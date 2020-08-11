@@ -9,7 +9,7 @@ $(function () {
         el: "#addStep",
         data: [
             {title: "选择目标用户", description: ""},
-            {title: "编辑申请消息", description: ""}
+            {title: "编辑申请文案", description: ""}
         ],
         center: true,
         dataOrder: ["title", "line", "description"]
@@ -24,6 +24,7 @@ $(function () {
         $("#cityDiv").html(code);
     }
     getSource();
+    statInputNum();
 });
 // 筛选用户
 function selectUser(flag) {
@@ -44,6 +45,7 @@ function stepBreak(idx) {
     if(idx == 1) {
         if(validStep1Data('Y')) {
             custom_step.setActive(1);
+            initGetInputNum();
             $("#step1").attr("style", "display:none;");
             $("#step2").attr("style", "display:block;");
         }
@@ -419,9 +421,60 @@ function sourceClick(dom, id, name) {
 }
 
 // 文案内容输入
-function smsContentInput(dom) {
-    $("#currentWordCnt").text($(dom).val().length);
-    $("#article").html($(dom).val() === '' ? "请输入消息内容...":$(dom).val());
+function smsContentInput() {
+    let content = $('#smsContent').val() === "" ? "请输入消息内容": signature+$('#smsContent').val()+unsubscribe;
+    $("#article").html('').append(content);
+}
+
+/**
+ * 字数统计
+ * @param textArea
+ * @param numItem
+ */
+function statInputNum() {
+    $("#smsContent").on('input propertychange', function () {
+        let smsContent = $('#smsContent').val();
+        let y = smsContent.length;
+        let total_num = y+signatureLen+unsubscribeLen;
+        let snum3=0;
+        $("#snum1").text(y);
+        $("#snum2").text(total_num);
+
+        if(total_num<=70)
+        {
+            snum3=1;
+        }else
+        {
+            snum3=total_num%67===0?total_num/67:(parseInt(total_num/67)+1);
+        }
+        //计算文案的条数
+        $("#snum3").text(snum3);
+    });
+}
+
+/**
+ * 编辑 - 设置初始的字数统计信息
+ */
+function initGetInputNum() {
+    let smsContent = $('#smsContent').val();
+    let y = smsContent.length;
+    let total_num = y+signatureLen+unsubscribeLen;
+    let snum3=0;
+    $("#snum1").text(y);
+    $("#snum2").text(total_num);
+
+    if(total_num<=70)
+    {
+        snum3=1;
+    }else
+    {
+        snum3=total_num%67===0?total_num/67:(parseInt(total_num/67)+1);
+    }
+    //计算文案的条数
+    $("#snum3").text(snum3);
+
+    let content = $('#smsContent').val() === "" ? "请输入消息内容": signature+$('#smsContent').val()+unsubscribe;
+    $("#article").html('').append(content);
 }
 
 // 更新文案值

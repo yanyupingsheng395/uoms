@@ -415,7 +415,7 @@ public class PageController extends BaseController {
     @RequestMapping("/addCustom/add")
     public String addCustomAdd(Model model) {
         SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
-        model.addAttribute("smsLengthLimit",sourceConfigVO.getSmsLengthLimit());
+        model.addAttribute("sourceConfig",sourceConfigVO);
         model.addAttribute("opType", "save");
         return "operate/addCustom/add";
     }
@@ -455,8 +455,6 @@ public class PageController extends BaseController {
     @RequestMapping("/addCustom/edit")
     public String addCustomEdit(@RequestParam String id, Model model) {
         model.addAttribute("opType", "update");
-        SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
-        model.addAttribute("smsLengthLimit",sourceConfigVO.getSmsLengthLimit());
         AddUserHead addUserHead = addUserService.getHeadById(Long.parseLong(id));
 
         if(null==addUserHead||"abort".equals(addUserHead.getTaskStatus()))
@@ -465,6 +463,8 @@ public class PageController extends BaseController {
             return "operate/addCustom/list";
         }else
         {
+            SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
+            model.addAttribute("sourceConfig",sourceConfigVO);
             model.addAttribute("addUserHead", addUserHead);
             return "operate/addCustom/add";
         }

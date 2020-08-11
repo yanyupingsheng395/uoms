@@ -1,12 +1,12 @@
 <div th:if="${opType eq 'save'}">
     <div class="row">
-        <span class="navbar-page-title">编辑申请消息</span>
+        <span class="navbar-page-title">编辑申请文案</span>
         <div class="col-md-12">
             <hr class="hr m-t-0 m-t-10" style="margin-bottom: 10px;">
         </div>
     </div>
     <div class="row">
-        <span class="navbar-page-title m-b-10">配置消息中的二维码</span>
+        <span class="navbar-page-title m-b-10">配置文案中的二维码</span>
     </div>
     <div class="row">
         <div class="col-md-12">
@@ -24,15 +24,37 @@
     </div>
     <hr style="margin-top: 10px;margin-bottom: 10px;">
     <div class="row">
-        <span class="navbar-page-title">编辑好友申请消息</span>
+        <span class="navbar-page-title">编辑好友申请文案</span>
         <div class="col-md-12">
             <div>
                 <textarea placeholder="请输入消息内容..." id="smsContent" name="smsContent" style="height: 102px;width:520px;border: solid 1px #ebebeb;" oninput="smsContentInput(this)"></textarea>
-                <h6 style="color: #8b95a5"><i class="fa fa-info-circle"></i>&nbsp;最大文案字符数:<span style="color: red;font-weight: bold" data-th-text="${smsLengthLimit}"></span>字，当前文案字数:<span style="color: red;font-weight: bold" id="currentWordCnt">0</span>字</h6>
+                <div class="wordstatis">
+                    长度估算：当前内容字数<span id="snum1" style="color:rgb(255, 152, 0);"></span>
+                    ,签名+内容+退订信息 三部分总字数<span id="snum2" style="color:rgb(255, 152, 0);"></span>
+                    ,按照<span id="snum3" style="color:rgb(255, 0, 0);font-size: 14px;font-weight: bold"></span>条文案发送并计费。
+                </div>
             </div>
         </div>
     </div>
-    <div class="row m-t-15">
+    <hr class="hr m-t-0 m-b-5"/>
+    <div class="row">
+        <div class="col-md-12 control-label" style="text-align: left;margin-left: 15px;padding-left: 5px;">
+            <ol class="list-inline">文案编写说明：</ol>
+            <ol style="padding-inline-start: 20px">
+                <li class="smscomments">1.文案字数=运营者编写内容的字数+签名长度+退订信息长度；</li>
+                <li class="smscomments">2.计费规则：文案字数<=70个字数，按照70个字数一条计算；文案字数>70个字数，即为长信息，按照67个字数记为一条；</li>
+
+                <li class="smscomments">3.当前系统支持在文案中使用的变量及其占用长度、签名长度、退订信息长度情况如下：</li>
+                <ul>
+                    <li class="smsvariable">&nbsp;&nbsp;签名：[[${sourceConfig.signature}]]，占<font color="red">[[${sourceConfig.signatureLen}]]</font>个字符；</li>
+                    <li class="smsvariable">&nbsp;&nbsp;退订信息：[[${sourceConfig.unsubscribe}]]，占<font color="red">[[${sourceConfig.unsubscribeLen}]]</font>个字符；</li>
+                </ul>
+                <li  class="smscomments">4.编写文案时起始位置请<font color="red">不要包含</font>签名信息[[${sourceConfig.signature}]]</li>
+                <li  class="smscomments">5.编写文案时结束位置请<font color="red">不要包含</font>退订信息[[${sourceConfig.unsubscribe}]]</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row m-t-10">
         <div class="col-md-12">
             <a class="btn btn-secondary btn-sm" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="true" aria-controls="collapseExample">
                 预览效果
@@ -62,7 +84,7 @@
         <div class="col-md-12 text-right">
             <div class="btn-group-sm" role="group">
                 <a class="btn btn-primary" onclick="updateSmsContent()">
-                    <i class="fa fa-save"></i> 完成
+                    <i class="fa fa-save"></i> 保存
                 </a>
                 <a class="btn btn-secondary" onclick="stepBreak(0)">
                     <i class="fa fa-arrow-left"></i> 上一步
@@ -76,13 +98,13 @@
 </div>
 <div th:if="${opType eq 'update'}">
     <div class="row">
-        <span style="margin-top: 5px;" class="navbar-page-title">编辑申请消息</span>
+        <span style="margin-top: 5px;" class="navbar-page-title">编辑申请文案</span>
         <div class="col-md-12">
             <hr class="hr m-t-0 m-t-5" style="margin-bottom: 5px;">
         </div>
     </div>
     <div class="row">
-        <span class="navbar-page-title m-b-10">配置消息中的二维码</span>
+        <span class="navbar-page-title m-b-10">配置文案中的二维码</span>
     </div>
     <div class="row">
         <div class="col-md-12">
@@ -100,12 +122,34 @@
     </div>
     <hr style="margin-top: 10px;margin-bottom: 10px;">
     <div class="row">
-        <span class="navbar-page-title" style="margin-top: 0px;">编辑好友申请消息</span>
+        <span class="navbar-page-title" style="margin-top: 0px;">编辑好友申请文案</span>
         <div class="col-md-12">
             <div>
-                <textarea th:text="${addUserHead.smsContent}" placeholder="请输入消息内容..." id="smsContent" name="smsContent" style="height: 102px;width:520px;border: solid 1px #ebebeb;" oninput="smsContentInput(this)"></textarea>
-                <h6 style="color: #8b95a5"><i class="fa fa-info-circle"></i>&nbsp;最大文案字符数:<span style="color: red;font-weight: bold" data-th-text="${smsLengthLimit}"></span>字，当前文案字数:<span style="color: red;font-weight: bold" id="currentWordCnt">0</span>字</h6>
+                <textarea th:text="${addUserHead.smsContent}" placeholder="请输入文案内容..." id="smsContent" name="smsContent" style="height: 102px;width:520px;border: solid 1px #ebebeb;" oninput="smsContentInput(this)"></textarea>
+                <div class="wordstatis">
+                    长度估算：当前内容字数<span id="snum1" style="color:rgb(255, 152, 0);"></span>
+                    ,签名+内容+退订信息 三部分总字数<span id="snum2" style="color:rgb(255, 152, 0);"></span>
+                    ,按照<span id="snum3" style="color:rgb(255, 0, 0);font-size: 14px;font-weight: bold"></span>条文案发送并计费。
+                </div>
             </div>
+        </div>
+    </div>
+    <hr class="hr m-t-0 m-b-5"/>
+    <div class="row">
+        <div class="col-md-12 control-label" style="text-align: left;margin-left: 15px;padding-left: 5px;">
+            <ol class="list-inline">文案编写说明：</ol>
+            <ol style="padding-inline-start: 20px">
+                <li class="smscomments">1.文案字数=运营者编写内容的字数+签名长度+退订信息长度；</li>
+                <li class="smscomments">2.计费规则：文案字数<=70个字数，按照70个字数一条计算；文案字数>70个字数，即为长信息，按照67个字数记为一条；</li>
+
+                <li class="smscomments">3.当前系统支持在文案中使用的变量及其占用长度、签名长度、退订信息长度情况如下：</li>
+                <ul>
+                    <li class="smsvariable">&nbsp;&nbsp;签名：[[${sourceConfig.signature}]]，占<font color="red">[[${sourceConfig.signatureLen}]]</font>个字符；</li>
+                    <li class="smsvariable">&nbsp;&nbsp;退订信息：[[${sourceConfig.unsubscribe}]]，占<font color="red">[[${sourceConfig.unsubscribeLen}]]</font>个字符；</li>
+                </ul>
+                <li  class="smscomments">4.编写文案时起始位置请<font color="red">不要包含</font>签名信息[[${sourceConfig.signature}]]</li>
+                <li  class="smscomments">5.编写文案时结束位置请<font color="red">不要包含</font>退订信息[[${sourceConfig.unsubscribe}]]</li>
+            </ol>
         </div>
     </div>
     <div class="row m-t-10">
@@ -138,7 +182,7 @@
         <div class="col-md-12 text-right">
             <div class="btn-group-sm" role="group">
                 <a class="btn btn-primary" onclick="updateSmsContent()">
-                    <i class="fa fa-save"></i> 完成
+                    <i class="fa fa-save"></i> 保存
                 </a>
                 <a class="btn btn-secondary" onclick="stepBreak(0)">
                     <i class="fa fa-arrow-left"></i> 上一步
