@@ -14,9 +14,9 @@ spring:
     # Redis服务器地址
     host: 127.0.0.1
     # Redis服务器连接端口
-    port: 6379
+    port: 6380
     # Redis 密码
-    password:
+    password: 123456
 
 sys:
   # 是否开启对thrift接口连通性的检测
