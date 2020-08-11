@@ -16,14 +16,13 @@ $(function () {
 
     if(opType === 'update' && sendType === '1') {
         selectUser(true);
-
         var code = "";
         selected_city_name.forEach((v, k)=>{
             code += "<button type=\"button\" class=\"btn btn-round btn-sm btn-warning m-t-5\">"+v+"</button>&nbsp;";
         });
         $("#cityDiv").html(code);
     }
-
+    getSource();
 });
 // 筛选用户
 function selectUser(flag) {
@@ -42,7 +41,14 @@ function stepBreak(idx) {
         $("#step2").attr("style", "display:none;");
     }
     if(idx == 1) {
-        if(validData(idx)) {
+        if(opType === 'save') {
+            if(validData(idx)) {
+                custom_step.setActive(1);
+                $("#step1").attr("style", "display:none;");
+                $("#step2").attr("style", "display:block;");
+            }
+        }
+        if(opType === 'update') {
             custom_step.setActive(1);
             $("#step1").attr("style", "display:none;");
             $("#step2").attr("style", "display:block;");
@@ -259,7 +265,10 @@ function saveDailyUserData() {
             $("input[name='dailyApplyRate']").val(r.data['dailyApplyRate']);
             $("input[name='dailyAddUserCnt']").val(r.data['dailyAddUserCnt']);
             $("input[name='dailyWaitDays']").val(r.data['dailyWaitDays']);
-            $MB.n_success("更新成功！");
+            $MB.n_success("申请消息保存成功！");
+            setTimeout(function () {
+                window.location.href = "/page/addCustom";
+            }, 1000);
         }
     });
 }
@@ -284,71 +293,7 @@ function validData(stepIndex) {
 
     // 验证第二步
     if(stepIndex == 2) {
-        var isChannel = $("input[name='isChannel']:checked").val();
-        var isProduct = $("input[name='isProduct']:checked").val();
-        var isCoupon = $("input[name='isCoupon']:checked").val();
-        var isQrcode = $("input[name='isQrcode']:checked").val();
-        if(isChannel === undefined) {
-            $MB.n_warning("请选择渠道名称！");
-            return false;
-        }
-        if(isProduct === undefined) {
-            $MB.n_warning("请选择商品名称！");
-            return false;
-        }
-        if(isCoupon === undefined) {
-            $MB.n_warning("请选择补贴名称！");
-            return false;
-        }
-        if(isQrcode === undefined) {
-            $MB.n_warning("请选择二维码短链！");
-            return false;
-        }
-        var qrId = $("#qrId").val();
-        if(qrId === '') {
-            $MB.n_warning("请配置二维码短链！");
-            return false;
-        }
-        var smsContent = $("#smsContent").val();
-        if(smsContent === undefined || smsContent === '') {
-            $MB.n_warning("请输入短信内容！");
-            return false;
-        }
-        if(isChannel === '1' && smsContent.indexOf('${渠道名称}') == -1) {
-            $MB.n_warning("渠道名称：是，文案中没有发现${渠道名称}模板变量！");
-            return false;
-        }
-        if(isChannel === '0' && smsContent.indexOf('${渠道名称}') > -1) {
-            $MB.n_warning("渠道名称：否，文案中发现${渠道名称}模板变量！");
-            return false;
-        }
-
-        if(isProduct === '1' && smsContent.indexOf('${商品名称}') == -1) {
-            $MB.n_warning("商品名称：是，文案中没有发现${商品名称}模板变量！");
-            return false;
-        }
-        if(isProduct === '0' && smsContent.indexOf('${商品名称}') > -1) {
-            $MB.n_warning("商品名称：否，文案中发现${商品名称}模板变量！");
-            return false;
-        }
-
-        if(isCoupon === '1' && smsContent.indexOf('${补贴名称}') == -1) {
-            $MB.n_warning("补贴名称：是，文案中没有发现${补贴名称}模板变量！");
-            return false;
-        }
-        if(isCoupon === '0' && smsContent.indexOf('${补贴名称}') > -1) {
-            $MB.n_warning("补贴名称：否，文案中发现${补贴名称}模板变量！");
-            return false;
-        }
-
-        if(isQrcode === '1' && smsContent.indexOf('${二维码短链}') == -1) {
-            $MB.n_warning("二维码短链：是，文案中没有发现${二维码短链}模板变量！");
-            return false;
-        }
-        if(isQrcode === '0' && smsContent.indexOf('${二维码短链}') > -1) {
-            $MB.n_warning("二维码短链：否，文案中发现${二维码短链}模板变量！");
-            return false;
-        }
+        var len = $("textarea[name='smsContent']").text()
         // 判断文案的长度是否超最大限制
         return true;
     }
@@ -398,7 +343,7 @@ function addCityClick() {
     $("#selectCityModal").modal('hide');
 }
 
-getSource();
+// 获取渠道数据
 function getSource() {
     $.get("/addUser/getSource", {}, function (r) {
         if(opType === 'save') {
