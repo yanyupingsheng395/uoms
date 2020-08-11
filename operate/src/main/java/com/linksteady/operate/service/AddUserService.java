@@ -1,6 +1,5 @@
 package com.linksteady.operate.service;
 
-import com.linksteady.common.domain.Ztree;
 import com.linksteady.operate.domain.AddUserConfig;
 import com.linksteady.operate.domain.AddUserHead;
 
@@ -45,13 +44,22 @@ public interface AddUserService {
 
     void updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId, String contactWayUrl);
 
+    Map<String, Object> getTaskResultData(String headId);
+
+    List<Map<String, Object>> getStatisApplyData(String headId, String scheduleId);
+
+    /**
+     * 任务是否存在执行计划
+     */
+    int getScheduleCount(long headId);
+
     /**
      * 更新推送状态 （每日调度任务用)
      */
     void autoUpdateStatus();
 
     /**
-     * 计算任务的效果
+     * 计算任务的效果 (每日调度任务用)
      */
     void calculateAddUserEffect();
 

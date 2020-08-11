@@ -40,9 +40,6 @@ public class AddUserServiceImpl implements AddUserService {
     @Autowired
     private AddUserMapper addUserMapper;
 
-    @Autowired
-    private QywxContactWayMapper qywxContactWayMapper;
-
     @Override
     public int getHeadCount() {
         return addUserMapper.getHeadCount();
@@ -127,7 +124,7 @@ public class AddUserServiceImpl implements AddUserService {
         addUserMapper.insertAddUserList(headId, whereInfo.toString());
 
         //计算推送节奏参数
-        //推送总人数
+        //推送总人数(重新进行查询)
         count = addUserMapper.getAddUserListCount(headId);
 
         //获取默认的 每日推送人数 及 推送转化率
@@ -148,9 +145,9 @@ public class AddUserServiceImpl implements AddUserService {
         int addTotal = 0;
         //计算预计每日添加好友人数  预计全部推送所需天数  预计添加好友总人数
         if (count > 0) {
-            dailyAddNum = (int) Math.floor(defaultAddcount * defaultApplyRate);
-            waitDays = count / defaultAddcount;
-            addTotal = (int) Math.floor(defaultApplyRate * count);
+            dailyAddNum = (int) Math.floor(defaultAddcount * defaultApplyRate/100);
+            waitDays = count%defaultAddcount==0?count / defaultAddcount:count / defaultAddcount+1;
+            addTotal = (int) Math.floor(defaultApplyRate * count/100);
         }
         //更新记录
         addUserMapper.updatePushParameter(headId, count, defaultAddcount, defaultApplyRate, dailyAddNum, waitDays, addTotal);
@@ -260,17 +257,24 @@ public class AddUserServiceImpl implements AddUserService {
 
     @Override
     public AddUserHead saveDailyUserData(String headId, String dailyUserCnt, String dailyApplyRate) {
+        //界面设置的每日推送人数
         Integer dailyUserCntLong = Integer.parseInt(dailyUserCnt);
+        //界面设置的转化率
         Double dailyApplyRateDouble = Double.parseDouble(dailyApplyRate);
-        int count = addUserMapper.getAddUserListCount(Long.parseLong(headId));
+        //获取当前任务剩余的推送人数
+        AddUserHead addUserHead = addUserMapper.getHeadById(Long.parseLong(headId));
+        int count=(int)addUserHead.getWaitUserCnt();
+        //每日添加用户人数
         int dailyAddNum = 0;
+        //完成推送需要的天数
         int waitDays = 0;
+        //总添加人数
         int addTotal = 0;
         //计算预计每日添加好友人数  预计全部推送所需天数  预计添加好友总人数
         if (count > 0) {
-            dailyAddNum = (int) Math.floor(dailyUserCntLong * dailyApplyRateDouble);
-            waitDays = count / dailyUserCntLong;
-            addTotal = (int) Math.floor(dailyApplyRateDouble * count);
+            dailyAddNum = (int) Math.floor(dailyUserCntLong * dailyApplyRateDouble/100);
+            waitDays = count%dailyUserCntLong==0?count / dailyUserCntLong:count / dailyUserCntLong+1;
+            addTotal = (int) Math.floor(dailyApplyRateDouble * count/100);
         }
         //更新记录
         addUserMapper.updatePushParameter(Long.parseLong(headId), count, dailyUserCntLong, dailyApplyRateDouble, dailyAddNum, waitDays, addTotal);
@@ -312,6 +316,11 @@ public class AddUserServiceImpl implements AddUserService {
     @Override
     public List<Map<String, Object>> getStatisApplyData(String headId, String scheduleId) {
         return addUserMapper.getStatisApplyData(headId, scheduleId);
+    }
+
+    @Override
+    public int getScheduleCount(long headId) {
+        return addUserMapper.getScheduleCount(headId);
     }
 
     @Override

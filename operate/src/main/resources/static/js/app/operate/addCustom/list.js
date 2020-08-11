@@ -1,4 +1,13 @@
-getTableData();
+$(function () {
+    let msg=$("#msg").val();
+    if(null!=msg&&msg!='')
+    {
+        $MB.n_danger(msg);
+    }
+    getTableData();
+});
+
+
 function getTableData() {
     var settings = {
         url: "/addUser/getHeadPageList",
@@ -58,19 +67,6 @@ function getTableData() {
             field: 'applyPassRate',
             align: "center",
             title: '申请通过率（%）'
-        }, {
-            field: 'addUserMethod',
-            align: "center",
-            title: '申请触发机制',
-            formatter: function (value, row, index) {
-                if(value === '0') {
-                    return "通过企业微信自动添加好友";
-                } else if(value === '1') {
-                    return "通过短信推送带有二维码的页面 ";
-                } else if(value === '2') {
-                    return "用户发生购买后短信推送申请";
-                }
-            }
         },{
             field: 'taskStartDt',
             align: "center",
@@ -86,13 +82,16 @@ function getTableData() {
                         res = "<span class=\"badge bg-info\">计划中</span>";
                         break;
                     case "doing":
-                        res = "<span class=\"badge bg-warning\">执行中</span>";
+                        res = "<span class=\"badge bg-primary\">执行中</span>";
                         break;
                     case "stop":
                         res = "<span class=\"badge bg-gray\">停止</span>";
                         break;
                     case "done":
                         res = "<span class=\"badge bg-success\">执行完</span>";
+                        break;
+                    case "abort":
+                        res = "<span class=\"badge bg-warning\">终止</span>";
                         break;
                 }
                 return res;
@@ -102,12 +101,22 @@ function getTableData() {
     $("#dataTable").bootstrapTable(settings);
 }
 
+/**
+ * 删除任务
+ */
 function deleteTask() {
     var selected = $("#dataTable").bootstrapTable('getSelections');
     if(selected[0].length === 0) {
         $MB.n_warning("请先选择一条记录！");
     }
     var id = selected[0].id;
+    var status=selected[0].taskStatus;
+    if(status!='edit')
+    {
+        $MB.n_danger("仅有待计划的任务支持删除！");
+        return false;
+    }
+
     $MB.confirm({
         title: '提示:',
         content: '确认删除选中的记录？'
@@ -116,12 +125,18 @@ function deleteTask() {
             if(r.code === 200) {
                 $MB.refreshTable('dataTable');
                 $MB.n_success("删除任务成功！");
+            }else
+            {
+                $MB.n_danger(r.msg);
             }
         });
     });
 }
 
-
+/**
+ * 任务编辑
+ * @returns {boolean}
+ */
 function editTask() {
     var selected = $("#dataTable").bootstrapTable('getSelections');
     if(selected.length === 0) {
@@ -129,9 +144,20 @@ function editTask() {
         return false;
     }
     var id = selected[0].id;
+    var status=selected[0].taskStatus;
+    //判断状态
+    if(status=='abort')
+    {
+        $MB.n_danger("已终止的任务不允许被编辑！");
+        return false;
+    }
+
     window.location.href = "/page/addCustom/edit?id=" + id;
 }
 
+/**
+ * 查看效果
+ */
 $("#btn_effect").click(function () {
     var selected = $("#dataTable").bootstrapTable('getSelections');
     if(selected.length == 0) {
@@ -139,15 +165,24 @@ $("#btn_effect").click(function () {
         return false;
     }
     var id = selected[0].id;
+    var status=selected[0].taskStatus;
+    if(status=='edit')
+    {
+        $MB.n_danger("计划中的任务不支持查看效果！");
+        return false;
+    }
     window.location.href = "/page/addCustom/effect?id=" + id;
 });
 
+/**
+ * 任务执行
+ */
 function executeTask()
 {
     var selected = $("#dataTable").bootstrapTable('getSelections');
     if(selected[0].length === 0) {
         $MB.n_warning("请先选择要执行的任务！");
-        return;
+        return false;
     }
     var id = selected[0].id;
     var status=selected[0].taskStatus;
@@ -155,7 +190,7 @@ function executeTask()
     if(status!='edit'&&status!='stop')
     {
         $MB.n_warning("只有计划中或停止状态的任务才能被执行！");
-        return;
+        return false;
     }
     //提交后端进行执行
     $MB.confirm({
@@ -167,6 +202,8 @@ function executeTask()
         $.post("/addUser/executeTask", {headId: id}, function (r) {
             if(r.code === 200) {
                 $MB.n_success("任务已成功提交执行！");
+                //对表格进行刷新
+                $MB.refreshTable('dataTable');
             }else
             {
                 $MB.n_danger(r.msg);

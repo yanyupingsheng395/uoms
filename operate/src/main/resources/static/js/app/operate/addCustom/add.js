@@ -263,12 +263,8 @@ function validData(stepIndex) {
     if(stepIndex == 1) {
         var sendType = $("input[name='sendType']:checked").val();
         if(sendType === '1') {
-            if(selected_city_code.length == 0) {
-                $MB.n_warning("请选择地域！");
-                return false;
-            }
-            if(selected_source_code === null) {
-                $MB.n_warning("请选择渠道！");
+            if(selected_city_code.length == 0 && selected_source_code === null) {
+                $MB.n_warning("请至少选择一组条件！");
                 return false;
             }
         }

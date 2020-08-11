@@ -263,4 +263,8 @@
     <select id="geRegionData" resultType="map">
         select id, name, pid from w_region
     </select>
+
+    <select id="getScheduleCount" resultType="int">
+        select count(*) from uo_qywx_add_user_schedule where head_id=#{headId}
+    </select>
 </mapper>

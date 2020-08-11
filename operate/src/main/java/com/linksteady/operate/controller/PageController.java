@@ -425,10 +425,28 @@ public class PageController extends BaseController {
      */
     @RequestMapping("/addCustom/effect")
     public String addCustomEffect(String id, Model model) {
-        Map<String, Object> data = addUserService.getTaskResultData(id);
-        model.addAttribute("id", id);
-        model.addAttribute("data", data);
-        return "operate/addCustom/effect";
+        AddUserHead addUserHead = addUserService.getHeadById(Long.parseLong(id));
+
+        if(null==addUserHead||"edit".equals(addUserHead.getTaskStatus()))
+        {
+            model.addAttribute("msg","计划中的任务不支持查看效果！");
+            return "operate/addCustom/list";
+        }else
+        {
+            //判断是否存在已经执行的记录
+            int count=addUserService.getScheduleCount(Long.parseLong(id));
+            if(count==0)
+            {
+                model.addAttribute("msg","任务至少被执行一次后才能查看效果！");
+                return "operate/addCustom/list";
+            }else
+            {
+                Map<String, Object> data = addUserService.getTaskResultData(id);
+                model.addAttribute("id", id);
+                model.addAttribute("data", data);
+                return "operate/addCustom/effect";
+            }
+        }
     }
 
     /**
@@ -440,8 +458,16 @@ public class PageController extends BaseController {
         SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
         model.addAttribute("smsLengthLimit",sourceConfigVO.getSmsLengthLimit());
         AddUserHead addUserHead = addUserService.getHeadById(Long.parseLong(id));
-        model.addAttribute("addUserHead", addUserHead);
-        return "operate/addCustom/add";
+
+        if(null==addUserHead||"abort".equals(addUserHead.getTaskStatus()))
+        {
+            model.addAttribute("msg","已终止的任务不允许被编辑！");
+            return "operate/addCustom/list";
+        }else
+        {
+            model.addAttribute("addUserHead", addUserHead);
+            return "operate/addCustom/add";
+        }
     }
 
     /**

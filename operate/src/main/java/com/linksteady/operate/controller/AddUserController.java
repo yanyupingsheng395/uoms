@@ -56,11 +56,22 @@ public class AddUserController extends BaseController {
         return ResponseBo.okWithData(null, addUserService.getHeadById(addUserHead.getId()));
     }
 
-
+    /**
+     * 删除任务
+     * @param id
+     * @return
+     */
     @RequestMapping("/deleteTask")
     public ResponseBo deleteTask(@RequestParam String id) {
-        addUserService.deleteTask(id);
-        return ResponseBo.ok();
+        AddUserHead addUserHead=addUserService.getHeadById(Long.parseLong(id));
+        if(null==addUserHead||!"edit".equals(addUserHead.getTaskStatus()))
+        {
+            return ResponseBo.error("仅有待计划的任务支持删除！");
+        }else
+        {
+            addUserService.deleteTask(id);
+            return ResponseBo.ok();
+        }
     }
 
     @RequestMapping("/editConfig")
