@@ -266,7 +266,6 @@ function saveDailyUserData() {
 // 验证数据
 function validData(stepIndex) {
     // 验证第一步
-    alert(stepIndex)
     if(stepIndex == 1) {
         var sendType = $("input[name='sendType']:checked").val();
         if(sendType === '1') {
