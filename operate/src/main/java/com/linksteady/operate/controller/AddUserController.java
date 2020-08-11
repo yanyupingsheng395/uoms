@@ -1,5 +1,6 @@
 package com.linksteady.operate.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.AddUserConfig;
@@ -114,5 +115,14 @@ public class AddUserController extends BaseController {
     @RequestMapping("/getStatisApplyData")
     public ResponseBo getStatisApplyData(String headId, String scheduleId) {
         return ResponseBo.okWithData(null, addUserService.getStatisApplyData(headId, scheduleId));
+    }
+
+    /**
+     * 获取地域数据
+     * @return
+     */
+    @RequestMapping("/geRegionData")
+    public ResponseBo geRegionData() {
+        return ResponseBo.okWithData(null, addUserService.geRegionData());
     }
 }

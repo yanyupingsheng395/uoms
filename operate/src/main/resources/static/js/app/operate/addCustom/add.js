@@ -184,10 +184,12 @@ function saveData(opType) {
                 title: '提示:',
                 content: '确认保存数据？'
             }, function () {
+                $MB.loadingDesc('show', '正在计算数据中,请稍后...');
                 $.post("/addUser/saveData",{taskName:taskName, sendType: sendType, sourceId: sourceId,
                         regionId: regionId, sourceName: sourceName, regionName: regionName},
                     function (r) {
                         if(r.code === 200) {
+                            $MB.loadingDesc('hide');
                             $MB.n_success("保存成功！");
                             $("#sendUserDataDiv").attr("style", "display:block;");
                             $("#saveBasicBtn").attr("style", "display:none;");
@@ -200,6 +202,7 @@ function saveData(opType) {
                             $("input[name='dailyAddUserCnt']").val(r.data['dailyAddUserCnt']);
                             $("input[name='dailyWaitDays']").val(r.data['dailyWaitDays']);
                             $("input[name='dailyAddTotal']").val(r.data['dailyAddTotal']);
+                            $("#totalUserCnt").text(r.data['dailyAddTotal']);
                             head_id = r.data['id'];
                         }else {
                             $MB.n_danger("保存失败！");
@@ -357,19 +360,27 @@ function selectCityModal() {
 
 var selected_city_code = [];
 var selected_city_name = [];
-function addCity() {
-    var cityName = $("#city").find("option:selected").val();
-    var cityCode = $("#city").find("option:selected").attr("data-code");
-    if(selected_city_code.indexOf(cityCode) == -1) {
-        if(selected_city_code.length <= 4) {
-            $("#cityTags").append("<span class=\"tag\"><span>" + cityName + "&nbsp;&nbsp;</span><a style=\"color: #fff;cursor: pointer;\" onclick=\"$(this).parent().remove()\">x</a></span>");
-            selected_city_code.push(cityCode);
-            selected_city_name.push(cityName);
-            console.log(selected_city_name)
-        }else {
-            $MB.n_warning("最多可选5个城市！");
+function addRegion(id) {
+    var cityName = $("#" + id).find("option:selected").val();
+    var cityCode = $("#" + id).find("option:selected").attr("data-code");
+    if(cityName !== undefined) {
+        if(selected_city_code.indexOf(cityCode) == -1) {
+            if(selected_city_code.length <= 4) {
+                $("#cityTags").append("<span class=\"tag\"><span>" + cityName + "&nbsp;&nbsp;</span><a style=\"color: #fff;cursor: pointer;\" onclick=\"regionRemove(this, \'"+cityCode+"\', \'"+cityName+"\')\">x</a></span>");
+                selected_city_code.push(cityCode);
+                selected_city_name.push(cityName);
+            }else {
+                $MB.n_warning("最多可选5个城市！");
+            }
         }
     }
+}
+
+// 移除region数据
+function regionRemove(dom, cityCode, cityName) {
+    $(dom).parent().remove();
+    selected_city_code.splice(selected_city_code.indexOf(cityCode), 1);
+    selected_city_name.splice(selected_city_name.indexOf(cityCode), 1);
 }
 
 function addCityClick() {

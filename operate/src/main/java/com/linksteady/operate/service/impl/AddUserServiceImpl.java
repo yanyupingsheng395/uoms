@@ -11,16 +11,23 @@ import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.AddUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.mybatis.generator.config.JDBCConnectionConfiguration;
+import org.mybatis.generator.internal.JDBCConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.support.JdbcBeanDefinitionReader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author hxcao
@@ -305,6 +312,17 @@ public class AddUserServiceImpl implements AddUserService {
     @Override
     public List<Map<String, Object>> getStatisApplyData(String headId, String scheduleId) {
         return addUserMapper.getStatisApplyData(headId, scheduleId);
+    }
+
+    @Override
+    public Map<Long, Object> geRegionData() {
+        Map<Long, Object> result = Maps.newHashMap();
+        List<Map<Long, Object>> test = addUserMapper.geRegionData();
+        Map<Long, List<Map<Long, Object>>> pid = test.stream().collect(Collectors.groupingBy(x -> Long.parseLong(x.get("pid").toString())));
+        pid.entrySet().stream().forEach(x -> {
+            result.put(x.getKey(), x.getValue().stream().collect(Collectors.toMap(k -> k.get("id"), v -> v.get("name"))));
+        });
+        return result;
     }
 
     @Override

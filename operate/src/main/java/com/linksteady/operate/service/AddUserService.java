@@ -58,4 +58,6 @@ public interface AddUserService {
     Map<String, Object> getTaskResultData(String headId);
 
     List<Map<String, Object>> getStatisApplyData(String headId, String scheduleId);
+
+    Map<Long, Object> geRegionData();
 }

@@ -32,7 +32,7 @@
                 <div id="tagTabContent" class="tab-content">
                     <div class="tab-pane fade active in" id="tagTabone">
                         <h6>
-                            <i class="fa fa-info-circle" style="color: #313944;"></i>&nbsp;您当前筛选了X渠道中的M个用户，将对其发送带有“联系我”二维码的短信息，使其添加企业微信好友；
+                            <i class="fa fa-info-circle" style="color: #313944;"></i>&nbsp;通过筛选地域、渠道用户，将对其发送带有“联系我”二维码的短信息，使其添加企业微信好友；
                         </h6>
                         <div class="row" style="margin-bottom: 5px;">
                             <div class="col-md-4">
@@ -96,7 +96,7 @@
         <div class="row m-t-5">
             <div class="col-md-12">
                 <h6>
-                    <i class="fa fa-info-circle" style="color: #313944"></i>&nbsp;目前需要推送的用户有M人，考虑到平台对添加好友的限制，请配置用户分批推送；
+                    <i class="fa fa-info-circle" style="color: #313944"></i>&nbsp;目前需要推送的用户有 <span id="totalUserCnt">0</span> 人，考虑到平台对添加好友的限制，请配置用户分批推送；
                 </h6>
                 <div style="border: dashed 1px #ccc;padding: 15px;margin-bottom: 5px;" class="m-t-5">
                     <form action="" class="form-inline">
@@ -298,13 +298,18 @@
                     <div class="col-md-12 table-striped">
                         <form class="form-inline">
                             <div data-toggle="distpicker">
-                                <div class="form-group">
-                                    <select class="form-control" id="province"></select>
+                                <div class="m-t-5 text-center">
+                                    省(市)：<select class="form-control" id="region1" style="width: 200px;"></select>
+                                    <a onclick="addRegion('region1')" style="cursor: pointer;">&nbsp;<i class="fa fa-plus-circle"></i></a>
                                 </div>
-                                <div class="form-group">
-                                    <select class="form-control" id="city"></select>
+                                <div class="m-t-5 text-center">
+                                    市(区)：<select class="form-control" id="region2" style="width: 200px;"></select>
+                                    <a onclick="addRegion('region2')" style="cursor: pointer;">&nbsp;<i class="fa fa-plus-circle"></i></a>
                                 </div>
-                                <a class="btn btn-primary" onclick="addCity()">添加</a>
+                                <div class="m-t-5 text-center">
+                                    &#12288;&nbsp;&nbsp;区：<select class="form-control" id="region3" style="width: 200px;"></select>
+                                    <a onclick="addRegion('region3')" style="cursor: pointer;">&nbsp;<i class="fa fa-plus-circle"></i></a>
+                                </div>
                             </div>
                             <div class="row m-t-15">
                                 <div class="col-md-12" id="cityTags"></div>
@@ -313,7 +318,7 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer m-t-10">
                 <button type="button" class="btn btn-primary btn-sm" onclick="addCityClick()" name="save">确定</button>
                 <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
             </div>
