@@ -63,9 +63,5 @@ public interface AddUserService {
      */
     void calculateAddUserEffect();
 
-    Map<String, Object> getTaskResultData(String headId);
-
-    List<Map<String, Object>> getStatisApplyData(String headId, String scheduleId);
-
     Map<Long, Object> geRegionData();
 }
