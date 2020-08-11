@@ -16,6 +16,12 @@ $(function () {
 
     if(opType === 'update' && sendType === '1') {
         selectUser(true);
+
+        var code = "";
+        selected_city_name.forEach((v, k)=>{
+            code += "<button type=\"button\" class=\"btn btn-round btn-sm btn-warning m-t-5\">"+v+"</button>&nbsp;";
+        });
+        $("#cityDiv").html(code);
     }
 
 });
@@ -395,13 +401,31 @@ function addCityClick() {
 getSource();
 function getSource() {
     $.get("/addUser/getSource", {}, function (r) {
-        var code = "";
-        r.data.forEach((v, k)=>{
-            code += "<button type=\"button\" \n" +
-                "class=\"btn btn-round btn-sm btn-secondary m-t-5\" onclick='sourceClick(this, \""+v['id']+"\",  \""+v['name']+"\")'>"+v['name']+"\n" +
-                "</button>&nbsp;";
-        });
-        $("#sourceDiv").html(code);
+        if(opType === 'save') {
+            var code = "";
+            r.data.forEach((v, k)=>{
+                code += "<button type=\"button\" \n" +
+                    "class=\"btn btn-round btn-sm btn-secondary m-t-5\" onclick='sourceClick(this, \""+v['id']+"\",  \""+v['name']+"\")'>"+v['name']+"\n" +
+                    "</button>&nbsp;";
+            });
+            $("#sourceDiv").html(code);
+        }
+        if(opType === 'update') {
+            var code = "";
+            r.data.forEach((v, k)=>{
+                if(v['name'] === sourceName) {
+                    code += "<button type=\"button\" \n" +
+                        "class=\"btn btn-round btn-sm btn-info m-t-5\">"+v['name']+"\n" +
+                        "</button>&nbsp;";
+                }else {
+                    code += "<button type=\"button\" \n" +
+                        "class=\"btn btn-round btn-sm btn-secondary m-t-5\">"+v['name']+"\n" +
+                        "</button>&nbsp;";
+                }
+            });
+            $("#sourceDiv").html(code);
+        }
+
     });
 }
 

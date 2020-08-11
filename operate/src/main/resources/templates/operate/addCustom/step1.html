@@ -185,7 +185,7 @@
                 <div id="tagTabContent" class="tab-content">
                     <div class="tab-pane fade active in" id="tagTabone">
                         <h6>
-                            <i class="fa fa-info-circle" style="color: #313944;"></i>&nbsp;您当前筛选了X渠道中的M个用户，将对其发送带有“联系我”二维码的短信息，使其添加企业微信好友；
+                            <i class="fa fa-info-circle" style="color: #313944;"></i>&nbsp;通过筛选地域、渠道用户，将对其发送带有“联系我”二维码的短信息，使其添加企业微信好友；
                         </h6>
                         <div class="row" style="margin-bottom: 5px;">
                             <div class="col-md-4">
@@ -195,15 +195,10 @@
                                             <div class="text-left pull-left" style="-webkit-flex: 1;flex: 1;">
                                                 <p class="h6" style="border-bottom: #faa64b 1px dashed;padding: 5px;">地域</p>
                                             </div>
-                                            <div class="pull-right text-right" style="-webkit-flex: 1;flex: 1;">
-                                                <p class="h6" style="border-bottom: #faa64b 1px dashed;padding: 5px;">
-                                                    <a onclick="selectCityModal()" style="cursor: pointer;"><i class="fa fa-check-square-o"></i>选择</a>
-                                                </p>
-                                            </div>
                                         </div>
-                                        <div style="position: relative;" id="cityDiv">
-                                            <button type="button" class="btn btn-round btn-sm btn-secondary m-t-5" onclick="selectCityModal()">请选择地域</button>
-                                        </div>
+                                        <th:block th:each="tmp : ${#strings.listSplit(addUserHead.regionName, ',')}">
+                                            <button type="button" class="btn btn-round btn-sm btn-warning m-t-5" data-th-text="${tmp}"></button>&nbsp;
+                                        </th:block>
                                     </div>
                                 </div>
                             </div>
@@ -231,7 +226,7 @@
         <div class="row m-t-5">
             <div class="col-md-12">
                 <h6>
-                    <i class="fa fa-info-circle" style="color: #313944"></i>&nbsp;目前需要推送的用户有M人，考虑到平台对添加好友的限制，请配置用户分批推送；
+                    <i class="fa fa-info-circle" style="color: #313944"></i>&nbsp;目前需要推送的用户有 <span data-th-text="${addUserHead.dailyAddTotal}"></span> 人，考虑到平台对添加好友的限制，请配置用户分批推送；
                 </h6>
                 <div style="border: dashed 1px #ccc;padding: 15px;margin-bottom: 5px;" class="m-t-5">
                     <form action="" class="form-inline">
