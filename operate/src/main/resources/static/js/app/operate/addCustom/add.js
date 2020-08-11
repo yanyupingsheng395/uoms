@@ -2,6 +2,7 @@ let custom_step;
 let daily_user_cnt;
 let daily_apply_rate;
 let head_id;
+let upgradeFlag='N';
 $(function () {
     // 初始化步骤条
     custom_step= steps({
@@ -41,14 +42,7 @@ function stepBreak(idx) {
         $("#step2").attr("style", "display:none;");
     }
     if(idx == 1) {
-        if(opType === 'save') {
-            if(validData(idx)) {
-                custom_step.setActive(1);
-                $("#step1").attr("style", "display:none;");
-                $("#step2").attr("style", "display:block;");
-            }
-        }
-        if(opType === 'update') {
+        if(validStep1Data('Y')) {
             custom_step.setActive(1);
             $("#step1").attr("style", "display:none;");
             $("#step2").attr("style", "display:block;");
@@ -177,81 +171,67 @@ function setQrCode() {
     $("#selectQrModal").modal('hide');
 }
 
-// 保存数据
-function saveData(opType) {
+/**
+ * 选择完条件后保存主记录的保存
+ */
+function saveData() {
     // 验证表单数据
-    if(validData(1)) {
-        if(opType === 'save') {
-            var taskName = $("input[name='taskName']").val();
-            var sendType = $("input[name='sendType']:checked").val();
-            var sourceId = selected_source_code;
-            var sourceName = selected_source_name;
-            var regionId = selected_city_code.join(",");
-            var regionName = selected_city_name.join(",");
-            if(sendType === '0') {
-                sourceId = '';
-                regionId = '';
-            }
-            $MB.confirm({
-                title: '提示:',
-                content: '确认保存数据？'
-            }, function () {
-                $MB.loadingDesc('show', '正在计算数据中,请稍后...');
-                $.post("/addUser/saveData",{taskName:taskName, sendType: sendType, sourceId: sourceId,
-                        regionId: regionId, sourceName: sourceName, regionName: regionName},
-                    function (r) {
-                        if(r.code === 200) {
-                            $MB.loadingDesc('hide');
-                            $MB.n_success("保存成功！");
-                            $("#sendUserDataDiv").attr("style", "display:block;");
-                            $("#saveBasicBtn").attr("style", "display:none;");
-                            $("input[name='taskName']").attr("disabled", "disabled").attr("readOnly", "readOnly");
-                            $("input[name='sendType']").attr("disabled", "disabled").attr("readOnly", "readOnly");
-                            $("input[name='dailyUserCnt']").val(r.data['dailyUserCnt']);
-                            daily_user_cnt = r.data['dailyUserCnt'];
-                            daily_apply_rate = r.data['dailyApplyRate'];
-                            $("input[name='dailyApplyRate']").val(r.data['dailyApplyRate']);
-                            $("input[name='dailyAddUserCnt']").val(r.data['dailyAddUserCnt']);
-                            $("input[name='dailyWaitDays']").val(r.data['dailyWaitDays']);
-                            $("input[name='dailyAddTotal']").val(r.data['dailyAddTotal']);
-                            $("#totalUserCnt").text(r.data['dailyAddTotal']);
-                            head_id = r.data['id'];
-                        }else {
-                            $MB.n_danger("保存失败！");
-                        }
-                    });
-            });
-        }else {
-            $MB.confirm({
-                title: '提示:',
-                content: '确认修改数据？'
-            }, function () {
-                $.post("/addUser/editConfig",
-                    $("#dataForm").serialize() + '&userValue=' + userValue.join() + "&lifeCycle=" + lifeCycle.join() +
-                    "&pathActive=" + pathActive.join() + "&userGrowth=" + userGrowth.join(),
-                    function (r) {
-                        if(r.code === 200) {
-                            $MB.n_success("修改成功！");
-                            setTimeout(function () {
-                                window.location.href = "/page/addCustom";
-                            }, 1400);
-                        }else {
-                            $MB.n_danger("修改失败！");
-                        }
-                    });
-            });
+    if(validStep1Data('N')) {
+        var taskName = $("input[name='taskName']").val();
+        var sendType = $("input[name='sendType']:checked").val();
+        var sourceId = selected_source_code;
+        var sourceName = selected_source_name;
+        var regionId = selected_city_code.join(",");
+        var regionName = selected_city_name.join(",");
+        if(sendType === '0') {
+            sourceId = '';
+            regionId = '';
         }
+        $MB.confirm({
+            title: '提示:',
+            content: '确认保存？'
+        }, function () {
+            //打开遮罩层
+            $MB.loadingDesc('show', '保存中，请稍候...');
+            $.post("/addUser/saveData",{taskName:taskName, sendType: sendType, sourceId: sourceId,
+                    regionId: regionId, sourceName: sourceName, regionName: regionName},
+                function (r) {
+                    if(r.code === 200) {
+                        $MB.n_success("保存成功！");
+                        $("#sendUserDataDiv").attr("style", "display:block;");
+                        $("#saveBasicBtn").attr("style", "display:none;");
+                        $("input[name='taskName']").attr("disabled", "disabled").attr("readOnly", "readOnly");
+                        $("input[name='sendType']").attr("disabled", "disabled").attr("readOnly", "readOnly");
+                        $("input[name='dailyUserCnt']").val(r.data['dailyUserCnt']);
+                        daily_user_cnt = r.data['dailyUserCnt'];
+                        daily_apply_rate = r.data['dailyApplyRate'];
+                        $("input[name='dailyApplyRate']").val(r.data['dailyApplyRate']);
+                        $("input[name='dailyAddUserCnt']").val(r.data['dailyAddUserCnt']);
+                        $("input[name='dailyWaitDays']").val(r.data['dailyWaitDays']);
+                        $("input[name='dailyAddTotal']").val(r.data['dailyAddTotal']);
+                        head_id = r.data['id'];
+                    }else {
+                        $MB.n_danger("保存失败！");
+                    }
+                    $MB.loadingDesc('hide');
+                });
+        });
     }
 }
 
 function userDataChange(dom, idx) {
     if(($("input[name='dailyUserCnt']").val() !== daily_user_cnt) || ($("input[name='dailyApplyRate']").val() !== daily_apply_rate)) {
         $("#saveDailyUserBtn").attr("style", "display:inline-block;");
+        upgradeFlag='Y';
     }else {
         $("#saveDailyUserBtn").attr("style", "display:none;");
+        upgradeFlag='N';
     }
 }
-// 调整每日转化用户数
+
+/**
+ * 调整参数保存
+ */
 function saveDailyUserData() {
     var currentDailyUserCnt = $('input[name="dailyUserCnt"]').val();
     var currentDailyApplyRate = $('input[name="dailyApplyRate"]').val();
@@ -259,45 +239,96 @@ function saveDailyUserData() {
     if(opType === 'update') {
         headId = $("#headId").val();
     }
+
+    //判断headId是否为空
+    if(null==headId||headId == undefined || headId == '')
+    {
+        $MB.n_warning("请先完成任务的保存！");
+        return false;
+    }
+
     $.get("/addUser/saveDailyUserData", {headId: headId, dailyUserCnt:currentDailyUserCnt, dailyApplyRate:currentDailyApplyRate}, function (r) {
         if(r.code === 200) {
             $("#saveDailyUserBtn").attr("style", "display:none;");
             $("input[name='dailyApplyRate']").val(r.data['dailyApplyRate']);
             $("input[name='dailyAddUserCnt']").val(r.data['dailyAddUserCnt']);
             $("input[name='dailyWaitDays']").val(r.data['dailyWaitDays']);
-            $MB.n_success("申请消息保存成功！");
-            setTimeout(function () {
-                window.location.href = "/page/addCustom";
-            }, 1000);
+            $MB.n_success("更新成功！");
+            //隐藏更新按钮
+            $("#saveDailyUserBtn").attr("style", "display:none;");
+            upgradeFlag='N';
+        }else
+        {
+            $MB.n_danger(r.msg);
         }
     });
 }
-// 验证数据
-function validData(stepIndex) {
-    // 验证第一步
-    if(stepIndex == 1) {
-        var sendType = $("input[name='sendType']:checked").val();
+
+/**
+ * 完成对数据的校验(步骤1)
+ * @param stepIndex
+ * @returns {boolean}
+ */
+function validStep1Data(flag) {
+    if(opType === 'save')
+    {
+        let sendType = $("input[name='sendType']:checked").val();
         if(sendType === '1') {
             if(selected_city_code.length == 0 && selected_source_code === null) {
                 $MB.n_warning("请至少选择一组条件！");
                 return false;
             }
         }
-        var taskName = $("input[name='taskName']").val();
+        let taskName = $("input[name='taskName']").val();
         if(taskName === '') {
             $MB.n_warning("请输入任务名称！");
             return false;
         }
-        return true;
     }
 
-    // 验证第二步
-    if(stepIndex == 2) {
-        var len = $("textarea[name='smsContent']").text()
-        // 判断文案的长度是否超最大限制
-        return true;
+    var headId = head_id;
+    if(opType === 'update') {
+        headId = $("#headId").val();
     }
-    return false;
+
+    //额外校验是否完成了主记录的保存
+    if(flag=='Y')
+    {
+       if(null==headId||headId == undefined || headId == '')
+       {
+           $MB.n_warning("请先完成任务的保存！");
+           return false;
+       }
+    }
+
+    //验证是否需要先更新数据
+    if(upgradeFlag=='Y')
+    {
+        $MB.n_warning("请先完成任务的更新！");
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * 完成对数据的校验(步骤2)
+ * @param stepIndex
+ * @returns {boolean}
+ */
+function validStep2Data() {
+    var qrId = $("#qrId").val();
+
+    if(qrId === '') {
+        $MB.n_warning("请配置渠道活码二维码短链！");
+        return false;
+    }
+    var smsContent = $("#smsContent").val();
+    if(smsContent === undefined || smsContent === '') {
+        $MB.n_warning("请输入短信内容！");
+        return false;
+    }
+    return true;
 }
 
 // 选择城市modal
@@ -399,10 +430,21 @@ function updateSmsContent() {
     if(opType === 'update') {
         headId = $("#headId").val();
     }
-    $.post("/addUser/updateSmsContentAndContactWay", {headId: headId, smsContent: $("textarea[name='smsContent']").val(),
-    contactWayId: $("#qrId").val(), contactWayUrl: $("#qrCode").val()}, function (r) {
-        if(r.code == 200) {
-            $MB.n_success("更新成功！");
+
+    if(validStep2Data())
+    {
+        if(null==headId||headId == undefined || headId == '')
+        {
+            $MB.n_warning("请先完成任务的保存！");
+            return false;
         }
-    });
+
+        $.post("/addUser/updateSmsContentAndContactWay", {headId: headId, smsContent: $("textarea[name='smsContent']").val(),
+            contactWayId: $("#qrId").val(), contactWayUrl: $("#qrCode").val()}, function (r) {
+            if(r.code == 200) {
+                $MB.n_success("更新成功！");
+            }
+        });
+    }
+
 }

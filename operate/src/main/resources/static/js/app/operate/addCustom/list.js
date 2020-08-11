@@ -210,9 +210,5 @@ function executeTask()
             }
             $MB.loadingDesc('hide');
         });
-
     });
-
-
-
 }

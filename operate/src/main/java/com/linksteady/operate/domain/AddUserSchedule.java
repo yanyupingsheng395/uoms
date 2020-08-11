@@ -8,7 +8,7 @@ import java.util.Date;
 public class AddUserSchedule {
 
     private long scheduleId;
-    private long headId;
+    private Long headId;
     private long applyNum;
     private double applyRate;
     private long waitAddNum;
@@ -16,7 +16,7 @@ public class AddUserSchedule {
     private long waitDays;
 
     private long remainAddNum;
-    private long contactwayId;
+    private Long contactwayId;
     private String state;
     private String contactwayUrl;
     private String smsContent;
