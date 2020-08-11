@@ -1,8 +1,8 @@
 package com.linksteady.operate.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.linksteady.common.domain.Ztree;
 import com.google.common.base.Splitter;
 import com.linksteady.operate.dao.AddUserMapper;
 import com.linksteady.operate.domain.AddUserConfig;
@@ -199,17 +199,22 @@ public class AddUserServiceImpl implements AddUserService {
         List<Map<String, Object>> statisApplyData = Lists.newArrayList();
         if (sendAndApplyData.size() > 0) {
             // 申请通过随统计日期变化图
-            String scheduleId = sendAndApplyData.get(0).get("scheduleId").toString();
+            String scheduleId = sendAndApplyData.get(0).get("scheduleid").toString();
             statisApplyData = addUserMapper.getStatisApplyData(headId, scheduleId);
 
         }
-        result.put("statisApplyData", statisApplyData);
+        result.put("statisApplyData", JSON.toJSONString(statisApplyData));
         result.put("applyUserCnt", addUserHead.getApplyUserCnt() == null ? "-" : addUserHead.getApplyUserCnt());
         result.put("applyPassCnt", addUserHead.getApplyPassCnt() == null ? "-" : addUserHead.getApplyPassCnt());
         result.put("applyPassRate", addUserHead.getApplyPassRate() == null ? "-" : addUserHead.getApplyPassRate());
-        result.put("sendAndApplyData", sendAndApplyData);
+        result.put("sendAndApplyData", JSON.toJSONString(sendAndApplyData));
         result.put("sendType", sendType);
         return result;
+    }
+
+    @Override
+    public List<Map<String, Object>> getStatisApplyData(String headId, String scheduleId) {
+        return addUserMapper.getStatisApplyData(headId, scheduleId);
     }
 
     @Override

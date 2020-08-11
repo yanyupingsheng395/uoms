@@ -73,4 +73,9 @@ public class AddUserController {
         addUserService.updateSmsContentAndContactWay(headId, smsContent, contactWayId, contactWayUrl);
         return ResponseBo.ok();
     }
+
+    @RequestMapping("/getStatisApplyData")
+    public ResponseBo getStatisApplyData(String headId, String scheduleId) {
+        return ResponseBo.okWithData(null, addUserService.getStatisApplyData(headId, scheduleId));
+    }
 }

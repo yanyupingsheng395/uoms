@@ -1,16 +1,23 @@
-let custom_step = steps({
-    el: "#addStep",
-    data: [
-        {title: "选择目标用户", description: ""},
-        {title: "编辑申请消息", description: ""}
-    ],
-    center: true,
-    dataOrder: ["title", "line", "description"]
-});
+let custom_step;
+let daily_user_cnt;
+let daily_apply_rate;
+let head_id;
 $(function () {
+    // 初始化步骤条
+    custom_step= steps({
+        el: "#addStep",
+        data: [
+            {title: "选择目标用户", description: ""},
+            {title: "编辑申请消息", description: ""}
+        ],
+        center: true,
+        dataOrder: ["title", "line", "description"]
+    });
+
     if(opType === 'update' && sendType === '1') {
         selectUser(true);
     }
+
 });
 // 筛选用户
 function selectUser(flag) {
@@ -21,6 +28,7 @@ function selectUser(flag) {
     }
 }
 
+// 切换步骤页面
 function stepBreak(idx) {
     if(idx == 0) {
         custom_step.setActive(0);
@@ -34,80 +42,6 @@ function stepBreak(idx) {
             $("#step2").attr("style", "display:block;");
         }
     }
-}
-
-// 短信内容验证
-function smsContentValid() {
-    $('#smsContentInput').val($('#smsContent').val());
-    if($('#smsContentInput').val() !== '') {
-        $('#smsContentInput').removeClass('error');
-        $("#smsContentInput-error").remove();
-    }
-    var content = $('#smsContent').val() === "" ? "请输入短信内容": $('#smsContent').val();
-    $("#article").html('').append(content);
-}
-
-statTmpContentNum();
-// 设置文案当前的字数
-function statTmpContentNum() {
-    var PROD_NAME_LEN = 12;
-    var COUPON_NAME_LEN = 12;
-    var CHANNEL_LEN = 12;
-    var SMS_LEN_LIMIT = 70;
-    $("#smsContent").on('input propertychange', function () {
-        let smsContent = $('#smsContent').val();
-        let y = smsContent.length;
-        let m = smsContent.length;
-        if(smsContent.indexOf('${商品名称}') > -1) {
-            y = y - '${商品名称}'.length + parseInt(PROD_NAME_LEN);
-            m = m - '${商品名称}'.length;
-        }
-        if(smsContent.indexOf('${补贴名称}') > -1) {
-            y = y - '${补贴名称}'.length + parseInt(COUPON_NAME_LEN);
-            m = m - '${补贴名称}'.length;
-        }
-        if(smsContent.indexOf('${渠道名称}') > -1) {
-            y = y - '${渠道名称}'.length + parseInt(CHANNEL_LEN);
-            m = m - '${渠道名称}'.length;
-        }
-        if(smsContent.indexOf('${二维码短链}') > -1) {
-            y = y - '${二维码短链}'.length + parseInt(CHANNEL_LEN);
-            m = m - '${二维码短链}'.length;
-        }
-        total_num = y;
-        var code = "";
-        code += m + ":编写内容字符数 / " + y + ":填充变量最大字符数 / " + SMS_LEN_LIMIT + ":文案总字符数";
-        $("#word").text(code);
-    });
-}
-
-// 获取短链
-function getShortUrl() {
-    var url = $("#longUrl").val();
-    if(url.trim() == "") {
-        $MB.n_warning("长链不能为空!");
-        return;
-    }
-    $.get("/coupon/getShortUrl", {url: url}, function(r) {
-        if(r.code === 200) {
-            $("#shortUrl").val(r.data);
-            $MB.n_success("生成短链成功!");
-        }else {
-            $MB.n_danger(r['msg']);
-        }
-    });
-}
-
-getQrData();
-function getQrData() {
-    var code = "";
-    $.get("/contactWay/getContactWayData", {}, function(r) {
-        var data = r.rows;
-        data.forEach((k, v)=>{
-            code += "<option value='"+k['id']+"'>"+k['state']+"</option>";
-        });
-        $("#qrData").html(code);
-    });
 }
 
 // 获取二维码数据
@@ -212,7 +146,7 @@ function selectQrCode() {
     $("#selectQrModal").modal('show');
 }
 
-// 选择二维码
+// 选择二维码=》确定事件
 function setQrCode() {
     var selected = $("#qrDataTable").bootstrapTable('getSelections');
     if(selected.length === 0) {
@@ -231,9 +165,6 @@ function setQrCode() {
     $("#selectQrModal").modal('hide');
 }
 
-var daily_user_cnt;
-var daily_apply_rate;
-var head_id;
 // 保存数据
 function saveData(opType) {
     // 验证表单数据

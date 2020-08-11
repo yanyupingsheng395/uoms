@@ -42,4 +42,6 @@ public interface AddUserService {
     void updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId, String contactWayUrl);
 
     Map<String, Object> getTaskResultData(String headId);
+
+    List<Map<String, Object>> getStatisApplyData(String headId, String scheduleId);
 }

@@ -114,7 +114,7 @@
     </select>
 
     <select id="getStatisApplyData" resultType="map">
-        select statis_day day, stats_pass_num num, statis_pass_rate rate from uo_qywx_add_user_effect where head_id = #{headId}::integer and schedule_id = #{scheduleId}::integer
+        select statis_day statisDay, stats_pass_num num, statis_pass_rate rate from uo_qywx_add_user_effect where head_id = #{headId}::integer and schedule_id = #{scheduleId}::integer
         order by statis_day asc
     </select>
 </mapper>
