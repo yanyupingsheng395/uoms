@@ -411,6 +411,8 @@ var selected_source_code = null;
 var selected_source_name = null;
 function sourceClick(dom, id, name) {
     if($(dom).hasClass('btn-info')) {
+        selected_source_code = null;
+        selected_source_name = null;
         $(dom).removeClass('btn-info').addClass('btn-secondary');
     }else {
         selected_source_code = id;
