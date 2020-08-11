@@ -120,6 +120,11 @@ public interface AddUserMapper {
     List<Map<String, Object>> getSendAndApplyData(String headId);
 
     List<Map<String, Object>> getStatisApplyData(String headId, String scheduleId);
+
+    /**
+     * 查看任务的执行计划数
+     */
+    int getScheduleCount(long headId);
 }
 
 

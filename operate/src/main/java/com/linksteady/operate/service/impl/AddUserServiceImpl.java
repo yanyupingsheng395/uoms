@@ -312,6 +312,11 @@ public class AddUserServiceImpl implements AddUserService {
     }
 
     @Override
+    public int getScheduleCount(long headId) {
+        return addUserMapper.getScheduleCount(headId);
+    }
+
+    @Override
     public AddUserHead getHeadById(long id) {
         return addUserMapper.getHeadById(id);
     }
