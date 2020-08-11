@@ -196,6 +196,9 @@
                                                 <p class="h6" style="border-bottom: #faa64b 1px dashed;padding: 5px;">地域</p>
                                             </div>
                                         </div>
+                                        <div th:if="${addUserHead.regionName eq ''}">
+                                            <button type="button" class="btn btn-round btn-sm btn-secondary m-t-5">没有选择地域</button>
+                                        </div>
                                         <th:block th:each="tmp : ${#strings.listSplit(addUserHead.regionName, ',')}">
                                             <button type="button" class="btn btn-round btn-sm btn-warning m-t-5" data-th-text="${tmp}"></button>&nbsp;
                                         </th:block>

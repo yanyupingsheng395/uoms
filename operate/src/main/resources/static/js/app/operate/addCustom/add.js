@@ -266,6 +266,7 @@ function saveDailyUserData() {
 // 验证数据
 function validData(stepIndex) {
     // 验证第一步
+    alert(stepIndex)
     if(stepIndex == 1) {
         var sendType = $("input[name='sendType']:checked").val();
         if(sendType === '1') {
@@ -432,10 +433,14 @@ function getSource() {
 var selected_source_code = null;
 var selected_source_name = null;
 function sourceClick(dom, id, name) {
-    selected_source_code = id;
-    selected_source_name = name;
-    $(dom).addClass('btn-info').removeClass('btn-secondary');
-    $(dom).siblings().removeClass('btn-info').addClass('btn-secondary');
+    if($(dom).hasClass('btn-info')) {
+        $(dom).removeClass('btn-info').addClass('btn-secondary');
+    }else {
+        selected_source_code = id;
+        selected_source_name = name;
+        $(dom).addClass('btn-info').removeClass('btn-secondary');
+        $(dom).siblings().removeClass('btn-info').addClass('btn-secondary');
+    }
 }
 
 // 文案内容输入
