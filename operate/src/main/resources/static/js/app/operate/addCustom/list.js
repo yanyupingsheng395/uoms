@@ -41,7 +41,15 @@ function getTableData() {
         },{
             field: 'applyUserCnt',
             align: "center",
-            title: '发送申请数量（人）'
+            title: '发送申请总数量（人）'
+        },{
+            field: 'waitUserCnt',
+            align: "center",
+            title: '剩余待发送数量（人）'
+        },{
+            field: 'deliveredUserCnt',
+            align: "center",
+            title: '已发送申请数量（人）'
         }, {
             field: 'applyPassCnt',
             align: "center",

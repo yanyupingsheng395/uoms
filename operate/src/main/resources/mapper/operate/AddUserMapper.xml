@@ -24,6 +24,7 @@
         <result column="contactway_url" jdbcType="VARCHAR" property="contactWayUrl"/>
         <result column="sms_content" jdbcType="VARCHAR" property="smsContent"/>
         <result column="wait_user_cnt" jdbcType="DECIMAL" property="waitUserCnt"/>
+        <result column="delivered_user_cnt" jdbcType="DECIMAL" property="deliveredUserCnt"/>
     </resultMap>
 
     <resultMap id="paramMap" type="com.linksteady.operate.domain.QywxParam">
@@ -36,7 +37,17 @@
     </select>
 
     <select id="getHeadPageList" resultMap="base">
-        select id, task_name, apply_user_cnt, apply_pass_cnt, apply_pass_rate, task_start_dt, task_status, send_type from uo_qywx_add_user_header
+        select id,
+            task_name,
+            apply_user_cnt,
+            apply_pass_cnt,
+            apply_pass_rate,
+            task_start_dt,
+            task_status,
+            send_type,
+            delivered_user_cnt,
+            wait_user_cnt
+         from uo_qywx_add_user_header
         order by insert_dt desc
         limit #{limit} offset #{offset}
     </select>
