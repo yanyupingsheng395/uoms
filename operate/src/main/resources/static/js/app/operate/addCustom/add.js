@@ -67,7 +67,13 @@ function selectQrCode() {
             };
         },
         columns: [{
-            checkbox: true
+            checkbox: true,
+            formatter: function (value, row, index) {
+                if(row.contactWayId === Number.parseInt($("#qrId").val())) {
+                    return {checked: true};
+                }
+                return {};
+            }
         },  {
             field: 'qrCode',
             title: '二维码样式',
@@ -160,14 +166,8 @@ function setQrCode() {
         return false;
     }
     $("#qrId").val(selected[0].contactWayId);
-    $.get("/coupon/getShortUrl", {url: selected[0].qrCode}, function(r) {
-        if(r.code === 200) {
-            $("#copyQrCodeBtn").attr("data-clipboard-text", r.data);
-            $("#qrCode").val(r.data);
-        }else {
-            $MB.n_danger(r['msg']);
-        }
-    });
+    $("#copyQrCodeBtn").attr("data-clipboard-text", selected[0].shortUrl);
+    $("#qrCode").val(selected[0].shortUrl);
     $("#selectQrModal").modal('hide');
 }
 
@@ -442,9 +442,8 @@ function updateSmsContent() {
         $.post("/addUser/updateSmsContentAndContactWay", {headId: headId, smsContent: $("textarea[name='smsContent']").val(),
             contactWayId: $("#qrId").val(), contactWayUrl: $("#qrCode").val()}, function (r) {
             if(r.code == 200) {
-                $MB.n_success("更新成功！");
+                $MB.n_success("任务消息编辑完成！");
             }
         });
     }
-
 }

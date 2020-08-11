@@ -13,7 +13,7 @@ function init() {
         chart2([], []);
         chart3([], []);
     }else {
-        var xdata = statisApplyData.map((v, k)=>v['statisday']);
+        var xdata = statisApplyData.map((v, k)=>'第' + v['statisday'] + '天');
         var ydata1 = statisApplyData.map((v, k)=>v['num']);
         var ydata2 = statisApplyData.map((v, k)=>v['rate']);
         chart2(xdata, ydata1);
