@@ -23,6 +23,8 @@
         <result column="contactway_id" jdbcType="VARCHAR" property="contactWayId"/>
         <result column="contactway_url" jdbcType="VARCHAR" property="contactWayUrl"/>
         <result column="sms_content" jdbcType="VARCHAR" property="smsContent"/>
+        <result column="wait_user_cnt" jdbcType="DECIMAL" property="waitUserCnt"/>
+        <result column="delivered_user_cnt" jdbcType="DECIMAL" property="deliveredUserCnt"/>
     </resultMap>
 
     <resultMap id="paramMap" type="com.linksteady.operate.domain.QywxParam">
@@ -35,7 +37,17 @@
     </select>
 
     <select id="getHeadPageList" resultMap="base">
-        select id, task_name, apply_user_cnt, apply_pass_cnt, apply_pass_rate, task_start_dt, task_status, send_type from uo_qywx_add_user_header
+        select id,
+            task_name,
+            apply_user_cnt,
+            apply_pass_cnt,
+            apply_pass_rate,
+            task_start_dt,
+            task_status,
+            send_type,
+            delivered_user_cnt,
+            wait_user_cnt
+         from uo_qywx_add_user_header
         order by insert_dt desc
         limit #{limit} offset #{offset}
     </select>
@@ -95,6 +107,7 @@
     <update id="updatePushParameter">
         update uo_qywx_add_user_header set
           apply_user_cnt=#{totalNum},
+          wait_user_cnt=#{totalNum},
           daily_user_cnt=#{defaultAddCount},
           daily_apply_rate=#{defaultApplyRate},
           daily_add_user_cnt=#{dailyAddNum},
@@ -107,6 +120,135 @@
         update uo_qywx_add_user_header set sms_content = #{smsContent}, contactway_id =  #{contactWayId}::integer, contactway_url = #{contactWayUrl}
         where id= #{headId}::integer
     </update>
+
+    <update id="updateHeadVersion">
+        update uo_qywx_add_user_header set version=version+1 where id= #{headId} and version=#{version}
+    </update>
+
+    <select id="getRunningSchedule" resultType="int">
+        select count(*) from uo_qywx_add_user_schedule where schedule_date_wid=#{currentDay} and status='doing'
+    </select>
+
+    <insert id="saveAddUserSchedule" useGeneratedKeys="true" keyProperty="scheduleId" keyColumn="schedule_id">
+       insert into uo_qywx_add_user_schedule
+       (
+                head_id,
+                apply_num,
+                apply_rate,
+                wait_add_num,
+                remain_user_cnt,
+                wait_days,
+                remain_add_num,
+                contactway_id,
+                state,
+                contactway_url,
+                sms_content,
+                status,
+                insert_dt,
+                insert_by,
+                update_dt,
+                update_by,
+                schedule_date_wid,
+                schedule_date,
+                apply_pass_num
+       ) values(
+                #{headId},
+                #{applyNum},
+                #{applyRate},
+                #{waitAddNum},
+                #{remainUserCnt},
+                #{waitDays},
+                #{remainAddNum},
+                #{contactwayId},
+                #{state},
+                #{contactwayUrl},
+                #{smsContent},
+                #{status},
+                #{insertDt},
+                #{insertBy},
+                #{updateDt},
+                #{updateBy},
+                #{scheduleDateWid},
+                #{scheduleDate},
+                #{applyPassNum}
+       )
+    </insert>
+
+    <update id="updateAddUserList">
+        update uo_qywx_add_user_list set schedule_id=#{scheduleId} where id in (
+          select id from uo_qywx_add_user_list
+          where head_id=#{headId} and schedule_id is null  order by id asc limit #{targetNum}
+        )
+
+    </update>
+
+    <update id="updateHeadWaitUserCnt">
+           update uo_qywx_add_user_header set
+             wait_user_cnt=#{afterWaitNum},
+             delivered_user_cnt=#{afterFinishNum},
+             task_status='doing',
+             update_dt=now(),
+             update_by=#{opUserName}
+           where
+             id=#{headId}
+    </update>
+
+    <insert id="pushToPushListLarge">
+        INSERT INTO uo_op_push_list_large(
+            PUSH_CONTENT,
+            PUSH_STATUS,
+            SOURCE_CODE,
+            SOURCE_ID,
+            USER_PHONE,
+            IS_PUSH,
+            PUSH_SCHEDULING_DATE
+        ) select
+            uo_qywx_add_user_schedule.sms_content,
+            'P',
+            'ADDUSER',
+            uo_qywx_add_user_list.id,
+            uo_qywx_add_user_list.phone_num,
+            '0',
+            #{scheduleDate}
+        from uo_qywx_add_user_list join uo_qywx_add_user_schedule
+           on uo_qywx_add_user_list.schedule_id=uo_qywx_add_user_schedule.schedule_id
+          and uo_qywx_add_user_list.head_id=uo_qywx_add_user_schedule.head_id
+          and uo_qywx_add_user_schedule.schedule_id=#{scheduleId}
+          and uo_qywx_add_user_schedule.head_id=#{headId}
+          and uo_qywx_add_user_list.is_push='0'
+    </insert>
+
+    <update id="updatePushResult">
+        update uo_qywx_add_user_list set
+              push_status = t4.push_status,
+              push_date   = t4.push_date,
+              is_push     = t4.is_push
+        from uo_op_push_list_large as t4
+        where id = t4.source_id and t4.source_code = 'ADDUSER' and uo_qywx_add_user_list.insert_dt::date>=(current_date-3)
+    </update>
+
+    <update id="updateScheduleToDone">
+        update uo_qywx_add_user_schedule set status='done' where
+          status='doing' and not exists(
+              select 1 from uo_qywx_add_user_list l
+              where l.head_id=uo_qywx_add_user_schedule.head_id
+                and l.schedule_id=uo_qywx_add_user_schedule.schedule_id
+                and l.is_push='0'
+          )
+    </update>
+
+    <update id="updateHeadToStop">
+        update uo_qywx_add_user_header set task_status='stop' where
+          task_status='doing' and not exists (
+             select 1 from uo_qywx_add_user_schedule s where s.head_id=uo_qywx_add_user_header.id and s.status='doing')
+    </update>
+
+    <update id="updateHeadToDone">
+        update uo_qywx_add_user_header set task_status='done' where
+          task_status='doing' and wait_user_cnt=0 and not exists (
+             select 1 from uo_qywx_add_user_schedule s where s.head_id=uo_qywx_add_user_header.id and s.status='doing')
+    </update>
+
 
     <select id="getSendAndApplyData" resultType="map">
         select schedule_date_wid date, apply_num applyNum, apply_pass_num applyPassNum, schedule_id scheduleId from uo_qywx_add_user_schedule where head_id = #{headId}::integer

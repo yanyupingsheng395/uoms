@@ -17,6 +17,10 @@ public interface AddUserService {
 
     List<AddUserHead> getHeadPageList(int limit, int offset);
 
+    /**
+     * 对主记录进行保存
+     * @param addUserHead
+     */
     void saveData(AddUserHead addUserHead);
 
     void deleteTask(String id);
@@ -35,11 +39,21 @@ public interface AddUserService {
      * 执行一次拉新推送任务
      * @param headId
      */
-    void execTask(long headId) throws Exception;
+    void execTask(long headId,String opUserName) throws Exception;
 
     AddUserHead saveDailyUserData(String headId, String dailyUserCnt, String dailyApplyRate);
 
     void updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId, String contactWayUrl);
+
+    /**
+     * 更新推送状态 （每日调度任务用)
+     */
+    void autoUpdateStatus();
+
+    /**
+     * 计算任务的效果
+     */
+    void calculateAddUserEffect();
 
     Map<String, Object> getTaskResultData(String headId);
 

@@ -3,6 +3,7 @@ package com.linksteady.operate.dao;
 import com.linksteady.common.domain.Ztree;
 import com.linksteady.operate.domain.AddUserConfig;
 import com.linksteady.operate.domain.AddUserHead;
+import com.linksteady.operate.domain.AddUserSchedule;
 import com.linksteady.operate.domain.QywxParam;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.jmx.export.annotation.ManagedOperationParameter;
@@ -63,9 +64,62 @@ public interface AddUserMapper {
             int waitDays,
             int addTotal);
 
+    /**
+     * 更新head表的version字段
+     */
+    int updateHeadVersion(long headId,int version);
+
+    /**
+     * 获取当前天是否存在执行中的计划
+     */
+    int getRunningSchedule(long currentDay);
+
+    /**
+     * 保存当前的推送计划
+     */
+    void saveAddUserSchedule(AddUserSchedule addUserSchedule);
+
+    /**
+     * 更新推送明细
+     */
+    int updateAddUserList(long headId,long scheduleId,long targetNum);
+
+    /**
+     * 更新主记录上的剩余人数
+     */
+    void updateHeadWaitUserCnt(long headId, long afterWaitNum,long afterFinishNum,String opUserName);
+
+    /**
+     * 更新推送内容到推送计划表
+     */
+    void pushToPushListLarge(long headId, long scheduleId,long scheduleDate);
+
+    /**
+     * 更新推送结果
+     */
+   void updatePushResult();
+
+    /**
+     * 更新推送计划 （由进行中 更新为完成)
+     */
+    void updateScheduleToDone();
+
+    /**
+     * 更新头数据的状态为停止 （执行中的任务，且不存在尚在执行中的计划）
+     */
+    void updateHeadToStop();
+
+
+    /**
+     * 更新头数据的状态为结束 (执行中的任务，且不存在尚在执行中的计划 且剩余推送人数为0)
+     */
+    void updateHeadToDone();
+
     void updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId, String contactWayUrl);
 
     List<Map<String, Object>> getSendAndApplyData(String headId);
 
     List<Map<String, Object>> getStatisApplyData(String headId, String scheduleId);
 }
+
+
