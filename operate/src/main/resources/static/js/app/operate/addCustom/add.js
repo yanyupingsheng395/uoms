@@ -15,13 +15,16 @@ $(function () {
         dataOrder: ["title", "line", "description"]
     });
 
-    if(opType === 'update' && sendType === '1') {
-        selectUser(true);
-        var code = "";
-        selected_city_name.forEach((v, k)=>{
-            code += "<button type=\"button\" class=\"btn btn-round btn-sm btn-warning m-t-5\">"+v+"</button>&nbsp;";
-        });
-        $("#cityDiv").html(code);
+    if(opType === 'update') {
+        if(sendType === '1') {
+            selectUser(true);
+            var code = "";
+            selected_city_name.forEach((v, k)=>{
+                code += "<button type=\"button\" class=\"btn btn-round btn-sm btn-warning m-t-5\">"+v+"</button>&nbsp;";
+            });
+            $("#cityDiv").html(code);
+        }
+        head_id = $("#headId").val();
     }
     getSource();
     statInputNum();
@@ -237,19 +240,14 @@ function userDataChange(dom, idx) {
 function saveDailyUserData() {
     var currentDailyUserCnt = $('input[name="dailyUserCnt"]').val();
     var currentDailyApplyRate = $('input[name="dailyApplyRate"]').val();
-    var headId = head_id;
-    if(opType === 'update') {
-        headId = $("#headId").val();
-    }
-
     //判断headId是否为空
-    if(null==headId||headId == undefined || headId == '')
+    if(null==head_id||head_id == undefined || head_id == '')
     {
         $MB.n_warning("请先完成任务的保存！");
         return false;
     }
 
-    $.get("/addUser/saveDailyUserData", {headId: headId, dailyUserCnt:currentDailyUserCnt, dailyApplyRate:currentDailyApplyRate}, function (r) {
+    $.get("/addUser/saveDailyUserData", {headId: head_id, dailyUserCnt:currentDailyUserCnt, dailyApplyRate:currentDailyApplyRate}, function (r) {
         if(r.code === 200) {
             $("#saveDailyUserBtn").attr("style", "display:none;");
             $("input[name='dailyApplyRate']").val(r.data['dailyApplyRate']);
@@ -288,15 +286,10 @@ function validStep1Data(flag) {
         }
     }
 
-    var headId = head_id;
-    if(opType === 'update') {
-        headId = $("#headId").val();
-    }
-
     //额外校验是否完成了主记录的保存
     if(flag=='Y')
     {
-       if(null==headId||headId == undefined || headId == '')
+       if(null==head_id||head_id == undefined || head_id == '')
        {
            $MB.n_warning("请先完成任务的保存！");
            return false;
@@ -481,20 +474,15 @@ function initGetInputNum() {
 
 // 更新文案值
 function updateSmsContent() {
-    var headId = head_id;
-    if(opType === 'update') {
-        headId = $("#headId").val();
-    }
-
     if(validStep2Data())
     {
-        if(null==headId||headId == undefined || headId == '')
+        if(null==head_id||head_id == undefined || head_id == '')
         {
             $MB.n_warning("请先完成任务的保存！");
             return false;
         }
 
-        $.post("/addUser/updateSmsContentAndContactWay", {headId: headId, smsContent: $("textarea[name='smsContent']").val(),
+        $.post("/addUser/updateSmsContentAndContactWay", {headId: head_id, smsContent: $("textarea[name='smsContent']").val(),
             contactWayId: $("#qrId").val(), contactWayUrl: $("#qrCode").val()}, function (r) {
             if(r.code == 200) {
                 $MB.n_success("任务消息编辑完成！");
