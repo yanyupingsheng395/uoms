@@ -1,33 +1,27 @@
 package com.linksteady.operate.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.base.Splitter;
-import com.linksteady.operate.dao.AddUserMapper;
-import com.linksteady.operate.dao.QywxContactWayMapper;
-import com.linksteady.operate.domain.*;
+import com.linksteady.operate.dao.AddUserTriggerMapper;
+import com.linksteady.operate.domain.AddUserHead;
+import com.linksteady.operate.domain.AddUserSchedule;
+import com.linksteady.operate.domain.QywxParam;
 import com.linksteady.operate.exception.OptimisticLockException;
-import com.linksteady.operate.service.AddUserService;
+import com.linksteady.operate.service.AddUserTriggerService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.mybatis.generator.config.JDBCConnectionConfiguration;
-import org.mybatis.generator.internal.JDBCConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.support.JdbcBeanDefinitionReader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author hxcao
@@ -35,19 +29,19 @@ import java.util.stream.Stream;
  */
 @Service
 @Slf4j
-public class AddUserServiceImpl implements AddUserService {
+public class AddUserTriggerServiceImpl implements AddUserTriggerService {
 
     @Autowired
-    private AddUserMapper addUserMapper;
+    private AddUserTriggerMapper addUserTriggerMapper;
 
     @Override
     public int getHeadCount() {
-        return addUserMapper.getHeadCount();
+        return addUserTriggerMapper.getHeadCount();
     }
 
     @Override
     public List<AddUserHead> getHeadPageList(int limit, int offset) {
-        return addUserMapper.getHeadPageList(limit, offset);
+        return addUserTriggerMapper.getHeadPageList(limit, offset);
     }
 
     /**
@@ -58,7 +52,7 @@ public class AddUserServiceImpl implements AddUserService {
     @Transactional(rollbackFor = Exception.class)
     public void saveData(AddUserHead addUserHead) {
         addUserHead.setTaskStatus("edit");
-        addUserMapper.saveHeadData(addUserHead);
+        addUserTriggerMapper.saveHeadData(addUserHead);
         try {
             filterUsers(addUserHead.getId(), addUserHead.getSourceId(), addUserHead.getRegionId());
         } catch (Exception e) {
@@ -68,12 +62,12 @@ public class AddUserServiceImpl implements AddUserService {
 
     @Override
     public void deleteTask(String id) {
-        addUserMapper.deleteHead(id);
+        addUserTriggerMapper.deleteHead(id);
     }
 
     @Override
     public List<Map<String, String>> getSource() {
-        return addUserMapper.getSource();
+        return addUserTriggerMapper.getSource();
     }
 
     /**
@@ -87,7 +81,7 @@ public class AddUserServiceImpl implements AddUserService {
     @Transactional
     public void filterUsers(long headId, String sourceId, String regionIds) throws Exception {
         //判断当前head_id下是否已存在明细数据 如果是，抛出异常
-        int count = addUserMapper.getAddUserListCount(headId);
+        int count = addUserTriggerMapper.getAddUserListCount(headId);
 
         if (count > 0) {
             throw new Exception("当前记录已存在推送明细,请不要重复操作!");
@@ -116,16 +110,16 @@ public class AddUserServiceImpl implements AddUserService {
         }
 
         //对筛选出的明细数据进行写入操作
-        addUserMapper.insertAddUserList(headId, whereInfo.toString());
+        addUserTriggerMapper.insertAddUserList(headId, whereInfo.toString());
 
         //计算推送节奏参数
         //推送总人数(重新进行查询)
-        count = addUserMapper.getAddUserListCount(headId);
+        count = addUserTriggerMapper.getAddUserListCount(headId);
 
         //获取默认的 每日推送人数 及 推送转化率
         int defaultAddcount;
         double defaultApplyRate;
-        QywxParam qywxParam = addUserMapper.getQywxParam();
+        QywxParam qywxParam = addUserTriggerMapper.getQywxParam();
         if (null == qywxParam) {
             defaultAddcount = 2000;
             defaultApplyRate = 5;
@@ -145,7 +139,7 @@ public class AddUserServiceImpl implements AddUserService {
             addTotal = (int) Math.floor(defaultApplyRate * count/100);
         }
         //更新记录
-        addUserMapper.updatePushParameter(headId, count, defaultAddcount, defaultApplyRate, dailyAddNum, waitDays, addTotal);
+        addUserTriggerMapper.updatePushParameter(headId, count, defaultAddcount, defaultApplyRate, dailyAddNum, waitDays, addTotal);
     }
 
     /**
@@ -156,9 +150,9 @@ public class AddUserServiceImpl implements AddUserService {
     @Override
     @Transactional
     public void execTask(long headId,String opUserName) throws Exception {
-        AddUserHead addUserHead=addUserMapper.getHeadById(headId);
+        AddUserHead addUserHead=addUserTriggerMapper.getHeadById(headId);
         //更新版本号
-        int count=addUserMapper.updateHeadVersion(headId,addUserHead.getVersion());
+        int count=addUserTriggerMapper.updateHeadVersion(headId,addUserHead.getVersion());
 
         if(count==0)
         {
@@ -185,7 +179,7 @@ public class AddUserServiceImpl implements AddUserService {
 
         //判断当天是否已经有推送计划
         String currentDay=DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now());
-        if(addUserMapper.getRunningSchedule(Long.parseLong(currentDay))>0)
+        if(addUserTriggerMapper.getRunningSchedule(Long.parseLong(currentDay))>0)
         {
             throw new Exception("当前日期已存在执行中的推送，为避免触发企业微信人数上限，请选择明日再进行推送!");
         }
@@ -229,12 +223,12 @@ public class AddUserServiceImpl implements AddUserService {
         addUserSchedule.setScheduleDateWid(Long.parseLong(currentDay));
         addUserSchedule.setApplyPassNum(0);
 
-        addUserMapper.saveAddUserSchedule(addUserSchedule);
+        addUserTriggerMapper.saveAddUserSchedule(addUserSchedule);
 
         long scheduleId=addUserSchedule.getScheduleId();
 
         //更新推送明细
-        long updateNum=addUserMapper.updateAddUserList(headId,scheduleId,targetNum);
+        long updateNum=addUserTriggerMapper.updateAddUserList(headId,scheduleId,targetNum);
 
         if(updateNum!=targetNum)
         {
@@ -242,12 +236,12 @@ public class AddUserServiceImpl implements AddUserService {
         }
 
         //更新主记录表的剩余人数、更新任务状态为执行中
-        addUserMapper.updateHeadWaitUserCnt(headId,afterWaitNum,finishNum,opUserName);
+        addUserTriggerMapper.updateHeadWaitUserCnt(headId,afterWaitNum,finishNum,opUserName);
 
         //将推送明细数据放到短信表里面去
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
         long scheduleDate= Long.parseLong(LocalDateTime.now().plusHours(1).format(dateTimeFormatter));
-        addUserMapper.pushToPushListLarge(headId,scheduleId,scheduleDate);
+        addUserTriggerMapper.pushToPushListLarge(headId,scheduleId,scheduleDate);
     }
 
     @Override
@@ -257,7 +251,7 @@ public class AddUserServiceImpl implements AddUserService {
         //界面设置的转化率
         Double dailyApplyRateDouble = Double.parseDouble(dailyApplyRate);
         //获取当前任务剩余的推送人数
-        AddUserHead addUserHead = addUserMapper.getHeadById(Long.parseLong(headId));
+        AddUserHead addUserHead = addUserTriggerMapper.getHeadById(Long.parseLong(headId));
         int count=(int)addUserHead.getWaitUserCnt();
         //每日添加用户人数
         int dailyAddNum = 0;
@@ -272,14 +266,14 @@ public class AddUserServiceImpl implements AddUserService {
             addTotal = (int) Math.floor(dailyApplyRateDouble * count/100);
         }
         //更新记录
-        addUserMapper.updatePushParameter(Long.parseLong(headId), count, dailyUserCntLong, dailyApplyRateDouble, dailyAddNum, waitDays, addTotal);
-        return addUserMapper.getHeadById(Long.parseLong(headId));
+        addUserTriggerMapper.updatePushParameter(Long.parseLong(headId), count, dailyUserCntLong, dailyApplyRateDouble, dailyAddNum, waitDays, addTotal);
+        return addUserTriggerMapper.getHeadById(Long.parseLong(headId));
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId, String contactWayUrl) {
-        addUserMapper.updateSmsContentAndContactWay(headId, smsContent, contactWayId, contactWayUrl);
+        addUserTriggerMapper.updateSmsContentAndContactWay(headId, smsContent, contactWayId, contactWayUrl);
     }
 
 
@@ -287,16 +281,16 @@ public class AddUserServiceImpl implements AddUserService {
     public Map<String, Object> getTaskResultData(String headId) {
         Map<String, Object> result = Maps.newHashMap();
         // 获取发送范围
-        AddUserHead addUserHead = addUserMapper.getHeadById(Long.parseLong(headId));
+        AddUserHead addUserHead = addUserTriggerMapper.getHeadById(Long.parseLong(headId));
         String sendType = "0".equalsIgnoreCase(addUserHead.getSendType()) ? "全部用户" : addUserHead.getSourceName() + "|" + addUserHead.getRegionName();
         // 发送申请数+申请通过数
-        List<Map<String, Object>> sendAndApplyData = addUserMapper.getSendAndApplyData(headId);
+        List<Map<String, Object>> sendAndApplyData = addUserTriggerMapper.getSendAndApplyData(headId);
         // 统计所有数据
         List<Map<String, Object>> statisApplyData = Lists.newArrayList();
         if (sendAndApplyData.size() > 0) {
             // 申请通过随统计日期变化图
             String scheduleId = sendAndApplyData.get(0).get("scheduleid").toString();
-            statisApplyData = addUserMapper.getStatisApplyData(headId, scheduleId);
+            statisApplyData = addUserTriggerMapper.getStatisApplyData(headId, scheduleId);
 
         }
         result.put("statisApplyData", JSON.toJSONString(statisApplyData));
@@ -310,18 +304,18 @@ public class AddUserServiceImpl implements AddUserService {
 
     @Override
     public List<Map<String, Object>> getStatisApplyData(String headId, String scheduleId) {
-        return addUserMapper.getStatisApplyData(headId, scheduleId);
+        return addUserTriggerMapper.getStatisApplyData(headId, scheduleId);
     }
 
     @Override
     public int getScheduleCount(long headId) {
-        return addUserMapper.getScheduleCount(headId);
+        return addUserTriggerMapper.getScheduleCount(headId);
     }
 
     @Override
     public Map<Long, Object> geRegionData() {
         Map<Long, Object> result = Maps.newHashMap();
-        List<Map<Long, Object>> test = addUserMapper.geRegionData();
+        List<Map<Long, Object>> test = addUserTriggerMapper.geRegionData();
         Map<Long, List<Map<Long, Object>>> pid = test.stream().collect(Collectors.groupingBy(x -> Long.parseLong(x.get("pid").toString())));
         pid.entrySet().stream().forEach(x -> {
             result.put(x.getKey(), x.getValue().stream().collect(Collectors.toMap(k -> k.get("id"), v -> v.get("name"))));
@@ -331,7 +325,7 @@ public class AddUserServiceImpl implements AddUserService {
 
     @Override
     public AddUserHead getHeadById(long id) {
-        return addUserMapper.getHeadById(id);
+        return addUserTriggerMapper.getHeadById(id);
     }
 
     /**
@@ -340,12 +334,12 @@ public class AddUserServiceImpl implements AddUserService {
     @Override
     public void autoUpdateStatus() {
         //更新最近三天的推送结果
-        addUserMapper.updatePushResult();
+        addUserTriggerMapper.updatePushResult();
         //对于 执行中的计划 判断其下面所有的用户都完成了推送，如果是，则更新其状态为 完成
-        addUserMapper.updateScheduleToDone();
+        addUserTriggerMapper.updateScheduleToDone();
         //更新头表的状态(存在执行中的计划，则为执行中 否则为停止  如果所有的人都推送完了，则为已结束 )
-        addUserMapper.updateHeadToStop();
-        addUserMapper.updateHeadToDone();
+        addUserTriggerMapper.updateHeadToStop();
+        addUserTriggerMapper.updateHeadToDone();
         //更新企业微信拉新状态 todo
 
     }

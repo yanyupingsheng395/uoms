@@ -151,8 +151,7 @@ function editTask() {
         $MB.n_danger("已终止的任务不允许被编辑！");
         return false;
     }
-
-    window.location.href = "/page/addCustom/edit?id=" + id;
+    window.location.href = "/page/addUser/edit?id=" + id;
 }
 
 /**
@@ -171,7 +170,7 @@ $("#btn_effect").click(function () {
         $MB.n_danger("计划中的任务不支持查看效果！");
         return false;
     }
-    window.location.href = "/page/addCustom/effect?id=" + id;
+    window.location.href = "/page/addUser/effect?id=" + id;
 });
 
 /**

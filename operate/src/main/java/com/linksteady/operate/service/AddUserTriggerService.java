@@ -9,7 +9,7 @@ import java.util.Map;
  * @author hxcao
  * @date 2020/7/16
  */
-public interface AddUserService {
+public interface AddUserTriggerService {
 
     int getHeadCount();
 
@@ -35,7 +35,7 @@ public interface AddUserService {
      * 执行一次拉新推送任务
      * @param headId
      */
-    void execTask(long headId,String opUserName) throws Exception;
+    void execTask(long headId, String opUserName) throws Exception;
 
     AddUserHead saveDailyUserData(String headId, String dailyUserCnt, String dailyApplyRate);
 

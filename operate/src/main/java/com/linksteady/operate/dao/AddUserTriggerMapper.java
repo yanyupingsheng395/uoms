@@ -12,7 +12,7 @@ import java.util.Map;
  * @author hxcao
  * @date 2020/7/16
  */
-public interface AddUserMapper {
+public interface AddUserTriggerMapper {
 
     int getHeadCount();
 
@@ -29,7 +29,7 @@ public interface AddUserMapper {
     /**
      * 写入待推送的用户明细
      */
-    void insertAddUserList(@Param("headId") long headId, @Param("whereInfo")String whereInfo);
+    void insertAddUserList(@Param("headId") long headId, @Param("whereInfo") String whereInfo);
 
     /**
      * 判断当前任务是否存在推送明细
@@ -62,7 +62,7 @@ public interface AddUserMapper {
     /**
      * 更新head表的version字段
      */
-    int updateHeadVersion(long headId,int version);
+    int updateHeadVersion(long headId, int version);
 
     /**
      * 获取当前天是否存在执行中的计划
@@ -77,17 +77,17 @@ public interface AddUserMapper {
     /**
      * 更新推送明细
      */
-    int updateAddUserList(long headId,long scheduleId,long targetNum);
+    int updateAddUserList(long headId, long scheduleId, long targetNum);
 
     /**
      * 更新主记录上的剩余人数
      */
-    void updateHeadWaitUserCnt(long headId, long afterWaitNum,long afterFinishNum,String opUserName);
+    void updateHeadWaitUserCnt(long headId, long afterWaitNum, long afterFinishNum, String opUserName);
 
     /**
      * 更新推送内容到推送计划表
      */
-    void pushToPushListLarge(long headId, long scheduleId,long scheduleDate);
+    void pushToPushListLarge(long headId, long scheduleId, long scheduleDate);
 
     /**
      * 更新推送结果

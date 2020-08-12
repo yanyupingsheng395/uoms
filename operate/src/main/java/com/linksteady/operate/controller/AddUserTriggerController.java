@@ -4,7 +4,7 @@ import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.AddUserHead;
 import com.linksteady.operate.exception.OptimisticLockException;
-import com.linksteady.operate.service.AddUserService;
+import com.linksteady.operate.service.AddUserTriggerService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,19 +22,19 @@ import java.util.concurrent.locks.ReentrantLock;
  * @date 2020/7/16
  */
 @RestController
-@RequestMapping("/addUser")
+@RequestMapping("/addUserTrigger")
 @Slf4j
-public class AddUserController extends BaseController {
+public class AddUserTriggerController extends BaseController {
 
     private final ReentrantLock lock = new ReentrantLock();
 
     @Autowired
-    private AddUserService addUserService;
+    private AddUserTriggerService addUserTriggerService;
 
     @RequestMapping("/getHeadPageList")
     public ResponseBo getHeadPageList(int limit, int offset) {
-        int count = addUserService.getHeadCount();
-        List<AddUserHead> dataList = addUserService.getHeadPageList(limit, offset);
+        int count = addUserTriggerService.getHeadCount();
+        List<AddUserHead> dataList = addUserTriggerService.getHeadPageList(limit, offset);
         return ResponseBo.okOverPaging(null, count, dataList);
     }
 
@@ -50,8 +50,8 @@ public class AddUserController extends BaseController {
         addUserHead.setInsertBy(getCurrentUser().getUsername());
         addUserHead.setUpdateDt(new Date());
         addUserHead.setUpdateBy(getCurrentUser().getUsername());
-        addUserService.saveData(addUserHead);
-        return ResponseBo.okWithData(null, addUserService.getHeadById(addUserHead.getId()));
+        addUserTriggerService.saveData(addUserHead);
+        return ResponseBo.okWithData(null, addUserTriggerService.getHeadById(addUserHead.getId()));
     }
 
     /**
@@ -62,28 +62,28 @@ public class AddUserController extends BaseController {
      */
     @RequestMapping("/deleteTask")
     public ResponseBo deleteTask(@RequestParam String id) {
-        AddUserHead addUserHead = addUserService.getHeadById(Long.parseLong(id));
+        AddUserHead addUserHead = addUserTriggerService.getHeadById(Long.parseLong(id));
         if (null == addUserHead || !"edit".equals(addUserHead.getTaskStatus())) {
             return ResponseBo.error("仅有待计划的任务支持删除！");
         } else {
-            addUserService.deleteTask(id);
+            addUserTriggerService.deleteTask(id);
             return ResponseBo.ok();
         }
     }
 
     @RequestMapping("/getSource")
     public ResponseBo getSource() {
-        return ResponseBo.okWithData(null, addUserService.getSource());
+        return ResponseBo.okWithData(null, addUserTriggerService.getSource());
     }
 
     @RequestMapping("/saveDailyUserData")
     public ResponseBo saveDailyUserData(String headId, String dailyUserCnt, String dailyApplyRate) {
-        return ResponseBo.okWithData(null, addUserService.saveDailyUserData(headId, dailyUserCnt, dailyApplyRate));
+        return ResponseBo.okWithData(null, addUserTriggerService.saveDailyUserData(headId, dailyUserCnt, dailyApplyRate));
     }
 
     @RequestMapping("/updateSmsContentAndContactWay")
     public ResponseBo updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId, String contactWayUrl) {
-        addUserService.updateSmsContentAndContactWay(headId, smsContent, contactWayId, contactWayUrl);
+        addUserTriggerService.updateSmsContentAndContactWay(headId, smsContent, contactWayId, contactWayUrl);
         return ResponseBo.ok();
     }
 
@@ -97,7 +97,7 @@ public class AddUserController extends BaseController {
     public ResponseBo executeTask(@Param("headId") long headId) {
         try {
             if (lock.tryLock()) {
-                addUserService.execTask(headId, getCurrentUser().getUsername());
+                addUserTriggerService.execTask(headId, getCurrentUser().getUsername());
             } else {
                 throw new OptimisticLockException("其他用户正在操作，请稍后再试!");
             }
@@ -112,7 +112,7 @@ public class AddUserController extends BaseController {
 
     @RequestMapping("/getStatisApplyData")
     public ResponseBo getStatisApplyData(String headId, String scheduleId) {
-        return ResponseBo.okWithData(null, addUserService.getStatisApplyData(headId, scheduleId));
+        return ResponseBo.okWithData(null, addUserTriggerService.getStatisApplyData(headId, scheduleId));
     }
 
     /**
@@ -122,7 +122,7 @@ public class AddUserController extends BaseController {
      */
     @RequestMapping("/geRegionData")
     public ResponseBo geRegionData() {
-        return ResponseBo.okWithData(null, addUserService.geRegionData());
+        return ResponseBo.okWithData(null, addUserTriggerService.geRegionData());
     }
 
 }
