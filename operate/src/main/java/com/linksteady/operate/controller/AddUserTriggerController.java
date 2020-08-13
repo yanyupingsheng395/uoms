@@ -140,10 +140,10 @@ public class AddUserTriggerController extends BaseController {
     @RequestMapping("/getTriggerParam")
     public ResponseBo getTriggerParam() {
         QywxParam qywxParam=qywxParamService.getQywxParam();
-        int triggerNum=qywxParam.getTriggerNum(); //发送人数
-        double addRate=qywxParam.getDailyAddRate(); //转化率
-        int version=qywxParam.getVersion();
-        int addNum=qywxParam.getDailyAddNum();  //当前企业微信每日加人上限
+//        int triggerNum=qywxParam.getTriggerNum(); //发送人数
+//        double addRate=qywxParam.getDailyAddRate(); //转化率
+//        int version=qywxParam.getVersion();
+//        int addNum=qywxParam.getDailyAddNum();  //当前企业微信每日加人上限
         return ResponseBo.okWithData(null,qywxParam);
     }
 
@@ -159,11 +159,11 @@ public class AddUserTriggerController extends BaseController {
             if (paramLock.tryLock()) {
 
                 //todo 校验当前是否有正在执行的拉新任务
-                qywxParamService.updateQywxParam(addNum,addRate,getCurrentUser().getUsername(),version);
+                QywxParam qywxParam=qywxParamService.updateQywxParam(addNum,addRate,getCurrentUser().getUsername(),version);
+                return ResponseBo.ok(qywxParam);
             } else {
                 throw new OptimisticLockException("其他用户正在操作，请稍后再试!");
             }
-            return ResponseBo.ok();
         } catch (Exception e) {
             log.error("修改企业微信参数错误，错误原因为{}", e);
             if(e instanceof OptimisticLockException)

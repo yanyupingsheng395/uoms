@@ -54,7 +54,7 @@ public class QywxParamServiceImpl implements QywxParamService {
      */
     @Override
     @Transactional
-    public void updateQywxParam(int dailyAddNum, double dailyAddRate,String opUser,int version) throws Exception{
+    public QywxParam updateQywxParam(int dailyAddNum, double dailyAddRate,String opUser,int version) throws Exception{
         int count=qywxParamMapper.updateVersion(version);
         if(count==0)
         {
@@ -73,6 +73,8 @@ public class QywxParamServiceImpl implements QywxParamService {
         //更新到数据库
         qywxParamMapper.updateQywxParam(dailyAddNum,dailyAddRate,applyNum,opUser);
 
+        return qywxParamMapper.getQywxParam();
+
     }
 
     /**
@@ -81,7 +83,7 @@ public class QywxParamServiceImpl implements QywxParamService {
      */
     @Override
     @Transactional
-    public void updateTriggerNum(int triggerNum,String opUser,int version) throws Exception{
+    public QywxParam updateTriggerNum(int triggerNum,String opUser,int version) throws Exception{
         int count=qywxParamMapper.updateVersion(version);
 
         if(count==0)
@@ -98,5 +100,7 @@ public class QywxParamServiceImpl implements QywxParamService {
         }
         //更新到数据库
         qywxParamMapper.updateTriggerNum(triggerNum,opUser);
+
+        return qywxParamMapper.getQywxParam();
     }
 }
