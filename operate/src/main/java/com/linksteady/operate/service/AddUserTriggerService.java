@@ -39,7 +39,7 @@ public interface AddUserTriggerService {
 
     AddUserHead saveDailyUserData(String headId, String dailyUserCnt, String dailyApplyRate);
 
-    void updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId, String contactWayUrl);
+    void updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId, String contactWayUrl, String isSourceName, String isProdName);
 
     Map<String, Object> getTaskResultData(String headId);
 

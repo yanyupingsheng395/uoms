@@ -139,7 +139,8 @@ public class AddUserTriggerServiceImpl implements AddUserTriggerService {
             addTotal = (int) Math.floor(defaultApplyRate * count/100);
         }
         //更新记录
-        addUserTriggerMapper.updatePushParameter(headId, count, defaultAddcount, defaultApplyRate, dailyAddNum, waitDays, addTotal);
+//        addUserTriggerMapper.updatePushParameter(headId, count, defaultAddcount, defaultApplyRate, dailyAddNum, waitDays, addTotal);
+        addUserTriggerMapper.updatePushParameter(headId, defaultAddcount, defaultApplyRate, dailyAddNum, waitDays, addTotal);
     }
 
     /**
@@ -266,14 +267,15 @@ public class AddUserTriggerServiceImpl implements AddUserTriggerService {
             addTotal = (int) Math.floor(dailyApplyRateDouble * count/100);
         }
         //更新记录
-        addUserTriggerMapper.updatePushParameter(Long.parseLong(headId), count, dailyUserCntLong, dailyApplyRateDouble, dailyAddNum, waitDays, addTotal);
+//        addUserTriggerMapper.updatePushParameter(Long.parseLong(headId), count, dailyUserCntLong, dailyApplyRateDouble, dailyAddNum, waitDays, addTotal);
+        addUserTriggerMapper.updatePushParameter(Long.parseLong(headId), dailyUserCntLong, dailyApplyRateDouble, dailyAddNum, waitDays, addTotal);
         return addUserTriggerMapper.getHeadById(Long.parseLong(headId));
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId, String contactWayUrl) {
-        addUserTriggerMapper.updateSmsContentAndContactWay(headId, smsContent, contactWayId, contactWayUrl);
+    public void updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId, String contactWayUrl, String isSourceName, String isProdName) {
+        addUserTriggerMapper.updateSmsContentAndContactWay(headId, smsContent, contactWayId, contactWayUrl, isSourceName, isProdName);
     }
 
 

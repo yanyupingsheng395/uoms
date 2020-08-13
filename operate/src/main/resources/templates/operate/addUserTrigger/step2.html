@@ -1,40 +1,69 @@
 <div th:if="${opType eq 'save'}">
     <div class="row">
-        <span class="navbar-page-title">编辑申请消息</span>
+        <span style="margin-top: 5px;" class="navbar-page-title">编辑申请消息</span>
         <div class="col-md-12">
-            <hr class="hr m-t-0 m-t-10" style="margin-bottom: 10px;">
+            <hr class="hr m-t-0 m-t-5" style="margin-bottom: 5px;">
         </div>
     </div>
     <div class="row">
         <div class="col-md-12">
+            <div class="form-group">
+                <div>
+                    <label class="control-label" style="font-size: 10px;">消息中的个性化要素</label>
+                </div>
+                <div>
+                    <input type="hidden" name="smsCode" id="smsCode"/>
+                    <div style="width:520px;border: solid 1px #ebebeb;padding: 8px; float: left;" id="config-box">
+                        <div>
+                            <label class="control-label">渠道名称：</label>
+                            <label class="lyear-radio radio-inline radio-primary">
+                                <input type="radio" name="isSourceName" value="1"/><span>是</span>
+                            </label>
+                            <label class="lyear-radio radio-inline radio-primary">
+                                <input type="radio" name="isSourceName" value="0"/><span>否</span>
+                            </label>
+                            &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${渠道名称} 粘贴到期望位置；</span>
+                            <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${渠道名称}" class="copy_btn">复制</a>
+                        </div>
+                        <div>
+                            <label class="control-label">商品名称：</label>
+                            <label class="lyear-radio radio-inline radio-primary">
+                                <input type="radio" name="isProdName" value="1"/><span>是</span>
+                            </label>
+                            <label class="lyear-radio radio-inline radio-primary">
+                                <input type="radio" name="isProdName" value="0"/><span>否</span>
+                            </label>
+                            &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${商品名称} 粘贴到期望位置；</span>
+                            <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${商品名称}" class="copy_btn">复制</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 m-t-10">
             <label class="control-label" style="font-size: 10px;">配置消息中的二维码</label>
         </div>
-    </div>
-    <div class="row">
         <div class="col-md-12">
             <form class="form-inline">
                 <div class="row">
                     <div class="col-md-12">
                         <input type="hidden" id="qrId"/>
-                        获取二维码链接：<input id='qrCode' type="text" style="border: none 0;outline: medium;background: transparent;-webkit-appearance: none;  -moz-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-                        -moz-tap-highlight-color: transparent;border-bottom: 1px solid #ccc;" onclick="selectQrCode()"/>
+                        获取二维码链接：<input id='qrCode' type="text" style="background-color:#ccc;border: none 0;outline: medium;background: transparent;-webkit-appearance: none;-moz-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+                    -moz-tap-highlight-color: transparent;border-bottom: 1px solid #ccc;" onclick="selectQrCode()"/>
                         <a id="copyQrCodeBtn" style="cursor: pointer;font-size: 12px;" class="copy_btn"><i class="fa fa-clone"></i>复制二维码短链</a>
                     </div>
                 </div>
             </form>
         </div>
-    </div>
-    <hr style="margin-top: 10px;margin-bottom: 10px;">
-    <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-12 m-t-10">
             <label class="control-label" style="font-size: 10px;">编辑好友申请消息</label>
-            <div>
-                <textarea placeholder="请输入消息内容..." id="smsContent" name="smsContent" style="height: 102px;width:520px;border: solid 1px #ebebeb;" oninput="smsContentInput(this)"></textarea>
-                <div class="wordstatis">
-                    长度估算：当前内容字数<span id="snum1" style="color:rgb(255, 152, 0);"></span>
-                    ,签名+内容+退订信息 三部分总字数<span id="snum2" style="color:rgb(255, 152, 0);"></span>
-                    ,按照<span id="snum3" style="color:rgb(255, 0, 0);font-size: 14px;font-weight: bold"></span>条文案发送并计费。
-                </div>
+        </div>
+        <div class="col-md-12">
+            <textarea placeholder="请输入消息内容..." id="smsContent" name="smsContent" style="height: 102px;width:520px;border: solid 1px #ebebeb;" oninput="smsContentInput(this)"></textarea>
+            <div class="wordstatis">
+                长度估算：当前内容字数<span id="snum1" style="color:rgb(255, 152, 0);"></span>
+                ,签名+内容+退订信息 三部分总字数<span id="snum2" style="color:rgb(255, 152, 0);"></span>
+                ,按照<span id="snum3" style="color:rgb(255, 0, 0);font-size: 14px;font-weight: bold"></span>条文案发送并计费。
             </div>
         </div>
     </div>
@@ -45,9 +74,10 @@
             <ol style="padding-inline-start: 20px">
                 <li class="smscomments">1.文案字数=运营者编写内容的字数+签名长度+退订信息长度；</li>
                 <li class="smscomments">2.计费规则：文案字数<=70个字数，按照70个字数一条计算；文案字数>70个字数，即为长信息，按照67个字数记为一条；</li>
-
                 <li class="smscomments">3.当前系统支持在文案中使用的变量及其占用长度、签名长度、退订信息长度情况如下：</li>
                 <ul>
+                    <li class="smsvariable">&nbsp;&nbsp;变量：${渠道名称}：渠道名称，占<font color="red">[[${sourceConfig.sourceNameLen}]]</font>个字符；例如:[[${sourceConfig.sourceName}]]</li>
+                    <li class="smsvariable">&nbsp;&nbsp;变量：${商品名称}：商品短名称，占<font color="red">[[${sourceConfig.prodNameLen}]]</font>个字符；例如:[[${sourceConfig.prodName}]]</li>
                     <li class="smsvariable">&nbsp;&nbsp;签名：[[${sourceConfig.signature}]]，占<font color="red">[[${sourceConfig.signatureLen}]]</font>个字符；</li>
                     <li class="smsvariable">&nbsp;&nbsp;退订信息：[[${sourceConfig.unsubscribe}]]，占<font color="red">[[${sourceConfig.unsubscribeLen}]]</font>个字符；</li>
                 </ul>
@@ -59,7 +89,7 @@
     <div class="row m-t-10">
         <div class="col-md-12">
             <a class="btn btn-secondary btn-sm" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="true" aria-controls="collapseExample">
-                预览效果
+                效果预览
             </a>
         </div>
     </div>
@@ -91,7 +121,7 @@
                 <a class="btn btn-secondary" onclick="stepBreak(0)">
                     <i class="fa fa-arrow-left"></i> 上一步
                 </a>
-                <a class="btn btn-secondary" href="/page/addUser">
+                <a class="btn btn-secondary" href="/page/addUserTrigger">
                     <i class="fa fa-backward"></i> 返回
                 </a>
             </div>
@@ -107,34 +137,63 @@
     </div>
     <div class="row">
         <div class="col-md-12">
+            <div class="form-group">
+                <div>
+                    <label class="control-label" style="font-size: 10px;">消息中的个性化要素</label>
+                </div>
+                <div>
+                    <input type="hidden" name="smsCode" id="smsCode"/>
+                    <div style="width:520px;border: solid 1px #ebebeb;padding: 8px; float: left;" id="config-box">
+                        <div>
+                            <label class="control-label">渠道名称：</label>
+                            <label class="lyear-radio radio-inline radio-primary">
+                                <input type="radio" name="isSourceName" value="1" th:checked="${addUserHead.isSourceName eq '1'} ? true:false"/><span>是</span>
+                            </label>
+                            <label class="lyear-radio radio-inline radio-primary">
+                                <input type="radio" name="isSourceName" value="0" th:checked="${addUserHead.isSourceName eq '0'} ? true:false"/><span>否</span>
+                            </label>
+                            &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${渠道名称} 粘贴到期望位置；</span>
+                            <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${渠道名称}" class="copy_btn">复制</a>
+                        </div>
+                        <div>
+                            <label class="control-label">商品名称：</label>
+                            <label class="lyear-radio radio-inline radio-primary">
+                                <input type="radio" name="isProdName" value="1" th:checked="${addUserHead.isProdName eq '1'} ? true:false"/><span>是</span>
+                            </label>
+                            <label class="lyear-radio radio-inline radio-primary">
+                                <input type="radio" name="isProdName" value="0" th:checked="${addUserHead.isProdName eq '0'} ? true:false"/><span>否</span>
+                            </label>
+                            &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${商品名称} 粘贴到期望位置；</span>
+                            <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${商品名称}" class="copy_btn">复制</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 m-t-10">
             <label class="control-label" style="font-size: 10px;">配置消息中的二维码</label>
         </div>
-    </div>
-    <div class="row">
         <div class="col-md-12">
             <form class="form-inline">
                 <div class="row">
                     <div class="col-md-12">
                         <input type="hidden" id="qrId" th:value="${addUserHead.contactWayId}"/>
                         获取二维码链接：<input id='qrCode' type="text" style="background-color:#ccc;border: none 0;outline: medium;background: transparent;-webkit-appearance: none;-moz-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-                        -moz-tap-highlight-color: transparent;border-bottom: 1px solid #ccc;" th:value="${addUserHead.contactWayUrl}" onclick="selectQrCode()"/>
+                    -moz-tap-highlight-color: transparent;border-bottom: 1px solid #ccc;" th:value="${addUserHead.contactWayUrl}" onclick="selectQrCode()"/>
                         <a id="copyQrCodeBtn" style="cursor: pointer;font-size: 12px;" class="copy_btn"><i class="fa fa-clone"></i>复制二维码短链</a>
                     </div>
                 </div>
             </form>
         </div>
-    </div>
-    <hr style="margin-top: 10px;margin-bottom: 10px;">
-    <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-12 m-t-10">
             <label class="control-label" style="font-size: 10px;">编辑好友申请消息</label>
-            <div>
-                <textarea th:text="${addUserHead.smsContent}" placeholder="请输入文案内容..." id="smsContent" name="smsContent" style="height: 102px;width:520px;border: solid 1px #ebebeb;" oninput="smsContentInput(this)"></textarea>
-                <div class="wordstatis">
-                    长度估算：当前内容字数<span id="snum1" style="color:rgb(255, 152, 0);"></span>
-                    ,签名+内容+退订信息 三部分总字数<span id="snum2" style="color:rgb(255, 152, 0);"></span>
-                    ,按照<span id="snum3" style="color:rgb(255, 0, 0);font-size: 14px;font-weight: bold"></span>条文案发送并计费。
-                </div>
+        </div>
+        <div class="col-md-12">
+            <textarea th:text="${addUserHead.smsContent}" placeholder="请输入消息内容..." id="smsContent" name="smsContent" style="height: 102px;width:520px;border: solid 1px #ebebeb;" oninput="smsContentInput(this)"></textarea>
+            <div class="wordstatis">
+                长度估算：当前内容字数<span id="snum1" style="color:rgb(255, 152, 0);"></span>
+                ,签名+内容+退订信息 三部分总字数<span id="snum2" style="color:rgb(255, 152, 0);"></span>
+                ,按照<span id="snum3" style="color:rgb(255, 0, 0);font-size: 14px;font-weight: bold"></span>条文案发送并计费。
             </div>
         </div>
     </div>
@@ -148,6 +207,8 @@
 
                 <li class="smscomments">3.当前系统支持在文案中使用的变量及其占用长度、签名长度、退订信息长度情况如下：</li>
                 <ul>
+                    <li class="smsvariable">&nbsp;&nbsp;变量：${渠道名称}：渠道名称，占<font color="red">[[${sourceConfig.sourceNameLen}]]</font>个字符；例如:[[${sourceConfig.sourceName}]]</li>
+                    <li class="smsvariable">&nbsp;&nbsp;变量：${商品名称}：商品短名称，占<font color="red">[[${sourceConfig.prodNameLen}]]</font>个字符；例如:[[${sourceConfig.prodName}]]</li>
                     <li class="smsvariable">&nbsp;&nbsp;签名：[[${sourceConfig.signature}]]，占<font color="red">[[${sourceConfig.signatureLen}]]</font>个字符；</li>
                     <li class="smsvariable">&nbsp;&nbsp;退订信息：[[${sourceConfig.unsubscribe}]]，占<font color="red">[[${sourceConfig.unsubscribeLen}]]</font>个字符；</li>
                 </ul>
@@ -191,7 +252,7 @@
                 <a class="btn btn-secondary" onclick="stepBreak(0)">
                     <i class="fa fa-arrow-left"></i> 上一步
                 </a>
-                <a class="btn btn-secondary" href="/page/addUser">
+                <a class="btn btn-secondary" href="/page/addUserTrigger">
                     <i class="fa fa-backward"></i> 返回
                 </a>
             </div>

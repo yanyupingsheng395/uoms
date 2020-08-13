@@ -52,7 +52,7 @@ public interface AddUserTriggerMapper {
      */
     void updatePushParameter(
             long headId,
-            int totalNum,
+//            int totalNum,
             int defaultAddCount,
             double defaultApplyRate,
             int dailyAddNum,
@@ -110,7 +110,7 @@ public interface AddUserTriggerMapper {
      */
     void updateHeadToDone();
 
-    void updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId, String contactWayUrl);
+    void updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId, String contactWayUrl, String isSourceName, String isProdName);
 
     List<Map<String, Object>> getSendAndApplyData(String headId);
 

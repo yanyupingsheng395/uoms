@@ -18,6 +18,7 @@ public enum  ConfigEnum {
     couponNameLen("op.push.couponNameLen"),
     priceLen("op.push.priceLen"),
     profitLen("op.push.profitLen"),
+    sourceNameLen("op.push.sourceNameLen"),
 
     pushVendor("op.push.pushVendor"),
     openNightSleep("op.push.openNightSleep"),

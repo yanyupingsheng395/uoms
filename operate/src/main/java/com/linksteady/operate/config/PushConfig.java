@@ -97,6 +97,10 @@ public class PushConfig {
         return Integer.parseInt(configService.getValueByName(ConfigEnum.prodNameLen.getKeyCode()));
     }
 
+    public int getSourceNameLen() {
+        return Integer.parseInt(configService.getValueByName(ConfigEnum.sourceNameLen.getKeyCode()));
+    }
+
     public String getCouponSendType() {
         return configService.getValueByName(ConfigEnum.couponSendType.getKeyCode());
     }
@@ -258,5 +262,4 @@ public class PushConfig {
     public Integer getSmsLengthLimit() {
         return Integer.valueOf(configService.getValueByName(ConfigEnum.smsLengthLimit.getKeyCode()));
     }
-
 }

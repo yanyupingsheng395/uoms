@@ -48,6 +48,9 @@ public class PageController extends BaseController {
     @Autowired
     private AddUserService addUserService;
 
+    @Autowired
+    private AddUserTriggerService addUserTriggerService;
+
     @Log(value = "用户成长监控",location = "用户成长系统")
     @RequestMapping("/operator/user")
     public String userOperator() {
@@ -424,7 +427,7 @@ public class PageController extends BaseController {
      *添加外部联系人-效果
      */
     @RequestMapping("/addUser/effect")
-    public String addCustomEffect(String id, Model model) {
+    public String addUserEffect(String id, Model model) {
         AddUserHead addUserHead = addUserService.getHeadById(Long.parseLong(id));
 
         if(null==addUserHead||"edit".equals(addUserHead.getTaskStatus()))
@@ -467,6 +470,75 @@ public class PageController extends BaseController {
             model.addAttribute("sourceConfig",sourceConfigVO);
             model.addAttribute("addUserHead", addUserHead);
             return "operate/addUser/add";
+        }
+    }
+
+    /**
+     *添加外部联系人-列表
+     */
+    @RequestMapping("/addUserTrigger")
+    public String addUserTriggerList() {
+        return "operate/addUserTrigger/list";
+    }
+
+    /**
+     *添加外部联系人-新增
+     */
+    @RequestMapping("/addUserTrigger/add")
+    public String addUserTriggerAdd(Model model) {
+        SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
+        model.addAttribute("sourceConfig",sourceConfigVO);
+        model.addAttribute("opType", "save");
+        return "operate/addUserTrigger/add";
+    }
+
+    /**
+     *添加外部联系人-效果
+     */
+    @RequestMapping("/addUserTrigger/effect")
+    public String addUserTriggerEffect(String id, Model model) {
+        AddUserHead addUserHead = addUserTriggerService.getHeadById(Long.parseLong(id));
+
+        if(null==addUserHead||"edit".equals(addUserHead.getTaskStatus()))
+        {
+            model.addAttribute("msg","计划中的任务不支持查看效果！");
+            return "operate/addUserTrigger/list";
+        }else
+        {
+            //判断是否存在已经执行的记录
+            int count=addUserTriggerService.getScheduleCount(Long.parseLong(id));
+            if(count==0)
+            {
+                model.addAttribute("msg","任务至少被执行一次后才能查看效果！");
+                return "operate/addUserTrigger/list";
+            }else
+            {
+                Map<String, Object> data = addUserTriggerService.getTaskResultData(id);
+                model.addAttribute("id", id);
+                model.addAttribute("data", data);
+                return "operate/addUserTrigger/effect";
+            }
+        }
+    }
+
+    /**
+     *添加外部联系人-编辑
+     */
+    @RequestMapping("/addUserTrigger/edit")
+    public String addUserTriggerEdit(@RequestParam String id, Model model) {
+        model.addAttribute("opType", "update");
+        AddUserHead addUserHead = addUserTriggerService.getHeadById(Long.parseLong(id));
+
+        if(null==addUserHead||"abort".equals(addUserHead.getTaskStatus()))
+        {
+            model.addAttribute("msg","已终止的任务不允许被编辑！");
+            return "operate/addUserTrigger/list";
+        }else
+        {
+            SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
+            model.addAttribute("sourceConfig",sourceConfigVO);
+            model.addAttribute("addUserHead", addUserHead);
+            return "operate/addUserTrigger/add";
         }
     }
 

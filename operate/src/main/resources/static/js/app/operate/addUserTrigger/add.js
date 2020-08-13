@@ -198,7 +198,7 @@ function saveData() {
         }, function () {
             //打开遮罩层
             $MB.loadingDesc('show', '保存中，请稍候...');
-            $.post("/addUser/saveData",{taskName:taskName, sendType: sendType, sourceId: sourceId,
+            $.post("/addUserTrigger/saveData",{taskName:taskName, sendType: sendType, sourceId: sourceId,
                     regionId: regionId, sourceName: sourceName, regionName: regionName},
                 function (r) {
                     if(r.code === 200) {
@@ -247,7 +247,7 @@ function saveDailyUserData() {
         return false;
     }
 
-    $.get("/addUser/saveDailyUserData", {headId: head_id, dailyUserCnt:currentDailyUserCnt, dailyApplyRate:currentDailyApplyRate}, function (r) {
+    $.get("/addUserTrigger/saveDailyUserData", {headId: head_id, dailyUserCnt:currentDailyUserCnt, dailyApplyRate:currentDailyApplyRate}, function (r) {
         if(r.code === 200) {
             $("#saveDailyUserBtn").attr("style", "display:none;");
             $("input[name='dailyApplyRate']").val(r.data['dailyApplyRate']);
@@ -313,6 +313,17 @@ function validStep1Data(flag) {
  */
 function validStep2Data() {
     var qrId = $("#qrId").val();
+    var isSourceName = $("input[name='isSourceName']:checked").val();
+    var isProdName = $("input[name='isProdName']:checked").val();
+
+    if(isProdName === undefined) {
+        $MB.n_warning("请选择商品名称！");
+        return false;
+    }
+    if(isSourceName === undefined) {
+        $MB.n_warning("请选择渠道名称！");
+        return false;
+    }
 
     if(qrId === '') {
         $MB.n_warning("请配置渠道活码二维码短链！");
@@ -322,6 +333,30 @@ function validStep2Data() {
     if(smsContent === undefined || smsContent === '') {
         $MB.n_warning("请输入短信内容！");
         return false;
+    }
+
+    if(isSourceName === '1') {
+        if(smsContent.indexOf("${渠道名称}") == -1) {
+            $MB.n_warning("渠道名称：是，消息内容未发现${渠道名称}变量！");
+            return false;
+        }
+    }else {
+        if(smsContent.indexOf("${渠道名称}") > -1) {
+            $MB.n_warning("渠道名称：否，消息内容却发现${渠道名称}变量！");
+            return false;
+        }
+    }
+
+    if(isProdName === '1') {
+        if(smsContent.indexOf("${商品名称}") == -1) {
+            $MB.n_warning("商品名称：是，消息内容未发现${商品名称}变量！");
+            return false;
+        }
+    }else {
+        if(smsContent.indexOf("${商品名称}") > -1) {
+            $MB.n_warning("商品名称：否，消息内容却发现${商品名称}变量！");
+            return false;
+        }
     }
     return true;
 }
@@ -371,7 +406,7 @@ function addCityClick() {
 
 // 获取渠道数据
 function getSource() {
-    $.get("/addUser/getSource", {}, function (r) {
+    $.get("/addUserTrigger/getSource", {}, function (r) {
         if(opType === 'save') {
             var code = "";
             r.data.forEach((v, k)=>{
@@ -430,6 +465,16 @@ function statInputNum() {
     $("#smsContent").on('input propertychange', function () {
         let smsContent = $('#smsContent').val();
         let y = smsContent.length;
+        let m = smsContent.length;
+        if(smsContent.indexOf('${渠道名称}') > -1) {
+            y = y - '${渠道名称}'.length + sourceNameLen;
+            m = m - '${渠道名称}'.length;
+        }
+        if(smsContent.indexOf('${商品名称}') > -1) {
+            y = y - '${商品名称}'.length + prodNameLen;
+            m = m - '${商品名称}'.length;
+        }
+
         let total_num = y+signatureLen+unsubscribeLen;
         let snum3=0;
         $("#snum1").text(y);
@@ -455,6 +500,12 @@ function initGetInputNum() {
     let y = smsContent.length;
     let total_num = y+signatureLen+unsubscribeLen;
     let snum3=0;
+    if(smsContent.indexOf('${渠道名称}') > -1) {
+        y = y - '${渠道名称}'.length + sourceNameLen;
+    }
+    if(smsContent.indexOf('${商品名称}') > -1) {
+        y = y - '${商品名称}'.length + prodNameLen;
+    }
     $("#snum1").text(y);
     $("#snum2").text(total_num);
 
@@ -482,8 +533,8 @@ function updateSmsContent() {
             return false;
         }
 
-        $.post("/addUser/updateSmsContentAndContactWay", {headId: head_id, smsContent: $("textarea[name='smsContent']").val(),
-            contactWayId: $("#qrId").val(), contactWayUrl: $("#qrCode").val()}, function (r) {
+        $.post("/addUserTrigger/updateSmsContentAndContactWay", {headId: head_id, smsContent: $("textarea[name='smsContent']").val(),
+            contactWayId: $("#qrId").val(), contactWayUrl: $("#qrCode").val(), isSourceName:$("input[name='isSourceName']:checked").val(), isProdName:$("input[name='isProdName']:checked").val()}, function (r) {
             if(r.code == 200) {
                 $MB.n_success("任务消息编辑完成！");
             }

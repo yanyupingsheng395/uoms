@@ -45,7 +45,8 @@ public class SourceConfigVO {
                 .setUnsubscribe(pushConfig.getUnsubscribe())
                 .setSignatureLen(StringUtils.isEmpty(pushConfig.getSignature())?0:pushConfig.getSignature().length())
                 .setUnsubscribeLen(StringUtils.isEmpty(pushConfig.getUnsubscribe())?0:pushConfig.getUnsubscribe().length())
-                .setSmsLengthLimit(pushConfig.getSmsLengthLimit());
+                .setSmsLengthLimit(pushConfig.getSmsLengthLimit())
+                .setSourceNameLen(pushConfig.getSourceNameLen());
     }
 
     /**
@@ -165,8 +166,18 @@ public class SourceConfigVO {
      */
     private Integer smsLengthLimit;
 
+    /**
+     * 渠道名称长度
+     */
+    private Integer sourceNameLen;
+
     public SourceConfigVO setSmsLengthLimit(Integer smsLengthLimit) {
         this.smsLengthLimit = smsLengthLimit;
+        return this;
+    }
+
+    public SourceConfigVO setSourceNameLen(Integer sourceNameLen) {
+        this.sourceNameLen = sourceNameLen;
         return this;
     }
 
@@ -352,5 +363,9 @@ public class SourceConfigVO {
 
     public Integer getSmsLengthLimit() {
         return smsLengthLimit;
+    }
+
+    public Integer getSourceNameLen() {
+        return sourceNameLen;
     }
 }

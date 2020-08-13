@@ -25,6 +25,8 @@
         <result column="sms_content" jdbcType="VARCHAR" property="smsContent"/>
         <result column="wait_user_cnt" jdbcType="DECIMAL" property="waitUserCnt"/>
         <result column="delivered_user_cnt" jdbcType="DECIMAL" property="deliveredUserCnt"/>
+        <result column="is_source_name" jdbcType="VARCHAR" property="isSourceName"/>
+        <result column="is_prod_name" jdbcType="VARCHAR" property="isProdName"/>
     </resultMap>
 
     <resultMap id="paramMap" type="com.linksteady.operate.domain.QywxParam">
@@ -33,7 +35,7 @@
     </resultMap>
 
     <select id="getHeadCount" resultType="int">
-        select count(1) from uo_qywx_add_user_header
+        select count(1) from uo_qywx_trigger_header
     </select>
 
     <select id="getHeadPageList" resultMap="base">
@@ -44,42 +46,34 @@
             apply_pass_rate,
             task_start_dt,
             task_status,
-            send_type,
-            delivered_user_cnt,
-            wait_user_cnt
-         from uo_qywx_add_user_header
+            send_type
+         from uo_qywx_trigger_header
         order by insert_dt desc
         limit #{limit} offset #{offset}
     </select>
 
     <insert id="saveHeadData">
         <selectKey resultType="java.lang.Integer" order="BEFORE" keyProperty="id">
-            select nextval('qywx_add_user_header_id_seq'::regclass)
+            select nextval('uo_qywx_trigger_header_id_seq'::regclass)
         </selectKey>
-        insert into uo_qywx_add_user_header(id, send_type, task_status, task_name, region_id, region_name, source_id, source_name)
+        insert into uo_qywx_trigger_header(id, send_type, task_status, task_name, region_id, region_name, source_id, source_name)
         values (#{id}, #{sendType}, 'edit', #{taskName}, #{regionId}, #{regionName}, #{sourceId}, #{sourceName})
     </insert>
 
     <delete id="deleteHead">
-        delete from uo_qywx_add_user_header where id = #{id}::integer
+        delete from uo_qywx_trigger_header where id = #{id}::integer
     </delete>
 
     <select id="getHeadById" resultMap="base">
-        select * from uo_qywx_add_user_header where id = #{id}
+        select * from uo_qywx_trigger_header where id = #{id}
     </select>
-
-    <resultMap id="treeMap" type="com.linksteady.common.domain.Ztree">
-        <result column="id" jdbcType="VARCHAR" property="id"></result>
-        <result column="pid" jdbcType="VARCHAR" property="pId"></result>
-        <result column="name" jdbcType="VARCHAR" property="name"></result>
-    </resultMap>
 
     <select id="getSource" resultType="map">
         select source_id id, source_name as name from w_source
     </select>
 
     <insert id="insertAddUserList">
-       insert into uo_qywx_add_user_list
+       insert into uo_qywx_trigger_list
        (
           head_id,user_id,phone_num,is_push,push_status,insert_dt,update_dt
        )
@@ -92,7 +86,7 @@
     </insert>
 
     <select id="getAddUserListCount" resultType="int">
-         select count(*) from uo_qywx_add_user_list where head_id= #{headId}
+         select count(*) from uo_qywx_trigger_list where head_id= #{headId}
     </select>
 
     <select id="getQywxParam" resultMap="paramMap">
@@ -100,9 +94,7 @@
     </select>
 
     <update id="updatePushParameter">
-        update uo_qywx_add_user_header set
-          apply_user_cnt=#{totalNum},
-          wait_user_cnt=#{totalNum},
+        update uo_qywx_trigger_header set
           daily_user_cnt=#{defaultAddCount},
           daily_apply_rate=#{defaultApplyRate},
           daily_add_user_cnt=#{dailyAddNum},
@@ -112,20 +104,21 @@
     </update>
 
     <update id="updateSmsContentAndContactWay">
-        update uo_qywx_add_user_header set sms_content = #{smsContent}, contactway_id =  #{contactWayId}::integer, contactway_url = #{contactWayUrl}
+        update uo_qywx_trigger_header set sms_content = #{smsContent}, contactway_id =  #{contactWayId}::integer,
+                                          contactway_url = #{contactWayUrl}, is_source_name = #{isSourceName}, is_prod_name = #{isProdName}
         where id= #{headId}::integer
     </update>
 
     <update id="updateHeadVersion">
-        update uo_qywx_add_user_header set version=version+1 where id= #{headId} and version=#{version}
+        update uo_qywx_trigger_header set version=version+1 where id= #{headId} and version=#{version}
     </update>
 
     <select id="getRunningSchedule" resultType="int">
-        select count(*) from uo_qywx_add_user_schedule where schedule_date_wid=#{currentDay} and status='doing'
+        select count(*) from uo_qywx_trigger_schedule where schedule_date_wid=#{currentDay} and status='doing'
     </select>
 
     <insert id="saveAddUserSchedule" useGeneratedKeys="true" keyProperty="scheduleId" keyColumn="schedule_id">
-       insert into uo_qywx_add_user_schedule
+       insert into uo_qywx_trigger_schedule
        (
                 head_id,
                 apply_num,
@@ -170,16 +163,16 @@
     </insert>
 
     <update id="updateAddUserList">
-        update uo_qywx_add_user_list set schedule_id=#{scheduleId} where id in (
-          select id from uo_qywx_add_user_list
+        update uo_qywx_trigger_list set schedule_id=#{scheduleId} where id in (
+          select id from uo_qywx_trigger_list
           where head_id=#{headId} and schedule_id is null  order by id asc limit #{targetNum}
         )
 
     </update>
 
     <update id="updateHeadWaitUserCnt">
-           update uo_qywx_add_user_header set
-             wait_user_cnt=#{afterWaitNum},
+           update uo_qywx_trigger_header set
+--              wait_user_cnt=#{afterWaitNum},
              delivered_user_cnt=#{afterFinishNum},
              task_status='doing',
              update_dt=now(),
@@ -214,7 +207,7 @@
     </insert>
 
     <update id="updatePushResult">
-        update uo_qywx_add_user_list set
+        update uo_qywx_trigger_list set
               push_status = t4.push_status,
               push_date   = t4.push_date,
               is_push     = t4.is_push
@@ -223,35 +216,37 @@
     </update>
 
     <update id="updateScheduleToDone">
-        update uo_qywx_add_user_schedule set status='done' where
+        update uo_qywx_trigger_schedule set status='done' where
           status='doing' and not exists(
               select 1 from uo_qywx_add_user_list l
-              where l.head_id=uo_qywx_add_user_schedule.head_id
-                and l.schedule_id=uo_qywx_add_user_schedule.schedule_id
+              where l.head_id=uo_qywx_trigger_schedule.head_id
+                and l.schedule_id=uo_qywx_trigger_schedule.schedule_id
                 and l.is_push='0'
           )
     </update>
 
     <update id="updateHeadToStop">
-        update uo_qywx_add_user_header set task_status='stop' where
+        update uo_qywx_trigger_header set task_status='stop' where
           task_status='doing' and not exists (
-             select 1 from uo_qywx_add_user_schedule s where s.head_id=uo_qywx_add_user_header.id and s.status='doing')
+             select 1 from uo_qywx_trigger_schedule s where s.head_id=uo_qywx_trigger_header.id and s.status='doing')
     </update>
 
     <update id="updateHeadToDone">
-        update uo_qywx_add_user_header set task_status='done' where
-          task_status='doing' and wait_user_cnt=0 and not exists (
-             select 1 from uo_qywx_add_user_schedule s where s.head_id=uo_qywx_add_user_header.id and s.status='doing')
+        update uo_qywx_trigger_header set task_status='done' where
+          task_status='doing'
+--                                                                and wait_user_cnt=0
+                                                               and not exists (
+             select 1 from uo_qywx_add_user_schedule s where s.head_id=uo_qywx_trigger_header.id and s.status='doing')
     </update>
 
 
     <select id="getSendAndApplyData" resultType="map">
-        select schedule_date_wid date, apply_num applyNum, apply_pass_num applyPassNum, schedule_id scheduleId from uo_qywx_add_user_schedule where head_id = #{headId}::integer
+        select schedule_date_wid date, apply_num applyNum, apply_pass_num applyPassNum, schedule_id scheduleId from uo_qywx_trigger_schedule where head_id = #{headId}::integer
         order by schedule_date_wid asc
     </select>
 
     <select id="getStatisApplyData" resultType="map">
-        select statis_day statisDay, stats_pass_num num, statis_pass_rate rate from uo_qywx_add_user_effect where head_id = #{headId}::integer and schedule_id = #{scheduleId}::integer
+        select statis_day statisDay, stats_pass_num num, statis_pass_rate rate from uo_qywx_trigger_effect where head_id = #{headId}::integer and schedule_id = #{scheduleId}::integer
         order by statis_day asc
     </select>
 
@@ -260,6 +255,6 @@
     </select>
 
     <select id="getScheduleCount" resultType="int">
-        select count(*) from uo_qywx_add_user_schedule where head_id=#{headId}
+        select count(*) from uo_qywx_trigger_schedule where head_id=#{headId}
     </select>
 </mapper>

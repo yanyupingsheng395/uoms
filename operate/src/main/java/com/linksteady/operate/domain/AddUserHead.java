@@ -38,6 +38,7 @@ public class AddUserHead {
     private String regionId;
     private String regionName;
     private String sendType;
-
     private int version;
+    private String isSourceName;
+    private String isProdName;
 }

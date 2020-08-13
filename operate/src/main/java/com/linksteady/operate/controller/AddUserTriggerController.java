@@ -82,8 +82,9 @@ public class AddUserTriggerController extends BaseController {
     }
 
     @RequestMapping("/updateSmsContentAndContactWay")
-    public ResponseBo updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId, String contactWayUrl) {
-        addUserTriggerService.updateSmsContentAndContactWay(headId, smsContent, contactWayId, contactWayUrl);
+    public ResponseBo updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId
+            , String contactWayUrl, String isSourceName, String isProdName) {
+        addUserTriggerService.updateSmsContentAndContactWay(headId, smsContent, contactWayId, contactWayUrl, isSourceName, isProdName);
         return ResponseBo.ok();
     }
 
