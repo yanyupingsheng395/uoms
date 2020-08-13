@@ -148,6 +148,7 @@ public class AddUserTriggerController extends BaseController {
     }
 
     /**
+     * addNum:当前企业微信每日加人上限
      * 更新转化率
      */
     @PostMapping("/updateQywxParam")
