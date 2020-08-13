@@ -3,8 +3,10 @@ package com.linksteady.operate.controller;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.AddUserHead;
+import com.linksteady.operate.domain.QywxParam;
 import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.AddUserTriggerService;
+import com.linksteady.operate.service.QywxParamService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +30,13 @@ public class AddUserTriggerController extends BaseController {
 
     private final ReentrantLock lock = new ReentrantLock();
 
+    private final ReentrantLock paramLock = new ReentrantLock();
+
     @Autowired
     private AddUserTriggerService addUserTriggerService;
+
+    @Autowired
+    QywxParamService qywxParamService;
 
     @RequestMapping("/getHeadPageList")
     public ResponseBo getHeadPageList(int limit, int offset) {
@@ -125,5 +132,51 @@ public class AddUserTriggerController extends BaseController {
     public ResponseBo geRegionData() {
         return ResponseBo.okWithData(null, addUserTriggerService.geRegionData());
     }
+
+
+    /**
+     * 获取默认的转化率、及发送人数
+     */
+    @RequestMapping("/getTriggerParam")
+    public ResponseBo getTriggerParam() {
+        QywxParam qywxParam=qywxParamService.getQywxParam();
+        int triggerNum=qywxParam.getTriggerNum(); //发送人数
+        double addRate=qywxParam.getDailyAddRate(); //转化率
+        int version=qywxParam.getVersion();
+        int addNum=qywxParam.getDailyAddNum();  //当前企业微信每日加人上限
+        return ResponseBo.okWithData(null,qywxParam);
+    }
+
+    /**
+     * 更新转化率
+     */
+    @PostMapping("/updateQywxParam")
+    public ResponseBo updateQywxParam(int addNum,double addRate,int version) {
+       //todo 对转化率进行校验 addNum>0 addRate>0 且这两个必须是数字
+
+        try {
+            if (paramLock.tryLock()) {
+
+                //todo 校验当前是否有正在执行的拉新任务
+                qywxParamService.updateQywxParam(addNum,addRate,getCurrentUser().getUsername(),version);
+            } else {
+                throw new OptimisticLockException("其他用户正在操作，请稍后再试!");
+            }
+            return ResponseBo.ok();
+        } catch (Exception e) {
+            log.error("修改企业微信参数错误，错误原因为{}", e);
+            if(e instanceof OptimisticLockException)
+            {
+                return ResponseBo.error(e.getMessage());
+            }else
+            {
+                return ResponseBo.error("保存失败！");
+            }
+        } finally {
+            paramLock.unlock();
+        }
+
+    }
+
 
 }

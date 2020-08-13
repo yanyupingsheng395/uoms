@@ -64,8 +64,7 @@ public enum  ConfigEnum {
 
     qywxCorpId("qywx.corpid"),
     qywxDomainUrl("qywx.domainUrl"),
-    qywxDomainIpAddress("qywx.domainIpAddress"),
-    smsLengthLimit("op.push.smsLengthLimit");
+    qywxDomainIpAddress("qywx.domainIpAddress");
 
 
     private String keyCode;

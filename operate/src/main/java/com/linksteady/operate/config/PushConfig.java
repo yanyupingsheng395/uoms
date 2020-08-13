@@ -259,7 +259,4 @@ public class PushConfig {
     public String getWxofficialEnabled() {
         return  configService.getValueByName(ConfigEnum.wxofficialEnabled.getKeyCode());
     }
-    public Integer getSmsLengthLimit() {
-        return Integer.valueOf(configService.getValueByName(ConfigEnum.smsLengthLimit.getKeyCode()));
-    }
 }
