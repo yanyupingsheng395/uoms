@@ -23,12 +23,12 @@ public class QywxParam {
     private int dailyApplyNum;
 
     /**
-     * 自动触发人数
+     * 自动触发人数(根据订单自动触发)
      */
     private int triggerNum;
 
     /**
-     * 主动触发人数
+     * 主动触发人数（手工推送）
      */
     private int activeNum;
 
