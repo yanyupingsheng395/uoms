@@ -108,6 +108,21 @@ public class AddUserTriggerServiceImpl implements AddUserTriggerService {
 
         QywxParam qywxParam=qywxParamMapper.getQywxParam();
 
+        if(qywxParam.getTriggerNum()==0)
+        {
+            throw new Exception("当前推送任务分配的推送人数为0!");
+        }
+
+        if(StringUtils.isEmpty(addUserHead.getSmsContent()))
+        {
+            throw new Exception("当前任务尚未配置文案!");
+        }
+
+        if(StringUtils.isEmpty(addUserHead.getContactWayUrl())||null==addUserHead.getContactWayId())
+        {
+            throw new Exception("当前任务尚未配置渠道活码!");
+        }
+
         //写入推送计划
         AddUserSchedule addUserSchedule=new AddUserSchedule();
         addUserSchedule.setHeadId(addUserHead.getId());
