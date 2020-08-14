@@ -52,13 +52,19 @@ public class AddUserTriggerController extends BaseController {
      * @return
      */
     @RequestMapping("/saveData")
-    public ResponseBo saveData(AddUserHead addUserHead) {
-        addUserHead.setInsertDt(new Date());
-        addUserHead.setInsertBy(getCurrentUser().getUsername());
-        addUserHead.setUpdateDt(new Date());
-        addUserHead.setUpdateBy(getCurrentUser().getUsername());
-        addUserTriggerService.saveData(addUserHead);
-        return ResponseBo.okWithData(null, addUserHead.getId());
+    public synchronized ResponseBo saveData(AddUserHead addUserHead) {
+        List<String> statusList = addUserTriggerService.getStatusList();
+        long doingCnt = statusList.stream().filter(x -> x.equalsIgnoreCase("doing")).count();
+        if(doingCnt > 0) {
+            return ResponseBo.error("当前有任务正在执行中，无法保存新记录！");
+        }else {
+            addUserHead.setInsertDt(new Date());
+            addUserHead.setInsertBy(getCurrentUser().getUsername());
+            addUserHead.setUpdateDt(new Date());
+            addUserHead.setUpdateBy(getCurrentUser().getUsername());
+            addUserTriggerService.saveData(addUserHead);
+            return ResponseBo.okWithData(null, addUserHead.getId());
+        }
     }
 
     /**
@@ -83,13 +89,20 @@ public class AddUserTriggerController extends BaseController {
         return ResponseBo.okWithData(null, addUserTriggerService.getSource());
     }
 
+    /**
+     * 更新头表
+     */
     @RequestMapping("/updateSmsContentAndContactWay")
-    public ResponseBo updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId
+    public synchronized ResponseBo updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId
             , String contactWayUrl, String isSourceName, String isProdName) {
-        addUserTriggerService.updateSmsContentAndContactWay(headId, smsContent, contactWayId, contactWayUrl, isSourceName, isProdName);
-        return ResponseBo.ok();
+        String status = addUserTriggerService.getStatus(headId);
+        if (!("edit".equalsIgnoreCase(status) || "stop".equalsIgnoreCase(status))) {
+            return ResponseBo.error("该任务的当前状态不支持更新操作！");
+        } else {
+            addUserTriggerService.updateSmsContentAndContactWay(headId, smsContent, contactWayId, contactWayUrl, isSourceName, isProdName);
+            return ResponseBo.ok();
+        }
     }
-
     /**
      * 提交任务进行执行
      *

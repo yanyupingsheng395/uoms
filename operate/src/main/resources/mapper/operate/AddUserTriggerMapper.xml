@@ -257,4 +257,12 @@
     <select id="getScheduleCount" resultType="int">
         select count(*) from uo_qywx_trigger_schedule where head_id=#{headId}
     </select>
+
+    <select id="getStatus" resultType="string">
+        select task_status from uo_qywx_trigger_header where id = #{headId}::integer
+    </select>
+
+    <select id="getStatusList" resultType="string">
+        select task_status from uo_qywx_trigger_header
+    </select>
 </mapper>

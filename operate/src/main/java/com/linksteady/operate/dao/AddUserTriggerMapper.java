@@ -122,6 +122,10 @@ public interface AddUserTriggerMapper {
      * 查看任务的执行计划数
      */
     int getScheduleCount(long headId);
+
+    String getStatus(String headId);
+
+    List<String> getStatusList();
 }
 
 
