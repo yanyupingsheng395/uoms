@@ -154,7 +154,6 @@ public class AddUserTriggerController extends BaseController {
     @PostMapping("/updateQywxParam")
     public ResponseBo updateQywxParam(int addNum,double addRate,int version) {
        //todo 对转化率进行校验 addNum>0 addRate>0 且这两个必须是数字
-
         try {
             if (paramLock.tryLock()) {
 

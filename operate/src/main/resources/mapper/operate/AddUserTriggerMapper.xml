@@ -29,11 +29,6 @@
         <result column="is_prod_name" jdbcType="VARCHAR" property="isProdName"/>
     </resultMap>
 
-    <resultMap id="paramMap" type="com.linksteady.operate.domain.QywxParam">
-        <result column="daily_add_num" jdbcType="DECIMAL" property="dailyAddNum"/>
-        <result column="daily_add_rate" jdbcType="DECIMAL" property="dailyAddRate"/>
-    </resultMap>
-
     <select id="getHeadCount" resultType="int">
         select count(1) from uo_qywx_trigger_header
     </select>
@@ -89,20 +84,6 @@
          select count(*) from uo_qywx_trigger_list where head_id= #{headId}
     </select>
 
-    <select id="getQywxParam" resultMap="paramMap">
-         select daily_add_num,daily_add_rate from uo_qywx_param limit 1
-    </select>
-
-    <update id="updatePushParameter">
-        update uo_qywx_trigger_header set
-          daily_user_cnt=#{defaultAddCount},
-          daily_apply_rate=#{defaultApplyRate},
-          daily_add_user_cnt=#{dailyAddNum},
-          daily_wait_days=#{waitDays},
-          daily_add_total=#{addTotal}
-       where id= #{headId}
-    </update>
-
     <update id="updateSmsContentAndContactWay">
         update uo_qywx_trigger_header set sms_content = #{smsContent}, contactway_id =  #{contactWayId}::integer,
                                           contactway_url = #{contactWayUrl}, is_source_name = #{isSourceName}, is_prod_name = #{isProdName}
@@ -125,8 +106,6 @@
                 apply_rate,
                 wait_add_num,
                 remain_user_cnt,
-                wait_days,
-                remain_add_num,
                 contactway_id,
                 state,
                 contactway_url,
@@ -145,8 +124,6 @@
                 #{applyRate},
                 #{waitAddNum},
                 #{remainUserCnt},
-                #{waitDays},
-                #{remainAddNum},
                 #{contactwayId},
                 #{state},
                 #{contactwayUrl},
@@ -170,10 +147,8 @@
 
     </update>
 
-    <update id="updateHeadWaitUserCnt">
+    <update id="updateHeadToDoing">
            update uo_qywx_trigger_header set
---              wait_user_cnt=#{afterWaitNum},
-             delivered_user_cnt=#{afterFinishNum},
              task_status='doing',
              update_dt=now(),
              update_by=#{opUserName}
@@ -234,8 +209,7 @@
     <update id="updateHeadToDone">
         update uo_qywx_trigger_header set task_status='done' where
           task_status='doing'
---                                                                and wait_user_cnt=0
-                                                               and not exists (
+           and not exists (
              select 1 from uo_qywx_add_user_schedule s where s.head_id=uo_qywx_trigger_header.id and s.status='doing')
     </update>
 
