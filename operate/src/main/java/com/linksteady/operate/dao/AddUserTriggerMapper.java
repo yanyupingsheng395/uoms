@@ -36,10 +36,6 @@ public interface AddUserTriggerMapper {
      */
     int getAddUserListCount(@Param("headId") long headId);
 
-    /**
-     * 获取企业微信默认的参数
-     */
-    QywxParam getQywxParam();
 
     /**
      * 更新拉新任务的推送节奏数据
@@ -80,9 +76,9 @@ public interface AddUserTriggerMapper {
     int updateAddUserList(long headId, long scheduleId, long targetNum);
 
     /**
-     * 更新主记录上的剩余人数
+     * 更新主记录状态为执行中
      */
-    void updateHeadWaitUserCnt(long headId, long afterWaitNum, long afterFinishNum, String opUserName);
+    void updateHeadToDoing(long headId, String opUserName);
 
     /**
      * 更新推送内容到推送计划表

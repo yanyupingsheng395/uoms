@@ -5,8 +5,11 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.operate.dao.AddUserTriggerMapper;
+import com.linksteady.operate.dao.QywxContactWayMapper;
+import com.linksteady.operate.dao.QywxParamMapper;
 import com.linksteady.operate.domain.AddUserHead;
 import com.linksteady.operate.domain.AddUserSchedule;
+import com.linksteady.operate.domain.QywxContactWay;
 import com.linksteady.operate.domain.QywxParam;
 import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.AddUserTriggerService;
@@ -33,6 +36,12 @@ public class AddUserTriggerServiceImpl implements AddUserTriggerService {
 
     @Autowired
     private AddUserTriggerMapper addUserTriggerMapper;
+
+    @Autowired
+    private QywxParamMapper qywxParamMapper;
+
+    @Autowired
+    private QywxContactWayMapper qywxContactWayMapper;
 
     @Override
     public int getHeadCount() {
@@ -65,76 +74,6 @@ public class AddUserTriggerServiceImpl implements AddUserTriggerService {
         return addUserTriggerMapper.getSource();
     }
 
-    /**
-     * 根据条件找出符合的用户
-     *
-     * @param headId
-     * @param sourceId
-     * @param regionIds
-     */
-    @Override
-    @Transactional
-    public void filterUsers(long headId, String sourceId, String regionIds) throws Exception {
-        //判断当前head_id下是否已存在明细数据 如果是，抛出异常
-        int count = addUserTriggerMapper.getAddUserListCount(headId);
-
-        if (count > 0) {
-            throw new Exception("当前记录已存在推送明细,请不要重复操作!");
-        }
-        //构造查询条件
-        StringBuffer whereInfo = new StringBuffer();
-
-        if (StringUtils.isNotEmpty(sourceId)) {
-            whereInfo.append(" and  position('" + sourceId + "' in source) > 0 ");
-        }
-        //构造regions查询条件
-        if (StringUtils.isNotEmpty(regionIds)) {
-            StringBuffer subWhere = new StringBuffer(" and (");
-            List<String> regionList = Splitter.on(',').trimResults().omitEmptyStrings().splitToList(regionIds);
-
-            for (int i = 0; i < regionList.size(); i++) {
-                if (i == 0) {
-                    subWhere.append(" position('" + regionList.get(i) + "' in area) > 0 ");
-                } else {
-                    subWhere.append(" or position('" + regionList.get(i) + "' in area) > 0 ");
-                }
-            }
-            subWhere.append(" )");
-
-            whereInfo.append(subWhere);
-        }
-
-        //对筛选出的明细数据进行写入操作
-        addUserTriggerMapper.insertAddUserList(headId, whereInfo.toString());
-
-        //计算推送节奏参数
-        //推送总人数(重新进行查询)
-        count = addUserTriggerMapper.getAddUserListCount(headId);
-
-        //获取默认的 每日推送人数 及 推送转化率
-        int defaultAddcount;
-        double defaultApplyRate;
-        QywxParam qywxParam = addUserTriggerMapper.getQywxParam();
-        if (null == qywxParam) {
-            defaultAddcount = 2000;
-            defaultApplyRate = 5;
-        } else {
-            defaultAddcount = qywxParam.getDailyAddNum();
-            defaultApplyRate = qywxParam.getDailyAddRate();
-        }
-
-
-        int dailyAddNum = 0;
-        int waitDays = 0;
-        int addTotal = 0;
-        //计算预计每日添加好友人数  预计全部推送所需天数  预计添加好友总人数
-        if (count > 0) {
-            dailyAddNum = (int) Math.floor(defaultAddcount * defaultApplyRate/100);
-            waitDays = count%defaultAddcount==0?count / defaultAddcount:count / defaultAddcount+1;
-            addTotal = (int) Math.floor(defaultApplyRate * count/100);
-        }
-//        更新记录
-    }
 
     /**
      * 执行一次推送任务
@@ -159,17 +98,6 @@ public class AddUserTriggerServiceImpl implements AddUserTriggerService {
         {
             throw new Exception("当前任务已在执行中!");
         }
-        if("abort".equals(status))
-        {
-            throw new Exception("当前任务已终止，无法再执行!");
-        }
-
-        //判断任务的剩余人数
-        long waitUserCnt=addUserHead.getWaitUserCnt();
-        if(waitUserCnt==0)
-        {
-            throw new Exception("当前任务已无用户需要推送!");
-        }
 
         //判断当天是否已经有推送计划
         String currentDay=DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now());
@@ -178,33 +106,39 @@ public class AddUserTriggerServiceImpl implements AddUserTriggerService {
             throw new Exception("当前日期已存在执行中的推送，为避免触发企业微信人数上限，请选择明日再进行推送!");
         }
 
-        //获取计划推送人数
-        long dailyUserCnt=addUserHead.getDailyUserCnt();
+        QywxParam qywxParam=qywxParamMapper.getQywxParam();
 
-        //最终待推送的人数，如果剩余>计划，则为计划人数 否则为剩余人数
-        long targetNum=waitUserCnt>dailyUserCnt?dailyUserCnt:waitUserCnt;
-        //本次推送完后 完成推送的人数
-        long finishNum=addUserHead.getDeliveredUserCnt()+targetNum;
+        if(qywxParam.getTriggerNum()==0)
+        {
+            throw new Exception("当前推送任务分配的推送人数为0!");
+        }
+
+        if(StringUtils.isEmpty(addUserHead.getSmsContent()))
+        {
+            throw new Exception("当前任务尚未配置文案!");
+        }
+
+        if(StringUtils.isEmpty(addUserHead.getContactWayUrl())||null==addUserHead.getContactWayId())
+        {
+            throw new Exception("当前任务尚未配置渠道活码!");
+        }
 
         //写入推送计划
         AddUserSchedule addUserSchedule=new AddUserSchedule();
         addUserSchedule.setHeadId(addUserHead.getId());
-        addUserSchedule.setApplyNum(targetNum);
+        //主动触发预计的人数
+        addUserSchedule.setApplyNum(qywxParam.getTriggerNum());
 
         //预计的推送转化率
-        addUserSchedule.setApplyRate(addUserHead.getDailyApplyRate());
+        addUserSchedule.setApplyRate(qywxParam.getDailyAddRate());
         //预计本次添加用户人数
-        addUserSchedule.setWaitAddNum((long)Math.floor(targetNum*addUserHead.getDailyApplyRate()));
-        //本次推送后剩余人数
-        long afterWaitNum=waitUserCnt-targetNum;
-        addUserSchedule.setRemainUserCnt(afterWaitNum);
-        //剩余人数预计推送天数
-        addUserSchedule.setWaitDays(afterWaitNum%addUserHead.getDailyUserCnt()+1);
-        //按当前转化率剩余人数预计添加好友数量
-        addUserSchedule.setRemainAddNum((long)Math.floor(afterWaitNum*addUserHead.getDailyApplyRate()));
-        addUserSchedule.setContactwayId(addUserHead.getContactWayId());
-        //todo
-        addUserSchedule.setState("");
+        addUserSchedule.setWaitAddNum((long)Math.floor(qywxParam.getTriggerNum()*qywxParam.getDailyAddRate()));
+
+        addUserSchedule.setRemainUserCnt(qywxParam.getTriggerNum());
+
+        QywxContactWay qywxContactWay=qywxContactWayMapper.getContactWayById(addUserHead.getContactWayId());
+        addUserSchedule.setContactwayId(qywxContactWay.getContactWayId());
+        addUserSchedule.setState(qywxContactWay.getState());
         addUserSchedule.setContactwayUrl(addUserHead.getContactWayUrl());
 
         addUserSchedule.setSmsContent(addUserHead.getSmsContent());
@@ -219,23 +153,8 @@ public class AddUserTriggerServiceImpl implements AddUserTriggerService {
 
         addUserTriggerMapper.saveAddUserSchedule(addUserSchedule);
 
-        long scheduleId=addUserSchedule.getScheduleId();
-
-        //更新推送明细
-        long updateNum=addUserTriggerMapper.updateAddUserList(headId,scheduleId,targetNum);
-
-        if(updateNum!=targetNum)
-        {
-           throw new Exception("推送人员数量不足，请检查！");
-        }
-
-        //更新主记录表的剩余人数、更新任务状态为执行中
-        addUserTriggerMapper.updateHeadWaitUserCnt(headId,afterWaitNum,finishNum,opUserName);
-
-        //将推送明细数据放到短信表里面去
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
-        long scheduleDate= Long.parseLong(LocalDateTime.now().plusHours(1).format(dateTimeFormatter));
-        addUserTriggerMapper.pushToPushListLarge(headId,scheduleId,scheduleDate);
+        //更新更新任务状态为执行中
+        addUserTriggerMapper.updateHeadToDoing(headId,opUserName);
     }
 
     @Override
@@ -306,7 +225,7 @@ public class AddUserTriggerServiceImpl implements AddUserTriggerService {
     }
 
     /**
-     * 自动跟新任务的状态、计划的状态 （为调度任务写的方法)
+     * 自动更新任务的状态、计划的状态 （为调度任务写的方法)
      */
     @Override
     public void autoUpdateStatus() {

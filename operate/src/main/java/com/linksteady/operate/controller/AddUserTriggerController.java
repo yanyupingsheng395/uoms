@@ -113,6 +113,9 @@ public class AddUserTriggerController extends BaseController {
     public ResponseBo executeTask(@Param("headId") long headId) {
         try {
             if (lock.tryLock()) {
+
+                //todo 判断当前是否有已经处于doing状态的任务 如果有，给出提示，退出
+
                 addUserTriggerService.execTask(headId, getCurrentUser().getUsername());
             } else {
                 throw new OptimisticLockException("其他用户正在操作，请稍后再试!");
@@ -162,7 +165,6 @@ public class AddUserTriggerController extends BaseController {
     @PostMapping("/updateQywxParam")
     public ResponseBo updateQywxParam(int addNum,double addRate,int version) {
        //todo 对转化率进行校验 addNum>0 addRate>0 且这两个必须是数字
-
         try {
             if (paramLock.tryLock()) {
 
