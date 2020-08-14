@@ -180,7 +180,7 @@
                         <input type="hidden" id="qrId" th:value="${addUserHead.contactWayId}"/>
                         获取二维码链接：<input id='qrCode' type="text" style="background-color:#ccc;border: none 0;outline: medium;background: transparent;-webkit-appearance: none;-moz-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
                     -moz-tap-highlight-color: transparent;border-bottom: 1px solid #ccc;" th:value="${addUserHead.contactWayUrl}" onclick="selectQrCode()"/>
-                        <a id="copyQrCodeBtn" style="cursor: pointer;font-size: 12px;" class="copy_btn"><i class="fa fa-clone"></i>复制二维码短链</a>
+                        <a id="copyQrCodeBtn" style="cursor: pointer;font-size: 12px;" class="copy_btn" th:data-clipboard-text="${addUserHead.contactWayUrl}"><i class="fa fa-clone"></i>复制二维码短链</a>
                     </div>
                 </div>
             </form>

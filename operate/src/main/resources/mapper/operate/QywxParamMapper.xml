@@ -13,37 +13,38 @@
     </resultMap>
 
     <select id="getQywxParam" resultMap="paramMap">
-        select
-            daily_add_num,
-            daily_add_rate,
-            daily_apply_num,
-            trigger_num,
-            (daily_apply_num-triggerNum) activeNum
-            last_update_by,
-            last_update_dt,
-            version
-         from uo_qywx_param limit 1
+        select daily_add_num,
+               daily_add_rate,
+               daily_apply_num,
+               trigger_num,
+               (daily_apply_num - trigger_num) activeNum,
+               last_update_by,
+               last_update_dt,
+               version
+        from uo_qywx_param
+        limit 1
     </select>
 
     <update id="updateQywxParam">
-      update uo_qywx_param set
-          daily_add_num=#{dailyAddNum},
-          daily_add_rate=#{dailyAddRate},
-          daily_apply_num=#{applyNum},
-          last_update_by=#{opUser},
-          last_update_dt=now()
+        update uo_qywx_param
+        set daily_add_num=#{dailyAddNum},
+            daily_add_rate=#{dailyAddRate},
+            daily_apply_num=#{applyNum},
+            last_update_by=#{opUser},
+            last_update_dt=now()
     </update>
 
     <update id="updateTriggerNum">
-         update uo_qywx_param set
-          trigger_num=#{triggerNum},
-          last_update_by=#{opUser},
-          last_update_dt=now()
+        update uo_qywx_param
+        set trigger_num=#{triggerNum},
+            last_update_by=#{opUser},
+            last_update_dt=now()
     </update>
 
     <update id="updateVersion">
-        update uo_qywx_param set version=version+1
-          where version=#{version}
+        update uo_qywx_param
+        set version=version + 1
+        where version = #{version}
     </update>
 
 </mapper>
