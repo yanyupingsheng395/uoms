@@ -51,6 +51,9 @@ public class PageController extends BaseController {
     @Autowired
     private AddUserTriggerService addUserTriggerService;
 
+    @Autowired
+    private QywxParamService qywxParamService;
+
     @Log(value = "用户成长监控",location = "用户成长系统")
     @RequestMapping("/operator/user")
     public String userOperator() {
@@ -486,6 +489,8 @@ public class PageController extends BaseController {
      */
     @RequestMapping("/addUserTrigger/add")
     public String addUserTriggerAdd(Model model) {
+        QywxParam qywxParam=qywxParamService.getQywxParam();
+        model.addAttribute("qywxParam", qywxParam);
         SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
         model.addAttribute("sourceConfig",sourceConfigVO);
         model.addAttribute("opType", "save");
@@ -526,6 +531,8 @@ public class PageController extends BaseController {
      */
     @RequestMapping("/addUserTrigger/edit")
     public String addUserTriggerEdit(@RequestParam String id, Model model) {
+        QywxParam qywxParam=qywxParamService.getQywxParam();
+        model.addAttribute("qywxParam", qywxParam);
         model.addAttribute("opType", "update");
         AddUserHead addUserHead = addUserTriggerService.getHeadById(Long.parseLong(id));
 

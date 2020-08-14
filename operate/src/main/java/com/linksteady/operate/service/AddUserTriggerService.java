@@ -32,8 +32,6 @@ public interface AddUserTriggerService {
      */
     void execTask(long headId, String opUserName) throws Exception;
 
-    AddUserHead saveDailyUserData(String headId, String dailyUserCnt, String dailyApplyRate);
-
     void updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId, String contactWayUrl, String isSourceName, String isProdName);
 
     Map<String, Object> getTaskResultData(String headId);

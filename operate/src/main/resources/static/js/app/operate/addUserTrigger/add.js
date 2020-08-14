@@ -1,6 +1,4 @@
 let custom_step;
-let daily_user_cnt;
-let daily_apply_rate;
 let head_id;
 let upgradeFlag='N';
 $(function () {
@@ -207,14 +205,7 @@ function saveData() {
                         $("#saveBasicBtn").attr("style", "display:none;");
                         $("input[name='taskName']").attr("disabled", "disabled").attr("readOnly", "readOnly");
                         $("input[name='sendType']").attr("disabled", "disabled").attr("readOnly", "readOnly");
-                        $("input[name='dailyUserCnt']").val(r.data['dailyUserCnt']);
-                        daily_user_cnt = r.data['dailyUserCnt'];
-                        daily_apply_rate = r.data['dailyApplyRate'];
-                        $("input[name='dailyApplyRate']").val(r.data['dailyApplyRate']);
-                        $("input[name='dailyAddUserCnt']").val(r.data['dailyAddUserCnt']);
-                        $("input[name='dailyWaitDays']").val(r.data['dailyWaitDays']);
-                        $("input[name='dailyAddTotal']").val(r.data['dailyAddTotal']);
-                        head_id = r.data['id'];
+                        head_id = r.data;
                     }else {
                         $MB.n_danger("保存失败！");
                     }
@@ -222,46 +213,6 @@ function saveData() {
                 });
         });
     }
-}
-
-function userDataChange(dom, idx) {
-    if(($("input[name='dailyUserCnt']").val() !== daily_user_cnt) || ($("input[name='dailyApplyRate']").val() !== daily_apply_rate)) {
-        $("#saveDailyUserBtn").attr("style", "display:inline-block;");
-        upgradeFlag='Y';
-    }else {
-        $("#saveDailyUserBtn").attr("style", "display:none;");
-        upgradeFlag='N';
-    }
-}
-
-/**
- * 调整参数保存
- */
-function saveDailyUserData() {
-    var currentDailyUserCnt = $('input[name="dailyUserCnt"]').val();
-    var currentDailyApplyRate = $('input[name="dailyApplyRate"]').val();
-    //判断headId是否为空
-    if(null==head_id||head_id == undefined || head_id == '')
-    {
-        $MB.n_warning("请先完成任务的保存！");
-        return false;
-    }
-
-    $.get("/addUserTrigger/saveDailyUserData", {headId: head_id, dailyUserCnt:currentDailyUserCnt, dailyApplyRate:currentDailyApplyRate}, function (r) {
-        if(r.code === 200) {
-            $("#saveDailyUserBtn").attr("style", "display:none;");
-            $("input[name='dailyApplyRate']").val(r.data['dailyApplyRate']);
-            $("input[name='dailyAddUserCnt']").val(r.data['dailyAddUserCnt']);
-            $("input[name='dailyWaitDays']").val(r.data['dailyWaitDays']);
-            $MB.n_success("更新成功！");
-            //隐藏更新按钮
-            $("#saveDailyUserBtn").attr("style", "display:none;");
-            upgradeFlag='N';
-        }else
-        {
-            $MB.n_danger(r.msg);
-        }
-    });
 }
 
 /**

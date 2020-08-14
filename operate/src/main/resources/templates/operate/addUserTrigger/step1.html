@@ -67,28 +67,10 @@
                 </div>
             </div>
         </div>
-        <div class="row" id="saveBasicBtn">
-            <div class="col-md-12">
-                <hr class="hr m-t-0 m-t-5">
-            </div>
-            <div class="col-md-12 text-right">
-                <div class="btn-group-sm" role="group">
-                    <a class="btn btn-primary" onclick="saveData()">
-                        <i class="fa fa-save"></i> 保存
-                    </a>
-                    <a class="btn btn-secondary" onclick="stepBreak(1)">
-                        <i class="fa fa-arrow-right"></i> 下一步
-                    </a>
-                    <a class="btn btn-secondary" href="/page/addUserTrigger">
-                        <i class="fa fa-backward"></i> 返回
-                    </a>
-                </div>
-            </div>
-        </div>
     </div>
-    <div class="col-md-12 select-table" style="display: none;" id="sendUserDataDiv">
+    <div class="col-md-12 select-table" id="sendUserDataDiv">
         <div class="row">
-            <span class="navbar-page-title">设定推送任务的节奏</span>
+            <span class="navbar-page-title">推送任务的节奏</span>
             <div class="col-md-12">
                 <hr class="hr m-t-0 m-t-5" style="margin-bottom: 5px;">
             </div>
@@ -96,34 +78,18 @@
         <div class="row m-t-5">
             <div class="col-md-12">
                 <h6>
-                    <i class="fa fa-info-circle" style="color: #313944"></i>&nbsp;目前需要推送的用户有 <span id="totalUserCnt">0</span> 人，考虑到平台对添加好友的限制，请配置用户分批推送；
+                    <i class="fa fa-info-circle" style="color: #313944"></i>&nbsp;企业微信添加人数上限为 <span style="color: red;font-weight: bold;" th:text="${qywxParam.dailyAddNum}">1000</span> 人；
                 </h6>
-                <div style="border: dashed 1px #ccc;padding: 15px;margin-bottom: 5px;" class="m-t-5">
+                <div style="margin-bottom: 5px;" class="m-t-15">
                     <form action="" class="form-inline">
                         <div class="row">
                             <div class="col-md-4">
-                                每日推送人数（人/天）：<input type="text" oninput="userDataChange()" name="dailyUserCnt" style=" border: none 0;outline: medium;background: transparent;-webkit-appearance: none;  -moz-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-moz-tap-highlight-color: transparent;border-bottom: 1px solid #ccc;">
+                                每日推送人数（人/天）：<input type="text" th:value="${qywxParam.dailyApplyNum}" readonly name="dailyUserCnt" style=" border: none 0;outline: medium;background: transparent;-webkit-appearance: none;  -moz-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-moz-tap-highlight-color: transparent;border-bottom: 1px solid #ccc;background-color: #eee;">
                             </div>
                             <div class="col-md-4">
-                                预计每日推送转化率（%）：<input type="text" oninput="userDataChange()" name="dailyApplyRate" style=" border: none 0;outline: medium;background: transparent;-webkit-appearance: none;  -moz-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-moz-tap-highlight-color: transparent;border-bottom: 1px solid #ccc;">
+                                预计每日推送转化率（%）：<input type="text" th:value="${qywxParam.dailyAddRate}" readonly name="dailyApplyRate" style="border: none 0;outline: medium;background: transparent;-webkit-appearance: none;  -moz-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-moz-tap-highlight-color: transparent;border-bottom: 1px solid #ccc;background-color: #eee;">
                             </div>
                             <div class="col-md-4"></div>
-                        </div>
-                        <div class="row m-t-10">
-                            <div class="col-md-12 text-center">
-                                <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1596702953648" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="18336" width="48" height="48" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><style type="text/css"></style></defs><path d="M464.404648 45.295577h95.390684L557.295577 0.09999h-90.391173z" fill="#8a8a8a" p-id="18337"></path><path d="M456.90538 180.882336h110.38922l-4.999512-90.391173H461.904892z" fill="#8a8a8a" p-id="18338"></path><path d="M512.09999 1024l271.173518-255.575041H599.991407l-30.097061-542.347037H454.405624l-30.197051 542.347037H240.926472z" fill="#8a8a8a" p-id="18339"></path></svg>
-                            </div>
-                        </div>
-                        <div class="row m-t-10">
-                            <div class="col-md-4">
-                                预计每日添加好友人数（人/天）：<input name="dailyAddUserCnt" disabled readonly type="text" style="border: none 0;outline: medium;background-color: #DCDCDC;-webkit-appearance: none;-moz-appearance:none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-moz-tap-highlight-color:transparent;border-bottom: 1px solid #ccc;"/>
-                            </div>
-                            <div class="col-md-4">
-                                预计全部推送所需天数（天）：<input name="dailyWaitDays" disabled readonly type="text" style=" border: none 0;outline: medium;background-color: #DCDCDC;-webkit-appearance: none;  -moz-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-moz-tap-highlight-color: transparent;border-bottom: 1px solid #ccc;"/>
-                            </div>
-                            <div class="col-md-4">
-                                预计添加好友总人数（人）：<input name="dailyAddTotal" disabled readonly type="text" style=" border: none 0;outline: medium;background-color: #DCDCDC;-webkit-appearance: none;  -moz-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-moz-tap-highlight-color: transparent;border-bottom: 1px solid #ccc;"/>
-                            </div>
                         </div>
                     </form>
                 </div>
@@ -135,8 +101,8 @@
             </div>
             <div class="col-md-12 text-right">
                 <div class="btn-group-sm" role="group">
-                    <a class="btn btn-primary" onclick="saveDailyUserData()" style="display: none;" id="saveDailyUserBtn">
-                        <i class="fa fa-save"></i> 更新
+                    <a class="btn btn-primary" onclick="saveData()">
+                        <i class="fa fa-save"></i> 保存
                     </a>
                     <a class="btn btn-secondary" onclick="stepBreak(1)">
                         <i class="fa fa-arrow-right"></i> 下一步
@@ -221,7 +187,7 @@
     </div>
     <div class="col-md-12 select-table">
         <div class="row">
-            <span class="navbar-page-title">设定推送任务的节奏</span>
+            <span class="navbar-page-title">推送任务的节奏</span>
             <div class="col-md-12">
                 <hr class="hr m-t-0 m-t-5" style="margin-bottom: 5px;">
             </div>
@@ -229,34 +195,18 @@
         <div class="row m-t-5">
             <div class="col-md-12">
                 <h6>
-                    <i class="fa fa-info-circle" style="color: #313944"></i>&nbsp;目前需要推送的用户有 <span data-th-text="${addUserHead.dailyAddTotal}"></span> 人，考虑到平台对添加好友的限制，请配置用户分批推送；
+                    <i class="fa fa-info-circle" style="color: #313944"></i>&nbsp;企业微信添加人数上限为 <span style="color: red;font-weight: bold;" th:text="${qywxParam.dailyAddNum}">1000</span> 人；
                 </h6>
-                <div style="border: dashed 1px #ccc;padding: 15px;margin-bottom: 5px;" class="m-t-5">
+                <div style="margin-bottom: 5px;" class="m-t-15">
                     <form action="" class="form-inline">
                         <div class="row">
                             <div class="col-md-4">
-                                每日推送人数（人/天）：<input th:value='${addUserHead.dailyUserCnt}' type="text" oninput="userDataChange()" name="dailyUserCnt" style=" border: none 0;outline: medium;background: transparent;-webkit-appearance: none;  -moz-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-moz-tap-highlight-color: transparent;border-bottom: 1px solid #ccc;">
+                                每日推送人数（人/天）：<input type="text" th:value="${qywxParam.dailyApplyNum}" readonly name="dailyUserCnt" style=" border: none 0;outline: medium;background: transparent;-webkit-appearance: none;  -moz-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-moz-tap-highlight-color: transparent;border-bottom: 1px solid #ccc;background-color: #eee;">
                             </div>
                             <div class="col-md-4">
-                                预计每日推送转化率（%）：<input th:value='${addUserHead.dailyApplyRate}' type="text" oninput="userDataChange()" name="dailyApplyRate" style=" border: none 0;outline: medium;background: transparent;-webkit-appearance: none;  -moz-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-moz-tap-highlight-color: transparent;border-bottom: 1px solid #ccc;">
+                                预计每日推送转化率（%）：<input type="text" th:value="${qywxParam.dailyAddRate}" readonly name="dailyApplyRate" style="border: none 0;outline: medium;background: transparent;-webkit-appearance: none;  -moz-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-moz-tap-highlight-color: transparent;border-bottom: 1px solid #ccc;background-color: #eee;">
                             </div>
                             <div class="col-md-4"></div>
-                        </div>
-                        <div class="row m-t-10">
-                            <div class="col-md-12 text-center">
-                                <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1596702953648" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="18336" width="48" height="48" xmlns:xlink="http://www.w3.org/1999/xlink"><defs><style type="text/css"></style></defs><path d="M464.404648 45.295577h95.390684L557.295577 0.09999h-90.391173z" fill="#8a8a8a" p-id="18337"></path><path d="M456.90538 180.882336h110.38922l-4.999512-90.391173H461.904892z" fill="#8a8a8a" p-id="18338"></path><path d="M512.09999 1024l271.173518-255.575041H599.991407l-30.097061-542.347037H454.405624l-30.197051 542.347037H240.926472z" fill="#8a8a8a" p-id="18339"></path></svg>
-                            </div>
-                        </div>
-                        <div class="row m-t-10">
-                            <div class="col-md-4">
-                                预计每日添加好友人数（人/天）：<input th:value="${addUserHead.dailyAddUserCnt}" name="dailyAddUserCnt" disabled readonly type="text" style="border: none 0;outline: medium;background-color: #DCDCDC;-webkit-appearance: none;-moz-appearance:none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-moz-tap-highlight-color:transparent;border-bottom: 1px solid #ccc;"/>
-                            </div>
-                            <div class="col-md-4">
-                                预计全部推送所需天数（天）：<input th:value="${addUserHead.dailyWaitDays}" name="dailyWaitDays" disabled readonly type="text" style=" border: none 0;outline: medium;background-color: #DCDCDC;-webkit-appearance: none;  -moz-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-moz-tap-highlight-color: transparent;border-bottom: 1px solid #ccc;"/>
-                            </div>
-                            <div class="col-md-4">
-                                预计添加好友总人数（人）：<input th:value="${addUserHead.dailyAddTotal}" name="dailyAddTotal" disabled readonly type="text" style=" border: none 0;outline: medium;background-color: #DCDCDC;-webkit-appearance: none;  -moz-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-moz-tap-highlight-color: transparent;border-bottom: 1px solid #ccc;"/>
-                            </div>
                         </div>
                     </form>
                 </div>
@@ -268,9 +218,6 @@
             </div>
             <div class="col-md-12 text-right">
                 <div class="btn-group-sm" role="group">
-                    <a class="btn btn-primary" onclick="saveDailyUserData()" style="display: none;" id="saveDailyUserBtn">
-                        <i class="fa fa-save"></i> 更新
-                    </a>
                     <a class="btn btn-secondary" onclick="stepBreak(1)">
                         <i class="fa fa-arrow-right"></i> 下一步
                     </a>

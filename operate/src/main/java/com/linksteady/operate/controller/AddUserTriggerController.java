@@ -58,7 +58,7 @@ public class AddUserTriggerController extends BaseController {
         addUserHead.setUpdateDt(new Date());
         addUserHead.setUpdateBy(getCurrentUser().getUsername());
         addUserTriggerService.saveData(addUserHead);
-        return ResponseBo.okWithData(null, addUserTriggerService.getHeadById(addUserHead.getId()));
+        return ResponseBo.okWithData(null, addUserHead.getId());
     }
 
     /**
@@ -81,11 +81,6 @@ public class AddUserTriggerController extends BaseController {
     @RequestMapping("/getSource")
     public ResponseBo getSource() {
         return ResponseBo.okWithData(null, addUserTriggerService.getSource());
-    }
-
-    @RequestMapping("/saveDailyUserData")
-    public ResponseBo saveDailyUserData(String headId, String dailyUserCnt, String dailyApplyRate) {
-        return ResponseBo.okWithData(null, addUserTriggerService.saveDailyUserData(headId, dailyUserCnt, dailyApplyRate));
     }
 
     @RequestMapping("/updateSmsContentAndContactWay")

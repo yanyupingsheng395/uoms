@@ -143,38 +143,10 @@ public class AddUserTriggerServiceImpl implements AddUserTriggerService {
     }
 
     @Override
-    public AddUserHead saveDailyUserData(String headId, String dailyUserCnt, String dailyApplyRate) {
-        //界面设置的每日推送人数
-        Integer dailyUserCntLong = Integer.parseInt(dailyUserCnt);
-        //界面设置的转化率
-        Double dailyApplyRateDouble = Double.parseDouble(dailyApplyRate);
-        //获取当前任务剩余的推送人数
-        AddUserHead addUserHead = addUserTriggerMapper.getHeadById(Long.parseLong(headId));
-        int count=(int)addUserHead.getWaitUserCnt();
-        //每日添加用户人数
-        int dailyAddNum = 0;
-        //完成推送需要的天数
-        int waitDays = 0;
-        //总添加人数
-        int addTotal = 0;
-        //计算预计每日添加好友人数  预计全部推送所需天数  预计添加好友总人数
-        if (count > 0) {
-            dailyAddNum = (int) Math.floor(dailyUserCntLong * dailyApplyRateDouble/100);
-            waitDays = count%dailyUserCntLong==0?count / dailyUserCntLong:count / dailyUserCntLong+1;
-            addTotal = (int) Math.floor(dailyApplyRateDouble * count/100);
-        }
-        //更新记录
-//        addUserTriggerMapper.updatePushParameter(Long.parseLong(headId), count, dailyUserCntLong, dailyApplyRateDouble, dailyAddNum, waitDays, addTotal);
-        addUserTriggerMapper.updatePushParameter(Long.parseLong(headId), dailyUserCntLong, dailyApplyRateDouble, dailyAddNum, waitDays, addTotal);
-        return addUserTriggerMapper.getHeadById(Long.parseLong(headId));
-    }
-
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId, String contactWayUrl, String isSourceName, String isProdName) {
         addUserTriggerMapper.updateSmsContentAndContactWay(headId, smsContent, contactWayId, contactWayUrl, isSourceName, isProdName);
     }
-
 
     @Override
     public Map<String, Object> getTaskResultData(String headId) {
