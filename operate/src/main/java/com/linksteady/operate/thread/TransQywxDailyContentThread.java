@@ -22,10 +22,10 @@ public class TransQywxDailyContentThread implements Callable {
     Long headerId;
     Map<String,List<GroupCouponVO>> groupCouponList;
 
-    public TransQywxDailyContentThread(Long headerId, int offset, int limit, Map<String,List<GroupCouponVO>> groupCouponList) {
+    public TransQywxDailyContentThread(Long headerId, int limit,int offset,  Map<String,List<GroupCouponVO>> groupCouponList) {
         this.headerId = headerId;
-        this.offset = offset;
         this.limit = limit;
+        this.offset = offset;
         this.groupCouponList=groupCouponList;
     }
 
@@ -37,7 +37,7 @@ public class TransQywxDailyContentThread implements Callable {
             list = qywxDailyDetailService.getUserList(headerId,  limit, offset);
             //转换文案
             List<QywxDailyDetail> targetList = qywxDailyDetailService.transContent(list,groupCouponList);
-            log.info("{}的第{}-{}调记录处理完成",headerId,offset,limit);
+            log.info("{}的从{}开始的{}条记录处理完成",headerId,limit,offset);
             return targetList;
         } catch (Exception e) {
             //错误日志上报

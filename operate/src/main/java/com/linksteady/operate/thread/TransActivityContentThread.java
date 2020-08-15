@@ -14,15 +14,15 @@ import java.util.concurrent.Callable;
 @Slf4j
 public class TransActivityContentThread  implements Callable {
 
-    int start;
-    int end;
+    int limit;
+    int offset;
     Long planId;
     Map<String,String> templateMap;
 
-    public TransActivityContentThread(Long planId, int start, int end,Map<String,String> templateMap) {
+    public TransActivityContentThread(Long planId, int limit, int offset,Map<String,String> templateMap) {
         this.planId=planId;
-        this.start = start;
-        this.end = end;
+        this.limit = limit;
+        this.offset = offset;
         this.templateMap=templateMap;
     }
 
@@ -34,11 +34,11 @@ public class TransActivityContentThread  implements Callable {
             ActivityPushMapper activityPushMapper= (ActivityPushMapper) SpringContextUtils.getBean("activityPushMapper");
             ActivityPushServiceImpl activityPushService = (ActivityPushServiceImpl) SpringContextUtils.getBean("activityPushServiceImpl");
 
-            list = activityPushMapper.getPushList(end - start + 1,start-1,planId);
+            list = activityPushMapper.getPushList(limit,offset,planId);
 
             //转换文案
             List<ActivityContentVO> targetList = activityPushService.processVariable(list,templateMap);
-            log.info("{}的第{}-{}调记录处理完成",planId,start, end);
+            log.info("{}的从{}开始的{}条记录处理完成",planId,limit,offset);
             return targetList;
         } catch (Exception e) {
             //错误日志上报

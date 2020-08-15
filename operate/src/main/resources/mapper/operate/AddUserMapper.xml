@@ -78,7 +78,7 @@
           head_id,user_id,phone_num,is_push,push_status,insert_dt,update_dt
        )
        select
-          #{headId},id,mobile,0,'X',now(),now()
+          #{headId},id,mobile,'0','X',now(),now()
           from w_users where valid_status=1
             <if test="whereInfo != null and whereInfo != ''">
                 ${whereInfo}
@@ -245,7 +245,7 @@
     </select>
 
     <select id="getStatisApplyData" resultType="map">
-        select statis_day statisDay, stats_pass_num num, statis_pass_rate rate from uo_qywx_add_user_effect where head_id = #{headId}::integer and schedule_id = #{scheduleId}::integer
+        select statis_day statisDay, statis_pass_num num, statis_pass_rate rate from uo_qywx_add_user_effect where head_id = #{headId}::integer and schedule_id = #{scheduleId}::integer
         order by statis_day asc
     </select>
 

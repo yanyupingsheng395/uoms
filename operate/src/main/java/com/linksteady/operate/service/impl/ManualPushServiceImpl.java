@@ -24,6 +24,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @author hxcao
@@ -126,34 +127,8 @@ public class ManualPushServiceImpl implements ManualPushService {
         });
 
         // 分批存储
-        int totalSize = manualDetails.size();
-        int pageSize = 1000;
-        int pageNum =  totalSize/ pageSize == 0 ? totalSize / pageSize : (totalSize / pageSize) + 1;
-        if(totalSize > pageSize) {
-            for (int i = 0; i < pageNum; i++) {
-                int start = i * pageSize;
-                int end = (i + 1) * pageSize - 1;
-                end = Math.min(end, totalSize);
-                int limit = start;
-                int offset = end - start + 1;
-                List<ManualDetail> tmpList;
-                if(end == totalSize) {
-                    tmpList = manualDetails.subList(limit,offset);
-                }else {
-                    tmpList = manualDetails.subList(limit,offset + 1);
-                }
-                if(tmpList.size() > 0) {
-                    manualDetailMapper.saveDetailList(tmpList);
-                }else {
-                    throw new LinkSteadyException("数据解析异常，获取到的数据为空！");
-                }
-            }
-        }else {
-            if(manualDetails.size() > 0) {
-                manualDetailMapper.saveDetailList(manualDetails);
-            }else {
-                throw new LinkSteadyException("数据解析异常，获取到的数据为空！");
-            }
+        for (int limit = 1000, skip = 0; skip < manualDetails.size(); skip = skip + limit) {
+            manualDetailMapper.saveDetailList(manualDetails.stream().skip(skip).limit(limit).collect(Collectors.toList()));
         }
     }
 

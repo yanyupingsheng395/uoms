@@ -10,6 +10,8 @@
         <result column="last_update_by" jdbcType="VARCHAR" property="lastUpdateBy"/>
         <result column="last_update_dt" jdbcType="TIMESTAMP" property="lastUpdateDt"/>
         <result column="version" jdbcType="DECIMAL" property="version"/>
+        <result column="last_sync_order_dt" jdbcType="TIMESTAMP" property="lastSyncOrderDt"/>
+        <result column="last_sync_order_times" jdbcType="DECIMAL" property="lastSyncOrderTimes"/>
     </resultMap>
 
     <select id="getQywxParam" resultMap="paramMap">
@@ -20,7 +22,9 @@
                (daily_apply_num - trigger_num) activeNum,
                last_update_by,
                last_update_dt,
-               version
+               version,
+               last_sync_order_dt,
+               last_sync_order_times
         from uo_qywx_param
         limit 1
     </select>
@@ -46,5 +50,20 @@
         set version=version + 1
         where version = #{version}
     </update>
+
+    <update id="updateOrderSyncTimes">
+         update uo_qywx_param set
+            last_sync_order_dt=#{orderSyncDt},
+            last_sync_order_times=#{orderSyncTimes}
+    </update>
+
+    <insert id="insertAddUserHistory">
+        insert into uo_qywx_add_user_history(phone_num,insert_dt)
+        values(#{phone_num},now());
+    </insert>
+
+    <delete id="deleteAddUserHistory">
+        delete from uo_qywx_add_user_history where current_date-insert_dt::date &gt;=#{diffDays}
+    </delete>
 
 </mapper>

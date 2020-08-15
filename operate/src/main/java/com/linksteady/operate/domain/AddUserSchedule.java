@@ -28,5 +28,12 @@ public class AddUserSchedule {
     private long scheduleDateWid;
     private Date scheduleDate;
     private long applyPassNum;
+    private long applySuccessNum;
+    private long actualApplyNum;
+
+    private String sourceId;
+    private String sourceName;
+    private String regionId;
+    private String regionName;
 
 }

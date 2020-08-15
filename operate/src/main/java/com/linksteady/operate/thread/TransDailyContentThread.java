@@ -15,15 +15,15 @@ import java.util.concurrent.Callable;
  */
 @Slf4j
 public class TransDailyContentThread implements Callable {
-    int start;
-    int end;
+    int limit;
+    int offset;
     Long headerId;
     Map<String,List<GroupCouponVO>> groupCouponList;
 
-    public TransDailyContentThread(Long headerId, int start, int end, Map<String,List<GroupCouponVO>> groupCouponList) {
+    public TransDailyContentThread(Long headerId, int limit, int offset, Map<String,List<GroupCouponVO>> groupCouponList) {
         this.headerId = headerId;
-        this.start = start;
-        this.end = end;
+        this.limit = limit;
+        this.offset = offset;
         this.groupCouponList=groupCouponList;
     }
 
@@ -32,10 +32,10 @@ public class TransDailyContentThread implements Callable {
         List<DailyDetail> list = null;
         try {
             DailyDetailServiceImpl dailyDetailService = (DailyDetailServiceImpl) SpringContextUtils.getBean("dailyDetailServiceImpl");
-            list = dailyDetailService.getUserList(headerId,  end - start + 1, start - 1);
+            list = dailyDetailService.getUserList(headerId,  limit, offset);
             //转换文案
             List<DailyDetail> targetList = dailyDetailService.transPushList(list,groupCouponList);
-            log.info("{}的第{}-{}调记录处理完成",headerId,start,end);
+            log.info("{}的从{}开始的{}条记录处理完成",headerId,limit,offset);
             return targetList;
         } catch (Exception e) {
             //错误日志上报

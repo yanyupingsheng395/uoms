@@ -131,7 +131,7 @@ public class DailyDetailServiceImpl implements DailyDetailService {
                 //生成线程对象列表
                 for(int i=0;i<page;i++)
                 {
-                    taskList.add(new TransDailyContentThread(headerId,i*pageSize+1,(i+1)*pageSize,groupCouponList));
+                    taskList.add(new TransDailyContentThread(headerId,i*pageSize,pageSize,groupCouponList));
                 }
 
                 log.info("转换文案一共需要{}个线程来处理",taskList.size());
