@@ -250,7 +250,7 @@
     </delete>
 
     <select id="getLastScheduleList" resultMap="scheduleMap">
-
+        select * from uo_qywx_trigger_schedule order by schedule_id desc limit 10
     </select>
 
     <select id="getScheduleCovStatis" resultMap="scheduleEffectVO">
@@ -305,7 +305,7 @@
                 ROW_NUMBER() OVER (partition BY w_users.mobile ORDER BY w_order_details.price desc) rn
             from
                 w_order_details join w_orders on w_order_details.order_id=w_orders.id
-            and w_order_details.order_dt::timestamp<= timestamp '2020-12-12 08:21:29'
+            and w_order_details.order_dt::timestamp&lt;= timestamp '2020-12-12 08:21:29'
             and w_orders.valid_status='1'
             join w_users on w_orders.user_id=w_users.id
             and w_users.valid_status='1'
