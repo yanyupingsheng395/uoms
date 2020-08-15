@@ -54,4 +54,8 @@ public interface AddUserTriggerService {
     void calculateAddUserEffect();
 
     Map<Long, Object> geRegionData();
+
+    String getStatus(String headId);
+
+    List<String> getStatusList();
 }

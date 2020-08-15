@@ -210,6 +210,16 @@ public class AddUserTriggerServiceImpl implements AddUserTriggerService {
     }
 
     @Override
+    public String getStatus(String headId) {
+        return addUserTriggerMapper.getStatus(headId);
+    }
+
+    @Override
+    public List<String> getStatusList() {
+        return addUserTriggerMapper.getStatusList();
+    }
+
+    @Override
     public AddUserHead getHeadById(long id) {
         return addUserTriggerMapper.getHeadById(id);
     }

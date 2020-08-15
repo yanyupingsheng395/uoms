@@ -540,8 +540,10 @@ public class PageController extends BaseController {
         {
             model.addAttribute("msg","已终止的任务不允许被编辑！");
             return "operate/addUserTrigger/list";
-        }else
-        {
+        }else if (!("edit".equalsIgnoreCase(addUserHead.getTaskStatus()) || "stop".equalsIgnoreCase(addUserHead.getTaskStatus()))) {
+            model.addAttribute("msg","该任务当前状态不允许被编辑！");
+            return "operate/addUserTrigger/list";
+        } else {
             SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
             model.addAttribute("sourceConfig",sourceConfigVO);
             model.addAttribute("addUserHead", addUserHead);
