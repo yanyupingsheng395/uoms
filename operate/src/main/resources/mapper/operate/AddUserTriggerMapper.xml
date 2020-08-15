@@ -35,6 +35,11 @@
         <result column="actual_apply_num" jdbcType="DECIMAL" property="actualApplyNum"/>
         <result column="schedule_date" jdbcType="TIMESTAMP" property="scheduleDate"/>
         <result column="remain_user_cnt" jdbcType="DECIMAL" property="remainUserCnt"/>
+
+        <result column="source_id" jdbcType="VARCHAR" property="sourceId"/>
+        <result column="source_name" jdbcType="VARCHAR" property="sourceName"/>
+        <result column="region_id" jdbcType="VARCHAR" property="regionId"/>
+        <result column="region_name" jdbcType="VARCHAR" property="regionName"/>
     </resultMap>
 
     <resultMap id="scheduleEffectVO" type="com.linksteady.operate.vo.QywxScheduleEffectVO">
@@ -293,7 +298,10 @@
             order_dt,
             mobile,
             source_name,
-            product_name
+            product_name,
+            region_id,
+            source_id
+
         from (
             select w_orders.id order_id,
                 w_orders.user_id,
@@ -302,6 +310,8 @@
                 w_source.source_name,
                 w_product.ebp_product_name product_name,
                 w_order_details.price,
+                w_users.area region_id,
+                w_source.source_id,
                 ROW_NUMBER() OVER (partition BY w_users.mobile ORDER BY w_order_details.price desc) rn
             from
                 w_order_details join w_orders on w_order_details.order_id=w_orders.id
@@ -411,4 +421,5 @@
             #{scheduleDate})
         </foreach>
     </insert>
+
 </mapper>

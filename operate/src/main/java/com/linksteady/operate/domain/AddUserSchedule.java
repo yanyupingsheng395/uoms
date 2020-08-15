@@ -31,4 +31,9 @@ public class AddUserSchedule {
     private long applySuccessNum;
     private long actualApplyNum;
 
+    private String sourceId;
+    private String sourceName;
+    private String regionId;
+    private String regionName;
+
 }

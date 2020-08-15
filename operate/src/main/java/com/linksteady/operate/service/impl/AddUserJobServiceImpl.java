@@ -1,5 +1,6 @@
 package com.linksteady.operate.service.impl;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.linksteady.common.util.ArithUtil;
 import com.linksteady.operate.dao.AddUserMapper;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -136,11 +138,21 @@ public class AddUserJobServiceImpl implements AddUserJobService {
      * 自动处理每日生成的订单，并生成文案，进行短信推送
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void processDailyOrders() throws Exception{
        //首先看当前是否有处于running的schedule
         int runingCount=addUserTriggerMapper.getRunningScheduleCount();
-       if(runingCount!=1)
+       if(runingCount==1)
        {
+           //获取当前计划上还有多少容量 如果容量为0，则给出提示；否则从排队表中取出对应的推送数据，放入到短信推送表里去；
+           AddUserSchedule addUserSchedule=addUserTriggerMapper.getRunningSchedule();
+
+           if(addUserSchedule==null||addUserSchedule.getRemainUserCnt()==0)
+           {
+               log.error("企业微信-主动拉新:无法获取到运行中的推送计划或推送计划无剩余数量。");
+               return;
+           }
+
            //获取当前的时间戳
            QywxParam qywxParam=qywxParamMapper.getQywxParam();
 
@@ -166,47 +178,86 @@ public class AddUserJobServiceImpl implements AddUserJobService {
 
            //根据时间戳去获取订单、渠道、商品，生成待推送名单，放入排队表 (同一个人，如果重复，则只取第一个)
            //todo 此处条件后续需要改一下
-           List<AddUserTriggerQueue> orderUserVOList=addUserTriggerMapper.getOrders(orderDt);
+           List<AddUserTriggerQueue> orderUserList=addUserTriggerMapper.getOrders(orderDt);
 
-           //写入排队队列 (如果手机号已经在排队表中，则忽略)
-           addUserTriggerMapper.addToTriggerQueue(orderUserVOList);
-
-           //获取当前计划上还有多少容量 如果容量为0，则给出提示；否则从排队表中取出对应的推送数据，放入到短信推送表里去；
-           AddUserSchedule addUserSchedule=addUserTriggerMapper.getRunningSchedule();
-
-           if(addUserSchedule!=null&&addUserSchedule.getRemainUserCnt()>0)
+           if(null!=orderUserList||orderUserList.size()>=0)
            {
-               //剩余槽位数
-               long remainCnt=addUserSchedule.getRemainUserCnt();
+               List<String> sourceIds= Splitter.on(',').trimResults().omitEmptyStrings().splitToList(addUserSchedule.getSourceId());
+               List<String> regionIds= Splitter.on(',').trimResults().omitEmptyStrings().splitToList(addUserSchedule.getRegionId());
 
-               //获取排队表本次要处理的最大ID、实际数量
-               Map<String,Long> triggerQueueInfo=addUserTriggerMapper.getTriggerQueueInfo(remainCnt);
-
-               long recordNum=triggerQueueInfo.get("record_num");
-               if(recordNum>0)
+               boolean sourceFlag=true;
+               boolean regionFlag=true;
+               List<AddUserTriggerQueue> afterFilterList=Lists.newArrayList();
+               for(AddUserTriggerQueue addUserTriggerQueue:orderUserList)
                {
-                   long queueId=triggerQueueInfo.get("max_queue_id");
-                   //将排队表中的数据同时写入推送列表、短信通道表
-                   processQueueDataToUserList(recordNum,queueId,addUserSchedule);
+                   //如果选择了渠道条件，则进行渠道条件的判断
+                   if(null!=sourceIds&&sourceIds.size()>0)
+                   {
+                       //任务选择的渠道不包含当前订单的渠道
+                       if(!sourceIds.contains(addUserTriggerQueue.getSourceId()))
+                       {
+                           sourceFlag=false;
+                       }
+                   }
 
-                   //删除排队表中本次处理完的数据
-                   addUserTriggerMapper.deleteTriggerQueue(queueId);
+                   if(null!=regionIds&&regionIds.size()>0)
+                   {
+                       //当前订单上用户的地域信息 100000,100010 这种格式，省代码,市代码
+                       List<String> currRegions=Splitter.on(',').trimResults().omitEmptyStrings().splitToList(addUserTriggerQueue.getRegionId());
 
-                   //更新schedule表中的剩余数量
-                   addUserTriggerMapper.updateScheduleRemainUserCnt(addUserSchedule.getScheduleId(),recordNum);
-               }else
-               {
-                   log.info("企业微信-主动拉新:本批次排队表中无要处理的数据!");
+                       //如果当前用户没有地域信息 直接排除掉
+                       if(null==currRegions||currRegions.size()==0)
+                       {
+                           regionFlag=false;
+                       }
+
+                       //如果用户的 省、市 任何一个代码在当前任务的条件内，则返回true，且不再进行后续循环
+                       for(String uRegionId:currRegions)
+                       {
+                           if(regionIds.contains(uRegionId))
+                           {
+                               regionFlag=true;
+                               break;
+                           }
+                       }
+                   }
+
+                   if(sourceFlag&&regionFlag)
+                   {
+                       afterFilterList.add(addUserTriggerQueue);
+                   }
                }
 
-               //更新参数表中的时间戳字段
-               LocalDateTime nextSyncDt=orderDt.minusMinutes(5);
-               qywxParamMapper.updateOrderSyncTimes(nextSyncDt,Timestamp.valueOf(nextSyncDt).getTime());
+               //写入排队队列 (如果手机号已经在排队表中，则忽略)
+               addUserTriggerMapper.addToTriggerQueue(afterFilterList);
+           }
 
+           //剩余槽位数
+           long remainCnt=addUserSchedule.getRemainUserCnt();
+
+           //获取排队表本次要处理的最大ID、实际数量
+           Map<String,Long> triggerQueueInfo=addUserTriggerMapper.getTriggerQueueInfo(remainCnt);
+
+           long recordNum=triggerQueueInfo.get("record_num");
+           if(recordNum>0)
+           {
+               long queueId=triggerQueueInfo.get("max_queue_id");
+               //将排队表中的数据同时写入推送列表、短信通道表
+               processQueueDataToUserList(recordNum,queueId,addUserSchedule);
+
+               //删除排队表中本次处理完的数据
+               addUserTriggerMapper.deleteTriggerQueue(queueId);
+
+               //更新schedule表中的剩余数量
+               addUserTriggerMapper.updateScheduleRemainUserCnt(addUserSchedule.getScheduleId(),recordNum);
            }else
            {
-               log.error("企业微信-主动拉新:无法获取到推送计划");
+               log.info("企业微信-主动拉新:本批次排队表中无要处理的数据!");
            }
+
+           //更新参数表中的时间戳字段
+           LocalDateTime nextSyncDt=orderDt.minusMinutes(5);
+           qywxParamMapper.updateOrderSyncTimes(nextSyncDt,Timestamp.valueOf(nextSyncDt).getTime());
 
 
        }else
@@ -239,6 +290,14 @@ public class AddUserJobServiceImpl implements AddUserJobService {
 
             for(AddUserTriggerQueue addUserTriggerQueue:queueData)
             {
+                //此处需要判断此用户在N天之内是否推送过拉新短信
+                try {
+                    qywxParamMapper.insertAddUserHistory(addUserTriggerQueue.getMobile());
+                } catch (Exception e) {
+                   log.error("{}写入历史表错误，原因:{}",e);
+                   continue;
+                }
+
                 //获取文案
                 smsContent=addUserSchedule.getSmsContent();
                 if(null==smsContent)
@@ -253,6 +312,7 @@ public class AddUserJobServiceImpl implements AddUserJobService {
                     log.error("企业微信-主动拉新:短信内容或渠道名称或商品名称有空的情况发生!");
                      throw new Exception("企业微信-主动拉新:短信内容或渠道名称或商品名称有空的情况发生!");
                 }
+
 
                 addUser=new AddUser();
                 addUser.setHeadId(addUserSchedule.getHeadId());
@@ -273,7 +333,14 @@ public class AddUserJobServiceImpl implements AddUserJobService {
             long scheduleDate= Long.parseLong(LocalDateTime.now().plusHours(1).format(dateTimeFormatter));
             //将推送表放入短信通道表
             addUserTriggerMapper.pushToPushListLarge(adduserList,scheduleDate);
-
         }
+    }
+
+    /**
+     * 删除推送历史表中超过7日的数据
+     */
+    void deleteAddUserHistory()
+    {
+        qywxParamMapper.deleteAddUserHistory(7);
     }
 }

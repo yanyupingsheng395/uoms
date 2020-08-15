@@ -21,4 +21,14 @@ public interface QywxParamMapper {
 
     int updateOrderSyncTimes(LocalDateTime orderSyncDt, long orderSyncTimes);
 
+    /**
+     * 往拉新历史表里写入数据
+     */
+    void insertAddUserHistory(String phone_num);
+
+    /**
+     * 删除企业微信拉新历史(超过多少天的被删除)
+     */
+    void deleteAddUserHistory(int diffDays);
+
 }

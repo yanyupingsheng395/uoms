@@ -14,7 +14,8 @@ public class AddUser {
     private String pushStatus;
     private Date insertDt;
     private Date updateDt;
-
     private String smsContent;
+
+
 
 }

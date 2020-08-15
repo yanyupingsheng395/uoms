@@ -167,6 +167,7 @@ public interface AddUserTriggerMapper {
     void pushToPushListLarge(List<AddUser> adduserList, long scheduleDate);
 
 
+
 }
 
 

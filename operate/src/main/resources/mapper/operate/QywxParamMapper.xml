@@ -57,4 +57,13 @@
             last_sync_order_times=#{orderSyncTimes}
     </update>
 
+    <insert id="insertAddUserHistory">
+        insert into uo_qywx_add_user_history(phone_num,insert_dt)
+        values(#{phone_num},now());
+    </insert>
+
+    <delete id="deleteAddUserHistory">
+        delete from uo_qywx_add_user_history where current_date-insert_dt::date &gt;=#{diffDays}
+    </delete>
+
 </mapper>

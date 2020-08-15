@@ -12,4 +12,7 @@ public class AddUserTriggerQueue {
     private String mobile;
     private String sourceName;
     private String productName;
+
+    private String sourceId;
+    private String regionId;
 }
