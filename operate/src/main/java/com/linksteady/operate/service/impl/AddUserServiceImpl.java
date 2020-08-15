@@ -1,33 +1,28 @@
 package com.linksteady.operate.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.base.Splitter;
 import com.linksteady.operate.dao.AddUserMapper;
-import com.linksteady.operate.dao.QywxContactWayMapper;
-import com.linksteady.operate.domain.*;
+import com.linksteady.operate.domain.AddUserHead;
+import com.linksteady.operate.domain.AddUserSchedule;
+import com.linksteady.operate.domain.QywxParam;
 import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.AddUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.mybatis.generator.config.JDBCConnectionConfiguration;
-import org.mybatis.generator.internal.JDBCConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.support.JdbcBeanDefinitionReader;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author hxcao
@@ -334,33 +329,5 @@ public class AddUserServiceImpl implements AddUserService {
         return addUserMapper.getHeadById(id);
     }
 
-    /**
-     * 自动跟新任务的状态、计划的状态 （为调度任务写的方法)
-     */
-    @Override
-    public void autoUpdateStatus() {
-        //更新最近三天的推送结果
-        addUserMapper.updatePushResult();
-        //对于 执行中的计划 判断其下面所有的用户都完成了推送，如果是，则更新其状态为 完成
-        addUserMapper.updateScheduleToDone();
-        //更新头表的状态(存在执行中的计划，则为执行中 否则为停止  如果所有的人都推送完了，则为已结束 )
-        addUserMapper.updateHeadToStop();
-        addUserMapper.updateHeadToDone();
-        //更新企业微信拉新状态 todo
-
-    }
-
-
-    /**
-     * 计算任务的效果
-     */
-    @Override
-    public void calculateAddUserEffect() {
-        //更新头表上的效果字段
-
-        //更新schedule表上的效果字段
-
-        //写逐日的转化统计表
-    }
 
 }

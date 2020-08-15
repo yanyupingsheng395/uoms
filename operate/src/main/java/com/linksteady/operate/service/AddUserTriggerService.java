@@ -43,16 +43,6 @@ public interface AddUserTriggerService {
      */
     int getScheduleCount(long headId);
 
-    /**
-     * 更新推送状态 （每日调度任务用)
-     */
-    void autoUpdateStatus();
-
-    /**
-     * 计算任务的效果 (每日调度任务用)
-     */
-    void calculateAddUserEffect();
-
     Map<Long, Object> geRegionData();
 
     String getStatus(String headId);

@@ -1,10 +1,11 @@
 package com.linksteady.operate.dao;
 
-import com.linksteady.operate.domain.AddUserHead;
-import com.linksteady.operate.domain.AddUserSchedule;
-import com.linksteady.operate.domain.QywxParam;
+import com.linksteady.operate.domain.*;
+import com.linksteady.operate.vo.QywxScheduleEffectVO;
 import org.apache.ibatis.annotations.Param;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -27,33 +28,9 @@ public interface AddUserTriggerMapper {
     List<Map<String, String>> getSource();
 
     /**
-     * 写入待推送的用户明细
-     */
-    void insertAddUserList(@Param("headId") long headId, @Param("whereInfo") String whereInfo);
-
-    /**
      * 判断当前任务是否存在推送明细
      */
     int getAddUserListCount(@Param("headId") long headId);
-
-
-    /**
-     * 更新拉新任务的推送节奏数据
-     * totalNum 总人数
-     * defaultAddcount 默认每日添加人数
-     * defaultApplyRate 默认转化率
-     * dailyAddNum 预计每日添加人数
-     * waitDays 预计推送完需要多少天
-     * addTotal 预计添加总人数
-     */
-    void updatePushParameter(
-            long headId,
-//            int totalNum,
-            int defaultAddCount,
-            double defaultApplyRate,
-            int dailyAddNum,
-            int waitDays,
-            int addTotal);
 
     /**
      * 更新head表的version字段
@@ -61,9 +38,14 @@ public interface AddUserTriggerMapper {
     int updateHeadVersion(long headId, int version);
 
     /**
-     * 获取当前天是否存在执行中的计划
+     * 获取是否存在执行中的计划
      */
-    int getRunningSchedule(long currentDay);
+    int getRunningScheduleCount();
+
+    /**
+     * 获取正在执行中的计划
+     */
+    AddUserSchedule getRunningSchedule();
 
     /**
      * 保存当前的推送计划
@@ -71,40 +53,9 @@ public interface AddUserTriggerMapper {
     void saveAddUserSchedule(AddUserSchedule addUserSchedule);
 
     /**
-     * 更新推送明细
-     */
-    int updateAddUserList(long headId, long scheduleId, long targetNum);
-
-    /**
      * 更新主记录状态为执行中
      */
     void updateHeadToDoing(long headId, String opUserName);
-
-    /**
-     * 更新推送内容到推送计划表
-     */
-    void pushToPushListLarge(long headId, long scheduleId, long scheduleDate);
-
-    /**
-     * 更新推送结果
-     */
-   void updatePushResult();
-
-    /**
-     * 更新推送计划 （由进行中 更新为完成)
-     */
-    void updateScheduleToDone();
-
-    /**
-     * 更新头数据的状态为停止 （执行中的任务，且不存在尚在执行中的计划）
-     */
-    void updateHeadToStop();
-
-
-    /**
-     * 更新头数据的状态为结束 (执行中的任务，且不存在尚在执行中的计划 且剩余推送人数为0)
-     */
-    void updateHeadToDone();
 
     void updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId, String contactWayUrl, String isSourceName, String isProdName);
 
@@ -122,6 +73,100 @@ public interface AddUserTriggerMapper {
     String getStatus(String headId);
 
     List<String> getStatusList();
+
+    /**---------------------------------下面的方法是调度中用的-----------------------------------*/
+    /**
+     * 更新推送结果(实际状态) [调度方法]
+     */
+    void updatePushResult();
+
+    /**
+     * 更新执行计划为完成 [调度方法]
+     */
+    void updateScheduleToDone();
+
+
+    /**
+     * 更新头数据的状态为停止 （执行中的任务，且不存在尚在执行中的计划） [调度方法]
+     */
+    void updateHeadToStop();
+
+    /**
+     * 更新计划表中的实际推送成功人数、通过申请人数 [调度方法]
+     */
+    void calculateScheduleEffect();
+
+    /**
+     * 更新头表的状态 [调度方法]
+     */
+    void calculateHeadEffect();
+
+    /**
+     * 删除最近10天的schedule的效果数据
+     */
+    void deleteScheduleEffect();
+
+    /**
+     * 获取最近10日内的schedule列表
+     */
+    List<AddUserSchedule> getLastScheduleList();
+
+    /**
+     * 查询某个schedule的转化数据
+     */
+    List<QywxScheduleEffectVO> getScheduleCovStatis(long scheduleId);
+
+    /**
+     * 保存逐日转化率数据
+     */
+    void saveScheduleEffect(List<AddUserEffect> addUserEffectList);
+
+    /**
+     * 更新推送列表中是否已加企业微信的标志信息  (如果一个手机号在企业微信外部联系人中匹配多个人，则只取按添加时间最近的一条)
+     */
+    void updateQywxAddInfo();
+
+    /**
+     * 获取待处理的的下单的用户( 如果一个人在此时间段内下多段，则只取商品价格最高的那条)
+     */
+    List<AddUserTriggerQueue> getOrders(LocalDateTime orderDt);
+
+    /**
+     * 将待处理的用户写入排队表中
+     */
+    void addToTriggerQueue(List<AddUserTriggerQueue> orderUserVOList);
+
+    /**
+     * 获取本批次要处理的最大的queueId
+     */
+    Map<String,Long> getTriggerQueueInfo(long slotsNum);
+
+    /**
+     * 删除排队表中已处理完的数据
+     */
+    void deleteTriggerQueue(long queueId);
+
+    /**
+     * 更新计划表中的剩余数量 costSlots 表示本次推送被消耗掉的数量
+     */
+    void updateScheduleRemainUserCnt(long scheduleId,long costSlots);
+
+    /**
+     * 分页获取排队表中的数据
+     */
+    List<AddUserTriggerQueue> getTriggerQueueData(long queueId,int limit,int offset);
+
+    /**
+     * 写入推送明细表
+     */
+    void insertAddUserList(List<AddUser> addUserList);
+
+    /**
+     * 写推送内容到推送计划表
+     */
+    void pushToPushListLarge(List<AddUser> adduserList, long scheduleDate);
+
+
 }
 
 

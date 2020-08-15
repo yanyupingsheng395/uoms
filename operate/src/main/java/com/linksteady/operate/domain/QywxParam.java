@@ -2,6 +2,7 @@ package com.linksteady.operate.domain;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -46,5 +47,15 @@ public class QywxParam {
      * 版本号
      */
     private int version;
+
+    /**
+     * 最后一次同步订单的时间戳
+     */
+    private LocalDateTime lastSyncOrderDt;
+
+    /**
+     * 最后一次同步订单的linux时间戳
+     */
+    private long lastSyncOrderTimes;
 
 }

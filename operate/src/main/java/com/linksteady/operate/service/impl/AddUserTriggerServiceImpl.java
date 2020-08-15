@@ -100,10 +100,9 @@ public class AddUserTriggerServiceImpl implements AddUserTriggerService {
         }
 
         //判断当天是否已经有推送计划
-        String currentDay=DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now());
-        if(addUserTriggerMapper.getRunningSchedule(Long.parseLong(currentDay))>0)
+        if(addUserTriggerMapper.getRunningScheduleCount()>0)
         {
-            throw new Exception("当前日期已存在执行中的推送，为避免触发企业微信人数上限，请选择明日再进行推送!");
+            throw new Exception("当前已存在执行中的推送，为避免触发企业微信人数上限，请选择明日再进行推送!");
         }
 
         QywxParam qywxParam=qywxParamMapper.getQywxParam();
@@ -148,8 +147,11 @@ public class AddUserTriggerServiceImpl implements AddUserTriggerService {
         addUserSchedule.setUpdateBy(opUserName);
         addUserSchedule.setUpdateDt(new Date());
         addUserSchedule.setScheduleDate(new Date());
+        String currentDay=DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now());
         addUserSchedule.setScheduleDateWid(Long.parseLong(currentDay));
         addUserSchedule.setApplyPassNum(0);
+        addUserSchedule.setApplySuccessNum(0);
+        addUserSchedule.setActualApplyNum(0);
 
         addUserTriggerMapper.saveAddUserSchedule(addUserSchedule);
 
@@ -177,7 +179,6 @@ public class AddUserTriggerServiceImpl implements AddUserTriggerService {
             // 申请通过随统计日期变化图
             String scheduleId = sendAndApplyData.get(0).get("scheduleid").toString();
             statisApplyData = addUserTriggerMapper.getStatisApplyData(headId, scheduleId);
-
         }
         result.put("statisApplyData", JSON.toJSONString(statisApplyData));
         result.put("applyUserCnt", addUserHead.getApplyUserCnt() == null ? "-" : addUserHead.getApplyUserCnt());
@@ -222,35 +223,6 @@ public class AddUserTriggerServiceImpl implements AddUserTriggerService {
     @Override
     public AddUserHead getHeadById(long id) {
         return addUserTriggerMapper.getHeadById(id);
-    }
-
-    /**
-     * 自动更新任务的状态、计划的状态 （为调度任务写的方法)
-     */
-    @Override
-    public void autoUpdateStatus() {
-        //更新最近三天的推送结果
-        addUserTriggerMapper.updatePushResult();
-        //对于 执行中的计划 判断其下面所有的用户都完成了推送，如果是，则更新其状态为 完成
-        addUserTriggerMapper.updateScheduleToDone();
-        //更新头表的状态(存在执行中的计划，则为执行中 否则为停止  如果所有的人都推送完了，则为已结束 )
-        addUserTriggerMapper.updateHeadToStop();
-        addUserTriggerMapper.updateHeadToDone();
-        //更新企业微信拉新状态 todo
-
-    }
-
-
-    /**
-     * 计算任务的效果
-     */
-    @Override
-    public void calculateAddUserEffect() {
-        //更新头表上的效果字段
-
-        //更新schedule表上的效果字段
-
-        //写逐日的转化统计表
     }
 
 }

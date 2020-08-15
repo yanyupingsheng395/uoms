@@ -41,4 +41,6 @@ public class AddUserHead {
     private int version;
     private String isSourceName;
     private String isProdName;
+
+    private long actualApplyNum;
 }
