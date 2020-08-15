@@ -314,15 +314,12 @@ public class DailyTaskController {
         int count = dailyService.getDailyPersonalEffectCount(new DailyPersonalVO(), headId);
         ExecutorService service = Executors.newFixedThreadPool(10);
         int pageSize = 1000;
-        int pageNum = count % pageSize == 0 ? count / pageSize : (count / pageSize) + 1;
+        int pageNum = count % pageSize == 0 ? count / pageSize : (count / pageSize + 1);
         for (int i = 0; i < pageNum; i++) {
             int idx = i;
             tmp.add(() -> {
-                int start = idx * pageSize + 1;
-                int end = (idx + 1) * pageSize;
-                end = end > count ? count : end;
-                int limit = start - 1;
-                int offset = end - start + 1;
+                int limit = pageNum*pageSize;
+                int offset = pageSize;
                 return dailyService.getDailyPersonalEffect(new DailyPersonalVO(), limit, offset, headId);
             });
         }
