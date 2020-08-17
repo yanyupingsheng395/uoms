@@ -3,6 +3,7 @@ package com.linksteady.operate.service.impl;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.linksteady.common.util.ArithUtil;
+import com.linksteady.common.util.SpringUtils;
 import com.linksteady.operate.dao.AddUserMapper;
 import com.linksteady.operate.dao.AddUserTriggerMapper;
 import com.linksteady.operate.dao.QywxParamMapper;
@@ -177,7 +178,6 @@ public class AddUserJobServiceImpl implements AddUserJobService {
            }
 
            //根据时间戳去获取订单、渠道、商品，生成待推送名单，放入排队表 (同一个人，如果重复，则只取第一个)
-           //todo 此处条件后续需要改一下
            List<AddUserTriggerQueue> orderUserList=addUserTriggerMapper.getOrders(orderDt);
 
            if(null!=orderUserList||orderUserList.size()>=0)
@@ -242,8 +242,67 @@ public class AddUserJobServiceImpl implements AddUserJobService {
            if(recordNum>0)
            {
                long queueId=triggerQueueInfo.get("max_queue_id");
-               //将排队表中的数据同时写入推送列表、短信通道表
-               processQueueDataToUserList(recordNum,queueId,addUserSchedule);
+
+               int pageSize=100;
+               long pageNum=recordNum%pageSize==0?recordNum/pageSize:(recordNum/pageSize+1);
+
+               List<AddUserTriggerQueue> queueData=null;
+               String smsContent="";
+               AddUser addUser=null;
+               List<AddUser> adduserList=null;
+
+               for(int m=0;m<pageNum;m++)
+               {
+                   //获取排队表的数据
+                   queueData=addUserTriggerMapper.getTriggerQueueData(queueId,pageSize,m*pageSize);
+                   adduserList=Lists.newArrayList();
+
+                   for(AddUserTriggerQueue addUserTriggerQueue:queueData)
+                   {
+                       //此处需要判断此用户在N天之内是否推送过拉新短信
+                       try {
+                           qywxParamMapper.insertAddUserHistory(addUserTriggerQueue.getMobile());
+                       } catch (Exception e) {
+                           log.error("{}写入历史表错误，原因:{}",e);
+                           continue;
+                       }
+
+                       //获取文案
+                       smsContent=addUserSchedule.getSmsContent();
+                       if(null==smsContent)
+                       {
+                           smsContent="";
+                       }
+                       smsContent=smsContent.replace("${渠道名称}",addUserTriggerQueue.getSourceName());
+                       smsContent=smsContent.replace("${商品名称}",addUserTriggerQueue.getProductName());
+
+                       if(StringUtils.isEmpty(smsContent)||StringUtils.isEmpty(addUserTriggerQueue.getSourceName())||StringUtils.isEmpty(addUserTriggerQueue.getProductName()))
+                       {
+                           log.error("企业微信-主动拉新:短信内容或渠道名称或商品名称有空的情况发生!");
+                           throw new Exception("企业微信-主动拉新:短信内容或渠道名称或商品名称有空的情况发生!");
+                       }
+
+
+                       addUser=new AddUser();
+                       addUser.setHeadId(addUserSchedule.getHeadId());
+                       addUser.setUserId(addUserTriggerQueue.getUserId());
+                       addUser.setPhoneNum(addUserTriggerQueue.getMobile());
+                       addUser.setIsPush("0");
+                       addUser.setPushStatus("X");
+                       addUser.setInsertDt(new Date());
+                       addUser.setUpdateDt(new Date());
+                       addUser.setSmsContent(smsContent);
+                       adduserList.add(addUser);
+                   }
+
+                   //写入推送明细
+                   addUserTriggerMapper.insertAddUserList(adduserList);
+
+                   DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
+                   long scheduleDate= Long.parseLong(LocalDateTime.now().plusHours(1).format(dateTimeFormatter));
+                   //将推送表放入短信通道表
+                   addUserTriggerMapper.pushToPushListLarge(adduserList,scheduleDate);
+               }
 
                //删除排队表中本次处理完的数据
                addUserTriggerMapper.deleteTriggerQueue(queueId);
@@ -258,8 +317,6 @@ public class AddUserJobServiceImpl implements AddUserJobService {
            //更新参数表中的时间戳字段
            LocalDateTime nextSyncDt=orderDt.minusMinutes(5);
            qywxParamMapper.updateOrderSyncTimes(nextSyncDt,Timestamp.valueOf(nextSyncDt).getTime());
-
-
        }else
        {
            log.error("企业微信-主动拉新:当前无处于running状态的计划或有多个计划！");
@@ -267,79 +324,10 @@ public class AddUserJobServiceImpl implements AddUserJobService {
     }
 
     /**
-     * 将排队表中的数据写入到推送列表中去
-     * @param recordNum 记录数
-     * @param queueId
-     * @param addUserSchedule
-     */
-    private void processQueueDataToUserList(long recordNum,long queueId,AddUserSchedule addUserSchedule) throws Exception
-    {
-         int pageSize=100;
-         long pageNum=recordNum%pageSize==0?recordNum/pageSize:(recordNum/pageSize+1);
-
-        List<AddUserTriggerQueue> queueData=null;
-        String smsContent="";
-        AddUser addUser=null;
-        List<AddUser> adduserList=null;
-
-         for(int m=0;m<pageNum;m++)
-        {
-           //获取排队表的数据
-            queueData=addUserTriggerMapper.getTriggerQueueData(queueId,m*pageSize+1,(m+1)*pageSize);
-            adduserList=Lists.newArrayList();
-
-            for(AddUserTriggerQueue addUserTriggerQueue:queueData)
-            {
-                //此处需要判断此用户在N天之内是否推送过拉新短信
-                try {
-                    qywxParamMapper.insertAddUserHistory(addUserTriggerQueue.getMobile());
-                } catch (Exception e) {
-                   log.error("{}写入历史表错误，原因:{}",e);
-                   continue;
-                }
-
-                //获取文案
-                smsContent=addUserSchedule.getSmsContent();
-                if(null==smsContent)
-                {
-                    smsContent="";
-                }
-                smsContent=smsContent.replace("${渠道名称}",addUserTriggerQueue.getSourceName());
-                smsContent=smsContent.replace("${商品名称}",addUserTriggerQueue.getProductName());
-
-                if(StringUtils.isEmpty(smsContent)||StringUtils.isEmpty(addUserTriggerQueue.getSourceName())||StringUtils.isEmpty(addUserTriggerQueue.getProductName()))
-                {
-                    log.error("企业微信-主动拉新:短信内容或渠道名称或商品名称有空的情况发生!");
-                     throw new Exception("企业微信-主动拉新:短信内容或渠道名称或商品名称有空的情况发生!");
-                }
-
-
-                addUser=new AddUser();
-                addUser.setHeadId(addUserSchedule.getHeadId());
-                addUser.setUserId(addUserTriggerQueue.getUserId());
-                addUser.setPhoneNum(addUserTriggerQueue.getMobile());
-                addUser.setIsPush("0");
-                addUser.setPushStatus("X");
-                addUser.setInsertDt(new Date());
-                addUser.setUpdateDt(new Date());
-                addUser.setSmsContent(smsContent);
-                adduserList.add(addUser);
-            }
-
-            //写入推送明细
-            addUserTriggerMapper.insertAddUserList(adduserList);
-
-            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
-            long scheduleDate= Long.parseLong(LocalDateTime.now().plusHours(1).format(dateTimeFormatter));
-            //将推送表放入短信通道表
-            addUserTriggerMapper.pushToPushListLarge(adduserList,scheduleDate);
-        }
-    }
-
-    /**
      * 删除推送历史表中超过7日的数据
      */
-    void deleteAddUserHistory()
+    @Override
+    public void deleteAddUserHistory()
     {
         qywxParamMapper.deleteAddUserHistory(7);
     }

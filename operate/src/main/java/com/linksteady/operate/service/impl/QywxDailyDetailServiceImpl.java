@@ -98,7 +98,7 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
                 //生成线程对象列表
                 for(int i=0;i<page;i++)
                 {
-                    taskList.add(new TransQywxDailyContentThread(headerId,i*pageSize,pageSize,groupCouponList));
+                    taskList.add(new TransQywxDailyContentThread(headerId,pageSize,i*pageSize,groupCouponList));
                 }
 
                 log.info("转换文案一共需要{}个线程来处理",taskList.size());

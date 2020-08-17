@@ -131,7 +131,7 @@ public class AddUserTriggerServiceImpl implements AddUserTriggerService {
         //预计的推送转化率
         addUserSchedule.setApplyRate(qywxParam.getDailyAddRate());
         //预计本次添加用户人数
-        addUserSchedule.setWaitAddNum((long)Math.floor(qywxParam.getTriggerNum()*qywxParam.getDailyAddRate()));
+        addUserSchedule.setWaitAddNum(qywxParam.getTriggerNum());
 
         addUserSchedule.setRemainUserCnt(qywxParam.getTriggerNum());
 
@@ -152,6 +152,10 @@ public class AddUserTriggerServiceImpl implements AddUserTriggerService {
         addUserSchedule.setApplyPassNum(0);
         addUserSchedule.setApplySuccessNum(0);
         addUserSchedule.setActualApplyNum(0);
+        addUserSchedule.setSourceId(addUserHead.getSourceId());
+        addUserSchedule.setSourceName(addUserHead.getSourceName());
+        addUserSchedule.setRegionId(addUserHead.getRegionId());
+        addUserSchedule.setRegionName(addUserHead.getRegionName());
 
         addUserTriggerMapper.saveAddUserSchedule(addUserSchedule);
 

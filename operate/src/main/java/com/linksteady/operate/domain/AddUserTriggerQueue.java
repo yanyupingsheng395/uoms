@@ -6,6 +6,7 @@ import java.util.Date;
 
 @Data
 public class AddUserTriggerQueue {
+    private Long queueId;
     private Long orderId;
     private Long userId;
     private Date orderDt;

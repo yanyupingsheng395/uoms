@@ -5,6 +5,7 @@ import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.AddUserHead;
 import com.linksteady.operate.domain.QywxParam;
 import com.linksteady.operate.exception.OptimisticLockException;
+import com.linksteady.operate.service.AddUserJobService;
 import com.linksteady.operate.service.AddUserTriggerService;
 import com.linksteady.operate.service.QywxParamService;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,11 @@ public class AddUserTriggerController extends BaseController {
     private final ReentrantLock lock = new ReentrantLock();
 
     private final ReentrantLock paramLock = new ReentrantLock();
+
+    private final ReentrantLock processOrderLock = new ReentrantLock();
+
+    @Autowired
+    private AddUserJobService addUserJobService;
 
     @Autowired
     private AddUserTriggerService addUserTriggerService;
@@ -143,6 +149,16 @@ public class AddUserTriggerController extends BaseController {
         return ResponseBo.okWithData(null, addUserTriggerService.geRegionData());
     }
 
+
+    /**
+     * 获取默认的转化率、及发送人数
+     */
+    @RequestMapping("/getTriggerParam")
+    public ResponseBo getTriggerParam() {
+        QywxParam qywxParam=qywxParamService.getQywxParam();
+        return ResponseBo.okWithData(null,qywxParam);
+    }
+
     /**
      * addNum:当前企业微信每日加人上限
      * 更新转化率
@@ -172,5 +188,26 @@ public class AddUserTriggerController extends BaseController {
             paramLock.unlock();
         }
 
+    }
+
+    /**
+     * 获取默认的转化率、及发送人数
+     */
+    @RequestMapping("/startJob")
+    public ResponseBo startJob() {
+        try {
+            if (processOrderLock.tryLock()) {
+                addUserJobService.deleteAddUserHistory();
+                addUserJobService.processDailyOrders();
+            } else {
+                throw new OptimisticLockException("任务已经在运行中，请稍后再试!");
+            }
+            return ResponseBo.ok();
+        } catch (Exception e) {
+            log.error("企业微信拉新自动处理订单出错，错误原因为{}", e);
+            return ResponseBo.error(e.getMessage());
+        } finally {
+            processOrderLock.unlock();
+        }
     }
 }
