@@ -77,7 +77,7 @@ public class AddUserTriggerController extends BaseController {
     public ResponseBo deleteTask(@RequestParam String id) {
         AddUserHead addUserHead = addUserTriggerService.getHeadById(Long.parseLong(id));
         if (null == addUserHead || !"edit".equals(addUserHead.getTaskStatus())) {
-            return ResponseBo.error("仅有待计划的任务支持删除！");
+            return ResponseBo.error("仅有计划中的任务支持删除！");
         } else {
             addUserTriggerService.deleteTask(id);
             return ResponseBo.ok();
@@ -143,20 +143,6 @@ public class AddUserTriggerController extends BaseController {
         return ResponseBo.okWithData(null, addUserTriggerService.geRegionData());
     }
 
-
-    /**
-     * 获取默认的转化率、及发送人数
-     */
-    @RequestMapping("/getTriggerParam")
-    public ResponseBo getTriggerParam() {
-        QywxParam qywxParam=qywxParamService.getQywxParam();
-//        int triggerNum=qywxParam.getTriggerNum(); //发送人数
-//        double addRate=qywxParam.getDailyAddRate(); //转化率
-//        int version=qywxParam.getVersion();
-//        int addNum=qywxParam.getDailyAddNum();  //当前企业微信每日加人上限
-        return ResponseBo.okWithData(null,qywxParam);
-    }
-
     /**
      * addNum:当前企业微信每日加人上限
      * 更新转化率
@@ -187,6 +173,4 @@ public class AddUserTriggerController extends BaseController {
         }
 
     }
-
-
 }

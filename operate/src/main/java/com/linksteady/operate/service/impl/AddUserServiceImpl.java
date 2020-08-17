@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.dao.AddUserMapper;
 import com.linksteady.operate.domain.AddUserHead;
 import com.linksteady.operate.domain.AddUserSchedule;
@@ -325,9 +326,12 @@ public class AddUserServiceImpl implements AddUserService {
     }
 
     @Override
+    public List<String> getStatusList() {
+        return addUserMapper.getStatusList();
+    }
+
+    @Override
     public AddUserHead getHeadById(long id) {
         return addUserMapper.getHeadById(id);
     }
-
-
 }

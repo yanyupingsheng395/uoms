@@ -226,7 +226,7 @@ function saveData() {
                         });
                         head_id = r.data['id'];
                     }else {
-                        $MB.n_danger("保存失败！");
+                        $MB.n_warning(r.msg);
                     }
                     $MB.loadingDesc('hide');
                 });

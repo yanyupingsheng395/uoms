@@ -122,6 +122,12 @@ public interface AddUserMapper {
      * 查看任务的执行计划数
      */
     int getScheduleCount(long headId);
+
+    /**
+     * 获取所有任务的状态列表
+     * @return
+     */
+    List<String> getStatusList();
 }
 
 

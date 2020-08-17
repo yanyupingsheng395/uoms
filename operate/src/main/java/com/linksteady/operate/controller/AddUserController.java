@@ -46,12 +46,18 @@ public class AddUserController extends BaseController {
      */
     @RequestMapping("/saveData")
     public ResponseBo saveData(AddUserHead addUserHead) {
-        addUserHead.setInsertDt(new Date());
-        addUserHead.setInsertBy(getCurrentUser().getUsername());
-        addUserHead.setUpdateDt(new Date());
-        addUserHead.setUpdateBy(getCurrentUser().getUsername());
-        addUserService.saveData(addUserHead);
-        return ResponseBo.okWithData(null, addUserService.getHeadById(addUserHead.getId()));
+        List<String> statusList = addUserService.getStatusList();
+        long doingCnt = statusList.stream().filter(x -> x.equalsIgnoreCase("doing")).count();
+        if(doingCnt > 0) {
+            return ResponseBo.error("当前有任务正在执行中，无法保存新记录！");
+        }else {
+            addUserHead.setInsertDt(new Date());
+            addUserHead.setInsertBy(getCurrentUser().getUsername());
+            addUserHead.setUpdateDt(new Date());
+            addUserHead.setUpdateBy(getCurrentUser().getUsername());
+            addUserService.saveData(addUserHead);
+            return ResponseBo.okWithData(null, addUserService.getHeadById(addUserHead.getId()));
+        }
     }
 
     /**
@@ -64,7 +70,7 @@ public class AddUserController extends BaseController {
     public ResponseBo deleteTask(@RequestParam String id) {
         AddUserHead addUserHead = addUserService.getHeadById(Long.parseLong(id));
         if (null == addUserHead || !"edit".equals(addUserHead.getTaskStatus())) {
-            return ResponseBo.error("仅有待计划的任务支持删除！");
+            return ResponseBo.error("仅有计划中的任务支持删除！");
         } else {
             addUserService.deleteTask(id);
             return ResponseBo.ok();
