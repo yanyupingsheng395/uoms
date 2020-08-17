@@ -213,7 +213,7 @@
         from uo_op_push_list_large as t4
         where id = t4.source_id
         and t4.source_code = 'ADDUSER'
-        and uo_qywx_add_user_list.insert_dt::date>=(current_date-3)
+        and uo_qywx_trigger_list.insert_dt::date>=(current_date-3)
     </update>
 
     <update id="updateScheduleToDone">

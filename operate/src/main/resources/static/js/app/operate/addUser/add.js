@@ -184,13 +184,17 @@ function saveData() {
     if(validStep1Data('N')) {
         var taskName = $("input[name='taskName']").val();
         var sendType = $("input[name='sendType']:checked").val();
-        var sourceId = selected_source_code;
-        var sourceName = selected_source_name;
+        var sourceId = selected_source_code.join(",");
+        var sourceName = selected_source_name.join(",");
         var regionId = selected_city_code.join(",");
         var regionName = selected_city_name.join(",");
+        var currentDailyUserCnt = $('input[name="dailyUserCnt"]').val();
+        var currentDailyApplyRate = $('input[name="dailyApplyRate"]').val();
         if(sendType === '0') {
             sourceId = '';
+            sourceName = '';
             regionId = '';
+            regionName = '';
         }
         $MB.confirm({
             title: '提示:',
@@ -198,13 +202,15 @@ function saveData() {
         }, function () {
             //打开遮罩层
             $MB.loadingDesc('show', '保存中，请稍候...');
+            console.log(sourceId);
+            console.log(sourceName);
             $.post("/addUser/saveData",{taskName:taskName, sendType: sendType, sourceId: sourceId,
-                    regionId: regionId, sourceName: sourceName, regionName: regionName},
+                    regionId: regionId, sourceName: sourceName, regionName: regionName, dailyUserCnt: currentDailyUserCnt,
+                    dailyApplyRate:currentDailyApplyRate},
                 function (r) {
                     if(r.code === 200) {
                         $MB.n_success("保存成功！");
-                        $("#sendUserDataDiv").attr("style", "display:block;");
-                        $("#saveBasicBtn").attr("style", "display:none;");
+                        $("#calculateData").attr("style", "display:block;");
                         $("input[name='taskName']").attr("disabled", "disabled").attr("readOnly", "readOnly");
                         $("input[name='sendType']").attr("disabled", "disabled").attr("readOnly", "readOnly");
                         $("input[name='dailyUserCnt']").val(r.data['dailyUserCnt']);
@@ -214,6 +220,10 @@ function saveData() {
                         $("input[name='dailyAddUserCnt']").val(r.data['dailyAddUserCnt']);
                         $("input[name='dailyWaitDays']").val(r.data['dailyWaitDays']);
                         $("input[name='dailyAddTotal']").val(r.data['dailyAddTotal']);
+                        $("span[name='totalUserCnt']").text(r.data['dailyAddTotal']);
+                        $("#sourceDiv").find("button").each(function () {
+                            $(this).removeAttr("onclick");
+                        });
                         head_id = r.data['id'];
                     }else {
                         $MB.n_danger("保存失败！");
@@ -235,36 +245,6 @@ function userDataChange(dom, idx) {
 }
 
 /**
- * 调整参数保存
- */
-function saveDailyUserData() {
-    var currentDailyUserCnt = $('input[name="dailyUserCnt"]').val();
-    var currentDailyApplyRate = $('input[name="dailyApplyRate"]').val();
-    //判断headId是否为空
-    if(null==head_id||head_id == undefined || head_id == '')
-    {
-        $MB.n_warning("请先完成任务的保存！");
-        return false;
-    }
-
-    $.get("/addUser/saveDailyUserData", {headId: head_id, dailyUserCnt:currentDailyUserCnt, dailyApplyRate:currentDailyApplyRate}, function (r) {
-        if(r.code === 200) {
-            $("#saveDailyUserBtn").attr("style", "display:none;");
-            $("input[name='dailyApplyRate']").val(r.data['dailyApplyRate']);
-            $("input[name='dailyAddUserCnt']").val(r.data['dailyAddUserCnt']);
-            $("input[name='dailyWaitDays']").val(r.data['dailyWaitDays']);
-            $MB.n_success("更新成功！");
-            //隐藏更新按钮
-            $("#saveDailyUserBtn").attr("style", "display:none;");
-            upgradeFlag='N';
-        }else
-        {
-            $MB.n_danger(r.msg);
-        }
-    });
-}
-
-/**
  * 完成对数据的校验(步骤1)
  * @param stepIndex
  * @returns {boolean}
@@ -274,7 +254,7 @@ function validStep1Data(flag) {
     {
         let sendType = $("input[name='sendType']:checked").val();
         if(sendType === '1') {
-            if(selected_city_code.length == 0 && selected_source_code === null) {
+            if(selected_city_code.length == 0 && selected_source_code.length == 0) {
                 $MB.n_warning("请至少选择一组条件！");
                 return false;
             }
@@ -384,7 +364,8 @@ function getSource() {
         if(opType === 'update') {
             var code = "";
             r.data.forEach((v, k)=>{
-                if(v['name'] === sourceName) {
+                var sourceNameArr = sourceName.split(",");
+                if(sourceNameArr.indexOf(v['name']) > -1) {
                     code += "<button type=\"button\" \n" +
                         "class=\"btn btn-round btn-sm btn-info m-t-5\">"+v['name']+"\n" +
                         "</button>&nbsp;";
@@ -400,18 +381,17 @@ function getSource() {
     });
 }
 
-var selected_source_code = null;
-var selected_source_name = null;
+var selected_source_code = [];
+var selected_source_name = [];
 function sourceClick(dom, id, name) {
     if($(dom).hasClass('btn-info')) {
-        selected_source_code = null;
-        selected_source_name = null;
+        selected_source_code.splice(selected_source_code.indexOf(id), 1);
+        selected_source_name.splice(selected_source_name.indexOf(name), 1);
         $(dom).removeClass('btn-info').addClass('btn-secondary');
     }else {
-        selected_source_code = id;
-        selected_source_name = name;
+        selected_source_code.push(id);
+        selected_source_name.push(name);
         $(dom).addClass('btn-info').removeClass('btn-secondary');
-        $(dom).siblings().removeClass('btn-info').addClass('btn-secondary');
     }
 }
 
@@ -486,6 +466,8 @@ function updateSmsContent() {
             contactWayId: $("#qrId").val(), contactWayUrl: $("#qrCode").val()}, function (r) {
             if(r.code == 200) {
                 $MB.n_success("任务消息编辑完成！");
+            }else{
+                $MB.n_warning(r.msg);
             }
         });
     }

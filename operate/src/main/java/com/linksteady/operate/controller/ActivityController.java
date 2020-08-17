@@ -405,10 +405,10 @@ public class ActivityController {
         int pageNum = count % pageSize == 0 ? count / pageSize : (count / pageSize) + 1;
         DecimalFormat df = new DecimalFormat("#.#");
         for (int i = 0; i < pageNum; i++) {
-            int idx = i;
+            int finalI = i;
             tmp.add(() -> {
                 int limit = pageSize;
-                int offset = pageNum*pageSize;
+                int offset = finalI * pageSize;
                 List<ActivityProduct> activityProductListPage = activityProductService.getActivityProductListPage(limit, offset, headId, "", "", "", activityStage, activityType);
                 activityProductListPage.stream().forEach(x->{
                     if(activityType.equalsIgnoreCase("NOTIFY")) {
