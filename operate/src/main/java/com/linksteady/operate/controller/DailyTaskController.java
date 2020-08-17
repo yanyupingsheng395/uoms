@@ -318,8 +318,8 @@ public class DailyTaskController {
         for (int i = 0; i < pageNum; i++) {
             int idx = i;
             tmp.add(() -> {
-                int limit = pageNum*pageSize;
-                int offset = pageSize;
+                int limit =pageSize ;
+                int offset = pageNum*pageSize;
                 return dailyService.getDailyPersonalEffect(new DailyPersonalVO(), limit, offset, headId);
             });
         }

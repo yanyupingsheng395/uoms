@@ -126,7 +126,7 @@ public class ActivityPushServiceImpl implements ActivityPushService {
         //判断如果条数大于400 则进行分页
         if(pushUserCount<=pageSize)
         {
-            List<ActivityDetail> list = activityPushMapper.getPushList(1,pushUserCount,planId);
+            List<ActivityDetail> list = activityPushMapper.getPushList(pushUserCount,0,planId);
             //填充模板 生成文案
             List<ActivityContentVO> targetList= null;
             try {
@@ -165,7 +165,7 @@ public class ActivityPushServiceImpl implements ActivityPushService {
                 //生成线程对象列表
                 for(int i=0;i<page;i++)
                 {
-                    taskList.add(new TransActivityContentThread(planId,i*pageSize+1,(i+1)*pageSize,templateMap));
+                    taskList.add(new TransActivityContentThread(planId,pageSize,i*pageSize,templateMap));
                 }
 
                 log.info("活动运营转换文案一共需要{}个线程来处理",taskList.size());

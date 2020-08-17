@@ -407,8 +407,8 @@ public class ActivityController {
         for (int i = 0; i < pageNum; i++) {
             int idx = i;
             tmp.add(() -> {
-                int limit = pageNum*pageSize;
-                int offset = pageSize;
+                int limit = pageSize;
+                int offset = pageNum*pageSize;
                 List<ActivityProduct> activityProductListPage = activityProductService.getActivityProductListPage(limit, offset, headId, "", "", "", activityStage, activityType);
                 activityProductListPage.stream().forEach(x->{
                     if(activityType.equalsIgnoreCase("NOTIFY")) {

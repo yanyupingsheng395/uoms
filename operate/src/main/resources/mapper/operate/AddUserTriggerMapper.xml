@@ -35,6 +35,7 @@
         <result column="actual_apply_num" jdbcType="DECIMAL" property="actualApplyNum"/>
         <result column="schedule_date" jdbcType="TIMESTAMP" property="scheduleDate"/>
         <result column="remain_user_cnt" jdbcType="DECIMAL" property="remainUserCnt"/>
+        <result column="sms_content" jdbcType="VARCHAR" property="smsContent"/>
 
         <result column="source_id" jdbcType="VARCHAR" property="sourceId"/>
         <result column="source_name" jdbcType="VARCHAR" property="sourceName"/>
@@ -48,12 +49,15 @@
     </resultMap>
 
     <resultMap id="triggerQueueMap" type="com.linksteady.operate.domain.AddUserTriggerQueue">
+        <result column="queue_id" jdbcType="DECIMAL" property="queueId"/>
         <result column="order_id" jdbcType="DECIMAL" property="orderId"/>
         <result column="user_id" jdbcType="DECIMAL" property="userId"/>
         <result column="order_dt" jdbcType="TIMESTAMP" property="orderDt"/>
         <result column="mobile" jdbcType="VARCHAR" property="mobile"/>
         <result column="source_name" jdbcType="VARCHAR" property="sourceName"/>
         <result column="product_name" jdbcType="VARCHAR" property="productName"/>
+        <result column="source_id" jdbcType="VARCHAR" property="sourceId"/>
+        <result column="region_id" jdbcType="VARCHAR" property="regionId"/>
     </resultMap>
 
     <select id="getHeadCount" resultType="int">
@@ -141,7 +145,11 @@
                 schedule_date,
                 apply_pass_num,
                 apply_success_num,
-                actual_apply_num
+                actual_apply_num,
+                source_id,
+                source_name,
+                region_id,
+                region_name
        ) values(
                 #{headId},
                 #{applyNum},
@@ -161,7 +169,11 @@
                 #{scheduleDate},
                 #{applyPassNum},
                 #{applySuccessNum},
-                #{actualApplyNum}
+                #{actualApplyNum},
+                #{sourceId},
+                #{sourceName},
+                #{regionId},
+                #{regionName}
        )
     </insert>
 
@@ -315,7 +327,7 @@
                 ROW_NUMBER() OVER (partition BY w_users.mobile ORDER BY w_order_details.price desc) rn
             from
                 w_order_details join w_orders on w_order_details.order_id=w_orders.id
-            and w_order_details.order_dt::timestamp&lt;= timestamp '2020-12-12 08:21:29'
+            and w_order_details.order_dt::timestamp &gt;= #{orderDt}::timestamp
             and w_orders.valid_status='1'
             join w_users on w_orders.user_id=w_users.id
             and w_users.valid_status='1'
@@ -344,8 +356,9 @@
                 #{item.orderDt},
                 #{item.sourceName},
                 #{item.productName},
-                now())  on conflict (mobile) do nothing
+                now())
         </foreach>
+        on conflict (mobile) do nothing
     </insert>
 
     <select id="getTriggerQueueInfo" resultType="map">
@@ -364,6 +377,7 @@
 
     <select id="getTriggerQueueData" resultMap="triggerQueueMap">
         select
+                queue_id,
                 order_id,
                 user_id,
                 mobile,
@@ -371,8 +385,7 @@
                 source_name,
                 product_name,
                 insert_dt
-        from uo_qywx_trigger_user_queue
-        where queue_id&lt;= #{queueId} order by queue_id asc limit #{limit} offset #{offset}
+        from uo_qywx_trigger_user_queue where queue_id&lt;= #{queueId} order by queue_id asc limit #{limit} offset #{offset}
     </select>
 
     <select id="getStatus" resultType="string">
