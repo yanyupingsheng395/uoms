@@ -420,6 +420,8 @@ public class PageController extends BaseController {
      */
     @RequestMapping("/addUser/add")
     public String addUserAdd(Model model) {
+        QywxParam qywxParam=qywxParamService.getQywxParam();
+        model.addAttribute("qywxParam", qywxParam);
         SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
         model.addAttribute("sourceConfig",sourceConfigVO);
         model.addAttribute("opType", "save");
@@ -539,9 +541,6 @@ public class PageController extends BaseController {
         if(null==addUserHead||"abort".equals(addUserHead.getTaskStatus()))
         {
             model.addAttribute("msg","已终止的任务不允许被编辑！");
-            return "operate/addUserTrigger/list";
-        }else if (!("edit".equalsIgnoreCase(addUserHead.getTaskStatus()) || "stop".equalsIgnoreCase(addUserHead.getTaskStatus()))) {
-            model.addAttribute("msg","该任务当前状态不允许被编辑！");
             return "operate/addUserTrigger/list";
         } else {
             SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);

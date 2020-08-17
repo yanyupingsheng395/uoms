@@ -177,8 +177,8 @@ function saveData() {
     if (validStep1Data( 'N' )) {
         var taskName = $( "input[name='taskName']" ).val();
         var sendType = $( "input[name='sendType']:checked" ).val();
-        var sourceId = selected_source_code;
-        var sourceName = selected_source_name;
+        var sourceId = selected_source_code.join(",");
+        var sourceName = selected_source_name.join(",");
         var regionId = selected_city_code.join( "," );
         var regionName = selected_city_name.join( "," );
         if (sendType === '0') {
@@ -221,7 +221,7 @@ function validStep1Data(flag) {
     if (opType === 'save') {
         let sendType = $( "input[name='sendType']:checked" ).val();
         if (sendType === '1') {
-            if (selected_city_code.length == 0 && selected_source_code === null) {
+            if (selected_city_code.length == 0 && selected_source_code.length == 0) {
                 $MB.n_warning( "请至少选择一组条件！" );
                 return false;
             }
@@ -364,7 +364,8 @@ function getSource() {
         if (opType === 'update') {
             var code = "";
             r.data.forEach( (v, k) => {
-                if (v['name'] === sourceName) {
+                var sourceNameArr = sourceName.split(",");
+                if (sourceNameArr.indexOf(v['name']) > -1) {
                     code += "<button type=\"button\" \n" +
                         "class=\"btn btn-round btn-sm btn-info m-t-5\">" + v['name'] + "\n" +
                         "</button>&nbsp;";
@@ -380,19 +381,17 @@ function getSource() {
     } );
 }
 
-var selected_source_code = null;
-var selected_source_name = null;
-
+var selected_source_code = [];
+var selected_source_name = [];
 function sourceClick(dom, id, name) {
-    if ($( dom ).hasClass( 'btn-info' )) {
-        selected_source_code = null;
-        selected_source_name = null;
-        $( dom ).removeClass( 'btn-info' ).addClass( 'btn-secondary' );
-    } else {
-        selected_source_code = id;
-        selected_source_name = name;
-        $( dom ).addClass( 'btn-info' ).removeClass( 'btn-secondary' );
-        $( dom ).siblings().removeClass( 'btn-info' ).addClass( 'btn-secondary' );
+    if($(dom).hasClass('btn-info')) {
+        selected_source_code.splice(selected_source_code.indexOf(id), 1);
+        selected_source_name.splice(selected_source_name.indexOf(name), 1);
+        $(dom).removeClass('btn-info').addClass('btn-secondary');
+    }else {
+        selected_source_code.push(id);
+        selected_source_name.push(name);
+        $(dom).addClass('btn-info').removeClass('btn-secondary');
     }
 }
 

@@ -56,8 +56,8 @@
         <selectKey resultType="java.lang.Integer" order="BEFORE" keyProperty="id">
             select nextval('qywx_add_user_header_id_seq'::regclass)
         </selectKey>
-        insert into uo_qywx_add_user_header(id, send_type, task_status, task_name, region_id, region_name, source_id, source_name)
-        values (#{id}, #{sendType}, 'edit', #{taskName}, #{regionId}, #{regionName}, #{sourceId}, #{sourceName})
+        insert into uo_qywx_add_user_header(id, send_type, task_status, task_name, region_id, region_name, source_id, source_name, daily_user_cnt, daily_apply_rate)
+        values (#{id}, #{sendType}, 'edit', #{taskName}, #{regionId}, #{regionName}, #{sourceId}, #{sourceName}, #{dailyUserCnt}, #{dailyApplyRate})
     </insert>
 
     <delete id="deleteHead">

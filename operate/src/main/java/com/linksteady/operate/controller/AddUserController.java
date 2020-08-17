@@ -82,9 +82,14 @@ public class AddUserController extends BaseController {
     }
 
     @RequestMapping("/updateSmsContentAndContactWay")
-    public ResponseBo updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId, String contactWayUrl) {
-        addUserService.updateSmsContentAndContactWay(headId, smsContent, contactWayId, contactWayUrl);
-        return ResponseBo.ok();
+    public synchronized ResponseBo updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId, String contactWayUrl) {
+        String status = addUserService.getHeadById(Long.parseLong(headId)).getTaskStatus();
+        if("edit".equalsIgnoreCase(status)) {
+            addUserService.updateSmsContentAndContactWay(headId, smsContent, contactWayId, contactWayUrl);
+            return ResponseBo.ok();
+        }else {
+            return ResponseBo.error("该记录当前状态不支持编辑操作！");
+        }
     }
 
     /**
