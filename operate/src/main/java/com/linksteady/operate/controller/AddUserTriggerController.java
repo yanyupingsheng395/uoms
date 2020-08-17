@@ -83,7 +83,7 @@ public class AddUserTriggerController extends BaseController {
     public ResponseBo deleteTask(@RequestParam String id) {
         AddUserHead addUserHead = addUserTriggerService.getHeadById(Long.parseLong(id));
         if (null == addUserHead || !"edit".equals(addUserHead.getTaskStatus())) {
-            return ResponseBo.error("仅有待计划的任务支持删除！");
+            return ResponseBo.error("仅有计划中的任务支持删除！");
         } else {
             addUserTriggerService.deleteTask(id);
             return ResponseBo.ok();

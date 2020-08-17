@@ -51,4 +51,6 @@ public interface AddUserService {
     int getScheduleCount(long headId);
 
     Map<Long, Object> geRegionData();
+
+    List<String> getStatusList();
 }
