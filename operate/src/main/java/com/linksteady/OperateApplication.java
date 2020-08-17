@@ -9,12 +9,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
 
 @SpringBootApplication
 @EnableTransactionManagement
+@EnableAspectJAutoProxy(exposeProxy = true)
 @MapperScan("com.linksteady.**.dao")
 @EnableConfigurationProperties({SystemProperties.class})
 @EnableCaching

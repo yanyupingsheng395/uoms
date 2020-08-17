@@ -34,7 +34,18 @@ public interface AddUserJobService {
 
 
     /**
+     * 处理排队表中的数据
+     */
+    void processQueueDataToUserList(long recordNum,long queueId,AddUserSchedule addUserSchedule) throws Exception;
+
+    /**
      * 删除超过N天的拉新推送信息
      */
     void deleteAddUserHistory();
+
+    /**
+     * 手机号放入拉新历史中
+     * @param phoneNum
+     */
+    void insertToHistory(String phoneNum) throws Exception;
 }
