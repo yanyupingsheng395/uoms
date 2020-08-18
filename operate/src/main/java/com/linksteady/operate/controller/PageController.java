@@ -559,7 +559,7 @@ public class PageController extends BaseController {
         return "operate/contactWay/list";
     }
 
-    @RequestMapping("/addUserMonitor")
+    @RequestMapping("/qywxAddUserMonitor")
     public String addUserMonitor() {
         return "operate/addUserMonitor/monitor";
     }

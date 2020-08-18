@@ -17,6 +17,7 @@ public class QywxParam {
      * 企业微信加人转化率
      */
     private double dailyAddRate;
+    private String dailyAddRateStr;
 
     /**
      * 企业微信每日推送总人数

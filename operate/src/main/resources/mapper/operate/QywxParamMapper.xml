@@ -3,7 +3,8 @@
 <mapper namespace="com.linksteady.operate.dao.QywxParamMapper">
     <resultMap id="paramMap" type="com.linksteady.operate.domain.QywxParam">
         <result column="daily_add_num" jdbcType="DECIMAL" property="dailyAddNum"/>
-        <result column="daily_add_rate" jdbcType="DECIMAL" property="dailyAddRate"/>
+        <result column="daily_add_rate" jdbcType="DOUBLE" property="dailyAddRate"/>
+        <result column="daily_add_rate" jdbcType="VARCHAR" property="dailyAddRateStr"/>
         <result column="daily_apply_num" jdbcType="DECIMAL" property="dailyApplyNum"/>
         <result column="trigger_num" jdbcType="DECIMAL" property="triggerNum"/>
         <result column="active_num" jdbcType="DECIMAL" property="activeNum"/>

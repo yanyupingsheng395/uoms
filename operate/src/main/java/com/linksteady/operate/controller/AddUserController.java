@@ -135,5 +135,4 @@ public class AddUserController extends BaseController {
     public ResponseBo geRegionData() {
         return ResponseBo.okWithData(null, addUserService.geRegionData());
     }
-
 }
