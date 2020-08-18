@@ -372,7 +372,10 @@
     </delete>
 
     <update id="updateScheduleRemainUserCnt">
-        update uo_qywx_trigger_schedule set remain_user_cnt=remain_user_cnt-#{costSlots} where schedule_id=#{scheduleId}
+        update uo_qywx_trigger_schedule
+        set remain_user_cnt=remain_user_cnt-#{costSlots} ,
+            actual_apply_num=actual_apply_num+#{actualApplyNum}
+        where schedule_id=#{scheduleId}
     </update>
 
     <select id="getTriggerQueueData" resultMap="triggerQueueMap">

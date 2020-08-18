@@ -15,12 +15,16 @@
         <result column="last_sync_order_times" jdbcType="DECIMAL" property="lastSyncOrderTimes"/>
     </resultMap>
 
+    <resultMap id="addUserHistoryMap" type="com.linksteady.operate.vo.AddUserHistoryVO">
+        <result column="phone_num" jdbcType="VARCHAR" property="phoneNum"/>
+    </resultMap>
+
     <select id="getQywxParam" resultMap="paramMap">
         select daily_add_num,
                daily_add_rate,
                daily_apply_num,
                trigger_num,
-               (daily_apply_num - trigger_num) activeNum,
+               (daily_apply_num - trigger_num) active_num,
                last_update_by,
                last_update_dt,
                version,
@@ -60,11 +64,24 @@
 
     <insert id="insertAddUserHistory">
         insert into uo_qywx_add_user_history(phone_num,insert_dt)
-        values(#{phone_num},now());
+        values(#{phone_num},now()) on conflict (phone_num) do nothing
     </insert>
 
     <delete id="deleteAddUserHistory">
         delete from uo_qywx_add_user_history where current_date-insert_dt::date &gt;=#{diffDays}
     </delete>
+
+    <select id="getAddUserHistory" resultMap="addUserHistoryMap">
+        select distinct phone_num from uo_qywx_add_user_history where current_date-insert_dt::date &gt;=#{diffDays}
+    </select>
+
+    <insert id="insertAddUserListHistory">
+        insert into uo_qywx_add_user_history(phone_num,insert_dt) values
+        <foreach collection="list" item="item" index="index"
+                 separator=",">
+            (#{item},now())
+        </foreach>
+        on conflict (phone_num) do nothing
+    </insert>
 
 </mapper>

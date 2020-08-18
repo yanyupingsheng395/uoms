@@ -220,7 +220,7 @@ function saveData() {
                         $("input[name='dailyAddUserCnt']").val(r.data['dailyAddUserCnt']);
                         $("input[name='dailyWaitDays']").val(r.data['dailyWaitDays']);
                         $("input[name='dailyAddTotal']").val(r.data['dailyAddTotal']);
-                        $('#totalUserCnt').text(r.data['dailyAddTotal']);
+                        $('#totalUserCnt').text(r.data['waitUserCnt']);
                         $("#sourceDiv").find("button").each(function () {
                             $(this).removeAttr("onclick");
                         });

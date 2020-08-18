@@ -32,6 +32,20 @@
         <result column="daily_add_rate" jdbcType="DECIMAL" property="dailyAddRate"/>
     </resultMap>
 
+    <resultMap id="addUserMap" type="com.linksteady.operate.domain.AddUser">
+        <result column="id" jdbcType="DECIMAL" property="id"/>
+        <result column="head_id" jdbcType="DECIMAL" property="headId"/>
+        <result column="user_id" jdbcType="DECIMAL" property="userId"/>
+        <result column="phone_num" jdbcType="VARCHAR" property="phoneNum"/>
+        <result column="is_push" jdbcType="DECIMAL" property="isPush"/>
+        <result column="push_status" jdbcType="VARCHAR" property="pushStatus"/>
+        <result column="insert_dt" jdbcType="TIMESTAMP" property="insertDt"/>
+        <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt"/>
+        <result column="sms_content" jdbcType="VARCHAR" property="smsContent"/>
+        <result column="schedule_id" jdbcType="DECIMAL" property="scheduleId"/>
+        <result column="state" jdbcType="VARCHAR" property="state"/>
+    </resultMap>
+
     <select id="getHeadCount" resultType="int">
         select count(1) from uo_qywx_add_user_header
     </select>
@@ -79,7 +93,7 @@
        )
        select
           #{headId},id,mobile,'0','X',now(),now()
-          from w_users where valid_status=1
+          from w_users where valid_status=1 and qywx_mapping_flag='N'
             <if test="whereInfo != null and whereInfo != ''">
                 ${whereInfo}
             </if>
@@ -89,15 +103,11 @@
          select count(*) from uo_qywx_add_user_list where head_id= #{headId}
     </select>
 
-    <select id="getQywxParam" resultMap="paramMap">
-         select daily_add_num,daily_add_rate from uo_qywx_param limit 1
-    </select>
-
     <update id="updatePushParameter">
         update uo_qywx_add_user_header set
           apply_user_cnt=#{totalNum},
           wait_user_cnt=#{totalNum},
-          daily_user_cnt=#{defaultAddCount},
+          daily_user_cnt=#{activeNum},
           daily_apply_rate=#{defaultApplyRate},
           daily_add_user_cnt=#{dailyAddNum},
           daily_wait_days=#{waitDays},
@@ -163,14 +173,6 @@
        )
     </insert>
 
-    <update id="updateAddUserList">
-        update uo_qywx_add_user_list set schedule_id=#{scheduleId} where id in (
-          select id from uo_qywx_add_user_list
-          where head_id=#{headId} and schedule_id is null  order by id asc limit #{targetNum}
-        )
-
-    </update>
-
     <update id="updateHeadWaitUserCnt">
            update uo_qywx_add_user_header set
              wait_user_cnt=#{afterWaitNum},
@@ -181,31 +183,6 @@
            where
              id=#{headId}
     </update>
-
-    <insert id="pushToPushListLarge">
-        INSERT INTO uo_op_push_list_large(
-            PUSH_CONTENT,
-            PUSH_STATUS,
-            SOURCE_CODE,
-            SOURCE_ID,
-            USER_PHONE,
-            IS_PUSH,
-            PUSH_SCHEDULING_DATE
-        ) select
-            uo_qywx_add_user_schedule.sms_content,
-            'P',
-            'ADDUSER',
-            uo_qywx_add_user_list.id,
-            uo_qywx_add_user_list.phone_num,
-            '0',
-            #{scheduleDate}
-        from uo_qywx_add_user_list join uo_qywx_add_user_schedule
-           on uo_qywx_add_user_list.schedule_id=uo_qywx_add_user_schedule.schedule_id
-          and uo_qywx_add_user_list.head_id=uo_qywx_add_user_schedule.head_id
-          and uo_qywx_add_user_schedule.schedule_id=#{scheduleId}
-          and uo_qywx_add_user_schedule.head_id=#{headId}
-          and uo_qywx_add_user_list.is_push='0'
-    </insert>
 
     <update id="updatePushResult">
         update uo_qywx_add_user_list set
@@ -260,4 +237,41 @@
     <select id="getStatusList" resultType="string">
         select task_status from uo_qywx_add_user_header
     </select>
+
+    <select id="getUnProcessAddUserList" resultMap="addUserMap">
+       select
+           id,head_id,user_id,phone_num,is_push,push_status,insert_dt,update_dt,sms_content,schedule_id,state
+       from uo_qywx_add_user_list where head_id=#{headId} and schedule_id is null order by id asc limit #{limit}
+    </select>
+
+    <update id="updateAddUserList">
+        update uo_qywx_add_user_list set schedule_id=#{scheduleId},state=#{state},sms_content=#{smsContent} where id in (
+        <foreach collection="addUserList" item="item" index="index"
+                 separator=",">
+            #{item.id}
+        </foreach>
+        )
+    </update>
+
+    <insert id="pushToPushListLarge">
+        INSERT INTO uo_op_push_list_large(
+            PUSH_CONTENT,
+            PUSH_STATUS,
+            SOURCE_CODE,
+            SOURCE_ID,
+            USER_PHONE,
+            IS_PUSH,
+            PUSH_SCHEDULING_DATE
+        ) values
+        <foreach collection="addUserList" item="item" index="index"
+                 separator=",">
+            (#{item.smsContent},
+            'P',
+            'ADDUSER',
+            #{item.id},
+            #{item.phoneNum},
+            '0',
+            #{scheduleDate})
+        </foreach>
+    </insert>
 </mapper>

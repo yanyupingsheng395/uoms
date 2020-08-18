@@ -31,8 +31,6 @@ public class AddUserTriggerController extends BaseController {
 
     private final ReentrantLock lock = new ReentrantLock();
 
-    private final ReentrantLock paramLock = new ReentrantLock();
-
     private final ReentrantLock processOrderLock = new ReentrantLock();
 
     @Autowired
@@ -159,36 +157,36 @@ public class AddUserTriggerController extends BaseController {
         return ResponseBo.okWithData(null,qywxParam);
     }
 
-    /**
-     * addNum:当前企业微信每日加人上限
-     * 更新转化率
-     */
-    @PostMapping("/updateQywxParam")
-    public ResponseBo updateQywxParam(int addNum,double addRate,int version) {
-       //todo 对转化率进行校验 addNum>0 addRate>0 且这两个必须是数字
-        try {
-            if (paramLock.tryLock()) {
-
-                //todo 校验当前是否有正在执行的拉新任务
-                QywxParam qywxParam=qywxParamService.updateQywxParam(addNum,addRate,getCurrentUser().getUsername(),version);
-                return ResponseBo.ok(qywxParam);
-            } else {
-                throw new OptimisticLockException("其他用户正在操作，请稍后再试!");
-            }
-        } catch (Exception e) {
-            log.error("修改企业微信参数错误，错误原因为{}", e);
-            if(e instanceof OptimisticLockException)
-            {
-                return ResponseBo.error(e.getMessage());
-            }else
-            {
-                return ResponseBo.error("保存失败！");
-            }
-        } finally {
-            paramLock.unlock();
-        }
-
-    }
+//    /**
+//     * addNum:当前企业微信每日加人上限
+//     * 更新转化率
+//     */
+//    @PostMapping("/updateQywxParam")
+//    public ResponseBo updateQywxParam(int addNum,double addRate,int version) {
+//       //todo 对转化率进行校验 addNum>0 addRate>0 且这两个必须是数字
+//        try {
+//            if (paramLock.tryLock()) {
+//
+//                //todo 校验当前是否有正在执行的拉新任务
+//                QywxParam qywxParam=qywxParamService.updateQywxParam(addNum,addRate,getCurrentUser().getUsername(),version);
+//                return ResponseBo.ok(qywxParam);
+//            } else {
+//                throw new OptimisticLockException("其他用户正在操作，请稍后再试!");
+//            }
+//        } catch (Exception e) {
+//            log.error("修改企业微信参数错误，错误原因为{}", e);
+//            if(e instanceof OptimisticLockException)
+//            {
+//                return ResponseBo.error(e.getMessage());
+//            }else
+//            {
+//                return ResponseBo.error("保存失败！");
+//            }
+//        } finally {
+//            paramLock.unlock();
+//        }
+//
+//    }
 
     /**
      * 获取默认的转化率、及发送人数

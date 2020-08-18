@@ -255,12 +255,6 @@ public class AddUserJobServiceImpl implements AddUserJobService {
 
                //处理排队表中的数据
                processQueueDataToUserList(recordNum,queueId,addUserSchedule);
-
-               //删除排队表中本次处理完的数据
-               addUserTriggerMapper.deleteTriggerQueue(queueId);
-
-               //更新schedule表中的剩余数量
-               addUserTriggerMapper.updateScheduleRemainUserCnt(addUserSchedule.getScheduleId(),recordNum);
            }else
            {
                log.info("企业微信-主动拉新:本批次排队表中无要处理的数据!");
@@ -288,6 +282,7 @@ public class AddUserJobServiceImpl implements AddUserJobService {
         String smsContent="";
         AddUser addUser=null;
         List<AddUser> adduserList=null;
+        long actualApplyNum=0;
 
         for(int m=0;m<pageNum;m++)
         {
@@ -301,7 +296,7 @@ public class AddUserJobServiceImpl implements AddUserJobService {
                 try {
                     SpringUtils.getAopProxy(this).insertToHistory(addUserTriggerQueue.getMobile());
                 } catch (Exception e) {
-                    log.error("{}写入历史表错误，原因:{}",e);
+                    log.debug("{}写入历史表错误，原因:{}",addUserTriggerQueue.getMobile(),e);
                     continue;
                 }
 
@@ -335,6 +330,7 @@ public class AddUserJobServiceImpl implements AddUserJobService {
                 adduserList.add(addUser);
             }
 
+            actualApplyNum+=adduserList.size();
             //写入推送明细
             if(adduserList.size()>0)
             {
@@ -346,6 +342,14 @@ public class AddUserJobServiceImpl implements AddUserJobService {
             }
 
         }
+
+        //删除排队表中本次处理完的数据
+        addUserTriggerMapper.deleteTriggerQueue(queueId);
+
+        //更新schedule表中的剩余数量
+        addUserTriggerMapper.updateScheduleRemainUserCnt(addUserSchedule.getScheduleId(),recordNum,actualApplyNum);
+
+        //todo 更新header表 apply_user_cnt
     }
 
     /**

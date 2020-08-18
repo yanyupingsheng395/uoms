@@ -94,7 +94,7 @@
     </div>
     <div class="col-md-12 select-table" id="sendUserDataDiv">
         <div class="row">
-            <span class="navbar-page-title">设定推送任务的节奏</span>
+            <span class="navbar-page-title">推送任务的节奏</span>
             <div class="col-md-12">
                 <hr class="hr m-t-0 m-t-5" style="margin-bottom: 5px;">
             </div>
@@ -102,14 +102,14 @@
         <div class="row m-t-5">
             <div class="col-md-12">
                 <h6>
-                    <i class="fa fa-info-circle" style="color: #313944"></i>&nbsp;目前需要推送的用户有 <span
-                        id="totalUserCnt">0</span> 人，考虑到平台对添加好友的限制，请配置用户分批推送；
+                    <i class="fa fa-info-circle" style="color: #313944"></i>&nbsp;目前尚需推送的用户有 <span
+                        id="totalUserCnt">0</span> 人，考虑到平台对添加好友的限制，将会对用户分批推送；
                 </h6>
                 <div style="border: dashed 1px #ccc;padding: 15px;margin-bottom: 5px;" class="m-t-5">
                     <form action="" class="form-inline">
                         <div class="row">
                             <div class="col-md-4">
-                                每日推送人数（人/天）：<input type="text" th:value="${qywxParam.dailyApplyNum}" readonly
+                                每日推送人数（人/天）：<input type="text" th:value="${qywxParam.activeNum}" readonly
                                                    name="dailyUserCnt"
                                                    style=" border: none 0;outline: medium;background: transparent;-webkit-appearance: none;  -moz-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-moz-tap-highlight-color: transparent;border-bottom: 1px solid #ccc;background-color: #eee;">
                             </div>
@@ -141,10 +141,10 @@
                                 </div>
                             </div>
                             <div class="row m-t-10">
-                                <div class="col-md-4">
-                                    预计每日添加好友人数（人/天）：<input name="dailyAddUserCnt" disabled readonly type="text"
-                                                           style="border: none 0;outline: medium;background-color: #eee;-webkit-appearance: none;-moz-appearance:none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-moz-tap-highlight-color:transparent;border-bottom: 1px solid #ccc;"/>
-                                </div>
+<!--                                <div class="col-md-4">-->
+<!--                                    预计每日添加好友人数（人/天）：<input name="dailyAddUserCnt" disabled readonly type="text"-->
+<!--                                                           style="border: none 0;outline: medium;background-color: #eee;-webkit-appearance: none;-moz-appearance:none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-moz-tap-highlight-color:transparent;border-bottom: 1px solid #ccc;"/>-->
+<!--                                </div>-->
                                 <div class="col-md-4">
                                     预计全部推送所需天数（天）：<input name="dailyWaitDays" disabled readonly type="text"
                                                          style=" border: none 0;outline: medium;background-color: #eee;-webkit-appearance: none;  -moz-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-moz-tap-highlight-color: transparent;border-bottom: 1px solid #ccc;"/>
@@ -260,7 +260,7 @@
     </div>
     <div class="col-md-12 select-table">
         <div class="row">
-            <span class="navbar-page-title">设定推送任务的节奏</span>
+            <span class="navbar-page-title">推送任务的节奏</span>
             <div class="col-md-12">
                 <hr class="hr m-t-0 m-t-5" style="margin-bottom: 5px;">
             </div>
@@ -268,8 +268,8 @@
         <div class="row m-t-5">
             <div class="col-md-12">
                 <h6>
-                    <i class="fa fa-info-circle" style="color: #313944"></i>&nbsp;目前需要推送的用户有 <span
-                        data-th-text="${addUserHead.dailyAddTotal}"></span> 人，考虑到平台对添加好友的限制，请配置用户分批推送；
+                    <i class="fa fa-info-circle" style="color: #313944"></i>&nbsp;目前尚需推送的用户有 <span
+                        data-th-text="${addUserHead.waitUserCnt}"></span> 人，考虑到平台对添加好友的限制，将会对用户分批推送；
                 </h6>
                 <div style="border: dashed 1px #ccc;padding: 15px;margin-bottom: 5px;" class="m-t-5">
                     <form action="" class="form-inline">
@@ -306,11 +306,11 @@
                             </div>
                         </div>
                         <div class="row m-t-10">
-                            <div class="col-md-4">
-                                预计每日添加好友人数（人/天）：<input th:value="${addUserHead.dailyAddUserCnt}" name="dailyAddUserCnt"
-                                                       disabled readonly type="text"
-                                                       style="border: none 0;outline: medium;background-color: #eee;-webkit-appearance: none;-moz-appearance:none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-moz-tap-highlight-color:transparent;border-bottom: 1px solid #ccc;"/>
-                            </div>
+<!--                            <div class="col-md-4">-->
+<!--                                预计每日添加好友人数（人/天）：<input th:value="${addUserHead.dailyAddUserCnt}" name="dailyAddUserCnt"-->
+<!--                                                       disabled readonly type="text"-->
+<!--                                                       style="border: none 0;outline: medium;background-color: #eee;-webkit-appearance: none;-moz-appearance:none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);-moz-tap-highlight-color:transparent;border-bottom: 1px solid #ccc;"/>-->
+<!--                            </div>-->
                             <div class="col-md-4">
                                 预计全部推送所需天数（天）：<input th:value="${addUserHead.dailyWaitDays}" name="dailyWaitDays"
                                                      disabled readonly type="text"

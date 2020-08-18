@@ -1,5 +1,6 @@
 package com.linksteady.operate.dao;
 
+import com.linksteady.operate.domain.AddUser;
 import com.linksteady.operate.domain.AddUserHead;
 import com.linksteady.operate.domain.AddUserSchedule;
 import com.linksteady.operate.domain.QywxParam;
@@ -37,14 +38,9 @@ public interface AddUserMapper {
     int getAddUserListCount(@Param("headId") long headId);
 
     /**
-     * 获取企业微信默认的参数
-     */
-    QywxParam getQywxParam();
-
-    /**
      * 更新拉新任务的推送节奏数据
      * totalNum 总人数
-     * defaultAddcount 默认每日添加人数
+     * activeNum 每日推送人数
      * defaultApplyRate 默认转化率
      * dailyAddNum 预计每日添加人数
      * waitDays 预计推送完需要多少天
@@ -53,7 +49,7 @@ public interface AddUserMapper {
     void updatePushParameter(
             long headId,
             int totalNum,
-            int defaultAddCount,
+            int activeNum,
             double defaultApplyRate,
             int dailyAddNum,
             int waitDays,
@@ -75,19 +71,9 @@ public interface AddUserMapper {
     void saveAddUserSchedule(AddUserSchedule addUserSchedule);
 
     /**
-     * 更新推送明细
-     */
-    int updateAddUserList(long headId,long scheduleId,long targetNum);
-
-    /**
      * 更新主记录上的剩余人数
      */
     void updateHeadWaitUserCnt(long headId, long afterWaitNum,long afterFinishNum,String opUserName);
-
-    /**
-     * 更新推送内容到推送计划表
-     */
-    void pushToPushListLarge(long headId, long scheduleId,long scheduleDate);
 
     /**
      * 更新推送结果
@@ -128,6 +114,22 @@ public interface AddUserMapper {
      * @return
      */
     List<String> getStatusList();
+
+    /**
+     * 获得未处理的用户列表
+     */
+    List<AddUser> getUnProcessAddUserList(long headId, long limit);
+
+    /**
+     * 更新推送明细上的scheduleId
+     */
+    int updateAddUserList(long headId,long scheduleId,List<AddUser> addUserList,String state,String smsContent);
+
+    /**
+     * 更新推送内容到推送计划表
+     */
+    void pushToPushListLarge(List<AddUser> addUserList,long scheduleDate);
+
 }
 
 

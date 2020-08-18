@@ -147,9 +147,11 @@ public interface AddUserTriggerMapper {
     void deleteTriggerQueue(long queueId);
 
     /**
-     * 更新计划表中的剩余数量 costSlots 表示本次推送被消耗掉的数量
+     * 更新计划表中的剩余数量、实际推送数量
+     * costSlots 表示本次推送被消耗掉的数量
+     * actualApplyNum 表次本次推送实际推送的数量
      */
-    void updateScheduleRemainUserCnt(long scheduleId,long costSlots);
+    void updateScheduleRemainUserCnt(long scheduleId,long costSlots,long actualApplyNum);
 
     /**
      * 分页获取排队表中的数据

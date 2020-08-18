@@ -55,8 +55,11 @@ public class AddUserController extends BaseController {
             addUserHead.setInsertBy(getCurrentUser().getUsername());
             addUserHead.setUpdateDt(new Date());
             addUserHead.setUpdateBy(getCurrentUser().getUsername());
-            addUserService.saveData(addUserHead);
-            return ResponseBo.okWithData(null, addUserService.getHeadById(addUserHead.getId()));
+            try {
+                return ResponseBo.okWithData(null, addUserService.saveData(addUserHead));
+            } catch (Exception e) {
+                return ResponseBo.error(e.getMessage());
+            }
         }
     }
 

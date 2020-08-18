@@ -5,16 +5,20 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.common.util.SpringUtils;
 import com.linksteady.operate.dao.AddUserMapper;
-import com.linksteady.operate.domain.AddUserHead;
-import com.linksteady.operate.domain.AddUserSchedule;
-import com.linksteady.operate.domain.QywxParam;
+import com.linksteady.operate.dao.QywxContactWayMapper;
+import com.linksteady.operate.dao.QywxParamMapper;
+import com.linksteady.operate.domain.*;
 import com.linksteady.operate.exception.OptimisticLockException;
+import com.linksteady.operate.service.AddUserJobService;
 import com.linksteady.operate.service.AddUserService;
+import com.linksteady.operate.vo.AddUserHistoryVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
@@ -36,6 +40,13 @@ public class AddUserServiceImpl implements AddUserService {
     @Autowired
     private AddUserMapper addUserMapper;
 
+    @Autowired
+    private QywxContactWayMapper qywxContactWayMapper;
+
+    @Autowired
+    QywxParamMapper qywxParamMapper;
+
+
     @Override
     public int getHeadCount() {
         return addUserMapper.getHeadCount();
@@ -52,14 +63,12 @@ public class AddUserServiceImpl implements AddUserService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void saveData(AddUserHead addUserHead) {
+    public AddUserHead saveData(AddUserHead addUserHead) throws Exception{
         addUserHead.setTaskStatus("edit");
         addUserMapper.saveHeadData(addUserHead);
-        try {
-            filterUsers(addUserHead.getId(), addUserHead.getSourceId(), addUserHead.getRegionId());
-        } catch (Exception e) {
-            log.error("计算数据出错", e);
-        }
+        filterUsers(addUserHead.getId(), addUserHead.getSourceId(), addUserHead.getRegionId());
+
+        return addUserMapper.getHeadById(addUserHead.getId());
     }
 
     @Override
@@ -118,17 +127,20 @@ public class AddUserServiceImpl implements AddUserService {
         //推送总人数(重新进行查询)
         count = addUserMapper.getAddUserListCount(headId);
 
-        //获取默认的 每日推送人数 及 推送转化率
-        int defaultAddcount;
-        double defaultApplyRate;
-        QywxParam qywxParam = addUserMapper.getQywxParam();
-        if (null == qywxParam) {
-            defaultAddcount = 2000;
-            defaultApplyRate = 5;
-        } else {
-            defaultAddcount = qywxParam.getDailyAddNum();
-            defaultApplyRate = qywxParam.getDailyAddRate();
+        if(count==0)
+        {
+            throw new Exception("无符合条件的用户,请修改条件重新筛选!");
         }
+
+        //获取默认的 每日推送人数 及 推送转化率
+        QywxParam qywxParam = qywxParamMapper.getQywxParam();
+
+        if(null==qywxParam||qywxParam.getActiveNum()==0)
+        {
+            throw new Exception("尚未为任务配置推送人数限制!");
+        }
+        int activeNum=qywxParam.getActiveNum();
+        double applyRate=qywxParam.getDailyAddRate();
 
 
         int dailyAddNum = 0;
@@ -136,12 +148,12 @@ public class AddUserServiceImpl implements AddUserService {
         int addTotal = 0;
         //计算预计每日添加好友人数  预计全部推送所需天数  预计添加好友总人数
         if (count > 0) {
-            dailyAddNum = (int) Math.floor(defaultAddcount * defaultApplyRate/100);
-            waitDays = count%defaultAddcount==0?count / defaultAddcount:count / defaultAddcount+1;
-            addTotal = (int) Math.floor(defaultApplyRate * count/100);
+            dailyAddNum = (int) Math.floor(activeNum * applyRate/100);
+            waitDays = count%activeNum==0?count / activeNum:(count / activeNum+1);
+            addTotal = (int) Math.floor(applyRate * count/100);
         }
         //更新记录
-        addUserMapper.updatePushParameter(headId, count, defaultAddcount, defaultApplyRate, dailyAddNum, waitDays, addTotal);
+        addUserMapper.updatePushParameter(headId, count, activeNum, applyRate, dailyAddNum, waitDays, addTotal);
     }
 
     /**
@@ -186,11 +198,25 @@ public class AddUserServiceImpl implements AddUserService {
             throw new Exception("当前日期已存在执行中的推送，为避免触发企业微信人数上限，请选择明日再进行推送!");
         }
 
-        //获取计划推送人数
+        if(StringUtils.isEmpty(addUserHead.getSmsContent()))
+        {
+            throw new Exception("当前任务尚未配置文案!");
+        }
+
+        if(null==addUserHead.getContactWayId()||StringUtils.isEmpty(addUserHead.getContactWayUrl()))
+        {
+            throw new Exception("当前任务尚未配置渠道二维码!");
+        }
+
+        //删除推送历史表中超过N天的记录
+        qywxParamMapper.deleteAddUserHistory(7);
+
+        //获取今天预计推送人数
         long dailyUserCnt=addUserHead.getDailyUserCnt();
 
-        //最终待推送的人数，如果剩余>计划，则为计划人数 否则为剩余人数
+        //最终待推送的人数，如果剩余>预计，则为预计人数 否则为剩余人数
         long targetNum=waitUserCnt>dailyUserCnt?dailyUserCnt:waitUserCnt;
+
         //本次推送完后 完成推送的人数
         long finishNum=addUserHead.getDeliveredUserCnt()+targetNum;
 
@@ -202,7 +228,7 @@ public class AddUserServiceImpl implements AddUserService {
         //预计的推送转化率
         addUserSchedule.setApplyRate(addUserHead.getDailyApplyRate());
         //预计本次添加用户人数
-        addUserSchedule.setWaitAddNum((long)Math.floor(targetNum*addUserHead.getDailyApplyRate()));
+        addUserSchedule.setWaitAddNum((long)Math.floor(targetNum*addUserHead.getDailyApplyRate()/100));
         //本次推送后剩余人数
         long afterWaitNum=waitUserCnt-targetNum;
         addUserSchedule.setRemainUserCnt(afterWaitNum);
@@ -210,9 +236,10 @@ public class AddUserServiceImpl implements AddUserService {
         addUserSchedule.setWaitDays(afterWaitNum%addUserHead.getDailyUserCnt()+1);
         //按当前转化率剩余人数预计添加好友数量
         addUserSchedule.setRemainAddNum((long)Math.floor(afterWaitNum*addUserHead.getDailyApplyRate()));
-        addUserSchedule.setContactwayId(addUserHead.getContactWayId());
-        //todo
-        addUserSchedule.setState("");
+
+        QywxContactWay qywxContactWay=qywxContactWayMapper.getContactWayById(addUserHead.getContactWayId());
+        addUserSchedule.setContactwayId(qywxContactWay.getContactWayId());
+        addUserSchedule.setState(qywxContactWay.getState());
         addUserSchedule.setContactwayUrl(addUserHead.getContactWayUrl());
 
         addUserSchedule.setSmsContent(addUserHead.getSmsContent());
@@ -229,21 +256,51 @@ public class AddUserServiceImpl implements AddUserService {
 
         long scheduleId=addUserSchedule.getScheduleId();
 
-        //更新推送明细
-        long updateNum=addUserMapper.updateAddUserList(headId,scheduleId,targetNum);
+        //根据targetNum进行分页
+        int pageSize=100;
+        long pageNum=targetNum%pageSize==0?targetNum/pageSize:(targetNum/pageSize+1);
 
-        if(updateNum!=targetNum)
+        List<AddUser> addUserList=null;
+        List<AddUser> targetAddUserList=null;
+        for(int j=0;j<pageNum;j++)
         {
-           throw new Exception("推送人员数量不足，请检查！");
+            //获取本批次要处理的数据
+            addUserList=addUserMapper.getUnProcessAddUserList(headId,pageSize);
+            //更新这批ID的scheduleId
+            addUserMapper.updateAddUserList(headId,scheduleId,addUserList,addUserSchedule.getState(),addUserSchedule.getSmsContent());
+            //将这批明细放入到短信推送表中去
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
+            long scheduleDate= Long.parseLong(LocalDateTime.now().plusHours(1).format(dateTimeFormatter));
+
+            targetAddUserList=Lists.newArrayList();
+            //获取历史的手机号
+            Map<String,String> addHistory=qywxParamMapper.getAddUserHistory(7).stream().collect(Collectors.toMap(AddUserHistoryVO::getPhoneNum,AddUserHistoryVO::getPhoneNum));
+            for(AddUser addUser:addUserList)
+            {
+                if(addHistory.containsKey(addUser.getPhoneNum()))
+                {
+                    log.debug("{}重复存在于拉新历史表中，忽略，",addUser.getPhoneNum());
+                    continue;
+                }
+                //通过数据库方式判断重复，太慢
+//                try {
+//                    SpringUtils.getAopProxy(this).insertToHistory(addUser.getPhoneNum());
+//                } catch (Exception e) {
+//                    log.debug("{}写入历史表错误，原因:{}",addUser.getPhoneNum(),e);
+//                    continue;
+//                }
+                targetAddUserList.add(addUser);
+            }
+
+            if(targetAddUserList.size()>0)
+            {
+                qywxParamMapper.insertAddUserListHistory(targetAddUserList.stream().map(i->i.getPhoneNum()).collect(Collectors.toList()));
+                addUserMapper.pushToPushListLarge(targetAddUserList,scheduleDate);
+            }
         }
 
-        //更新主记录表的剩余人数、更新任务状态为执行中
+        //更新主记录表的剩余人数、更新任务状态为执行中,实际发送人数
         addUserMapper.updateHeadWaitUserCnt(headId,afterWaitNum,finishNum,opUserName);
-
-        //将推送明细数据放到短信表里面去
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
-        long scheduleDate= Long.parseLong(LocalDateTime.now().plusHours(1).format(dateTimeFormatter));
-        addUserMapper.pushToPushListLarge(headId,scheduleId,scheduleDate);
     }
 
     @Override
@@ -333,5 +390,17 @@ public class AddUserServiceImpl implements AddUserService {
     @Override
     public AddUserHead getHeadById(long id) {
         return addUserMapper.getHeadById(id);
+    }
+
+    /**
+     * 将手机号放入推送历史表中 使用新的事务
+     * @param phoneNum
+     * @throws Exception
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class,propagation = Propagation.REQUIRES_NEW)
+    public void insertToHistory(String phoneNum) throws Exception
+    {
+        qywxParamMapper.insertAddUserHistory(phoneNum);
     }
 }

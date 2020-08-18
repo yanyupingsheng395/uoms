@@ -19,7 +19,7 @@ public interface AddUserService {
      * 对主记录进行保存
      * @param addUserHead
      */
-    void saveData(AddUserHead addUserHead);
+    AddUserHead saveData(AddUserHead addUserHead) throws Exception;
 
     void deleteTask(String id);
 
@@ -53,4 +53,6 @@ public interface AddUserService {
     Map<Long, Object> geRegionData();
 
     List<String> getStatusList();
+
+    void insertToHistory(String phoneNum) throws Exception;
 }
