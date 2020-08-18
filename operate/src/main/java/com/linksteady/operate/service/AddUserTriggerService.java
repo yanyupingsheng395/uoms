@@ -47,5 +47,4 @@ public interface AddUserTriggerService {
 
     String getStatus(String headId);
 
-    List<String> getStatusList();
 }

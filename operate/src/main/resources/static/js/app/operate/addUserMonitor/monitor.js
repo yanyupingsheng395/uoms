@@ -20,8 +20,43 @@ $("#datePeriod").change(function () {
     $('#endDt').datepicker("setEndDate", new Date());
 });
 
-chart1();
-function chart1() {
+
+function search_data() {
+    getData();
+}
+
+function reset_data() {
+    var currentYear = new Date().getFullYear();
+    var currentMonth = new Date().getMonth() + 1;
+    $("#startDt").val(currentYear + "-01");
+    $("#endDt").val(currentYear + "-" + (currentMonth < 10 ? "0" + currentMonth : currentMonth));
+    getData();
+}
+function getData() {
+    var startDt = $("#startDt").val();
+    var endDt = $("#endDt").val();
+    var datePeriod = $("#datePeriod").val();
+
+    if(startDt === '' || endDt === '') {
+        $MB.n_warning("开始时间和结束时间不能为空！");
+    }else {
+        $.get("/addUserMonitor/getApplySuccessData", {startDt:startDt, endDt:endDt, dateType: datePeriod}, function (r) {
+            var data = r.data;
+            var xdata = data.map(v=>v['add_date']);
+            var ydata1 = data.map(v=>v['sum_cnt']);
+            var ydata2 = data.map(v=>v['per_cnt']);
+            chart1(xdata, ydata1, ydata2);
+        });
+
+        $.get("/addUserMonitor/getConvertCntAndRate", {startDt:startDt, endDt:endDt, dateType: datePeriod}, function (r) {
+            var data = r.data;
+            chart2(data['dateList'], data['pCnt'], data['tCnt'], data['pRate'], data['tRate'], data['pRateAvgList'], data['tRateAvgList']);
+            chart3(data['dateList'], data['pTotal'], data['tTotal']);
+        });
+    }
+}
+
+function chart1(xdata, ydata1, ydata2) {
     var option = {
         title: {
             text: '企业微信通过申请人数变化趋势',
@@ -54,7 +89,7 @@ function chart1() {
         xAxis: {
             name: '日期',
             type: 'category',
-            data: ['202001', '202002', '202003', '202004', '202005', '202006', '202007'],
+            data: xdata,
             splitLine:{show: false},
             splitArea : {show : false}
         },
@@ -66,11 +101,11 @@ function chart1() {
         },
         series: [{
             name: '累计趋势',
-            data: [820, 932, 901, 934, 1290, 1330, 1320],
+            data: ydata1,
             type: 'line'
         },{
             name: '分布趋势',
-            data: [182, 293, 390, 923, 1239, 1313, 12],
+            data: ydata2,
             type: 'line'
         }]
     };
@@ -101,8 +136,7 @@ function chart1() {
     chart.setOption(option);
 }
 
-chart2();
-function chart2() {
+function chart2(xdata, ydata1, ydata2, ydata3, ydata4, ydata5, ydata6) {
     var option = {
         title: {
             text: '不同添加方式下的转化人数及转化率',
@@ -140,7 +174,7 @@ function chart2() {
             {
                 name: '日期',
                 type: 'category',
-                data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+                data: xdata,
                 axisPointer: {
                     type: 'shadow'
                 },
@@ -178,28 +212,28 @@ function chart2() {
             {
                 name: '主动添加',
                 type: 'bar',
-                data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3]
+                data: ydata1
             },
             {
                 name: '触发添加',
                 type: 'bar',
-                data: [2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3]
+                data: ydata2
             },
             {
                 name: '主动添加转化率',
                 type: 'line',
                 yAxisIndex: 1,
-                data: [2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
+                data: ydata3
             },
             {
                 name: '触发添加转化率',
                 type: 'line',
                 yAxisIndex: 1,
-                data: [3.0, 2.2, 4.3, 4.6, 2.3, 12.2, 10.3, 23.4, 23.0, 16.5, 12.0, 6.2]
+                data: ydata4
             },
             {
                 name: "主动添加平均转化率",
-                data: [13.0, 13.0, 13.0, 13.0, 13.0, 13.0, 13.0, 13.0, 13.0, 13.0, 13.0, 13.0],
+                data: ydata5,
                 type: 'line',
                 yAxisIndex: 1,
                 smooth: false,
@@ -215,7 +249,7 @@ function chart2() {
             {
                 name: "触发添加平均转化率",
                 yAxisIndex: 1,
-                data: [17.0, 17.0, 17.0, 17.0, 17.0, 17.0, 17.0, 17.0, 17.0, 17.0, 17.0, 17.0, 17.0],
+                data: ydata6,
                 type: 'line',
                 smooth: false,
                 itemStyle: {
@@ -232,8 +266,7 @@ function chart2() {
     chart.setOption(option);
 }
 
-chart3();
-function chart3() {
+function chart3(xdata, ydata1, ydata2) {
     var option = {
         title: {
             text: '不同添加方式下的推送人数',
@@ -271,7 +304,7 @@ function chart3() {
             {
                 name: '日期',
                 type: 'category',
-                data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+                data: xdata,
                 axisPointer: {
                     type: 'shadow'
                 },
@@ -297,12 +330,12 @@ function chart3() {
             {
                 name: '主动添加',
                 type: 'bar',
-                data: [2.0, 4.9, 7.0, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20.0, 6.4, 3.3]
+                data: ydata1
             },
             {
                 name: '触发添加',
                 type: 'bar',
-                data: [2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3]
+                data: ydata2
             }]
     };
     var chart = echarts.init(document.getElementById("chart3"), 'macarons');

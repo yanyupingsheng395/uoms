@@ -57,18 +57,12 @@ public class AddUserTriggerController extends BaseController {
      */
     @RequestMapping("/saveData")
     public synchronized ResponseBo saveData(AddUserHead addUserHead) {
-        List<String> statusList = addUserTriggerService.getStatusList();
-        long doingCnt = statusList.stream().filter(x -> x.equalsIgnoreCase("doing")).count();
-        if(doingCnt > 0) {
-            return ResponseBo.error("当前有任务正在执行中，无法保存新记录！");
-        }else {
-            addUserHead.setInsertDt(new Date());
-            addUserHead.setInsertBy(getCurrentUser().getUsername());
-            addUserHead.setUpdateDt(new Date());
-            addUserHead.setUpdateBy(getCurrentUser().getUsername());
-            addUserTriggerService.saveData(addUserHead);
-            return ResponseBo.okWithData(null, addUserHead.getId());
-        }
+        addUserHead.setInsertDt(new Date());
+        addUserHead.setInsertBy(getCurrentUser().getUsername());
+        addUserHead.setUpdateDt(new Date());
+        addUserHead.setUpdateBy(getCurrentUser().getUsername());
+        addUserTriggerService.saveData(addUserHead);
+        return ResponseBo.okWithData(null, addUserHead.getId());
     }
 
     /**
@@ -107,6 +101,7 @@ public class AddUserTriggerController extends BaseController {
             return ResponseBo.ok();
         }
     }
+
     /**
      * 提交任务进行执行
      *
@@ -153,8 +148,8 @@ public class AddUserTriggerController extends BaseController {
      */
     @RequestMapping("/getTriggerParam")
     public ResponseBo getTriggerParam() {
-        QywxParam qywxParam=qywxParamService.getQywxParam();
-        return ResponseBo.okWithData(null,qywxParam);
+        QywxParam qywxParam = qywxParamService.getQywxParam();
+        return ResponseBo.okWithData(null, qywxParam);
     }
 
 //    /**

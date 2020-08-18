@@ -395,10 +395,6 @@
         select task_status from uo_qywx_trigger_header where id = #{headId}::integer
     </select>
 
-    <select id="getStatusList" resultType="string">
-        select task_status from uo_qywx_trigger_header
-    </select>
-
     <insert id="insertAddUserList" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
        insert into uo_qywx_trigger_list(
          head_id,user_id,phone_num,is_push,push_status,insert_dt,update_dt,sms_content,schedule_id,state

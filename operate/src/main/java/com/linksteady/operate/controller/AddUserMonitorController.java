@@ -1,11 +1,10 @@
 package com.linksteady.operate.controller;
 
+import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.operate.service.AddUserMonitorService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 /**
  * 企业微信拉新效果&监控展示
@@ -16,23 +15,26 @@ import java.util.List;
 @RequestMapping("/addUserMonitor")
 public class AddUserMonitorController {
 
+    @Autowired
+    private AddUserMonitorService addUserMonitorService;
+    /**
+     * 企业微信通过申请人数的变化趋势
+     * @return
+     */
+    @RequestMapping("/getApplySuccessData")
+    public ResponseBo getApplySuccessData(String startDt, String endDt, String dateType) {
+        return ResponseBo.okWithData(null, addUserMonitorService.getApplySuccessData(startDt, endDt, dateType));
+    }
 
     /**
-     * 获取连续的时间列表
+     * 不同添加方式下的转化人数和转化率
      * @param startDt
      * @param endDt
      * @param dateType
      * @return
      */
-    private List<String> getDateList(String startDt, String endDt, String dateType) {
-        if("Y".equalsIgnoreCase(dateType)) {
-            LocalDate start = LocalDate.parse(startDt, DateTimeFormatter.ofPattern("yyyy"));
-            LocalDate end = LocalDate.parse(startDt, DateTimeFormatter.ofPattern("yyyy"));
-            while (end.isAfter(start)) {
-
-            }
-        }
-        return null;
+    @RequestMapping("/getConvertCntAndRate")
+    public ResponseBo getConvertCntAndRate(String startDt, String endDt, String dateType) {
+        return ResponseBo.okWithData(null, addUserMonitorService.getConvertCntAndRate(startDt, endDt, dateType));
     }
-
 }

@@ -44,7 +44,7 @@
                                                 <p class="h6" style="border-bottom: #faa64b 1px dashed;padding: 5px;">
                                                     地域</p>
                                             </div>
-                                            <div class="pull-right text-right" style="-webkit-flex: 1;flex: 1;">
+                                            <div class="pull-right text-right" style="-webkit-flex: 1;flex: 1;" id="selectRegion">
                                                 <p class="h6" style="border-bottom: #faa64b 1px dashed;padding: 5px;">
                                                     <a onclick="selectCityModal()" style="cursor: pointer;"><i
                                                             class="fa fa-check-square-o"></i>选择</a>
@@ -165,7 +165,7 @@
             </div>
             <div class="col-md-12 text-right">
                 <div class="btn-group-sm" role="group">
-                    <a class="btn btn-primary" onclick="saveData()">
+                    <a class="btn btn-primary" onclick="saveData(this)">
                         <i class="fa fa-save"></i> 保存
                     </a>
                     <a class="btn btn-secondary" onclick="stepBreak(1)">

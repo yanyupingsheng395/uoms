@@ -72,8 +72,6 @@ public interface AddUserTriggerMapper {
 
     String getStatus(String headId);
 
-    List<String> getStatusList();
-
     /**---------------------------------下面的方法是调度中用的-----------------------------------*/
     /**
      * 更新推送结果(实际状态) [调度方法]

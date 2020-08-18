@@ -172,7 +172,7 @@ function setQrCode() {
 /**
  * 选择完条件后保存主记录的保存
  */
-function saveData() {
+function saveData(dom) {
     // 验证表单数据
     if (validStep1Data( 'N' )) {
         var taskName = $( "input[name='taskName']" ).val();
@@ -203,6 +203,8 @@ function saveData() {
                         $( "input[name='taskName']" ).attr( "disabled", "disabled" ).attr( "readOnly", "readOnly" );
                         $( "input[name='sendType']" ).attr( "disabled", "disabled" ).attr( "readOnly", "readOnly" );
                         head_id = r.data;
+                        $(dom).remove();
+                        $("#selectRegion").remove();
                     } else {
                         $MB.n_warning(r.msg);
                     }

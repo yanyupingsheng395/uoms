@@ -52,8 +52,8 @@
                                         结束时间：<input type="text" name="endDt" class="js-datepicker" id="endDt"/>
                                     </li>
                                     <li>
-                                        <a class="btn btn-primary btn-rounded btn-sm" id="btn_query"><i class="fa fa-search"></i>&nbsp;搜索</a>
-                                        <a class="btn btn-warning btn-rounded btn-sm" onclick="resetQuery()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                        <a class="btn btn-primary btn-rounded btn-sm" id="btn_query" onclick="search_data()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                        <a class="btn btn-warning btn-rounded btn-sm" onclick="reset_data()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
                                     </li>
                                 </ul>
                             </div>
@@ -119,12 +119,7 @@
     var currentMonth = new Date().getMonth() + 1;
     $("#startDt").val(currentYear + "-01");
     $("#endDt").val(currentYear + "-" + (currentMonth < 10 ? "0" + currentMonth : currentMonth));
-
-    $("#startDateOfRetention").val('2020-01');
-    init_date("startDateOfRetention", "yyyy-mm", 1,2,1);
-    var d = new Date();
-    d.setMonth(d.getMonth());
-    $("#startDateOfRetention").datepicker('setEndDate',d);
+    getData();
 </script>
 </body>
 </html>

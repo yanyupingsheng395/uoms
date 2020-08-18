@@ -52,7 +52,5 @@ public interface AddUserService {
 
     Map<Long, Object> geRegionData();
 
-    List<String> getStatusList();
-
     void insertToHistory(String phoneNum) throws Exception;
 }

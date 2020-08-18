@@ -110,12 +110,6 @@ public interface AddUserMapper {
     int getScheduleCount(long headId);
 
     /**
-     * 获取所有任务的状态列表
-     * @return
-     */
-    List<String> getStatusList();
-
-    /**
      * 获得未处理的用户列表
      */
     List<AddUser> getUnProcessAddUserList(long headId, long limit);

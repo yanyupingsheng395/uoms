@@ -179,7 +179,7 @@ function setQrCode() {
 /**
  * 选择完条件后保存主记录的保存
  */
-function saveData() {
+function saveData(dom) {
     // 验证表单数据
     if(validStep1Data('N')) {
         var taskName = $("input[name='taskName']").val();
@@ -225,6 +225,8 @@ function saveData() {
                             $(this).removeAttr("onclick");
                         });
                         head_id = r.data['id'];
+                        $(dom).remove();
+                        $("#selectRegion").remove();
                     }else {
                         $MB.n_warning(r.msg);
                     }

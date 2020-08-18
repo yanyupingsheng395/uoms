@@ -383,11 +383,6 @@ public class AddUserServiceImpl implements AddUserService {
     }
 
     @Override
-    public List<String> getStatusList() {
-        return addUserMapper.getStatusList();
-    }
-
-    @Override
     public AddUserHead getHeadById(long id) {
         return addUserMapper.getHeadById(id);
     }

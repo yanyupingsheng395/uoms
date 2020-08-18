@@ -46,20 +46,14 @@ public class AddUserController extends BaseController {
      */
     @RequestMapping("/saveData")
     public ResponseBo saveData(AddUserHead addUserHead) {
-        List<String> statusList = addUserService.getStatusList();
-        long doingCnt = statusList.stream().filter(x -> x.equalsIgnoreCase("doing")).count();
-        if(doingCnt > 0) {
-            return ResponseBo.error("当前有任务正在执行中，无法保存新记录！");
-        }else {
-            addUserHead.setInsertDt(new Date());
-            addUserHead.setInsertBy(getCurrentUser().getUsername());
-            addUserHead.setUpdateDt(new Date());
-            addUserHead.setUpdateBy(getCurrentUser().getUsername());
-            try {
-                return ResponseBo.okWithData(null, addUserService.saveData(addUserHead));
-            } catch (Exception e) {
-                return ResponseBo.error(e.getMessage());
-            }
+        addUserHead.setInsertDt(new Date());
+        addUserHead.setInsertBy(getCurrentUser().getUsername());
+        addUserHead.setUpdateDt(new Date());
+        addUserHead.setUpdateBy(getCurrentUser().getUsername());
+        try {
+            return ResponseBo.okWithData(null, addUserService.saveData(addUserHead));
+        } catch (Exception e) {
+            return ResponseBo.error(e.getMessage());
         }
     }
 
@@ -93,10 +87,10 @@ public class AddUserController extends BaseController {
     @RequestMapping("/updateSmsContentAndContactWay")
     public synchronized ResponseBo updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId, String contactWayUrl) {
         String status = addUserService.getHeadById(Long.parseLong(headId)).getTaskStatus();
-        if("edit".equalsIgnoreCase(status)) {
+        if ("edit".equalsIgnoreCase(status)) {
             addUserService.updateSmsContentAndContactWay(headId, smsContent, contactWayId, contactWayUrl);
             return ResponseBo.ok();
-        }else {
+        } else {
             return ResponseBo.error("该记录当前状态不支持编辑操作！");
         }
     }

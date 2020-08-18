@@ -234,10 +234,6 @@
         select count(*) from uo_qywx_add_user_schedule where head_id=#{headId}
     </select>
 
-    <select id="getStatusList" resultType="string">
-        select task_status from uo_qywx_add_user_header
-    </select>
-
     <select id="getUnProcessAddUserList" resultMap="addUserMap">
        select
            id,head_id,user_id,phone_num,is_push,push_status,insert_dt,update_dt,sms_content,schedule_id,state
