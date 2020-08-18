@@ -212,7 +212,7 @@
               is_push     = t4.is_push
         from uo_op_push_list_large as t4
         where id = t4.source_id
-        and t4.source_code = 'ADDUSER'
+        and t4.source_code = 'TADDUSER'
         and uo_qywx_trigger_list.insert_dt::date>=(current_date-3)
     </update>
 
@@ -398,7 +398,7 @@
 
     <insert id="insertAddUserList" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
        insert into uo_qywx_trigger_list(
-         head_id,user_id,phone_num,is_push,push_status,insert_dt,update_dt,sms_content
+         head_id,user_id,phone_num,is_push,push_status,insert_dt,update_dt,sms_content,schedule_id,state
        ) values
         <foreach collection="list" item="item" index="index"
                  separator=",">
@@ -409,7 +409,9 @@
             #{item.pushStatus},
             #{item.insertDt},
             #{item.updateDt},
-            #{item.smsContent})
+            #{item.smsContent},
+            #{item.scheduleId},
+            #{item.state})
         </foreach>
     </insert>
 
@@ -423,11 +425,11 @@
             IS_PUSH,
             PUSH_SCHEDULING_DATE
         ) values
-        <foreach collection="list" item="item" index="index"
+        <foreach collection="adduserList" item="item" index="index"
                  separator=",">
             (#{item.smsContent},
             'P',
-            'TRIGGER_ADDUSER',
+            'TADDUSER',
             #{item.id},
             #{item.phoneNum},
             '0',

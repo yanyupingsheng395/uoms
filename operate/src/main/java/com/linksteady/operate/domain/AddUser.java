@@ -15,6 +15,8 @@ public class AddUser {
     private Date insertDt;
     private Date updateDt;
     private String smsContent;
+    private Long scheduleId;
+    private String state;
 
 
 
