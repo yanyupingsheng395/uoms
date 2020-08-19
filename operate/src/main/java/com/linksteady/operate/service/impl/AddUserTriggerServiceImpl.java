@@ -131,7 +131,7 @@ public class AddUserTriggerServiceImpl implements AddUserTriggerService {
         //预计的推送转化率
         addUserSchedule.setApplyRate(qywxParam.getDailyAddRate());
         //预计本次添加用户人数
-        addUserSchedule.setWaitAddNum(qywxParam.getTriggerNum());
+        addUserSchedule.setWaitAddNum((int)Math.floor(qywxParam.getTriggerNum()*qywxParam.getDailyAddRate()/100));
 
         addUserSchedule.setRemainUserCnt(qywxParam.getTriggerNum());
 

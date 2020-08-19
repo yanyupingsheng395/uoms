@@ -14,7 +14,7 @@ public class AddUserHead {
     private long id;
     private Long applyUserCnt;
     private Long applyPassCnt;
-    private String applyPassRate;
+    private Double applyPassRate;
     private Date taskStartDt;
     private String taskStatus;
     private Date insertDt;
@@ -42,5 +42,5 @@ public class AddUserHead {
     private String isSourceName;
     private String isProdName;
 
-    private long actualApplyNum;
+    private long applySuccessNum;
 }
