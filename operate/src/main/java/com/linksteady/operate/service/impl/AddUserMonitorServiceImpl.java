@@ -43,7 +43,7 @@ public class AddUserMonitorServiceImpl implements AddUserMonitorService {
         }
         List<Map<String, Object>> newDataList = Lists.newArrayList();
         List<Map<String, Object>> dataList = addUserMonitorMapper.getApplySuccessData(startDt, endDt, dateFormat);
-        Map<Object, List<Map<String, Object>>> dataListMap = dataList.stream().collect(Collectors.groupingBy(x -> x.get("add_date")));
+        Map<Object, List<Map<String, Object>>> dataListMap = dataList.stream().collect(Collectors.groupingBy(x -> x.get("add_date").toString().replaceAll("-", "")));
         dateList.forEach(x->{
             List<Map<String, Object>> maps = dataListMap.get(x);
             if(maps == null || maps.size() == 0) {
@@ -76,8 +76,8 @@ public class AddUserMonitorServiceImpl implements AddUserMonitorService {
         List<Map<String, Object>> triggerDataList = getTriggerPushAndApplyData(startDt, endDt, dateFormat);
         List<Map<String, Object>> newPassiveDataList = Lists.newArrayList();
         List<Map<String, Object>> newTriggerDataList = Lists.newArrayList();
-        Map<Object, List<Map<String, Object>>> passiveDataListMap = passiveDataList.stream().collect(Collectors.groupingBy(x -> x.get("add_date")));
-        Map<Object, List<Map<String, Object>>> triggerDataListMap = triggerDataList.stream().collect(Collectors.groupingBy(x -> x.get("add_date")));
+        Map<Object, List<Map<String, Object>>> passiveDataListMap = passiveDataList.stream().collect(Collectors.groupingBy(x -> x.get("add_date").toString().replaceAll("-", "")));
+        Map<Object, List<Map<String, Object>>> triggerDataListMap = triggerDataList.stream().collect(Collectors.groupingBy(x -> x.get("add_date").toString().replaceAll("-", "")));
         dateList.forEach(x->{
             List<Map<String, Object>> maps1 = passiveDataListMap.get(x);
             List<Map<String, Object>> maps2 = triggerDataListMap.get(x);
