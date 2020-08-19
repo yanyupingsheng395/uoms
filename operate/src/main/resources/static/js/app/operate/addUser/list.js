@@ -50,28 +50,28 @@ function getTableData() {
         },{
             field: 'applyUserCnt',
             align: "center",
-            title: '发送申请总数量（人）'
+            title: '总数量（人）'
         },{
             field: 'waitUserCnt',
             align: "center",
-            title: '剩余待发送数量（人）'
+            title: '剩余待发送（人）'
         },{
             field: 'deliveredUserCnt',
             align: "center",
-            title: '已发送申请数量（人）'
+            title: '已发送（人）'
+        }, {
+            field: 'actualApplyNum',
+            align: "center",
+            title: '成功发送（人）'
         }, {
             field: 'applyPassCnt',
             align: "center",
-            title: '通过申请数量（人）'
+            title: '通过申请（人）'
         }, {
             field: 'applyPassRate',
             align: "center",
             title: '申请通过率（%）'
         },{
-            field: 'taskStartDt',
-            align: "center",
-            title: '开始时间'
-        }, {
             field: 'taskStatus',
             align: "center",
             title: '任务状态',

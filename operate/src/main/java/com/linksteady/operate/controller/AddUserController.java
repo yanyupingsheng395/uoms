@@ -4,6 +4,7 @@ import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.domain.AddUserHead;
 import com.linksteady.operate.exception.OptimisticLockException;
+import com.linksteady.operate.service.AddUserJobService;
 import com.linksteady.operate.service.AddUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
@@ -30,6 +31,9 @@ public class AddUserController extends BaseController {
 
     @Autowired
     private AddUserService addUserService;
+
+    @Autowired
+    private AddUserJobService addUserJobService;
 
     @RequestMapping("/getHeadPageList")
     public ResponseBo getHeadPageList(int limit, int offset) {
@@ -131,5 +135,16 @@ public class AddUserController extends BaseController {
     @RequestMapping("/geRegionData")
     public ResponseBo geRegionData() {
         return ResponseBo.okWithData(null, addUserService.geRegionData());
+    }
+
+
+    /**
+     * 主动拉新-调度
+     */
+    @RequestMapping("/addUserJob")
+    public ResponseBo addUserJob() {
+        addUserJobService.updateAddUserStatus();
+        addUserJobService.updateAddUserEffect();
+        return ResponseBo.ok();
     }
 }

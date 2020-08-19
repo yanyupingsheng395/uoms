@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.operate.dao.AddUserMapper">
-
     <resultMap id="base" type="com.linksteady.operate.domain.AddUserHead">
         <result column="id" jdbcType="DECIMAL" property="id"/>
         <result column="send_type" jdbcType="VARCHAR" property="sendType"/>
@@ -25,6 +24,7 @@
         <result column="sms_content" jdbcType="VARCHAR" property="smsContent"/>
         <result column="wait_user_cnt" jdbcType="DECIMAL" property="waitUserCnt"/>
         <result column="delivered_user_cnt" jdbcType="DECIMAL" property="deliveredUserCnt"/>
+        <result column="actual_apply_num" jdbcType="DECIMAL" property="actualApplyNum"/>
     </resultMap>
 
     <resultMap id="paramMap" type="com.linksteady.operate.domain.QywxParam">
@@ -46,6 +46,20 @@
         <result column="state" jdbcType="VARCHAR" property="state"/>
     </resultMap>
 
+    <resultMap id="scheduleMap" type="com.linksteady.operate.domain.AddUserSchedule">
+        <result column="schedule_id" jdbcType="DECIMAL" property="scheduleId"/>
+        <result column="head_id" jdbcType="DECIMAL" property="headId"/>
+        <result column="actual_apply_num" jdbcType="DECIMAL" property="actualApplyNum"/>
+        <result column="schedule_date" jdbcType="TIMESTAMP" property="scheduleDate"/>
+        <result column="remain_user_cnt" jdbcType="DECIMAL" property="remainUserCnt"/>
+        <result column="sms_content" jdbcType="VARCHAR" property="smsContent"/>
+    </resultMap>
+
+    <resultMap id="scheduleEffectVO" type="com.linksteady.operate.vo.QywxScheduleEffectVO">
+        <result column="statis_date_wid" jdbcType="VARCHAR" property="statisDateWid"/>
+        <result column="cnt" jdbcType="DECIMAL" property="cnt"/>
+    </resultMap>
+
     <select id="getHeadCount" resultType="int">
         select count(1) from uo_qywx_add_user_header
     </select>
@@ -60,7 +74,8 @@
             task_status,
             send_type,
             delivered_user_cnt,
-            wait_user_cnt
+            wait_user_cnt,
+            actual_apply_num
          from uo_qywx_add_user_header
         order by insert_dt desc
         limit #{limit} offset #{offset}
@@ -184,38 +199,6 @@
              id=#{headId}
     </update>
 
-    <update id="updatePushResult">
-        update uo_qywx_add_user_list set
-              push_status = t4.push_status,
-              push_date   = t4.push_date,
-              is_push     = t4.is_push
-        from uo_op_push_list_large as t4
-        where id = t4.source_id and t4.source_code = 'ADDUSER' and uo_qywx_add_user_list.insert_dt::date>=(current_date-3)
-    </update>
-
-    <update id="updateScheduleToDone">
-        update uo_qywx_add_user_schedule set status='done' where
-          status='doing' and not exists(
-              select 1 from uo_qywx_add_user_list l
-              where l.head_id=uo_qywx_add_user_schedule.head_id
-                and l.schedule_id=uo_qywx_add_user_schedule.schedule_id
-                and l.is_push='0'
-          )
-    </update>
-
-    <update id="updateHeadToStop">
-        update uo_qywx_add_user_header set task_status='stop' where
-          task_status='doing' and not exists (
-             select 1 from uo_qywx_add_user_schedule s where s.head_id=uo_qywx_add_user_header.id and s.status='doing')
-    </update>
-
-    <update id="updateHeadToDone">
-        update uo_qywx_add_user_header set task_status='done' where
-          task_status='doing' and wait_user_cnt=0 and not exists (
-             select 1 from uo_qywx_add_user_schedule s where s.head_id=uo_qywx_add_user_header.id and s.status='doing')
-    </update>
-
-
     <select id="getSendAndApplyData" resultType="map">
         select schedule_date_wid date, apply_num applyNum, apply_pass_num applyPassNum, schedule_id scheduleId from uo_qywx_add_user_schedule where head_id = #{headId}::integer
         order by schedule_date_wid asc
@@ -270,4 +253,90 @@
             #{scheduleDate})
         </foreach>
     </insert>
+
+    <update id="updatePushResult">
+        update uo_qywx_add_user_list set
+              push_status = t4.push_status,
+              push_date   = t4.push_date,
+              is_push     = t4.is_push
+        from uo_op_push_list_large as t4
+        where id = t4.source_id and t4.source_code = 'ADDUSER' and uo_qywx_add_user_list.insert_dt::date>=(current_date-3)
+    </update>
+
+    <update id="updateScheduleToDone">
+        update uo_qywx_add_user_schedule set status='done' where
+          status='doing' and not exists(
+              select 1 from uo_qywx_add_user_list l
+              where l.head_id=uo_qywx_add_user_schedule.head_id
+                and l.schedule_id=uo_qywx_add_user_schedule.schedule_id
+                and l.is_push='0'
+          )
+    </update>
+
+    <update id="updateHeadToStop">
+        update uo_qywx_add_user_header set task_status='stop' where
+          task_status='doing' and not exists (
+             select 1 from uo_qywx_add_user_schedule s where s.head_id=uo_qywx_add_user_header.id and s.status='doing')
+    </update>
+
+    <update id="updateHeadToDone">
+        update uo_qywx_add_user_header set task_status='done' where
+          task_status='doing' and wait_user_cnt=0 and not exists (
+             select 1 from uo_qywx_add_user_schedule s where s.head_id=uo_qywx_add_user_header.id and s.status='doing')
+    </update>
+
+    <update id="calculateScheduleEffect">
+         update uo_qywx_add_user_schedule c
+             set (apply_success_num,apply_pass_num)=
+        (select
+            count(id) success_num,
+            count(case when is_add_qywx='1'then is_add_qywx end) pass_num
+        from uo_qywx_add_user_list
+        where is_push='1'
+          and push_status='S'
+          and uo_qywx_add_user_list.head_id=c.head_id
+          and uo_qywx_add_user_list.schedule_id=c.schedule_id
+          and c.insert_dt::date>=current_date-30)
+    </update>
+
+    <update id="calculateHeadEffect">
+          update uo_qywx_add_user_header c
+                 set (actual_apply_num,apply_pass_cnt,apply_pass_rate)=
+            (select
+                count(id) success_num,
+                count(case when is_add_qywx='1'then is_add_qywx end) pass_num,
+               (case when count(id)=0::int8 then 0 else
+                    round(count(case when is_add_qywx='1'then id end)/count(id),4)*100 end) rate
+            from uo_qywx_add_user_list
+            where is_push='1'
+              and push_status='S'
+              and uo_qywx_add_user_list.head_id=c.id)
+    </update>
+
+    <delete id="deleteScheduleEffect">
+        delete from uo_qywx_add_user_effect where schedule_id in (
+            select schedule_id from uo_qywx_add_user_schedule where insert_dt::date>=current_date-10
+        )
+    </delete>
+
+    <select id="getLastScheduleList" resultMap="scheduleMap">
+        select * from uo_qywx_add_user_schedule order by schedule_id desc limit 10
+    </select>
+
+    <select id="getScheduleCovStatis" resultMap="scheduleEffectVO">
+        select to_char(add_qywx_date, 'yyyymmdd') statis_date_wid,count(id) cnt
+          from uo_qywx_add_user_list
+        where schedule_id=#{scheduleId}
+          and is_push='1'
+          and push_status='S'
+          and is_add_qywx='1'
+        group by to_char(add_qywx_date, 'yyyymmdd')
+    </select>
+
+    <select id="saveScheduleEffect">
+        insert into uo_qywx_add_user_effect(head_id,schedule_id,apply_date,apply_num,statis_date,statis_day,statis_pass_num,statis_pass_rate) values
+        <foreach collection="list" separator="," item="item">
+            (#{item.headId}, #{item.scheduleId}, #{item.applyDate}, #{item.applyNum}, #{item.statisDate}, #{item.statisDay}, #{item.statisPassNum}, #{item.statisPassRate})
+        </foreach>
+    </select>
 </mapper>

@@ -129,11 +129,60 @@ public class AddUserJobServiceImpl implements AddUserJobService {
 
     @Override
     public void updateAddUserEffect() {
-        //更新头表上的效果字段
+        //1.更新schedule表上的效果字段
+        addUserMapper.calculateScheduleEffect();
+        //2.更新头表 (成功发送申请数量 通过申请数量 申请通过率)
+        addUserMapper.calculateHeadEffect();
+        //3.写逐日的转化统计表
+        //3.1 删除最近10天的schedule统计数
+        addUserMapper.deleteScheduleEffect();
+        //3.2 写入最近10天内schedule的逐日转化统计数
+        //获取最近10天的schedule列表
+        List<AddUserSchedule> scheduleList=addUserMapper.getLastScheduleList();
 
-        //更新schedule表上的效果字段
+        List<QywxScheduleEffectVO> covList=null;
+        Map<String,Long> covMap=null;
+        LocalDate covDate=null;
+        List<AddUserEffect> addUserEffectList=null;
+        AddUserEffect addUserEffect=null;
 
-        //写逐日的转化统计表
+        for(AddUserSchedule addUserSchedule:scheduleList)
+        {
+            addUserEffectList= Lists.newArrayList();
+            LocalDate scheduleDate=addUserSchedule.getScheduleDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+            //获取这个schdule的所有转化统计数据
+            covList=addUserMapper.getScheduleCovStatis(addUserSchedule.getScheduleId());
+            covMap=covList.stream().collect(Collectors.toMap(QywxScheduleEffectVO::getStatisDateWid, QywxScheduleEffectVO::getCnt));
+
+            for(int j=0;j<10;j++)
+            {
+                addUserEffect=new AddUserEffect();
+                addUserEffect.setHeadId(addUserSchedule.getHeadId());
+                addUserEffect.setScheduleId(addUserSchedule.getScheduleId());
+                addUserEffect.setApplyDate(addUserSchedule.getScheduleDate());
+                addUserEffect.setApplyNum(addUserSchedule.getActualApplyNum());
+
+                covDate=scheduleDate.plusDays(j);
+                addUserEffect.setStatisDate(Date.from(covDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+                addUserEffect.setStatisDay(j);
+
+                String key=covDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+                //判断这个日期是否有转化数据
+                if(covMap.containsKey(key))
+                {
+                    addUserEffect.setStatisPassNum(covMap.get(key));
+                    //转化率
+                    addUserEffect.setStatisPassRate(addUserSchedule.getActualApplyNum()==0?0d: ArithUtil.formatDouble(covMap.get(key)/addUserSchedule.getActualApplyNum()*100.00,2));
+                }else
+                {
+                    addUserEffect.setStatisPassNum(0);
+                    addUserEffect.setStatisPassRate(0d);
+                }
+                addUserEffectList.add(addUserEffect);
+                addUserMapper.saveScheduleEffect(addUserEffectList);
+            }
+        }
 
     }
 
@@ -349,7 +398,9 @@ public class AddUserJobServiceImpl implements AddUserJobService {
         //更新schedule表中的剩余数量
         addUserTriggerMapper.updateScheduleRemainUserCnt(addUserSchedule.getScheduleId(),recordNum,actualApplyNum);
 
-        //todo 更新header表 apply_user_cnt
+        //更新头表中的推送数量
+        addUserTriggerMapper.updateHeadApplyUserCnt(addUserSchedule.getHeadId(),actualApplyNum);
+
     }
 
     /**
