@@ -1,9 +1,7 @@
 package com.linksteady.operate.dao;
 
-import com.linksteady.operate.domain.AddUser;
-import com.linksteady.operate.domain.AddUserHead;
-import com.linksteady.operate.domain.AddUserSchedule;
-import com.linksteady.operate.domain.QywxParam;
+import com.linksteady.operate.domain.*;
+import com.linksteady.operate.vo.QywxScheduleEffectVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -75,26 +73,6 @@ public interface AddUserMapper {
      */
     void updateHeadWaitUserCnt(long headId, long afterWaitNum,long afterFinishNum,String opUserName);
 
-    /**
-     * 更新推送结果
-     */
-   void updatePushResult();
-
-    /**
-     * 更新推送计划 （由进行中 更新为完成)
-     */
-    void updateScheduleToDone();
-
-    /**
-     * 更新头数据的状态为停止 （执行中的任务，且不存在尚在执行中的计划）
-     */
-    void updateHeadToStop();
-
-
-    /**
-     * 更新头数据的状态为结束 (执行中的任务，且不存在尚在执行中的计划 且剩余推送人数为0)
-     */
-    void updateHeadToDone();
 
     void updateSmsContentAndContactWay(String headId, String smsContent, String contactWayId, String contactWayUrl);
 
@@ -123,6 +101,60 @@ public interface AddUserMapper {
      * 更新推送内容到推送计划表
      */
     void pushToPushListLarge(List<AddUser> addUserList,long scheduleDate);
+
+    /**----------------------------------调度中方法 用于计算效果 -------------------------------*/
+    /**
+     * 更新推送结果
+     */
+    void updatePushResult();
+
+    /**
+     * 更新推送计划 （由进行中 更新为完成)
+     */
+    void updateScheduleToDone();
+
+    /**
+     * 更新头数据的状态为停止 （执行中的任务，且不存在尚在执行中的计划）
+     */
+    void updateHeadToStop();
+
+
+    /**
+     * 更新头数据的状态为结束 (执行中的任务，且不存在尚在执行中的计划 且剩余推送人数为0)
+     */
+    void updateHeadToDone();
+
+    /**
+     * 计算计划表中的效果字段
+     */
+    void calculateScheduleEffect();
+
+    /**
+     * 计算头表中的效果字段
+     */
+    void calculateHeadEffect();
+
+    /**
+     * 删除近10天的效果统计数据
+     */
+    void deleteScheduleEffect();
+
+    /**
+     * 获取近10天的计划列表
+     */
+    List<AddUserSchedule> getLastScheduleList();
+
+    /**
+     * 获取某个schedule下的效果统计数据
+     * @param scheduleId
+     * @return
+     */
+    List<QywxScheduleEffectVO> getScheduleCovStatis(long scheduleId);
+
+    /**
+     * 保存效果统计数据
+     */
+    void saveScheduleEffect(List<AddUserEffect> addUserEffectList);
 
 }
 

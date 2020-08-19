@@ -281,7 +281,7 @@
     </select>
 
     <select id="saveScheduleEffect">
-        insert into uo_qywx_trigger_effect(head_id,schedule_id,apply_date,apply_num,statis_date,statis_day,stats_pass_num,statis_pass_rate) values
+        insert into uo_qywx_trigger_effect(head_id,schedule_id,apply_date,apply_num,statis_date,statis_day,statis_pass_num,statis_pass_rate) values
         <foreach collection="list" separator="," item="item">
             (#{item.headId}, #{item.scheduleId}, #{item.applyDate}, #{item.applyNum}, #{item.statisDate}, #{item.statisDay}, #{item.statisPassNum}, #{item.statisPassRate})
         </foreach>
@@ -435,5 +435,9 @@
             #{scheduleDate})
         </foreach>
     </insert>
+
+    <update id="updateHeadApplyUserCnt">
+        update uo_qywx_trigger_header set apply_user_cnt=apply_user_cnt+#{applyUserCnt} where head_id=#{headId}
+    </update>
 
 </mapper>

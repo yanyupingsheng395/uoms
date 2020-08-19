@@ -166,6 +166,11 @@ public interface AddUserTriggerMapper {
      */
     void pushToPushListLarge(List<AddUser> adduserList, long scheduleDate);
 
+    /**
+     * 更新头表的发送申请总数量
+     */
+    void updateHeadApplyUserCnt(long headId,long applyUserCnt);
+
 
 
 }
