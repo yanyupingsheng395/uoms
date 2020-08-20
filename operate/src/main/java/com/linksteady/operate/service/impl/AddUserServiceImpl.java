@@ -233,7 +233,7 @@ public class AddUserServiceImpl implements AddUserService {
         long afterWaitNum=waitUserCnt-targetNum;
         addUserSchedule.setRemainUserCnt(afterWaitNum);
         //剩余人数预计推送天数
-        addUserSchedule.setWaitDays(afterWaitNum%addUserHead.getDailyUserCnt()+1);
+        addUserSchedule.setWaitDays(afterWaitNum/addUserHead.getDailyUserCnt()+1);
         //按当前转化率剩余人数预计添加好友数量
         addUserSchedule.setRemainAddNum((long)Math.floor(afterWaitNum*addUserHead.getDailyApplyRate()));
 
@@ -251,6 +251,8 @@ public class AddUserServiceImpl implements AddUserService {
         addUserSchedule.setScheduleDate(new Date());
         addUserSchedule.setScheduleDateWid(Long.parseLong(currentDay));
         addUserSchedule.setApplyPassNum(0);
+        //默认全部推送成功
+        addUserSchedule.setApplySuccessNum(targetNum);
 
         addUserMapper.saveAddUserSchedule(addUserSchedule);
 
