@@ -63,7 +63,7 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
     ShortUrlService shortUrlService;
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void saveContactWay(QywxContactWay qywxContactWay) throws Exception{
         //保存渠道活码
         qywxContactWayMapper.saveContactWay(qywxContactWay);
@@ -113,7 +113,7 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void updateContractWay(QywxContactWay qywxContactWay) throws Exception{
         //更新数据库
         qywxContactWayMapper.updateContractWay(qywxContactWay);

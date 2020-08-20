@@ -108,11 +108,11 @@ public class QywxContactWayController extends BaseController {
             String message=e.getMessage();
             if(message.indexOf("uo_qywx_contact_way_u1")!=-1)
             {
-                return ResponseBo.error("新增失败，当前渠道已经存在！");
+                return ResponseBo.error("更新失败，当前渠道已经存在！");
             }else
             {
-                log.error("新增渠道活码失败，{}",e);
-                return ResponseBo.error("新增渠道活码失败！");
+                log.error("更新渠道活码失败，{}",e);
+                return ResponseBo.error("更新渠道活码失败！");
             }
         }
 

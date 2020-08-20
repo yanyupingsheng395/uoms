@@ -95,7 +95,9 @@
                 user_list=#{usersList},
                 party=#{party},
                 update_dt=#{updateDt},
-                update_by=#{updateBy}
+                update_by=#{updateBy},
+                qrcode = #{qrCode},
+                short_url = #{shortUrl}
          where contactway_id=#{contactWayId}
     </update>
 

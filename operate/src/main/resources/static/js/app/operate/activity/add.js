@@ -985,7 +985,6 @@ function initDt() {
     init_date_end( 'formalStartDt', 'formalEndDt', 'yyyy-mm-dd', 0, 2, 0 );
 
     var date = new Date();
-    date.setDate( date.getDate() + 1 );
     $( "#preheatStartDt" ).datepicker( 'setStartDate', date );
     $( "#preheatEndDt" ).datepicker( 'setStartDate', date );
     $( "#formalStartDt" ).datepicker( 'setStartDate', date );
@@ -1128,7 +1127,7 @@ $( "input[name='hasPreheat']" ).click( function () {
         $( "#btn_create_preheat" ).attr( "style", "display:none;" );
         $( "#preheatDiv" ).attr( "style", "display:none;" );
     }
-} );
+});
 
 // 保存基本信息
 function saveActivityHead() {

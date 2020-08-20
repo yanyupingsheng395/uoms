@@ -129,6 +129,7 @@ $("#btn_query").click(function () {
  * 编辑按钮
  */
 $("#btn_edit").click(function () {
+    $("#qrCodeDiv").show();
     $("#btn_save").attr("name", "update");
     let selected = $("#contactWayTable").bootstrapTable('getSelections');
     let selected_length = selected.length;
@@ -146,20 +147,26 @@ $("#btn_edit").click(function () {
             $("#myLargeModalLabel").html('修改渠道活码');
             $form.find("input[name='contactWayId']").val(d.contactWayId);
             $form.find("input[name='configId']").val(d.configId);
-            $form.find("input[name='state']").val(d.state);
+            $form.find("input[name='state']").val(d.state).attr("readOnly", "readOnly");
             $form.find("select[name='userSelect']").selectpicker('val', d.usersList.split(','));
             $form.find("input[name='usersList']").val($form.find("select[name='userSelect']").selectpicker('val'));
+            $form.find("input[name='qrCode']").val(d.qrCode);
+            $form.find("input[name='shortUrl']").val(d.shortUrl);
         } else {
             $MB.n_danger(r['msg']);
         }
     });
-
 });
 
 /**
  * 新增按钮
  */
 $("#btn_add").click(function () {
+    $("#myLargeModalLabel").html('新增渠道活码');
+    $("#state").removeAttr("readOnly");
+    $("#qrCodeDiv").hide();
+    $("#qrCode").val("");
+    $("#shortUrl").val("");
     $('#add_modal').modal('show');
 });
 
@@ -311,55 +318,11 @@ function closeModal() {
     $MB.closeAndRestModal("add_modal");
 }
 
-$("#btn_url").click(function () {
-    let selected = $("#contactWayTable").bootstrapTable('getSelections');
-    let selected_length = selected.length;
-    if (!selected_length) {
-        $MB.n_warning('请选择需要修改短链接的渠道活码！');
-        return;
-    }
-    let contactWayId = selected[0].contactWayId;
-    //获取数据 并进行填充
-    $.post("/contactWay/getContactWayById", {"contactWayId": contactWayId}, function (r) {
-        if (r.code === 200) {
-            var $form = $('#modifyurlForm');
-            $("#modifyurl_modal").modal('show');
-            let d = r.data;
-            $form.find("input[name='modifyurl_contactWayId']").val(d.contactWayId);
-            $form.find("input[name='state2']").val(d.state);
-        } else {
-            $MB.n_danger(r['msg']);
-        }
-    });
-});
-
-/**
- * 链接保存
- */
-$("#btn_saveUrl").click(function () {
-    var validator = $("#modifyurlForm").validate();
-    var flag = validator.form();
-    if (flag) {
-        let contactWayId=$('#modifyurl_contactWayId').val();
-        let shortUrl=$('#shortUrl').val();
-       //对短链进行保存
-        $.post("/contactWay/updateShortUrl", {"contactWayId": contactWayId,"shortUrl":shortUrl}, function (r) {
-            if (r.code === 200) {
-                $MB.closeAndRestModal("modifyurl_modal");
-                $MB.n_success(r.msg);
-                $MB.refreshTable("contactWayTable");
-            } else {
-                $MB.n_danger(r['msg']);
-            }
-        });
-    }
-});
-
 /**
  * 获取短链
  */
 function getShortUrl() {
-    var url = $("#longUrl").val();
+    var url = $("#qrCode").val();
     if(url.trim() == "") {
         $MB.n_warning("长链不能为空！");
         return;
