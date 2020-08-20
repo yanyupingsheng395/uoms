@@ -158,7 +158,7 @@ public class PageController extends BaseController {
         model.addAttribute("operateType", "save");
         SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
         model.addAttribute("sourceConfig",sourceConfigVO);
-        return "operate/activity/add/add";
+        return "/operate/activity/add/add";
     }
 
     /**

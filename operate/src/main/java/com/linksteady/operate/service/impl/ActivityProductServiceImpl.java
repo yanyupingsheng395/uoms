@@ -72,6 +72,9 @@ public class ActivityProductServiceImpl implements ActivityProductService {
      * @return
      */
     private ActivityProduct calculateProductMinPrice(ActivityProduct activityProduct) {
+        if("617512643196".equalsIgnoreCase(activityProduct.getProductId())) {
+            System.out.println(1);
+        }
         Long headId = activityProduct.getHeadId();
         List<ActivityCoupon> couponList = activityHeadMapper.getActivityCouponList(headId);
 
@@ -262,7 +265,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
         double totalDiscount = preferAmount1 + preferAmount2 + preferAmount3_1 + preferAmount3_2;
         activityPrice = (activityPrice - totalDiscount) < 0 ? 0 : (activityPrice - totalDiscount);
         activityProduct.setMinPrice(Math.round(activityPrice));
-        activityProduct.setActivityProfit((double) Math.round(activityProfit));
+        activityProduct.setActivityProfit(activityProfit);
         return activityProduct;
     }
 
@@ -478,6 +481,9 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                     double discountSize = 0D;
                     // 折扣金额
                     double discountAmount = 0D;
+                    if(StringUtils.isEmpty(groupId)) {
+                        System.out.println(1);
+                    }
                     switch (Objects.requireNonNull(groupId)) {
                         case "9":
                             // 满件打折

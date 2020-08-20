@@ -17,7 +17,4 @@ public class AddUser {
     private String smsContent;
     private Long scheduleId;
     private String state;
-
-
-
 }

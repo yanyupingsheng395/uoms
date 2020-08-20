@@ -27,6 +27,7 @@ public class AddUserHead {
     private long waitUserCnt;
     private long dailyUserCnt;
     private double dailyApplyRate;
+    private String dailyApplyRateStr;
     private long dailyAddUserCnt;
     private long dailyWaitDays;
     private long dailyAddTotal;

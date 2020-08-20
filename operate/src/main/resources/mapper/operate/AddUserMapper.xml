@@ -15,6 +15,7 @@
         <result column="source_name" jdbcType="VARCHAR" property="sourceName"/>
         <result column="daily_user_cnt" jdbcType="DECIMAL" property="dailyUserCnt"/>
         <result column="daily_apply_rate" jdbcType="VARCHAR" property="dailyApplyRate"/>
+        <result column="daily_apply_rate_str" jdbcType="VARCHAR" property="dailyApplyRateStr"/>
         <result column="daily_add_user_cnt" jdbcType="DECIMAL" property="dailyAddUserCnt"/>
         <result column="daily_wait_days" jdbcType="DECIMAL" property="dailyWaitDays"/>
         <result column="daily_add_total" jdbcType="DECIMAL" property="dailyAddTotal"/>
@@ -94,7 +95,7 @@
     </delete>
 
     <select id="getHeadById" resultMap="base">
-        select * from uo_qywx_add_user_header where id = #{id}
+        select id, apply_user_cnt, apply_pass_cnt, apply_pass_rate, task_start_dt, task_status, insert_dt, insert_by, update_dt, update_by, task_end_dt, task_name, delivered_user_cnt, wait_user_cnt, daily_user_cnt, daily_apply_rate, daily_apply_rate daily_apply_rate_str, daily_add_user_cnt, daily_wait_days, daily_add_total, contactway_id, sms_content, source_id, source_name, region_id, region_name, send_type, version, contactway_url from uo_qywx_add_user_header where id = #{id}
     </select>
 
     <select id="getSource" resultType="map">
