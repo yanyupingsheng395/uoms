@@ -27,7 +27,7 @@
         <result column="delivered_user_cnt" jdbcType="DECIMAL" property="deliveredUserCnt"/>
         <result column="is_source_name" jdbcType="VARCHAR" property="isSourceName"/>
         <result column="is_prod_name" jdbcType="VARCHAR" property="isProdName"/>
-        <result column="actual_apply_num" jdbcType="DECIMAL" property="actualApplyNum"/>
+        <result column="apply_success_num" jdbcType="DECIMAL" property="applySuccessNum"/>
     </resultMap>
 
     <resultMap id="scheduleMap" type="com.linksteady.operate.domain.AddUserSchedule">
@@ -42,6 +42,7 @@
         <result column="source_name" jdbcType="VARCHAR" property="sourceName"/>
         <result column="region_id" jdbcType="VARCHAR" property="regionId"/>
         <result column="region_name" jdbcType="VARCHAR" property="regionName"/>
+        <result column="apply_success_num" jdbcType="DECIMAL" property="applySuccessNum"/>
     </resultMap>
 
     <resultMap id="scheduleEffectVO" type="com.linksteady.operate.vo.QywxScheduleEffectVO">
@@ -73,7 +74,8 @@
             apply_pass_rate,
             task_start_dt,
             task_status,
-            send_type
+            send_type,
+            apply_success_num
          from uo_qywx_trigger_header
         order by insert_dt desc
         limit #{limit} offset #{offset}
@@ -249,7 +251,7 @@
 
     <update id="calculateHeadEffect">
           update uo_qywx_trigger_header c
-                 set (actual_apply_num,apply_pass_cnt,apply_pass_rate)=
+                 set (apply_success_num,apply_pass_cnt,apply_pass_rate)=
             (select
                 count(id) success_num,
                 count(case when is_add_qywx='1'then is_add_qywx end) pass_num,
@@ -375,7 +377,8 @@
     <update id="updateScheduleRemainUserCnt">
         update uo_qywx_trigger_schedule
         set remain_user_cnt=remain_user_cnt-#{costSlots} ,
-            actual_apply_num=actual_apply_num+#{actualApplyNum}
+            actual_apply_num=actual_apply_num+#{actualApplyNum},
+            apply_success_num=apply_success_num+#{actualApplyNum}
         where schedule_id=#{scheduleId}
     </update>
 
@@ -438,7 +441,10 @@
     </insert>
 
     <update id="updateHeadApplyUserCnt">
-        update uo_qywx_trigger_header set apply_user_cnt=apply_user_cnt+#{applyUserCnt} where head_id=#{headId}
+        update uo_qywx_trigger_header
+        set apply_user_cnt=apply_user_cnt+#{applyUserCnt},
+            apply_success_num=apply_success_num+#{applyUserCnt}
+        where id=#{headId}
     </update>
 
 </mapper>

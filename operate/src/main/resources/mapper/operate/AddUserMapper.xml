@@ -25,7 +25,7 @@
         <result column="sms_content" jdbcType="VARCHAR" property="smsContent"/>
         <result column="wait_user_cnt" jdbcType="DECIMAL" property="waitUserCnt"/>
         <result column="delivered_user_cnt" jdbcType="DECIMAL" property="deliveredUserCnt"/>
-        <result column="actual_apply_num" jdbcType="DECIMAL" property="actualApplyNum"/>
+        <result column="apply_success_num" jdbcType="DECIMAL" property="applySuccessNum"/>
     </resultMap>
 
     <resultMap id="paramMap" type="com.linksteady.operate.domain.QywxParam">
@@ -54,6 +54,7 @@
         <result column="schedule_date" jdbcType="TIMESTAMP" property="scheduleDate"/>
         <result column="remain_user_cnt" jdbcType="DECIMAL" property="remainUserCnt"/>
         <result column="sms_content" jdbcType="VARCHAR" property="smsContent"/>
+        <result column="apply_success_num" jdbcType="DECIMAL" property="applySuccessNum"/>
     </resultMap>
 
     <resultMap id="scheduleEffectVO" type="com.linksteady.operate.vo.QywxScheduleEffectVO">
@@ -76,7 +77,7 @@
             send_type,
             delivered_user_cnt,
             wait_user_cnt,
-            actual_apply_num
+            apply_success_num
          from uo_qywx_add_user_header
         order by insert_dt desc
         limit #{limit} offset #{offset}
@@ -86,8 +87,8 @@
         <selectKey resultType="java.lang.Integer" order="BEFORE" keyProperty="id">
             select nextval('qywx_add_user_header_id_seq'::regclass)
         </selectKey>
-        insert into uo_qywx_add_user_header(id, send_type, task_status, task_name, region_id, region_name, source_id, source_name, daily_user_cnt, daily_apply_rate)
-        values (#{id}, #{sendType}, 'edit', #{taskName}, #{regionId}, #{regionName}, #{sourceId}, #{sourceName}, #{dailyUserCnt}, #{dailyApplyRate})
+        insert into uo_qywx_add_user_header(id, send_type, task_status, task_name, region_id, region_name, source_id, source_name, daily_user_cnt, daily_apply_rate,insert_dt,insert_by)
+        values (#{id}, #{sendType}, 'edit', #{taskName}, #{regionId}, #{regionName}, #{sourceId}, #{sourceName}, #{dailyUserCnt}, #{dailyApplyRate},#{insertDt},#{insertBy})
     </insert>
 
     <delete id="deleteHead">
@@ -302,7 +303,7 @@
 
     <update id="calculateHeadEffect">
           update uo_qywx_add_user_header c
-                 set (actual_apply_num,apply_pass_cnt,apply_pass_rate)=
+                 set (apply_success_num,apply_pass_cnt,apply_pass_rate)=
             (select
                 count(id) success_num,
                 count(case when is_add_qywx='1'then is_add_qywx end) pass_num,

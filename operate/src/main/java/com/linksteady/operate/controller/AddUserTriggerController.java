@@ -190,8 +190,10 @@ public class AddUserTriggerController extends BaseController {
     public ResponseBo startJob() {
         try {
             if (processOrderLock.tryLock()) {
-                addUserJobService.deleteAddUserHistory();
-                addUserJobService.processDailyOrders();
+              //  addUserJobService.deleteAddUserHistory();
+             //   addUserJobService.processDailyOrders();
+                addUserJobService.updateTriggerStatus();
+                addUserJobService.updateTriggerEffect();
             } else {
                 throw new OptimisticLockException("任务已经在运行中，请稍后再试!");
             }

@@ -72,7 +72,7 @@ public class AddUserJobServiceImpl implements AddUserJobService {
 
         List<QywxScheduleEffectVO> covList=null;
         Map<String,Long> covMap=null;
-        LocalDate covDate=null;
+        LocalDate statisDate=null;
         List<AddUserEffect> addUserEffectList=null;
         AddUserEffect addUserEffect=null;
 
@@ -87,31 +87,36 @@ public class AddUserJobServiceImpl implements AddUserJobService {
 
             for(int j=0;j<10;j++)
             {
+                statisDate=scheduleDate.plusDays(j);
+                if(statisDate.isAfter(LocalDate.now()))
+                {
+                    break;
+                }
+
                 addUserEffect=new AddUserEffect();
                 addUserEffect.setHeadId(addUserSchedule.getHeadId());
                 addUserEffect.setScheduleId(addUserSchedule.getScheduleId());
                 addUserEffect.setApplyDate(addUserSchedule.getScheduleDate());
-                addUserEffect.setApplyNum(addUserSchedule.getActualApplyNum());
+                addUserEffect.setApplyNum(addUserSchedule.getApplySuccessNum());
 
-                covDate=scheduleDate.plusDays(j);
-                addUserEffect.setStatisDate(Date.from(covDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+                addUserEffect.setStatisDate(statisDate);
                 addUserEffect.setStatisDay(j);
 
-                String key=covDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+                String key=statisDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
                 //判断这个日期是否有转化数据
                 if(covMap.containsKey(key))
                 {
                     addUserEffect.setStatisPassNum(covMap.get(key));
                     //转化率
-                    addUserEffect.setStatisPassRate(addUserSchedule.getActualApplyNum()==0?0d: ArithUtil.formatDouble(covMap.get(key)/addUserSchedule.getActualApplyNum()*100.00,2));
+                    addUserEffect.setStatisPassRate(addUserSchedule.getApplySuccessNum()==0?0d: ArithUtil.formatDouble(covMap.get(key)/addUserSchedule.getApplySuccessNum()*100.00,2));
                 }else
                 {
                     addUserEffect.setStatisPassNum(0);
                     addUserEffect.setStatisPassRate(0d);
                 }
                 addUserEffectList.add(addUserEffect);
-                addUserTriggerMapper.saveScheduleEffect(addUserEffectList);
             }
+            addUserTriggerMapper.saveScheduleEffect(addUserEffectList);
         }
     }
 
@@ -142,9 +147,9 @@ public class AddUserJobServiceImpl implements AddUserJobService {
 
         List<QywxScheduleEffectVO> covList=null;
         Map<String,Long> covMap=null;
-        LocalDate covDate=null;
         List<AddUserEffect> addUserEffectList=null;
         AddUserEffect addUserEffect=null;
+        LocalDate statisDate=null;
 
         for(AddUserSchedule addUserSchedule:scheduleList)
         {
@@ -153,35 +158,42 @@ public class AddUserJobServiceImpl implements AddUserJobService {
 
             //获取这个schdule的所有转化统计数据
             covList=addUserMapper.getScheduleCovStatis(addUserSchedule.getScheduleId());
+            // key为日期 value为转化人数
             covMap=covList.stream().collect(Collectors.toMap(QywxScheduleEffectVO::getStatisDateWid, QywxScheduleEffectVO::getCnt));
 
+            //固定往后面算10天
             for(int j=0;j<10;j++)
             {
+                statisDate=scheduleDate.plusDays(j);
+                if(statisDate.isAfter(LocalDate.now()))
+                {
+                    break;
+                }
+
                 addUserEffect=new AddUserEffect();
                 addUserEffect.setHeadId(addUserSchedule.getHeadId());
                 addUserEffect.setScheduleId(addUserSchedule.getScheduleId());
                 addUserEffect.setApplyDate(addUserSchedule.getScheduleDate());
-                addUserEffect.setApplyNum(addUserSchedule.getActualApplyNum());
+                addUserEffect.setApplyNum(addUserSchedule.getApplySuccessNum());
 
-                covDate=scheduleDate.plusDays(j);
-                addUserEffect.setStatisDate(Date.from(covDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+                addUserEffect.setStatisDate(statisDate);
                 addUserEffect.setStatisDay(j);
 
-                String key=covDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+                String key=statisDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
                 //判断这个日期是否有转化数据
                 if(covMap.containsKey(key))
                 {
                     addUserEffect.setStatisPassNum(covMap.get(key));
                     //转化率
-                    addUserEffect.setStatisPassRate(addUserSchedule.getActualApplyNum()==0?0d: ArithUtil.formatDouble(covMap.get(key)/addUserSchedule.getActualApplyNum()*100.00,2));
+                    addUserEffect.setStatisPassRate(addUserSchedule.getApplySuccessNum()==0?0d: ArithUtil.formatDouble(covMap.get(key)/addUserSchedule.getApplySuccessNum()*100.00,2));
                 }else
                 {
                     addUserEffect.setStatisPassNum(0);
                     addUserEffect.setStatisPassRate(0d);
                 }
                 addUserEffectList.add(addUserEffect);
-                addUserMapper.saveScheduleEffect(addUserEffectList);
             }
+            addUserMapper.saveScheduleEffect(addUserEffectList);
         }
 
     }
@@ -215,18 +227,18 @@ public class AddUserJobServiceImpl implements AddUserJobService {
            LocalDateTime orderDt=null;
            //计算两个时间的时间差 (如果超过2天，则舍弃原来的时间，否则还用原来的)
            long diff=now-lastTimes;
-           if(diff<=172800000l)
+           if(diff<=345600000l)
            {
               orderDt=qywxParam.getLastSyncOrderDt();
            }else
            {
                //超过2天，则用当前时间往前推2天
-               orderDt=LocalDateTime.now().minusDays(2);
+               orderDt=LocalDateTime.now().minusDays(4);
            }
 
            if(orderDt==null)
            {
-               orderDt=LocalDateTime.now().minusDays(2);
+               orderDt=LocalDateTime.now().minusDays(4);
            }
            log.info("企业微信-主动拉新：本次处理的订单时间戳为{}",orderDt);
            LocalDateTime currentTimes= LocalDateTime.now();
