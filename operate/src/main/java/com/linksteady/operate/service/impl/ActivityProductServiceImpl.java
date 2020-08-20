@@ -72,9 +72,6 @@ public class ActivityProductServiceImpl implements ActivityProductService {
      * @return
      */
     private ActivityProduct calculateProductMinPrice(ActivityProduct activityProduct) {
-        if("617512643196".equalsIgnoreCase(activityProduct.getProductId())) {
-            System.out.println(1);
-        }
         Long headId = activityProduct.getHeadId();
         List<ActivityCoupon> couponList = activityHeadMapper.getActivityCouponList(headId);
 
@@ -249,23 +246,25 @@ public class ActivityProductServiceImpl implements ActivityProductService {
             }
         }
         double activityProfit = 0D;
+        double totalDiscount = preferAmount1 + preferAmount2 + preferAmount3_1 + preferAmount3_2;
+        activityPrice = (activityPrice - totalDiscount) < 0 ? 0 : (activityPrice - totalDiscount);
+        activityProduct.setMinPrice(Math.round(activityPrice));
         switch (groupId) {
             case "9":
                 activityProfit = activityProduct.getDiscountSize();
+                activityProduct.setActivityProfit(activityProfit);
                 break;
             case "13":
                 activityProfit = preferAmount2 + preferAmount3_1 + preferAmount3_2;
+                activityProduct.setActivityProfit(Math.ceil(activityProfit));
                 break;
             case "14":
                 activityProfit = preferAmount1 + preferAmount2 + preferAmount3_1 + preferAmount3_2;
+                activityProduct.setActivityProfit(Math.ceil(activityProfit));
                 break;
             default:
                 break;
         }
-        double totalDiscount = preferAmount1 + preferAmount2 + preferAmount3_1 + preferAmount3_2;
-        activityPrice = (activityPrice - totalDiscount) < 0 ? 0 : (activityPrice - totalDiscount);
-        activityProduct.setMinPrice(Math.round(activityPrice));
-        activityProduct.setActivityProfit(activityProfit);
         return activityProduct;
     }
 
@@ -369,6 +368,16 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                     //获取第一行的的数据
                     if (null == row) {
                         errorList.add(new ActivityProductUploadError("行为空", i + 1));
+                        continue;
+                    }
+                    boolean blankRow = false;
+                    for (int j = 0; j < headers.size(); j++) {
+                        Cell tmp = row.getCell(j);
+                        if(tmp != null && tmp.getCellType() != 3) {
+                            blankRow = true;
+                        }
+                    }
+                    if (!blankRow) {
                         continue;
                     }
                     // 校验文件第一行与模板是否一致
@@ -481,9 +490,6 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                     double discountSize = 0D;
                     // 折扣金额
                     double discountAmount = 0D;
-                    if(StringUtils.isEmpty(groupId)) {
-                        System.out.println(1);
-                    }
                     switch (Objects.requireNonNull(groupId)) {
                         case "9":
                             // 满件打折
@@ -763,23 +769,5 @@ public class ActivityProductServiceImpl implements ActivityProductService {
         } else {
             return "错误类型";
         }
-    }
-}
-
-/**
- * 活动类型的枚举
-  */
-enum ActivityType {
-    //满件打折
-    FULL_DISCOUNT("9", "满件打折"),
-    //立减特价
-    SPECIAL_REDUCE("14", "立减特价"),
-    //仅店铺券
-    ONLY_SHOP_DISCOUNT("13", "仅店铺券");
-    public String code;
-    public String msg;
-    ActivityType(String code, String msg) {
-        this.code = code;
-        this.msg = msg;
     }
 }
