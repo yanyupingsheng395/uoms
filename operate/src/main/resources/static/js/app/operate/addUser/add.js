@@ -202,8 +202,6 @@ function saveData(dom) {
         }, function () {
             //打开遮罩层
             $MB.loadingDesc('show', '保存中，请稍候...');
-            console.log(sourceId);
-            console.log(sourceName);
             $.post("/addUser/saveData",{taskName:taskName, sendType: sendType, sourceId: sourceId,
                     regionId: regionId, sourceName: sourceName, regionName: regionName, dailyUserCnt: currentDailyUserCnt,
                     dailyApplyRate:currentDailyApplyRate},

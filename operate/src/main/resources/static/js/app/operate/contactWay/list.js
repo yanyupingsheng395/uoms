@@ -150,7 +150,6 @@ $("#btn_edit").click(function () {
             $form.find("input[name='state']").val(d.state).attr("readOnly", "readOnly");
             $form.find("select[name='userSelect']").selectpicker('val', d.usersList.split(','));
             $form.find("input[name='usersList']").val($form.find("select[name='userSelect']").selectpicker('val'));
-            $form.find("input[name='qrCode']").val(d.qrCode);
             $form.find("input[name='shortUrl']").val(d.shortUrl);
         } else {
             $MB.n_danger(r['msg']);
@@ -165,7 +164,7 @@ $("#btn_add").click(function () {
     $("#myLargeModalLabel").html('新增渠道活码');
     $("#state").removeAttr("readOnly");
     $("#qrCodeDiv").hide();
-    $("#qrCode").val("");
+    $("#longUrl").val("");
     $("#shortUrl").val("");
     $('#add_modal').modal('show');
 });
@@ -211,6 +210,8 @@ $("#btn_save").click(function () {
     var validator = $contactWayForm.validate();
     var flag = validator.form();
     if (flag) {
+        //打开遮罩层
+        $MB.loadingDesc('show', '保存中，请稍候...');
         if (name === "save") {
             $.post("/contactWay/save", $("#contactWay_edit").serialize(), function (r) {
                 if (r.code === 200) {
@@ -220,6 +221,7 @@ $("#btn_save").click(function () {
                 } else {
                     $MB.n_danger(r.msg);
                 };
+                $MB.loadingDesc('hide');
             });
         }
         if (name === "update") {
@@ -232,6 +234,7 @@ $("#btn_save").click(function () {
                     $MB.n_danger(r.msg);
                 }
             });
+            $MB.loadingDesc('hide');
         }
     }
 });
@@ -322,7 +325,7 @@ function closeModal() {
  * 获取短链
  */
 function getShortUrl() {
-    var url = $("#qrCode").val();
+    var url = $("#longUrl").val();
     if(url.trim() == "") {
         $MB.n_warning("长链不能为空！");
         return;
