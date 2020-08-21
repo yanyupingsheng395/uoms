@@ -2,11 +2,6 @@
  * 通用css样式布局处理
  * Copyright (c) 2019 ruoyi
  */
-
-.pagination {
-    margin-top: 0px !important;
-    margin-bottom: 0px !important;
-}
 /** 基础通用 **/
 .pt5 {
     padding-top: 5px;

@@ -152,7 +152,7 @@ function selectQrCode() {
             visible: false
         }]
     };
-    $( "#qrDataTable" ).bootstrapTable( settings );
+    $( "#qrDataTable" ).bootstrapTable('destroy').bootstrapTable( settings );
     $( "#selectQrModal" ).modal( 'show' );
 }
 
