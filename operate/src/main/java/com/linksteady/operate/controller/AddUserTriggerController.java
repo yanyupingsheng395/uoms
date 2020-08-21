@@ -151,12 +151,31 @@ public class AddUserTriggerController extends BaseController {
     /**
      * 获取默认的转化率、及发送人数
      */
+    @RequestMapping("/startProcess")
+    public ResponseBo startProcess() {
+        try {
+            if (processOrderLock.tryLock()) {
+                addUserJobService.deleteAddUserHistory();
+                addUserJobService.processDailyOrders();
+            } else {
+                throw new OptimisticLockException("任务已经在运行中，请稍后再试!");
+            }
+            return ResponseBo.ok();
+        } catch (Exception e) {
+            log.error("企业微信拉新自动处理订单出错，错误原因为{}", e);
+            return ResponseBo.error(e.getMessage());
+        } finally {
+            processOrderLock.unlock();
+        }
+    }
+
+    /**
+     * 获取默认的转化率、及发送人数
+     */
     @RequestMapping("/startJob")
     public ResponseBo startJob() {
         try {
             if (processOrderLock.tryLock()) {
-              //  addUserJobService.deleteAddUserHistory();
-             //   addUserJobService.processDailyOrders();
                 addUserJobService.updateTriggerStatus();
                 addUserJobService.updateTriggerEffect();
             } else {
