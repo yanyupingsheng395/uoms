@@ -286,7 +286,6 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     }
 
     /**
-     * todo 更新状态
      * 删除商品，删除完更新head表的数据状态
      */
     @Override

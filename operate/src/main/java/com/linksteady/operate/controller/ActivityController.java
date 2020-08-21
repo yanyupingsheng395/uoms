@@ -145,7 +145,6 @@ public class ActivityController {
         return ResponseBo.ok();
     }
 
-    // todo 商品名称不能超过短信预设的，商品ID防重复
     /**
      * 保存商品信息
      * @return

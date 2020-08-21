@@ -209,8 +209,6 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
     @Transactional
     public void deleteContactWay(String configId) throws Exception{
         log.info("删除渠道活码，接收到的configId为{}",configId);
-
-        //todo 判断渠道活码是否被任务引用 如果引用 则不允许删除
         if(qywxContactWayMapper.getRefrenceCount(configId)>0)
         {
             throw new Exception("渠道活码已被拉新任务引用，无法删除!");
