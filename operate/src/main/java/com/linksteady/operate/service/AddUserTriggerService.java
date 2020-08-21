@@ -19,7 +19,7 @@ public interface AddUserTriggerService {
      * 对主记录进行保存
      * @param addUserHead
      */
-    void saveData(AddUserHead addUserHead);
+    void saveData(AddUserHead addUserHead,String opUser);
 
     void deleteTask(String id);
 

@@ -37,18 +37,6 @@ public class QywxContactWayController extends BaseController {
     @Autowired
     QywxContactWayService qywxContactWayService;
 
-    /**
-     * 获取所有的活码列表
-     *
-     * @return
-     */
-    @GetMapping("/contactWay/getContactWayData")
-    @ResponseBody
-    public ResponseBo getHeadList() {
-        List<QywxContactWay> list=qywxContactWayService.getContactWayList();
-        return ResponseBo.okOverPaging("", 0,list);
-    }
-
 
     /**
      * 获取列表
@@ -65,6 +53,22 @@ public class QywxContactWayController extends BaseController {
         Optional.ofNullable(request.getParam()).ifPresent(x -> qstate.set(x.get("qstate")));
         int count =qywxContactWayService.getContactWayCount(qstate.get());
         List<QywxContactWay> list=qywxContactWayService.getContactWayList(limit,offset, qstate.get());
+        return ResponseBo.okOverPaging("", count,list);
+    }
+
+    /**
+     * 获取列表(已配置了url)
+     *
+     * @param request
+     * @return
+     */
+    @GetMapping("/contactWay/getValidUrlList")
+    @ResponseBody
+    public ResponseBo getValidUrlList(QueryRequest request) {
+        int limit = request.getLimit();
+        int offset = request.getOffset();
+        int count =qywxContactWayService.getContactWayValidUrlCount();
+        List<QywxContactWay> list=qywxContactWayService.getContactWayValidUrlList(limit,offset);
         return ResponseBo.okOverPaging("", count,list);
     }
 
@@ -183,8 +187,8 @@ public class QywxContactWayController extends BaseController {
             qywxContactWayService.deleteContactWay(configId);
             return ResponseBo.ok("删除成功！");
         } catch (Exception e) {
-            log.error("删除渠道活码失败，{}",e);
-            return ResponseBo.error("删除失败！");
+            log.debug("删除渠道活码失败，{}",e);
+            return ResponseBo.error(e.getMessage());
         }
     }
 

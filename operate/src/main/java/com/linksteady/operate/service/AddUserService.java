@@ -19,7 +19,7 @@ public interface AddUserService {
      * 对主记录进行保存
      * @param addUserHead
      */
-    AddUserHead saveData(AddUserHead addUserHead) throws Exception;
+    AddUserHead saveData(AddUserHead addUserHead,String opUser) throws Exception;
 
     void deleteTask(String id);
 

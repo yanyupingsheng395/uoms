@@ -50,12 +50,8 @@ public class AddUserController extends BaseController {
      */
     @RequestMapping("/saveData")
     public ResponseBo saveData(AddUserHead addUserHead) {
-        addUserHead.setInsertDt(new Date());
-        addUserHead.setInsertBy(getCurrentUser().getUsername());
-        addUserHead.setUpdateDt(new Date());
-        addUserHead.setUpdateBy(getCurrentUser().getUsername());
         try {
-            return ResponseBo.okWithData(null, addUserService.saveData(addUserHead));
+            return ResponseBo.okWithData(null, addUserService.saveData(addUserHead,getCurrentUser().getUsername()));
         } catch (Exception e) {
             return ResponseBo.error(e.getMessage());
         }

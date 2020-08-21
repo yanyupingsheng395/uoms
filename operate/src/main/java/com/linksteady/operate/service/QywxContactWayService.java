@@ -18,9 +18,11 @@ public interface QywxContactWayService {
 
     int getContactWayCount(String qstate);
 
-    List<QywxContactWay> getContactWayList();
-
     List<QywxContactWay> getContactWayList(int limit,int offset,String qstate);
+
+    int getContactWayValidUrlCount();
+
+    List<QywxContactWay> getContactWayValidUrlList(int limit,int offset);
 
     QywxContactWay getContactWayById(Long contactWayId);
 

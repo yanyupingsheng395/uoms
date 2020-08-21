@@ -57,11 +57,7 @@ public class AddUserTriggerController extends BaseController {
      */
     @RequestMapping("/saveData")
     public synchronized ResponseBo saveData(AddUserHead addUserHead) {
-        addUserHead.setInsertDt(new Date());
-        addUserHead.setInsertBy(getCurrentUser().getUsername());
-        addUserHead.setUpdateDt(new Date());
-        addUserHead.setUpdateBy(getCurrentUser().getUsername());
-        addUserTriggerService.saveData(addUserHead);
+        addUserTriggerService.saveData(addUserHead,getCurrentUser().getUsername());
         return ResponseBo.okWithData(null, addUserHead.getId());
     }
 

@@ -28,6 +28,7 @@
         <result column="is_source_name" jdbcType="VARCHAR" property="isSourceName"/>
         <result column="is_prod_name" jdbcType="VARCHAR" property="isProdName"/>
         <result column="apply_success_num" jdbcType="DECIMAL" property="applySuccessNum"/>
+        <result column="state" jdbcType="VARCHAR" property="state"/>
     </resultMap>
 
     <resultMap id="scheduleMap" type="com.linksteady.operate.domain.AddUserSchedule">
@@ -75,9 +76,11 @@
             task_start_dt,
             task_status,
             send_type,
-            apply_success_num
+            apply_success_num,
+            state
          from uo_qywx_trigger_header
-        order by insert_dt desc
+          left join uo_qywx_contact_way on uo_qywx_trigger_header.contactway_id=uo_qywx_contact_way.contactway_id
+        order by uo_qywx_trigger_header.insert_dt desc
         limit #{limit} offset #{offset}
     </select>
 

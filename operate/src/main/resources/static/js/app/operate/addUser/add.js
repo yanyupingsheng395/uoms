@@ -58,7 +58,7 @@ function stepBreak(idx) {
 // 获取二维码数据
 function selectQrCode() {
     let settings = {
-        url: '/contactWay/getList',
+        url: '/contactWay/getValidUrlList',
         pagination: true,
         singleSelect: true,
         sidePagination: "server",

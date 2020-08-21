@@ -1,7 +1,6 @@
 package com.linksteady.operate.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.operate.dao.AddUserTriggerMapper;
@@ -18,8 +17,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
@@ -59,8 +58,13 @@ public class AddUserTriggerServiceImpl implements AddUserTriggerService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void saveData(AddUserHead addUserHead) {
+    public void saveData(AddUserHead addUserHead,String opUser) {
         addUserHead.setTaskStatus("edit");
+        addUserHead.setTaskStartDt(new Date());
+        addUserHead.setInsertDt(new Date());
+        addUserHead.setInsertBy(opUser);
+        addUserHead.setUpdateDt(new Date());
+        addUserHead.setUpdateBy(opUser);
         addUserTriggerMapper.saveHeadData(addUserHead);
     }
 

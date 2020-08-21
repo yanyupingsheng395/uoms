@@ -37,13 +37,6 @@
         from uo_qywx_contact_way where  contactway_id=#{contactWayId}
     </select>
 
-    <select id="getAllContactWayList" resultMap="BaseResultMap">
-        select contactway_id,qrcode,contact_type,scene,style,skip_verify,state,user_list,party,
-                config_id,create_dt,update_dt,create_by,update_by,externaluser_num,short_url
-        from uo_qywx_contact_way
-        ORDER BY update_dt desc
-    </select>
-
     <select id="getContactWayList" resultMap="BaseResultMap">
        select contactway_id,qrcode,contact_type,scene,style,skip_verify,state,user_list,party,
                 config_id,create_dt,update_dt,create_by,update_by,externaluser_num,short_url
@@ -65,6 +58,20 @@
                 state like concat('%', #{qstate}, '%')
             </if>
         </where>
+    </select>
+
+    <select id="getContactWayValidUrlList" resultMap="BaseResultMap">
+        select contactway_id,qrcode,contact_type,scene,style,skip_verify,state,user_list,party,
+        config_id,create_dt,update_dt,create_by,update_by,externaluser_num,short_url
+        from uo_qywx_contact_way
+        where coalesce(short_url,'')!=''
+        ORDER BY update_dt desc
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="getContactWayValidUrlCount" resultType="int">
+        select count(*)
+        from uo_qywx_contact_way where coalesce(short_url,'')!=''
     </select>
 
     <update id="updateContactWayFullInfo">
@@ -137,5 +144,14 @@
 
     <select id="getQrcodeByConfigId" resultMap="BaseResultMap">
         select qrcode,state from uo_qywx_contact_way where config_id=#{configId}
+    </select>
+
+    <select id="getRefrenceCount" resultType="int">
+        select count(*) from uo_qywx_contact_way where config_id=#{configId}
+        and contactway_id in (
+            select distinct uo_qywx_add_user_header.contactway_id from uo_qywx_add_user_header
+            union
+            select distinct uo_qywx_trigger_header.contactway_id from uo_qywx_trigger_header
+                )
     </select>
 </mapper>

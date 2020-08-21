@@ -63,9 +63,14 @@ public class AddUserServiceImpl implements AddUserService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public AddUserHead saveData(AddUserHead addUserHead) throws Exception{
+    public AddUserHead saveData(AddUserHead addUserHead,String opUser) throws Exception{
         addUserHead.setTaskStatus("edit");
+        addUserHead.setInsertDt(new Date());
+        addUserHead.setInsertBy(opUser);
+        addUserHead.setUpdateDt(new Date());
+        addUserHead.setUpdateBy(opUser);
         addUserMapper.saveHeadData(addUserHead);
+        //更新参数
         filterUsers(addUserHead.getId(), addUserHead.getSourceId(), addUserHead.getRegionId());
 
         return addUserMapper.getHeadById(addUserHead.getId());

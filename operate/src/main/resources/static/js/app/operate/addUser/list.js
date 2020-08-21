@@ -71,6 +71,10 @@ function getTableData() {
             field: 'applyPassRate',
             align: "center",
             title: '申请通过率（%）'
+        } ,{
+            field: 'state',
+            align: "center",
+            title: '渠道'
         },{
             field: 'taskStatus',
             align: "center",

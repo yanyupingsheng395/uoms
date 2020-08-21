@@ -44,4 +44,5 @@ public class AddUserHead {
     private String isProdName;
 
     private long applySuccessNum;
+    private String state;
 }
