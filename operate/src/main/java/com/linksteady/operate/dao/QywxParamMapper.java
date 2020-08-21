@@ -22,7 +22,7 @@ public interface QywxParamMapper {
 
     int updateVersion(int version);
 
-    int updateOrderSyncTimes(LocalDateTime orderSyncDt, long orderSyncTimes);
+    int updateOrderSyncTimes(LocalDateTime orderSyncDt);
 
     /**
      * 往拉新历史表里写入数据

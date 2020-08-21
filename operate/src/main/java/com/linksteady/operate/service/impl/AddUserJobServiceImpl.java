@@ -221,11 +221,11 @@ public class AddUserJobServiceImpl implements AddUserJobService {
            QywxParam qywxParam=qywxParamMapper.getQywxParam();
 
            //如果时间戳距现在已经过去?3天，则不再使用这个时间戳，使用新的时间戳，sysdate-1
-           long lastTimes=qywxParam.getLastSyncOrderTimes();
+           long lastTimes= Timestamp.valueOf(qywxParam.getLastSyncOrderDt()).getTime();
            long now= Timestamp.valueOf(LocalDateTime.now()).getTime();
 
            LocalDateTime orderDt=null;
-           //计算两个时间的时间差 (如果超过2天，则舍弃原来的时间，否则还用原来的)
+           //计算两个时间的时间差 (如果超过4天，则舍弃原来的时间，否则还用原来的)
            long diff=now-lastTimes;
            if(diff<=345600000l)
            {
@@ -323,7 +323,7 @@ public class AddUserJobServiceImpl implements AddUserJobService {
 
            //更新参数表中的时间戳字段
            LocalDateTime nextSyncDt=currentTimes.minusMinutes(5);
-           qywxParamMapper.updateOrderSyncTimes(nextSyncDt,Timestamp.valueOf(nextSyncDt).getTime());
+           qywxParamMapper.updateOrderSyncTimes(nextSyncDt);
            log.info("企业微信-主动拉新：订单处理完成");
        }else
        {

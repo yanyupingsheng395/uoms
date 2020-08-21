@@ -54,9 +54,5 @@ public class QywxParam {
      */
     private LocalDateTime lastSyncOrderDt;
 
-    /**
-     * 最后一次同步订单的linux时间戳
-     */
-    private long lastSyncOrderTimes;
 
 }

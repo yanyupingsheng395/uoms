@@ -12,7 +12,6 @@
         <result column="last_update_dt" jdbcType="TIMESTAMP" property="lastUpdateDt"/>
         <result column="version" jdbcType="DECIMAL" property="version"/>
         <result column="last_sync_order_dt" jdbcType="TIMESTAMP" property="lastSyncOrderDt"/>
-        <result column="last_sync_order_times" jdbcType="DECIMAL" property="lastSyncOrderTimes"/>
     </resultMap>
 
     <resultMap id="addUserHistoryMap" type="com.linksteady.operate.vo.AddUserHistoryVO">
@@ -28,8 +27,7 @@
                last_update_by,
                last_update_dt,
                version,
-               last_sync_order_dt,
-               last_sync_order_times
+               last_sync_order_dt
         from uo_qywx_param
         limit 1
     </select>
@@ -58,8 +56,7 @@
 
     <update id="updateOrderSyncTimes">
          update uo_qywx_param set
-            last_sync_order_dt=#{orderSyncDt},
-            last_sync_order_times=#{orderSyncTimes}
+            last_sync_order_dt=#{orderSyncDt}
     </update>
 
     <insert id="insertAddUserHistory">
