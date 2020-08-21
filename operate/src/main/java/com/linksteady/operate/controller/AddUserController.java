@@ -139,7 +139,7 @@ public class AddUserController extends BaseController {
      */
     @RequestMapping("/addUserJob")
     public ResponseBo addUserJob() {
-      //  addUserJobService.updateAddUserStatus();
+        addUserJobService.updateAddUserStatus();
         addUserJobService.updateAddUserEffect();
         return ResponseBo.ok();
     }

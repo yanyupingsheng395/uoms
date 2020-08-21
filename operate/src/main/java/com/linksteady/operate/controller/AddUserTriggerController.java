@@ -149,7 +149,7 @@ public class AddUserTriggerController extends BaseController {
     }
 
     /**
-     * 获取默认的转化率、及发送人数
+     * 手工进行订单处理
      */
     @RequestMapping("/startProcess")
     public ResponseBo startProcess() {
@@ -170,7 +170,7 @@ public class AddUserTriggerController extends BaseController {
     }
 
     /**
-     * 获取默认的转化率、及发送人数
+     * 手工进行效果的计算
      */
     @RequestMapping("/startJob")
     public ResponseBo startJob() {
