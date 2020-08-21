@@ -332,14 +332,14 @@ public class QywxDailyController {
         JSONObject param=new JSONObject();
         param.put("chat_type","single");
         JSONArray externalUserid=new JSONArray();
-//        externalUserid.add("wmXfFiDwAAIoOS6g8UB2tHo2pZKT0zfQ");
-//        externalUserid.add("wmXfFiDwAA2R-zN-afopB1W0aunsLowg");
-//        param.put("external_userid",externalUserid);
-//        param.put("sender","brandonz");
-
-        externalUserid.add("wmXfFiDwAAh6eI9IU6fYEXXuB0CDPZ9Q");
+        externalUserid.add("wmXfFiDwAAIoOS6g8UB2tHo2pZKT0zfQ");
+        externalUserid.add("wmXfFiDwAA2R-zN-afopB1W0aunsLowg");
         param.put("external_userid",externalUserid);
-        param.put("sender","WangJiaHui");
+        param.put("sender","brandonz");
+
+//        externalUserid.add("wmXfFiDwAAh6eI9IU6fYEXXuB0CDPZ9Q");
+//        param.put("external_userid",externalUserid);
+//        param.put("sender","WangJiaHui");
 
         JSONObject text=new JSONObject();
         text.put("content","您好，520活动季，您关注的提花浴巾低至35元，欢迎购买！");
