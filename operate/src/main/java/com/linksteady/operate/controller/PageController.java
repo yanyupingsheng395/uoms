@@ -158,6 +158,10 @@ public class PageController extends BaseController {
         model.addAttribute("operateType", "save");
         SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
         model.addAttribute("sourceConfig",sourceConfigVO);
+        model.addAttribute("preheatStatus", "");
+        model.addAttribute("preheatNotifyStatus", "");
+        model.addAttribute("formalStatus", "");
+        model.addAttribute("formalNotifyStatus", "");
         return "operate/activity/add/add";
     }
 

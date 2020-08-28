@@ -507,7 +507,9 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                             if (null == cell6 || cell6.getCellType() == 3) {
                                 errorList.add(new ActivityProductUploadError("满件打折力度为空", i + 1));
                             } else {
-                                if (cell6.getCellType() == 0) {
+                                if (cell6.getCellType() == 1) {
+                                    discountSize = Double.parseDouble(cell6.getStringCellValue());
+                                } else if (cell0.getCellType() == 0) {
                                     discountSize = cell6.getNumericCellValue();
                                 } else {
                                     errorList.add(new ActivityProductUploadError("满件打折力度数据类型有误，应改为数值型", i + 1));

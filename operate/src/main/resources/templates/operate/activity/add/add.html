@@ -570,16 +570,12 @@
         </div>
     </div>
 </div>
-<div th:if="${operateType eq 'update'}">
-    <script>
-        const preheatStatus = "[[${preheatStatus}]]";
-        const preheatNotifyStatus = "[[${preheatNotifyStatus}]]";
-        const formalStatus = "[[${formalStatus}]]";
-        const formalNotifyStatus = "[[${formalNotifyStatus}]]";
-    </script>
-</div>
-
 <script>
+    const preheatStatus = "[[${preheatStatus}]]";
+    const preheatNotifyStatus = "[[${preheatNotifyStatus}]]";
+    const formalStatus = "[[${formalStatus}]]";
+    const formalNotifyStatus = "[[${formalNotifyStatus}]]";
+
     const operate_type = "[[${operateType}]]";
     const PROD_NAME_LEN = [[${sourceConfig.prodNameLen}]];
     const PROFIT_LEN = [[${sourceConfig.profitLen}]];

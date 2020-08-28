@@ -71,8 +71,8 @@ public class ActivityTemplateServiceImpl implements ActivityTemplateService {
         if("DISPLAY".equals(scene))
         {
             //(编辑短信时候不需要加上签名和退订信息，则此处预览的时候补上)
-            content =signature+content;
-            content=content+unsubscribe;
+            content = signature+content;
+            content = content+unsubscribe;
         }else if("SEND".equals(scene))
         {
             //需要系统自动加上签名

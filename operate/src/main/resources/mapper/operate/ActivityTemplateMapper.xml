@@ -127,7 +127,7 @@
     <update id="setSmsCode">
         update UO_OP_ACTIVITY_GROUP set
         SMS_TEMPLATE_CODE = #{tmpCode},update_by=#{currentUserName},update_dt=now()
-         where GROUP_ID = #{groupId} and HEAD_ID = #{headId}
+        where GROUP_ID = #{groupId} and HEAD_ID = #{headId}
         and ACTIVITY_TYPE = #{type} and ACTIVITY_STAGE = #{stage}
     </update>
 

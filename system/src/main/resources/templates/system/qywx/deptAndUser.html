@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <th:block th:include="common/include :: common-css" />
+    <th:block th:include="common/include::datepicker-css" />
+    <th:block th:include="common/include::bootstrap-select-css" />
+    <th:block th:include="common/include::bootstrap-table-css" />
+    <th:block th:include="common/include::jquery-confirm-css" />
+</head>
+<body class="gray-bg">
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-div ui-layout-center">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <div class="row">
+                            <h5 class="navbar-page-title">企业微信</h5>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 select-table table-striped">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="btn-group-sm" id="toolbar" role="group">
+                                    <input type="file" id="file" name="file" style="display: none;"
+                                           onchange="beforeUpload()"/>
+                                    <button class="btn btn-primary btn-sm" type="button" onclick="$('#file').click()"><i class="fa fa-file-text-o"></i>&nbsp;选择文件</button>
+                                    <span id="upload_file_name"></span>
+                                    <button id="uploadBtn" disabled class="btn btn-info btn-sm" type="button" onclick="uploadData()"><i class="fa fa-upload"></i>上传文件</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row table-responsive" style="margin-top: 10px;">
+                            <div class="col-md-6" style="padding-right: 0px;">
+                                <table id="deptTable" class="table  table-striped table-bordered"></table>
+                            </div>
+                            <div class="col-md-6">
+                                <table id="userTable" class="table  table-striped table-bordered"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<th:block th:include="common/include::footer" />
+<th:block th:include="common/include::perfect-scrollbar" />
+<th:block th:include="common/include::jquery-validate-js" />
+<th:block th:include="common/include::datepicker-js" />
+<th:block th:include="common/include::common-js" />
+<th:block th:include="common/include::bootstrap-select-js" />
+<th:block th:include="common/include::bootstrap-table-js" />
+<th:block th:include="common/include::jquery-confirm-js" />
+<script>
+    function beforeUpload() {
+        let fileName = document.getElementById('file').files[0].name;
+        if(!fileName.endsWith(".txt")) {
+            $MB.n_warning("仅支持txt格式的文件！");
+            return;
+        }
+        $('#upload_file_name' ).text(document.getElementById('file').files[0].name).attr('style', 'display:inline-block;');
+        $('#uploadBtn').removeAttr("disabled");
+    }
+
+    function uploadData() {
+        let formData = new FormData();
+        formData.append("file", document.getElementById('file').files[0]);
+        $.ajax({
+            url: "/qywxDeptAndUser/uploadData",
+            type: "POST",
+            data:formData,
+            contentType: false,
+            processData: false,
+            success: function(data) {
+                if(data.code === 200){
+                    $MB.n_success("上传成功！");
+                }else {
+                    $MB.n_success(data.msg);
+                }
+                $MB.refreshTable('userTable');
+                $MB.refreshTable('deptTable');
+                $('#uploadBtn').attr("disabled", "disabled");
+                $('#upload_file_name' ).text('');
+            },
+            error: function (data) {
+                $MB.n_danger(data.msg);
+            }
+        });
+    }
+
+    getUserTableData();
+    function getUserTableData() {
+        var settings = {
+            url: "/qywxDeptAndUser/getUserTableData",
+            pagination: true,
+            sidePagination: "server",
+            pageList: [10, 25, 50, 100],
+            queryParams: function (params) {
+                return {
+                    limit: params.limit,
+                    offset: params.offset
+                };
+            },
+            columns: [{
+                    field: 'user_id',
+                    title: '用户ID',
+                    align: 'center',
+                    width: 150
+                }, {
+                    field: 'user_name',
+                    title: '用户名称',
+                    align: 'center'
+                }
+            ]
+        };
+        $MB.initTable('userTable', settings);
+    }
+
+    getDeptTableData();
+    function getDeptTableData() {
+        var settings = {
+            url: "/qywxDeptAndUser/getDeptTableData",
+            pageSize: 10,
+            pagination: true,
+            sidePagination: "server",
+            pageList: [10, 25, 50, 100],
+            queryParams: function (params) {
+                return {
+                    limit: params.limit,
+                    offset: params.offset
+                };
+            },
+            columns: [{
+                    field: 'id',
+                    title: '部门ID',
+                    align: 'center',
+                    width: 150
+                }, {
+                    field: 'name',
+                    title: '部门名称',
+                    align: 'center'
+                }
+            ]
+        };
+        $MB.initTable('deptTable', settings);
+    }
+</script>
+</body>
+</html>
