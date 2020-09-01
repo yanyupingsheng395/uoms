@@ -3,6 +3,7 @@ package com.linksteady.system.shiro;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO;
 import org.springframework.data.redis.core.RedisTemplate;
+
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
@@ -34,13 +35,11 @@ public class RedisSessionDao extends EnterpriseCacheSessionDAO {
 
     @Override
     protected void doUpdate(Session session) {
-        super.doUpdate(session);
         redisTemplate.opsForValue().set(session.getId(), session, expireIn, TimeUnit.SECONDS);
     }
 
     @Override
     protected void doDelete(Session session) {
-        super.doDelete(session);
         redisTemplate.delete(session.getId());
     }
 
