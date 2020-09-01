@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.data.redis.core.RedisTemplate;
 import redis.clients.jedis.JedisPool;
 
 import javax.servlet.Filter;
@@ -47,6 +48,9 @@ public class ShiroConfig {
 
     @Autowired
     JedisPool jedisPool;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     private String cipherKey="Vfixl8Hi8tXf/hS8jt2AHw==";
 
@@ -209,12 +213,11 @@ public class ShiroConfig {
     }
 
     @Bean
-    public RedisSessionDAO redisSessionDAO() {
-        RedisSessionDAO redisSessionDAO = new RedisSessionDAO();
-        redisSessionDAO.setRedisManager(redisManager());
-        //redis session对象的过期时间
-        redisSessionDAO.setExpire(shiroProperties.getExpireIn());
-        return redisSessionDAO;
+    public RedisSessionDao redisSessionDAO() {
+        RedisSessionDao redisSessionDao = new RedisSessionDao();
+        redisSessionDao.setRedisTemplate(redisTemplate);
+        redisSessionDao.setExpire(shiroProperties.getExpireIn());
+        return redisSessionDao;
     }
 
     /**
