@@ -567,4 +567,13 @@ public class PageController extends BaseController {
     public String addUserMonitor() {
         return "operate/addUserMonitor/monitor";
     }
+
+    /**
+     * 企业微信素材(图片)上传
+     * @return
+     */
+    @RequestMapping("/qywxMediaImage")
+    public String qywxMediaImage() {
+        return "operate/media/imgList";
+    }
 }

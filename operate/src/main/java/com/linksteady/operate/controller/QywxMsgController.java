@@ -15,7 +15,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/qywx")
-public class QyWxMsgController {
+public class QywxMsgController {
 
     @Autowired
     private QywxMsgService qywxMsgService;
