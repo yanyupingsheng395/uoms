@@ -38,4 +38,29 @@ public class SyncTaskServiceImpl implements SyncTaskService {
     public void updateSyncTask(String taskId,String status) {
         syncTaskMapper.updateSyncTask(taskId,status);
     }
+
+    @Override
+    public void updateDeptDisabled() {
+        syncTaskMapper.updateDeptDisabled();
+    }
+
+    @Override
+    public void saveDept(long id, long parentId, String name, int orderNo) {
+        syncTaskMapper.saveDept(id,parentId,name,orderNo);
+    }
+
+    @Override
+    public void saveChangeFlag(String changeCode) {
+        if("party".equals(changeCode))
+        {
+            syncTaskMapper.savePartyChangeFlag();
+        }else if("auth_scope".equals(changeCode))
+        {
+            syncTaskMapper.saveAuthCodeChangeFlag();
+        }else if("follow_user".equals(changeCode))
+        {
+            syncTaskMapper.saveFollowUserChangeFlag();
+        }
+
+    }
 }

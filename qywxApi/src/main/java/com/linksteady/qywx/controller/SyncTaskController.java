@@ -1,6 +1,7 @@
 package com.linksteady.qywx.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.google.common.collect.Lists;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.OkHttpUtil;
@@ -25,6 +26,8 @@ import java.util.List;
 public class SyncTaskController extends ApiBaseController{
 
     private static final Object obj = new Object();
+
+    private static final Object deptLock = new Object();
 
     @Autowired
     SyncTaskService syncTaskService;
@@ -134,6 +137,26 @@ public class SyncTaskController extends ApiBaseController{
         }
     }
 
+
+    /**
+     * 提交异步任务
+     * @param corpId
+     * @param taskList
+     * @return
+     */
+    private String submitTask(String corpId,List<SyncTask> taskList)
+    {
+        String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
+        String data=JSON.toJSONString(taskList);
+        String signature= SHA1.gen(timestamp,data);
+        //2.提交到企业微信端
+        StringBuffer url=new StringBuffer(apiService.getQywxDomainUrl()+SUBMIT_TASK_URL);
+        url.append("?corpId="+corpId);
+        url.append("&timestamp="+timestamp);
+        url.append("&signature="+signature);
+        return OkHttpUtil.postRequestByJson(url.toString(),data);
+    }
+
     /**
      * 接收企业微信端发过来 导购信息
      */
@@ -141,12 +164,10 @@ public class SyncTaskController extends ApiBaseController{
     public ResponseBo syncFollowUser(HttpServletRequest request,
                                      @RequestParam(name = "timestamp") String timestamp,
                                      @RequestParam(name = "signature") String signature,
-                                     @RequestParam(name = "data") String data,
-                                     @RequestParam(name = "corpId") String corpId) {
-
-        //对参数进行校验
-        try {
-            validateLegality(request,signature,timestamp,data,corpId);
+                                     @RequestParam(name = "corpId") String corpId,
+                                     @RequestParam(name = "data") String data) {
+        try{
+            validateLegality(request,signature,timestamp,corpId,data);
 
             //写入本地信息
             List<String> followUserList=JSONObject.parseArray(data,String.class);
@@ -170,10 +191,9 @@ public class SyncTaskController extends ApiBaseController{
                                            @RequestParam(name = "signature") String signature,
                                            @RequestParam(name = "taskId") String taskId,
                                            @RequestParam(name = "status") String status
-                                           ) {
-        //对参数进行校验
+    ) {
         try {
-            validateLegality(request,signature,timestamp,status,taskId);
+            validateLegality(request,signature,timestamp,taskId,status);
             //更新本地的企业微信同步任务状态
             syncTaskService.updateSyncTask(taskId,status);
             return ResponseBo.ok();
@@ -183,17 +203,61 @@ public class SyncTaskController extends ApiBaseController{
         }
     }
 
-    private String submitTask(String corpId,List<SyncTask> taskList)
-    {
-        String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
-        String data=JSON.toJSONString(taskList);
-        String signature= SHA1.gen(timestamp,data);
-        //2.提交到企业微信端
-        StringBuffer url=new StringBuffer(apiService.getQywxDomainUrl()+SUBMIT_TASK_URL);
-        url.append("?corpId="+corpId);
-        url.append("&timestamp="+timestamp);
-        url.append("&signature="+signature);
-        return OkHttpUtil.postRequestByJson(url.toString(),data);
+    /**
+     * 接收企业微信端返回来的部门信息
+     */
+    @PostMapping("/syncDept")
+    public ResponseBo syncDept(HttpServletRequest request,
+                                     @RequestParam(name = "timestamp") String timestamp,
+                                     @RequestParam(name = "signature") String signature,
+                                     @RequestParam(name = "data") String data,
+                                     @RequestParam(name = "corpId") String corpId) {
+        try {
+            validateLegality(request,signature,timestamp,data,corpId);
+
+            JSONArray deptArray=JSONObject.parseArray(data);
+            synchronized (deptLock)
+            {
+                //更新所有的部门为不可用
+                syncTaskService.updateDeptDisabled();
+                if(null!=deptArray&&deptArray.size()>0)
+                {
+                    JSONObject target=null;
+                    for(int i=0;i<deptArray.size();i++)
+                    {
+                        target=deptArray.getJSONObject(i);
+                        syncTaskService.saveDept(target.getLongValue("id"),target.getLongValue("parentId"),target.getString("name"),target.getIntValue("orderNo"));
+                    }
+                }
+            }
+            return ResponseBo.ok();
+        } catch (Exception e) {
+            log.error("syncFollowUser失败，错误原因为{}",e);
+            return ResponseBo.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 接收企业微信端返回来的 变更信息
+     */
+    @PostMapping("/syncChangeFlag")
+    public ResponseBo syncChangeFlag(HttpServletRequest request,
+                                     @RequestParam(name = "timestamp") String timestamp,
+                                     @RequestParam(name = "signature") String signature,
+                                     @RequestParam(name = "data") String data,
+                                     @RequestParam(name = "corpId") String corpId) {
+        try {
+            validateLegality(request,signature,timestamp,corpId,data);
+            String changeCode=data;
+            synchronized (obj)
+            {
+                syncTaskService.saveChangeFlag(changeCode);
+            }
+            return ResponseBo.ok();
+        } catch (Exception e) {
+            log.error("同步更新状态失败，原因为{}",e);
+            return ResponseBo.error(e.getMessage());
+        }
     }
 
 

@@ -29,4 +29,27 @@
     <delete id="deleteFollowUser">
         delete from uo_qywx_followuser_list where flag='N'
     </delete>
+
+    <update id="updateDeptDisabled">
+          update qywx_dept set enabled='N'
+    </update>
+
+    <insert id="saveDept">
+         insert into qywx_dept(id,name,parent_id,order_no,insert_dt,update_dt,enabled) values(
+             #{id},#{deptName},#{parentId},#{orderNo},now(),now(),'Y'
+          )  ON CONFLICT (id,corp_id) DO UPDATE
+          set parent_id=#{parentId}, order_no=#{orderNo},update_dt=now(),enabled='Y'
+    </insert>
+
+    <update id="savePartyChangeFlag">
+         update uo_qywx_param set party_change_flag='Y'
+    </update>
+
+    <update id="saveAuthCodeChangeFlag">
+        update uo_qywx_param set saveAuthCodeChangeFlag='Y'
+    </update>
+
+    <update id="saveFollowUserChangeFlag">
+        update uo_qywx_param set follow_user_change_flag='Y'
+    </update>
 </mapper>

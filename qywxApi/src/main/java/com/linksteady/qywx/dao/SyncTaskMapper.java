@@ -15,4 +15,14 @@ public interface SyncTaskMapper {
     void updateFollowUserFlag();
 
     void deleteFollowUser();
+
+    void updateDeptDisabled();
+
+    void saveDept(long id, long parentId, String deptName, int orderNo);
+
+    void savePartyChangeFlag();
+
+    void saveAuthCodeChangeFlag();
+
+    void saveFollowUserChangeFlag();
 }

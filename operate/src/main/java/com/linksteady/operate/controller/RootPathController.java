@@ -105,7 +105,6 @@ public class RootPathController extends BaseController {
     @RequestMapping("/findUserMenu")
     @ResponseBody
     public ResponseBo getUserMenu() {
-        log.info("获取菜单时间戳1:{}",new Date());
         UserBo userBo = super.getCurrentUser();
         SysInfoBo operate=commonFunService.getSysInfoByCode("operate");
         SysInfoBo system=commonFunService.getSysInfoByCode("system");
@@ -120,17 +119,14 @@ public class RootPathController extends BaseController {
         String userName = userBo.getUsername();
         result.put("username", userName);
         result.put("version", version);
-        log.info("获取菜单时间戳2:{}",new Date());
         String systemDomain = system.getSysDomain();
         result.put("navigatorUrl", systemDomain + "/main");
         result.put("logoutUrl", systemDomain + "/logout");
         result.put("single", userBo.getUserMenuTree().keySet().size() == 1);
 
         try {
-            log.info("获取菜单时间戳3:{}",new Date());
             Tree<Menu> tree = userBo.getUserMenuTree().get(operate.getSysCode());
             result.put("tree", tree);
-            log.info("获取菜单时间戳4:{}",new Date());
             return ResponseBo.okWithData(result,operate.getSysName());
         } catch (Exception e) {
             log.error("获取用户菜单失败", e);
