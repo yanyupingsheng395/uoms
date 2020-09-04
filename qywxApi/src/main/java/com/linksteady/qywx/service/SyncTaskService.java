@@ -1,5 +1,6 @@
 package com.linksteady.qywx.service;
 
+import com.linksteady.qywx.domain.ExternalContact;
 import com.linksteady.qywx.domain.SyncTask;
 
 import java.util.List;
@@ -35,4 +36,9 @@ public interface SyncTaskService {
      * 更新企业微信端更新标志
      */
     void saveChangeFlag(String changeCode);
+
+    /**
+     * 保存外部联系人信息
+     */
+    void saveExternalContactList(List<ExternalContact> externalContactList);
 }

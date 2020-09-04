@@ -52,4 +52,20 @@
     <update id="saveFollowUserChangeFlag">
         update uo_qywx_param set follow_user_change_flag='Y'
     </update>
+
+    <insert id="saveExternalContactList">
+        insert into uo_qywx_external_contact_list
+            (
+                follow_user_id,
+                external_contact_id,
+                state,
+                user_phone,
+                add_date,
+                insert_dt
+            ) values
+        <foreach collection="externalContactList" item="item" index="index" separator=",">
+            (#{item.followerUserId},#{item.externalUserid},#{item.state},#{item.remark},#{item.addDate},now())
+        </foreach>
+        ON CONFLICT(follow_user_id,external_contact_id) DO UPDATE set user_phone=#{item.remark}
+    </insert>
 </mapper>

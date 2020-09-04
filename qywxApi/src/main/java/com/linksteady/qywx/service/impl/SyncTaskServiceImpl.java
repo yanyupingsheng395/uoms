@@ -1,12 +1,15 @@
 package com.linksteady.qywx.service.impl;
 
 import com.linksteady.qywx.dao.SyncTaskMapper;
+import com.linksteady.qywx.domain.ExternalContact;
 import com.linksteady.qywx.domain.SyncTask;
 import com.linksteady.qywx.service.SyncTaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -60,6 +63,33 @@ public class SyncTaskServiceImpl implements SyncTaskService {
         }else if("follow_user".equals(changeCode))
         {
             syncTaskMapper.saveFollowUserChangeFlag();
+        }
+
+    }
+
+    @Override
+    public void saveExternalContactList(List<ExternalContact> externalContactList) {
+        externalContactList.stream().forEach(i->
+        {
+            i.setAddDate(timeStampToDate(i.getCreatetime()));
+        });
+        syncTaskMapper.saveExternalContactList(externalContactList);
+    }
+
+
+    /**
+     * 10位字符串 时间戳转日期
+     * @param timeStamp
+     * @return
+     */
+    private Date timeStampToDate(String timeStamp)
+    {
+        if(StringUtils.isEmpty(timeStamp))
+        {
+            return null;
+        }else
+        {
+            return new Date(Long.parseLong(timeStamp)*1000);
         }
 
     }

@@ -1,5 +1,6 @@
 package com.linksteady.qywx.dao;
 
+import com.linksteady.qywx.domain.ExternalContact;
 import com.linksteady.qywx.domain.SyncTask;
 
 import java.util.List;
@@ -25,4 +26,6 @@ public interface SyncTaskMapper {
     void saveAuthCodeChangeFlag();
 
     void saveFollowUserChangeFlag();
+
+    void saveExternalContactList(List<ExternalContact> externalContactList);
 }

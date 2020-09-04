@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.common.util.crypto.SHA1;
+import com.linksteady.qywx.domain.ExternalContact;
 import com.linksteady.qywx.domain.SyncTask;
 import com.linksteady.qywx.service.ApiService;
 import com.linksteady.qywx.service.SyncTaskService;
@@ -24,19 +25,16 @@ import java.util.List;
 @RequestMapping("/syncTask")
 @Slf4j
 public class SyncTaskController extends ApiBaseController{
-
     private static final Object obj = new Object();
-
     private static final Object deptLock = new Object();
+    private static final Object externalContactLock = new Object();
 
     @Autowired
     SyncTaskService syncTaskService;
-
     @Autowired
     ApiService apiService;
 
     private static final String SUBMIT_TASK_URL="/api/submitSyncTask";
-
 
     /**
      * 提交同步导购任务
@@ -168,10 +166,9 @@ public class SyncTaskController extends ApiBaseController{
                                      @RequestParam(name = "data") String data) {
         try{
             validateLegality(request,signature,timestamp,corpId,data);
-
             //写入本地信息
             List<String> followUserList=JSONObject.parseArray(data,String.class);
-            synchronized (obj)
+            synchronized (externalContactLock)
             {
                 syncTaskService.saveFollowUser(corpId,followUserList);
             }
@@ -256,6 +253,32 @@ public class SyncTaskController extends ApiBaseController{
             return ResponseBo.ok();
         } catch (Exception e) {
             log.error("同步更新状态失败，原因为{}",e);
+            return ResponseBo.error(e.getMessage());
+        }
+    }
+
+
+    /**
+     * 接收企业微信端发过来的外部联系人信息
+     * 备注：此方法一般只用于期初
+     */
+    @PostMapping("/syncExternalContract")
+    public ResponseBo syncExternalContract(HttpServletRequest request,
+                                     @RequestParam(name = "timestamp") String timestamp,
+                                     @RequestParam(name = "signature") String signature,
+                                     @RequestParam(name = "corpId") String corpId,
+                                     @RequestParam(name = "data") String data) {
+        try{
+            validateLegality(request,signature,timestamp,corpId,data);
+            //写入本地信息
+            List<ExternalContact> externalContactList=JSONObject.parseArray(data, ExternalContact.class);
+            synchronized (externalContactLock)
+            {
+                syncTaskService.saveExternalContactList(externalContactList);
+            }
+            return ResponseBo.ok();
+        } catch (Exception e) {
+            log.error("saveExternalContactList失败，错误原因为{}",e);
             return ResponseBo.error(e.getMessage());
         }
     }
