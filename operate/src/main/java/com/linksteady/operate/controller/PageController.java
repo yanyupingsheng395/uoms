@@ -567,4 +567,24 @@ public class PageController extends BaseController {
     public String addUserMonitor() {
         return "operate/addUserMonitor/monitor";
     }
+
+    @RequestMapping("/qywxWelcome")
+    public String welcome() {
+        return "operate/welcome/list";
+    }
+
+    @RequestMapping("/qywxWelcome/add")
+    public String addWelcome() {
+        return "operate/welcome/add";
+    }
+
+    @RequestMapping("/qywxWelcome/edit")
+    public String editWelcome() {
+        return "operate/welcome/edit";
+    }
+
+    @RequestMapping("/qywxWelcome/effect")
+    public String effectWelcome() {
+        return "operate/welcome/effect";
+    }
 }
