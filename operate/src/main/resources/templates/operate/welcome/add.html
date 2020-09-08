@@ -6,10 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="edge"/>
     <title>企业微信</title>
-    <th:block th:include="common/include :: common-css"/>
+    <th:block th:include="common/include::common-css"/>
     <th:block th:include="common/include::bootstrap-table-css"/>
     <th:block th:include="common/include::jquery-confirm-css"/>
     <th:block th:include="common/include::bootstrap-year-calendar-css"/>
+    <th:block th:include="common/include::datepicker-css"/>
 </head>
 
 <body class="gray-bg">
@@ -42,16 +43,16 @@
                                         <label class="col-xs-12" style="font-weight: bold;">欢迎语配置策略</label>
                                         <div class="col-xs-12">
                                             <label class="radio-inline">
-                                                <input type="radio" name="policyType" value="M" onclick="">
+                                                <input type="radio" name="policyType" value="M" onclick="policyClick()">
                                                 自定义
                                             </label>
                                             <label class="radio-inline">
-                                                <input type="radio" name="policyType" value="A">
+                                                <input type="radio" name="policyType" value="A" onclick="policyClick()">
                                                 智能策略
                                             </label>
                                         </div>
                                     </div>
-                                    <div class="form-group">
+                                    <div class="form-group" id="intelPolicy">
                                         <label class="col-xs-12" style="font-weight: bold;">智能策略配置方案</label>
                                         <div class="col-xs-12">
                                             <label class="radio-inline">
@@ -147,11 +148,8 @@
                                             <button class="btn btn-primary btn-sm" type="button" onclick="saveData()"><i
                                                     class="fa fa-save"></i>&nbsp;保存
                                             </button>
-                                            <button class="btn btn-primary btn-sm" type="button" onclick="getViewData1()"><i
-                                                    class="fa fa-save"></i>&nbsp;配置领券页
-                                            </button>
-                                            <button class="btn btn-primary btn-sm" type="button" onclick="getViewData2()"><i
-                                                    class="fa fa-save"></i>&nbsp;配置商品页
+                                            <button class="btn btn-primary btn-sm" type="button" onclick="getViewData()" id="configBtn"><i
+                                                    class="fa fa-cog"></i>&nbsp;去配置
                                             </button>
                                             <button class="btn btn-secondary btn-sm" type="button"
                                                     onclick="window.location.href='/page/qywxWelcome'"><i
@@ -194,13 +192,13 @@
                             <a class="btn btn-primary btn-edit" id="btn_insight">
                                 <i class="fa fa-cog"></i> 智能优惠券
                             </a>
-                            <a class="btn btn-primary btn-view">
+                            <a class="btn btn-primary btn-view" onclick="addCouponModal()">
                                 <i class="fa fa-save"></i> 新增优惠券
                             </a>
-                            <a class="btn btn-warning btn-view">
+                            <a class="btn btn-warning btn-view" onclick="beforeUpdateCoupon()">
                                 <i class="fa fa-edit"></i> 编辑优惠券
                             </a>
-                            <a class="btn btn-danger btn-view">
+                            <a class="btn btn-danger btn-view" onclick="deleteCoupon()">
                                 <i class="fa fa-trash"></i> 删除优惠券
                             </a>
                         </div>
@@ -240,17 +238,17 @@
                 </div>
                 <div class="row m-t-10">
                     <div class="col-sm-12">
-                        <div class="btn-group-sm" id="toolbar" role="group">
-                            <a class="btn btn-primary btn-edit" id="btn_insight">
+                        <div class="btn-group-sm" role="group">
+                            <a class="btn btn-primary btn-edit">
                                 <i class="fa fa-cog"></i> 智能商品页
                             </a>
                             <a class="btn btn-primary btn-view" onclick="addProductModal()">
                                 <i class="fa fa-save"></i> 新增商品页
                             </a>
-                            <a class="btn btn-warning btn-view">
+                            <a class="btn btn-warning btn-view" onclick="beforeUpdateProduct()">
                                 <i class="fa fa-edit"></i> 编辑商品页
                             </a>
-                            <a class="btn btn-danger btn-view">
+                            <a class="btn btn-danger btn-view" onclick="deleteProduct()">
                                 <i class="fa fa-trash"></i> 删除商品页
                             </a>
                         </div>
@@ -275,7 +273,7 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">×</span></button>
-                <h5 class="modal-title pull-left">新增商品</h5>
+                <h5 class="modal-title pull-left" id="addProductTitle">新增商品</h5>
             </div>
             <div class="modal-body">
                 <div class="row">
@@ -283,27 +281,33 @@
                         <div class="modal-body">
                             <form class="form-horizontal" id="addProductForm" novalidate="novalidate">
                                 <div class="form-group mg-stop">
+                                    <label class="col-md-3 control-label">商品ID：</label>
+                                    <div class="col-md-8 input-group">
+                                        <input class="form-control" type="text" id="productId" name="productId"/>
+                                    </div>
+                                </div>
+                                <div class="form-group mg-stop">
                                     <label class="col-md-3 control-label">商品名称：</label>
                                     <div class="col-md-8 input-group">
-                                        <input class="form-control" type="text" id="couponDisplayName" name="couponDisplayName" placeholder="xx元">
+                                        <input class="form-control" type="text" id="productName" name="productName">
                                     </div>
                                 </div>
                                 <div class="form-group mg-stop">
                                     <label class="col-md-3 control-label">售价(元)：</label>
                                     <div class="col-md-8 input-group">
-                                        <input class="form-control" type="text" id="couponThreshold" name="couponThreshold">
+                                        <input class="form-control" type="text" id="price" name="price">
                                     </div>
                                 </div>
                                 <div class="form-group mg-stop">
                                     <label class="col-md-3 control-label">商品类型：</label>
                                     <div class="col-md-8 input-group">
-                                        <input class="form-control" type="text" id="couponDenom" name="couponDenom">
+                                        <input class="form-control" type="text" id="productType" name="productType">
                                     </div>
                                 </div>
                                 <div class="form-group mg-stop">
                                     <label class="col-md-3 control-label">地址：</label>
                                     <div class="col-md-8 input-group">
-                                        <input class="form-control" type="text" id="couponDenom" name="couponDenom">
+                                        <input class="form-control" type="text" id="productUrl" name="productUrl">
                                     </div>
                                 </div>
                             </form>
@@ -311,6 +315,58 @@
                     </div>
                 </div>
                 <div class="modal-footer m-t-10">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="saveProductData()" id="saveProductBtn">确定</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addCouponModal" data-keyboard="false" data-backdrop="static" tabindex="-1">
+    <div class="modal-dialog" style="width: 65%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title pull-left" id="addCouponTitle">新增优惠券</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="modal-body">
+                            <form class="form-horizontal" id="addCouponForm" novalidate="novalidate">
+                                <input type="hidden" id="couponId" name="couponId"/>
+                                <div class="form-group mg-stop">
+                                    <label class="col-md-3 control-label">门槛（元）：</label>
+                                    <div class="col-md-8 input-group">
+                                        <input class="form-control" type="text" id="couponDeno" name="couponDeno">
+                                    </div>
+                                </div>
+                                <div class="form-group mg-stop">
+                                    <label class="col-md-3 control-label">面额（元）：</label>
+                                    <div class="col-md-8 input-group">
+                                        <input class="form-control" type="text" id="couponThreshold" name="couponThreshold">
+                                    </div>
+                                </div>
+                                <div class="form-group mg-stop">
+                                    <label class="col-md-3 control-label">优惠券地址：</label>
+                                    <div class="col-md-8 input-group">
+                                        <input class="form-control" type="text" id="couponUrl" name="couponUrl">
+                                    </div>
+                                </div>
+                                <div class="form-group mg-stop">
+                                    <label class="col-md-3 control-label">有效截止日期：</label>
+                                    <div class="col-md-8 input-group">
+                                        <input class="form-control" type="text" id="endDate" name="endDate">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer m-t-10">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="saveCouponData()" id="saveCouponBtn">确定</button>
                     <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
                 </div>
             </div>
@@ -318,19 +374,12 @@
     </div>
 </div>
 <th:block th:include="common/include::footer"/>
+<th:block th:include="common/include::datepicker-js" />
 <th:block th:include="common/include::perfect-scrollbar"/>
 <th:block th:include="common/include::jquery-validate-js"/>
 <th:block th:include="common/include::common-js"/>
 <th:block th:include="common/include::bootstrap-table-js"/>
 <th:block th:include="common/include::jquery-confirm-js"/>
 <script data-th-src="@{/js/app/operate/welcome/add.js}"></script>
-<script>
-    function getViewData1() {
-        $( "#couponModal" ).modal( 'show' );
-    }
-    function getViewData2() {
-        $( "#productModal" ).modal( 'show' );
-    }
-</script>
 </body>
 </html>

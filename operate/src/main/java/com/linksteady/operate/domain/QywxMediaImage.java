@@ -1,5 +1,6 @@
 package com.linksteady.operate.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -11,6 +12,7 @@ public class QywxMediaImage {
 
     private String imgUrl;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
     private LocalDateTime insertDt;
 
     private String insertBy;

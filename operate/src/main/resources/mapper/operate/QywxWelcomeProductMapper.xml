@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.QywxWelcomeProductMapper">
+
+    <select id="getTableDataCount" resultType="int">
+        select count(1) from uo_qywx_welcome_product
+    </select>
+
+    <select id="getTableDataList" resultType="com.linksteady.operate.domain.QywxWelcomeProduct">
+        select * from uo_qywx_welcome_product limit #{limit} offset #{offset}
+    </select>
+
+    <insert id="saveData">
+        insert into uo_qywx_welcome_product(product_id, product_name, price, product_type, product_url)
+        values (#{productId}, #{productName}, #{price}, #{productType}, #{productUrl})
+    </insert>
+
+    <select id="getDataById" resultType="com.linksteady.operate.domain.QywxWelcomeProduct">
+        select * from uo_qywx_welcome_product where product_id = #{productId}::integer
+    </select>
+
+    <update id="updateData">
+        update uo_qywx_welcome_product set (product_name, price, product_type, product_url)
+        = (#{productName}, #{price}, #{productType}, #{productUrl}) where product_id = #{productId}
+    </update>
+
+    <delete id="deleteProductById">
+        delete from uo_qywx_welcome_product where product_id = #{productId}::integer
+    </delete>
+</mapper>
