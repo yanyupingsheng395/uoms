@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.QywxWelcomeMapper">
+
+    <insert id="saveData">
+        insert into uo_qywx_welcome (welcome_name, content, insert_by, insert_dt, policy_type, pic_url, pic_id, link_title, link_picurl, link_desc, link_url, miniprogram_title, miniprogram_page, qywx_coupon_id, qywx_product_id)
+        values (#{welcomeName}, #{content}, #{insertBy}, now(), #{policyType}, #{picUrl}, #{picId}, #{linkTitle}, #{linkPicurl}, #{linkDesc}, #{linkUrl}, #{miniprogramTitle}, #{miniprogramPage}, #{qywxCouponId}, #{qywxProductId})
+    </insert>
+
+    <select id="getDataCount" resultType="int">
+        select count(1) from uo_qywx_welcome
+    </select>
+
+    <select id="getDataList" resultType="com.linksteady.operate.domain.QywxWelcome">
+        select id, welcome_name, content, insert_by, insert_dt, policy_type, pic_url, pic_id, link_title, link_picurl, link_desc, link_url, miniprogram_title, miniprogram_page, qywx_coupon_id, qywx_product_id, update_dt, update_by, valid_flag, status from uo_qywx_welcome
+        order by insert_dt desc limit #{limit} offset #{offset}
+    </select>
+</mapper>

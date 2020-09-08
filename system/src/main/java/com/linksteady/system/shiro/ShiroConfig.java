@@ -215,11 +215,12 @@ public class ShiroConfig {
     }
 
     @Bean
-    public RedisSessionDao redisSessionDAO() {
-        RedisSessionDao redisSessionDao = new RedisSessionDao();
-        redisSessionDao.setRedisTemplate(redisTemplate);
-        redisSessionDao.setExpire(shiroProperties.getExpireIn());
-        return redisSessionDao;
+    public RedisSessionDAO redisSessionDAO() {
+        RedisSessionDAO redisSessionDAO = new RedisSessionDAO();
+        redisSessionDAO.setRedisManager(redisManager());
+        //redis session对象的过期时间
+        redisSessionDAO.setExpire(shiroProperties.getExpireIn());
+        return redisSessionDAO;
     }
 
     /**
