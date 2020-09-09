@@ -233,12 +233,12 @@ public class AddUserJobServiceImpl implements AddUserJobService {
            }else
            {
                //超过2天，则用当前时间往前推2天
-               orderDt=LocalDateTime.now().minusDays(4);
+               orderDt=LocalDateTime.now().minusDays(2);
            }
 
            if(orderDt==null)
            {
-               orderDt=LocalDateTime.now().minusDays(4);
+               orderDt=LocalDateTime.now().minusDays(2);
            }
            log.info("企业微信-主动拉新：本次处理的订单时间戳为{}",orderDt);
            LocalDateTime currentTimes= LocalDateTime.now();

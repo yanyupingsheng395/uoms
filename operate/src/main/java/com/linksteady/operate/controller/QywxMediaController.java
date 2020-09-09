@@ -1,5 +1,6 @@
 package com.linksteady.operate.controller;
 
+import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.Base64Img;
@@ -15,13 +16,13 @@ import java.io.File;
 import java.util.List;
 
 /**
- * @author hxcao
- * @date 2020/5/15
+ * @author huang
+ * @date 2020/9/5
  */
 @RestController
 @RequestMapping("/qywxMedia")
 @Slf4j
-public class QywxMediaController {
+public class QywxMediaController extends BaseController {
 
     @Autowired
     private QywxMdiaService qywxMdiaService;
@@ -52,12 +53,21 @@ public class QywxMediaController {
             String fileName="tmp." + fileSuffix;
             File file = Base64Img.base64ToFile(base64Code, fileName);
 
-            qywxMdiaService.uploadImage(title,file);
+            qywxMdiaService.uploadImage(title,file,getCurrentUser().getUsername());
             return ResponseBo.ok();
         } catch (Exception e) {
             log.error("上传素材（图片）报错！");
             return ResponseBo.error();
         }
+    }
+
+    /**
+     * 获取临时素材(小程序封面)
+     */
+    @RequestMapping("/getMminiprogramMediaId")
+    public ResponseBo getMminiprogramMediaId()  {
+        String mediaId=qywxMdiaService.getMminiprogramMediaId();
+        return ResponseBo.ok(mediaId);
     }
 
 }

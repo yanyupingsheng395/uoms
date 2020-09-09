@@ -3,7 +3,7 @@ package com.linksteady.operate.config;
 import com.linksteady.common.dao.ConfigMapper;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.domain.HeartBeatInfo;
-import com.linksteady.operate.domain.enums.ConfigEnum;
+import com.linksteady.common.domain.enums.ConfigEnum;
 import com.linksteady.operate.domain.enums.PushSignalEnum;
 import com.linksteady.operate.service.RedisMessageService;
 import org.springframework.beans.factory.annotation.Autowired;

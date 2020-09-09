@@ -1,4 +1,4 @@
-package com.linksteady.system.dao;
+package com.linksteady.operate.dao;
 
 import org.apache.ibatis.annotations.Param;
 

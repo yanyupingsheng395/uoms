@@ -1,4 +1,4 @@
-package com.linksteady.operate.domain.enums;
+package com.linksteady.common.domain.enums;
 
 /**
  * 推送属性类的属性名及其在T_CONFIG中配置CODE的映射枚举类
@@ -64,7 +64,8 @@ public enum  ConfigEnum {
 
     qywxCorpId("qywx.corpid"),
     qywxDomainUrl("qywx.domainUrl"),
-    qywxDomainIpAddress("qywx.domainIpAddress");
+    qywxDomainIpAddress("qywx.domainIpAddress"),
+    qywxMiniProgramAppId("qywx.miniProgramAppId");
 
 
     private String keyCode;

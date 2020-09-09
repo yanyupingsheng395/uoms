@@ -12,6 +12,9 @@
         <result column="last_update_dt" jdbcType="TIMESTAMP" property="lastUpdateDt"/>
         <result column="version" jdbcType="DECIMAL" property="version"/>
         <result column="last_sync_order_dt" jdbcType="TIMESTAMP" property="lastSyncOrderDt"/>
+        <result column="media_id" jdbcType="VARCHAR" property="mediaId"/>
+        <result column="media_expire_date" jdbcType="TIMESTAMP" property="mediaExpireDate"/>
+        <result column="media_content" property="mediaContent" typeHandler="org.apache.ibatis.type.ByteArrayTypeHandler"/>
     </resultMap>
 
     <resultMap id="addUserHistoryMap" type="com.linksteady.operate.vo.AddUserHistoryVO">
@@ -27,7 +30,10 @@
                last_update_by,
                last_update_dt,
                version,
-               last_sync_order_dt
+               last_sync_order_dt,
+               media_id,
+               media_expire_date,
+               media_content
         from uo_qywx_param
         limit 1
     </select>
@@ -80,5 +86,9 @@
         </foreach>
         on conflict (phone_num) do nothing
     </insert>
+
+    <update id="updateMediaExpireInfo">
+        update uo_qywx_param set media_id=#{mediaId},media_expire_date=#{expreDt}
+    </update>
 
 </mapper>

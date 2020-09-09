@@ -1,12 +1,11 @@
-package com.linksteady.system.service.impl;
+package com.linksteady.operate.service.impl;
 
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.collect.Maps;
 import com.linksteady.common.util.FileUtils;
-import com.linksteady.system.dao.QywxDeptAndUserMapper;
-import com.linksteady.system.service.QywxDeptAndUserService;
+import com.linksteady.operate.dao.QywxDeptAndUserMapper;
+import com.linksteady.operate.service.QywxDeptAndUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;

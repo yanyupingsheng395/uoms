@@ -11,5 +11,10 @@ public interface QywxMdiaService {
 
     List<QywxMediaImage>  getMediaImageList(int limit, int offset);
 
-    void uploadImage(String title, File file);
+    void uploadImage(String title, File file,String opUserName) throws Exception;
+
+    /**
+     * 获取临时素材的media_id (供获取小程序卡片专用的方法)
+     */
+    String getMminiprogramMediaId();
 }

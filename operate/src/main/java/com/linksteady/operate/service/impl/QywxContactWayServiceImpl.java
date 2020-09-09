@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.dao.QywxContactWayMapper;
 import com.linksteady.operate.domain.QywxContactWay;
-import com.linksteady.operate.domain.enums.ConfigEnum;
+import com.linksteady.common.domain.enums.ConfigEnum;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.QywxContactWayService;
 import com.linksteady.operate.service.ShortUrlService;
