@@ -31,4 +31,10 @@ public class QywxWelcomeController {
         List<QywxWelcome> dataList = qywxWelcomeService.getDataList(limit, offset);
         return ResponseBo.okOverPaging(null, count, dataList);
     }
+
+    @PostMapping("/deleteById")
+    public ResponseBo deleteById(String id) {
+        qywxWelcomeService.deleteById(id);
+        return ResponseBo.ok();
+    }
 }

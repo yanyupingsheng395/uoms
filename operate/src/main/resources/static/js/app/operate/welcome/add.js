@@ -408,3 +408,21 @@ function deleteCoupon() {
         });
     }
 }
+
+// wxPreview
+$("#textContent1").on('click keyup', function () {
+    var content = $(this).val();
+    if(content.length >= 155) {
+        content = content.substr(0, 154) + "&nbsp;...";
+    }
+    $('#wxPreview').html('').append(content==='' ? '请输入欢迎语内容':content);
+});
+
+
+$("#myTabs").on('shown.bs.tab', function (e) {
+    var height = document.getElementById('preview').offsetHeight;
+    // chatDiv
+    console.log(e.target.id)
+
+    console.log()
+});

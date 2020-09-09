@@ -37,4 +37,9 @@ public class QywxWelcomeServiceImpl implements QywxWelcomeService {
     public List<QywxWelcome> getDataList(Integer limit, Integer offset) {
         return qywxWelcomeMapper.getDataList(limit, offset);
     }
+
+    @Override
+    public void deleteById(String id) {
+        qywxWelcomeMapper.deleteById(id);
+    }
 }

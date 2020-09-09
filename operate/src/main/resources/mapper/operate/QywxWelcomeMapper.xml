@@ -15,4 +15,8 @@
         select id, welcome_name, content, insert_by, insert_dt, policy_type, pic_url, pic_id, link_title, link_picurl, link_desc, link_url, miniprogram_title, miniprogram_page, qywx_coupon_id, qywx_product_id, update_dt, update_by, valid_flag, status from uo_qywx_welcome
         order by insert_dt desc limit #{limit} offset #{offset}
     </select>
+
+    <delete id="deleteById">
+        delete from uo_qywx_welcome where id = #{id}::integer
+    </delete>
 </mapper>

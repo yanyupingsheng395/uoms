@@ -15,4 +15,6 @@ public interface QywxWelcomeMapper {
     int getDataCount();
 
     List<QywxWelcome> getDataList(Integer limit, Integer offset);
+
+    void deleteById(String id);
 }

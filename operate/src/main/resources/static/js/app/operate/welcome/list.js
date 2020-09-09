@@ -55,5 +55,20 @@ function init() {
 
 // 删除欢迎语
 function deleteWelcome() {
-
+    var selected = $("#dataTable").bootstrapTable('getSelections');
+    if(selected.length == 0) {
+        $MB.n_warning("请先选择一条记录！");
+    }else {
+        $MB.confirm( {
+            title: "<i class='mdi mdi-alert-outline'></i>提示：",
+            content: "确定删除选中的记录?"
+        }, function () {
+            $.post( "/welcome/deleteById", {id: selected[0]['id']}, function (r) {
+                if (r.code == 200) {
+                    $MB.n_success( "删除成功！" );
+                    $MB.refreshTable( 'dataTable' );
+                }
+            } );
+        } );
+    }
 }
