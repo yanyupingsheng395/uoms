@@ -416,13 +416,29 @@ $("#textContent1").on('click keyup', function () {
         content = content.substr(0, 154) + "&nbsp;...";
     }
     $('#wxPreview').html('').append(content==='' ? '请输入欢迎语内容':content);
+
+    var height = document.getElementById('preview').offsetHeight;
+    height = height + 60;
+    $("#chatSend").attr('style', 'position: relative;margin-top:' + height + 'px;');
 });
 
 
 $("#myTabs").on('shown.bs.tab', function (e) {
     var height = document.getElementById('preview').offsetHeight;
+    height = height + 60;
     // chatDiv
-    console.log(e.target.id)
+    if(e.target.id === 'image-tab') {
+        $("#wxChat").attr("style", "height: auto;width: 100%;background-color: rgb(235,235,235);border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;padding-bottom: 15px");
+        $("#chatDiv").html('<div style="overflow:hidden;">\n' +
+        '<div id="chatSend" class="send" style="position: relative;margin-top: ' + height + 'px;">\n' +
+        '<div class="arrow"></div>\n' +
+        '<p class="h5">送你一张五元券</p>\n' +
+        '<div style=" width: 230px;height: 170px;background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1599631614507&di=8bb19956eab55733b1e8d9b7ae75d1ea&imgtype=0&src=http%3A%2F%2Fpicture.ik123.com%2Fuploads%2Fallimg%2F160812%2F4-160Q2151302.jpg);-webkit-background-size:cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;"></div>\n' +
+        '<hr style="background: #b0b0b0;margin-top: 6px;margin-bottom: 6px;"/>\n' +
+        '<p style="margin-bottom: 0px;color: #838383"><i class="fa fa-skyatlas" style="color: #1296db"></i>&nbsp;小程序</p>\n' +
+        '</div>\n' +
+        '</div>');
+    }
 
     console.log()
 });
