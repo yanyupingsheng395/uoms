@@ -4,13 +4,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.dao.DictMapper;
 import com.linksteady.common.domain.Dict;
-import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.dao.CouponMapper;
 import com.linksteady.operate.dao.DailyConfigMapper;
 import com.linksteady.operate.domain.CouponInfo;
 import com.linksteady.operate.domain.DailyGroupTemplate;
-import com.linksteady.operate.domain.enums.ConfigEnum;
+import com.linksteady.common.domain.enums.ConfigEnum;
 import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.DailyConfigService;
 import org.apache.commons.lang3.StringUtils;
@@ -21,8 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 @Service

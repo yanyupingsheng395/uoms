@@ -15,7 +15,6 @@ import org.springframework.stereotype.Component;
 public class TriggerAddUserJob extends IJobHandler {
     @Override
     public ResultInfo execute(String param) {
-
         return null;
     }
 }

@@ -9,4 +9,6 @@ public interface QywxMdiaMapper {
     int getMediaImageCount();
 
     List<QywxMediaImage> getMediaImageList(int limit, int offset);
+
+    void saveMediaImg(String title,String url,String insertBy);
 }

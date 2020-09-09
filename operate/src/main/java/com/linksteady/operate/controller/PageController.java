@@ -5,7 +5,7 @@ import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.domain.*;
-import com.linksteady.operate.domain.enums.ConfigEnum;
+import com.linksteady.common.domain.enums.ConfigEnum;
 import com.linksteady.operate.service.*;
 import com.linksteady.operate.vo.SourceConfigVO;
 import org.apache.commons.lang3.StringUtils;
@@ -595,5 +595,14 @@ public class PageController extends BaseController {
     @RequestMapping("/qywxMediaImage")
     public String qywxMediaImage() {
         return "operate/media/imgList";
+    }
+
+    /**
+     * 企业微信部门和导购列表
+     * @return
+     */
+    @RequestMapping("/qywxDeptAndUser/list")
+    public String qywxDeptAndUserList() {
+        return "operate/qywxConfig/deptAndUser";
     }
 }

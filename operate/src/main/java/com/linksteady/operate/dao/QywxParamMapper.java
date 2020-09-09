@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import org.apache.ibatis.type.ByteArrayTypeHandler;
 
 /**
  * @author huangkun
@@ -43,5 +44,10 @@ public interface QywxParamMapper {
      * 批量写入推送历史
      */
     void insertAddUserListHistory(List<String> phonenumList);
+
+    /**
+     * 更新小程序封面图片的midia_id信息
+     */
+    void updateMediaExpireInfo(String mediaId,LocalDateTime expreDt);
 
 }

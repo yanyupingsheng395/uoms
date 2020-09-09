@@ -1,9 +1,8 @@
 package com.linksteady.operate.controller;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
+import com.linksteady.common.domain.QywxMessage;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.config.PushConfig;
@@ -13,8 +12,7 @@ import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.DailyConfigService;
 import com.linksteady.operate.service.QywxDailyDetailService;
 import com.linksteady.operate.service.QywxDailyService;
-import com.linksteady.common.util.OkHttpUtil;
-import com.linksteady.operate.util.SHA1;
+import com.linksteady.operate.service.QywxMessageService;
 import com.linksteady.operate.vo.QywxUserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,15 +24,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static java.util.Arrays.asList;
 
 /**
  * 每日运营(企业微信)
@@ -61,6 +59,9 @@ public class QywxDailyController {
 
     @Autowired
     private DailyConfigService dailyConfigService;
+
+    @Autowired
+    private QywxMessageService qywxMessageService;
 
     /**
      * 获取每日成长任务分页列表
@@ -319,45 +320,30 @@ public class QywxDailyController {
         return ResponseBo.ok(testPush());
     }
 
-
+    /**
+     * 推送的实际方法
+     * @return
+     */
     private String  testPush()
     {
-        //绑定的corpID
-        String corpId="ww372de12b2d0cdf17";
+        QywxMessage qywxMessage=new QywxMessage();
+        qywxMessage.setText("您好，520活动季，您关注的提花浴巾低至35元，欢迎购买！");
 
-        //获取要推送的数据
-//        List<Map<String,String>> result=qywxDailyDetailService.getTestPushData();
+        qywxMessage.setMpTitle("测试小程序卡片");
+        qywxMessage.setMpPicMediaId("3oHsougJlOLRGcTbIpd-tEcnAkUzxOqP0QymcazYPZzMK77qH9_7do8XDgaelJgDI");
+        qywxMessage.setMpAppid("wxb9ca1e447f4285e7");
+        qywxMessage.setMpPage("pages/about/about");
 
-        //构造推送参数
-        JSONObject param=new JSONObject();
-        param.put("chat_type","single");
-        JSONArray externalUserid=new JSONArray();
-        externalUserid.add("wmXfFiDwAAIoOS6g8UB2tHo2pZKT0zfQ");
-        externalUserid.add("wmXfFiDwAA2R-zN-afopB1W0aunsLowg");
-        param.put("external_userid",externalUserid);
-        param.put("sender","brandonz");
+        List<String> externalContactList=asList("wmXfFiDwAAIoOS6g8UB2tHo2pZKT0zfQ","wmXfFiDwAA2R-zN-afopB1W0aunsLowg");
+        String result=qywxMessageService.pushQywxMessage(qywxMessage,"brandonz",externalContactList);
 
-//        externalUserid.add("wmXfFiDwAAh6eI9IU6fYEXXuB0CDPZ9Q");
-//        param.put("external_userid",externalUserid);
-//        param.put("sender","WangJiaHui");
+//        List<String> externalContactList=asList("wmXfFiDwAAIoOS6g8UB2tHo2pZKT0zfQ");
+//        String result=qywxMessageService.pushQywxMessage(qywxMessage,"HuangKun",externalContactList);
 
-        JSONObject text=new JSONObject();
-        text.put("content","您好，520活动季，您关注的提花浴巾低至35元，欢迎购买！");
-        param.put("text",text);
-
-        log.info("待推送的消息为{}",param.toJSONString());
-
-        //时间戳
-        String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
-        String signature= SHA1.gen(timestamp,param.toJSONString());
-        String requesturl="http://qywx.growth-master.com/push/addMsgTemplate?corpId="+corpId
-                +"&timestamp="+timestamp+"&signature="+signature;
-
-        log.info("请求的url为{}",requesturl);
-        //发送http请求
-        String backStr=OkHttpUtil.postRequestByJson(requesturl,param.toJSONString());
-        log.info("推送后的返回结果为{}",backStr);
-        return backStr;
+        //todo 这个result含有失败列表，需要自行处理
+        return result;
     }
+
+
 
 }

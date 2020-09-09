@@ -17,4 +17,10 @@
         select * from uo_qywx_media_img order by insert_dt desc limit #{limit} offset #{offset}
     </select>
 
+    <insert id="saveMediaImg">
+        insert into uo_qywx_media_img(img_title,img_url,insert_dt,insert_by) values(
+           #{title},#{url},now(),#{insertBy}
+        )
+    </insert>
+
 </mapper>
