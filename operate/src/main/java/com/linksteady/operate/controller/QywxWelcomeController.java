@@ -42,4 +42,10 @@ public class QywxWelcomeController {
         qywxWelcomeService.deleteById(id);
         return ResponseBo.ok();
     }
+
+    @PostMapping("/updateStatus")
+    public ResponseBo updateStatus(String id, String status) {
+        qywxWelcomeService.updateStatus(id, status);
+        return ResponseBo.ok();
+    }
 }

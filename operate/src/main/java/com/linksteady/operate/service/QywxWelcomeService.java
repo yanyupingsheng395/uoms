@@ -21,4 +21,6 @@ public interface QywxWelcomeService {
     QywxWelcome getDataById(String id);
 
     void updateData(QywxWelcome qywxWelcome);
+
+    void updateStatus(String id, String status);
 }

@@ -21,4 +21,8 @@ public interface QywxWelcomeMapper {
     List<QywxWelcome> getDataById(String id);
 
     void updateData(QywxWelcome qywxWelcome);
+
+    void updateStartStatus(String id, String status);
+
+    void updateStopStatus(String id, String status);
 }

@@ -32,4 +32,13 @@
         = (#{welcomeName}, #{content}, #{updateBy}, now(), #{policyType}, #{picUrl}, #{picId}::integer, #{linkTitle}, #{linkPicurl}, #{linkDesc}, #{linkUrl}, #{miniprogramTitle}, #{miniprogramPage}, #{qywxCouponId}, #{qywxProductId})
         where id = #{id}
     </update>
+
+    <update id="updateStartStatus">
+        update uo_qywx_welcome set status = '1' where id = #{id}::integer;
+        update uo_qywx_welcome set status = '0' where id &lt;&gt; #{id}::integer;
+    </update>
+
+    <update id="updateStopStatus">
+        update uo_qywx_welcome set status = '0' where id = #{id}::integer
+    </update>
 </mapper>
