@@ -183,64 +183,6 @@ function addCouponModal() {
     $("#addCouponForm").find('input[name="couponUrl"]').val('');
 }
 
-// 获取图片列表的setting
-function getImageTableSetting() {
-    return {
-        url: "/qywxMedia/getDataList",
-        cache: false,
-        pagination: true,
-        singleSelect: true,
-        sidePagination: "server",
-        pageNumber: 1,
-        pageSize: 5,
-        pageList: [5, 15, 25, 50],
-        clickToSelect: true,
-        queryParams: function (params) {
-            return {
-                limit: params.limit,
-                offset: params.offset
-            }
-        },
-        columns: [
-            {
-                checkbox: true
-            },
-            {
-                field: 'imgId',
-                title: 'ID',
-                visible: false
-            },
-            {
-                field: 'imgTitle',
-                title: '图片名称',
-                align: 'center',
-                formatter: function (value, row, index) {
-                    return '<a href="' + row['imgUrl'] + '" target="_blank" style="text-decoration: underline">' + value + '</a>';
-                }
-            },
-            {
-                field: 'insertDt',
-                title: '创建时间',
-                align: 'center'
-            }]
-    };
-}
-
-imageTable1();
-function imageTable1() {
-    $("#imageTable1").bootstrapTable(getImageTableSetting());
-}
-
-imageTable2();
-function imageTable2() {
-    $("#imageTable2").bootstrapTable(getImageTableSetting());
-}
-
-imageTable3();
-function imageTable3() {
-    $("#imageTable3").bootstrapTable(getImageTableSetting());
-}
-
 // 获取图片表单数据
 function getTabFormData() {
     var tabFormData = '';
@@ -302,29 +244,32 @@ function saveData(dom) {
 }
 
 function saveProductData() {
-    var operate = $("#saveProductBtn").attr('name');
-    if(operate === 'save') {
-        $.post("/qywxWelcomeProduct/saveData", $("#addProductForm").serialize(), function (r) {
-            if(r.code == 200) {
-                $MB.n_success("保存成功！");
-            }else {
-                $MB.n_danger("保存失败！");
-            }
-            $("#addProductModal").modal('hide');
-            $("#productModal").modal('show');
-            $MB.refreshTable('productDataTable');
-        });
-    }else {
-        $.post("/qywxWelcomeProduct/updateData", $("#addProductForm").serialize(), function (r) {
-            if(r.code == 200) {
-                $MB.n_success("更新成功！");
-            }else {
-                $MB.n_danger("更新失败！");
-            }
-            $("#addProductModal").modal('hide');
-            $("#productModal").modal('show');
-            $MB.refreshTable('productDataTable');
-        });
+    var flag = validator_product.form();
+    if(flag) {
+        var operate = $("#saveProductBtn").attr('name');
+        if(operate === 'save') {
+            $.post("/qywxWelcomeProduct/saveData", $("#addProductForm").serialize(), function (r) {
+                if(r.code == 200) {
+                    $MB.n_success("保存成功！");
+                }else {
+                    $MB.n_danger("保存失败！");
+                }
+                $("#addProductModal").modal('hide');
+                $("#productModal").modal('show');
+                $MB.refreshTable('productDataTable');
+            });
+        }else {
+            $.post("/qywxWelcomeProduct/updateData", $("#addProductForm").serialize(), function (r) {
+                if(r.code == 200) {
+                    $MB.n_success("更新成功！");
+                }else {
+                    $MB.n_danger("更新失败！");
+                }
+                $("#addProductModal").modal('hide');
+                $("#productModal").modal('show');
+                $MB.refreshTable('productDataTable');
+            });
+        }
     }
 }
 
@@ -370,29 +315,32 @@ function deleteProduct() {
 }
 
 function saveCouponData() {
-    var operate = $("#saveCouponBtn").attr('name');
-    if(operate === 'save') {
-        $.post("/qywxWelcomeCoupon/saveData", $("#addCouponForm").serialize(), function (r) {
-            if(r.code == 200) {
-                $MB.n_success("保存成功！");
-            }else {
-                $MB.n_danger("保存失败！");
-            }
-            $("#addCouponModal").modal('hide');
-            $("#couponModal").modal('show');
-            $MB.refreshTable('couponDataTable');
-        });
-    }else {
-        $.post("/qywxWelcomeCoupon/updateData", $("#addCouponForm").serialize(), function (r) {
-            if(r.code == 200) {
-                $MB.n_success("更新成功！");
-            }else {
-                $MB.n_danger("更新失败！");
-            }
-            $("#addCouponModal").modal('hide');
-            $("#couponModal").modal('show');
-            $MB.refreshTable('couponDataTable');
-        });
+    var flag = validator_coupon.form();
+    if(flag) {
+        var operate = $("#saveCouponBtn").attr('name');
+        if(operate === 'save') {
+            $.post("/qywxWelcomeCoupon/saveData", $("#addCouponForm").serialize(), function (r) {
+                if(r.code == 200) {
+                    $MB.n_success("保存成功！");
+                }else {
+                    $MB.n_danger("保存失败！");
+                }
+                $("#addCouponModal").modal('hide');
+                $("#couponModal").modal('show');
+                $MB.refreshTable('couponDataTable');
+            });
+        }else {
+            $.post("/qywxWelcomeCoupon/updateData", $("#addCouponForm").serialize(), function (r) {
+                if(r.code == 200) {
+                    $MB.n_success("更新成功！");
+                }else {
+                    $MB.n_danger("更新失败！");
+                }
+                $("#addCouponModal").modal('hide');
+                $("#couponModal").modal('show');
+                $MB.refreshTable('couponDataTable');
+            });
+        }
     }
 }
 
@@ -458,39 +406,24 @@ $("#myTabs").on('shown.bs.tab', function (e) {
     if(e.target.id === 'image-tab') {
         $("#wxChat").attr("style", "height: auto;width: 100%;background-color: rgb(235,235,235);border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;padding-bottom: 15px");
         $("#chatDiv").html('<div style="overflow:hidden;">\n' +
-        '<div id="chatSend" class="send" style="position: relative;margin-top: ' + height + 'px;">\n' +
-        '<div class="arrow"></div>\n' +
-        '<p class="h5">送你一张五元券</p>\n' +
-        '<div style=" width: 230px;height: 170px;background-image: url(https://qzh.faisys.com/image/baiduHome/pro1/v3/pic03.png);-webkit-background-size:cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;"></div>\n' +
-        '<hr style="background: #b0b0b0;margin-top: 6px;margin-bottom: 6px;"/>\n' +
-        '<p style="margin-bottom: 0px;color: #838383"><i class="fa fa-skyatlas" style="color: #1296db"></i>&nbsp;小程序</p>\n' +
-        '</div>\n' +
-        '</div>');
-    }
-});
-
-// 图片+网页+小程序 切换
-function cardChatChange(imgUrl, title, type) {
-    var res = "";
-    if(type === 'image') {
+            '<div id="chatSend" class="send" style="position: relative;margin-top: ' + height + 'px;">\n' +
+            '<div class="arrow"></div>\n' +
+            '<div style=" width: 230px;height: 170px;background-image: url(https://goss.veer.com/creative/vcg/veer/1600water/veer-158345394.jpg);-webkit-background-size:cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;"></div>\n' +
+            '</div>\n' +
+            '</div>');
+    }else if(e.target.id === 'miniprogram-tab') {
         $("#wxChat").attr("style", "height: auto;width: 100%;background-color: rgb(235,235,235);border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;padding-bottom: 15px");
         $("#chatDiv").html('<div style="overflow:hidden;">\n' +
             '<div id="chatSend" class="send" style="position: relative;margin-top: ' + height + 'px;">\n' +
             '<div class="arrow"></div>\n' +
             '<p class="h5">送你一张五元券</p>\n' +
-            '<div style=" width: 230px;height: 170px;background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1599631614507&di=8bb19956eab55733b1e8d9b7ae75d1ea&imgtype=0&src=http%3A%2F%2Fpicture.ik123.com%2Fuploads%2Fallimg%2F160812%2F4-160Q2151302.jpg);-webkit-background-size:cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;"></div>\n' +
+            '<div style=" width: 230px;height: 170px;background-image: url(https://goss.veer.com/creative/vcg/veer/800water/veer-307142650.jpg);-webkit-background-size:cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;"></div>\n' +
             '<hr style="background: #b0b0b0;margin-top: 6px;margin-bottom: 6px;"/>\n' +
             '<p style="margin-bottom: 0px;color: #838383"><i class="fa fa-skyatlas" style="color: #1296db"></i>&nbsp;小程序</p>\n' +
             '</div>\n' +
             '</div>');
     }
-    if(type === 'web') {
-
-    }
-    if(type === 'miniprogram') {
-
-    }
-}
+});
 
 // 选定优惠券
 function setCoupon() {
@@ -596,3 +529,92 @@ function updateWelcomeInfo() {
         });
     }
 }
+
+
+validCoupon();
+var validator_coupon;
+function validCoupon() {
+    var icon = "<i class='mdi mdi-close-circle'></i> ";
+    var rule = {
+        rules: {
+            couponDeno: {
+                required: true
+            },
+            couponThreshold: {
+                required: true
+            },
+            couponUrl: {
+                required: true
+            },
+            endDate: {
+                required: true
+            }
+        },
+        messages: {
+            couponDeno: {
+                required: icon + "请输入门槛"
+            },
+            couponThreshold: {
+                required: icon + "请输入面额"
+            },
+            couponUrl: {
+                required: icon + "请输入优惠券地址"
+            },
+            endDate: {
+                required: icon + "请输入有效截止日期"
+            }
+        }
+    };
+    validator_coupon = $("#addCouponForm").validate(rule);
+}
+
+validProduct();
+var validator_product;
+function validProduct() {
+    var icon = "<i class='mdi mdi-close-circle'></i> ";
+    var rule = {
+        rules: {
+            productId: {
+                required: true
+            },
+            productName: {
+                required: true
+            },
+            price: {
+                required: true
+            },
+            productType: {
+                required: true
+            },
+            productUrl: {
+                required: true
+            }
+        },
+        messages: {
+            productId: {
+                required: icon + "请输入商品ID"
+            },
+            productName: {
+                required: icon + "请输入商品名称"
+            },
+            price: {
+                required: icon + "请输入售价"
+            },
+            productType: {
+                required: icon + "请输入商品类型"
+            },
+            productUrl: {
+                required: icon + "请输入地址"
+            }
+        }
+    };
+    validator_product = $("#addProductForm").validate(rule);
+}
+
+$("#addProductModal").on('hidden.bs.modal', function () {
+    validator_product.resetForm();
+});
+
+$("#addCouponModal").on('hidden.bs.modal', function () {
+    validator_coupon.resetForm();
+});
