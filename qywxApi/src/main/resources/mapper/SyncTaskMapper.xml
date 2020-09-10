@@ -42,15 +42,15 @@
     </insert>
 
     <update id="savePartyChangeFlag">
-         update uo_qywx_param set party_change_flag='Y'
+         update uo_qywx_param set party_change_flag=#{status}
     </update>
 
     <update id="saveAuthCodeChangeFlag">
-        update uo_qywx_param set saveAuthCodeChangeFlag='Y'
+        update uo_qywx_param set saveAuthCodeChangeFlag=#{status}
     </update>
 
     <update id="saveFollowUserChangeFlag">
-        update uo_qywx_param set follow_user_change_flag='Y'
+        update uo_qywx_param set follow_user_change_flag=#{status}
     </update>
 
     <insert id="saveExternalContactList">
@@ -68,4 +68,23 @@
         </foreach>
         ON CONFLICT(follow_user_id,external_contact_id) DO UPDATE set user_phone=#{item.remark}
     </insert>
+
+    <delete id="deleteExternalContact">
+        delete from uo_qywx_external_contact_list where external_contact_id=#{externalUserId} and follow_user_id=#{followUserId}
+    </delete>
+    
+    <insert id="saveExternalContact">
+        insert into uo_qywx_external_contact_list
+        (
+        follow_user_id,
+        external_contact_id,
+        state,
+        user_phone,
+        add_date,
+        insert_dt
+        ) values
+         (#{item.followerUserId},#{item.externalUserid},#{item.state},#{item.remark},#{item.addDate},now())
+        ON CONFLICT(follow_user_id,external_contact_id) DO UPDATE set user_phone=#{item.remark}
+    </insert>
+
 </mapper>

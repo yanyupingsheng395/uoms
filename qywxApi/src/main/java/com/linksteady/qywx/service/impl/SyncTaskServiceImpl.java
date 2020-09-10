@@ -56,15 +56,29 @@ public class SyncTaskServiceImpl implements SyncTaskService {
     public void saveChangeFlag(String changeCode) {
         if("party".equals(changeCode))
         {
-            syncTaskMapper.savePartyChangeFlag();
+            syncTaskMapper.savePartyChangeFlag("Y");
         }else if("auth_scope".equals(changeCode))
         {
-            syncTaskMapper.saveAuthCodeChangeFlag();
+            syncTaskMapper.saveAuthCodeChangeFlag("Y");
         }else if("follow_user".equals(changeCode))
         {
-            syncTaskMapper.saveFollowUserChangeFlag();
+            syncTaskMapper.saveFollowUserChangeFlag("Y");
         }
 
+    }
+
+    @Override
+    public void saveChangeFlagToN(String changeCode) {
+        if("party".equals(changeCode))
+        {
+            syncTaskMapper.savePartyChangeFlag("N");
+        }else if("auth_scope".equals(changeCode))
+        {
+            syncTaskMapper.saveAuthCodeChangeFlag("N");
+        }else if("follow_user".equals(changeCode))
+        {
+            syncTaskMapper.saveFollowUserChangeFlag("N");
+        }
     }
 
     @Override
@@ -74,6 +88,18 @@ public class SyncTaskServiceImpl implements SyncTaskService {
             i.setAddDate(timeStampToDate(i.getCreatetime()));
         });
         syncTaskMapper.saveExternalContactList(externalContactList);
+    }
+
+
+    @Override
+    public void delExternalContact(String externalUserId, String followUserId, String corpId) {
+        syncTaskMapper.deleteExternalContact(followUserId,externalUserId);
+    }
+
+    @Override
+    public void saveExternalContact(ExternalContact externalContact) {
+        externalContact.setAddDate(timeStampToDate(externalContact.getCreatetime()));
+        syncTaskMapper.saveExternalContact(externalContact);
     }
 
 

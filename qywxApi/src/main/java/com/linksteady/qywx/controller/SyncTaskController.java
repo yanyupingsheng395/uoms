@@ -3,6 +3,7 @@ package com.linksteady.qywx.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.google.common.collect.Lists;
+import com.linksteady.common.domain.QywxMessage;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.common.util.crypto.SHA1;
@@ -10,6 +11,8 @@ import com.linksteady.qywx.domain.ExternalContact;
 import com.linksteady.qywx.domain.SyncTask;
 import com.linksteady.qywx.service.ApiService;
 import com.linksteady.qywx.service.SyncTaskService;
+import com.linksteady.qywx.service.UserMappingService;
+import com.linksteady.qywx.service.WelcomeMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +38,12 @@ public class SyncTaskController extends ApiBaseController{
     ApiService apiService;
 
     private static final String SUBMIT_TASK_URL="/api/submitSyncTask";
+
+    @Autowired
+    UserMappingService userMappingService;
+
+    @Autowired
+    WelcomeMessageService welcomeMessageService;
 
     /**
      * 提交同步导购任务
@@ -171,6 +180,8 @@ public class SyncTaskController extends ApiBaseController{
             synchronized (externalContactLock)
             {
                 syncTaskService.saveFollowUser(corpId,followUserList);
+                //更新标记
+                syncTaskService.saveChangeFlagToN("follow_user");
             }
             return ResponseBo.ok();
         } catch (Exception e) {
@@ -226,8 +237,9 @@ public class SyncTaskController extends ApiBaseController{
                         syncTaskService.saveDept(target.getLongValue("id"),target.getLongValue("parentId"),target.getString("name"),target.getIntValue("orderNo"));
                     }
                 }
+                syncTaskService.saveChangeFlagToN("party");
+                return ResponseBo.ok();
             }
-            return ResponseBo.ok();
         } catch (Exception e) {
             log.error("syncFollowUser失败，错误原因为{}",e);
             return ResponseBo.error(e.getMessage());
@@ -275,13 +287,127 @@ public class SyncTaskController extends ApiBaseController{
             synchronized (externalContactLock)
             {
                 syncTaskService.saveExternalContactList(externalContactList);
+                //更新标记
+                syncTaskService.saveChangeFlagToN("follow_user");
+                return ResponseBo.ok();
             }
-            return ResponseBo.ok();
         } catch (Exception e) {
             log.error("saveExternalContactList失败，错误原因为{}",e);
             return ResponseBo.error(e.getMessage());
         }
     }
+
+    /**
+     * 获取有效的欢迎语信息
+     */
+    @PostMapping("/getWelcomeMessage")
+    public ResponseBo getWelcomeMessage(HttpServletRequest request,
+                                           @RequestParam(name = "timestamp") String timestamp,
+                                           @RequestParam(name = "signature") String signature,
+                                           @RequestParam(name = "corpId") String corpId) {
+        try{
+            validateLegality(request,signature,timestamp,corpId);
+
+            //获取有效的欢迎语信息
+            QywxMessage qywxMessage=welcomeMessageService.getValidWelcomeMessage();
+            if(null==qywxMessage)
+            {
+                return ResponseBo.error("无法找到有效的欢迎语配置!");
+            }else
+            {
+                return ResponseBo.okWithData("",qywxMessage);
+            }
+        } catch (Exception e) {
+            log.error("获取有效的欢迎语信息失败，错误原因为{}",e);
+            return ResponseBo.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 接收外部联系人删除事件
+     * @param request
+     * @param signature
+     * @param timestamp
+     * @param externalUserId
+     * @param followUserId
+     * @return
+     */
+    @PostMapping("/delExternalContact")
+    public ResponseBo userMapping(HttpServletRequest request, String signature, String timestamp,
+                                  String externalUserId,
+                                  String followUserId,
+                                  String corpId) {
+        try {
+            validateLegality(request,signature,timestamp,followUserId,externalUserId,corpId);
+        } catch (Exception e) {
+            return ResponseBo.error(e.getMessage());
+        }
+
+        //对参数进行校验
+        if(StringUtils.isEmpty(externalUserId)||StringUtils.isEmpty(followUserId))
+        {
+            return ResponseBo.error("参数不能为空!");
+        }
+
+
+        try {
+            //对当前匹配到的用户进行清除
+            userMappingService.deleteMappingInfo(externalUserId,followUserId);
+            //清除本地的外部联系人
+            syncTaskService.delExternalContact(externalUserId,followUserId,corpId);
+            return ResponseBo.ok();
+        } catch (Exception e) {
+            log.error("删除用户匹配关系错误，错误原因为{}",e);
+            return ResponseBo.error(e.getMessage());
+        }
+
+    }
+
+    /**
+     * 外部联系人新增/修改事件
+     */
+    /**
+     * update
+     * @param request
+     * @param signature
+     * @param timestamp
+     * @param corpId 公司ID
+     * @param data 外部联系人ID
+     * @return
+     */
+    @PostMapping("/syncExternalContractSingle")
+    public ResponseBo userMapping(HttpServletRequest request, String signature, String timestamp,
+                                  String corpId,
+                                  String data) {
+        try {
+            validateLegality(request,signature,timestamp,corpId,data);
+        } catch (Exception e) {
+            return ResponseBo.error(e.getMessage());
+        }
+        //对参数进行校验
+        if(StringUtils.isEmpty(corpId)||StringUtils.isEmpty(data))
+        {
+            return ResponseBo.error("参数不能为空!");
+        }
+        Long userId=null;
+        ExternalContact externalContact=JSON.parseObject(data,ExternalContact.class);
+        //对外部联系人进行insert or update
+        syncTaskService.saveExternalContact(externalContact);
+
+        //todo 手机号存储在企业微信的备注字段上
+        String phoneNum=externalContact.getDescription();
+
+        if(StringUtils.isNotEmpty(phoneNum))
+        {
+            userId=userMappingService.updateMappingInfo(externalContact.getExternalUserid(),externalContact.getFollowerUserId(),phoneNum);
+        }else
+        {
+            //将externalUserId对应的映射信息全部清空 以为将外部联系人标记的手机号置为空了 所有要将之前匹配上的信息清空
+            userMappingService.deleteMappingInfo(externalContact.getExternalUserid(),externalContact.getFollowerUserId());
+        }
+        return ResponseBo.okWithData("",userId);
+    }
+
 
 
 }

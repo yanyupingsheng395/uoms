@@ -1,9 +1,6 @@
 package com.linksteady.qywx.domain;
 
 import lombok.Data;
-
-import javax.persistence.Column;
-import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 @Data
