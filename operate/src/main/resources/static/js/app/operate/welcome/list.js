@@ -72,3 +72,13 @@ function deleteWelcome() {
         } );
     }
 }
+
+// 编辑欢迎语
+function editWelcome() {
+    var selected = $("#dataTable").bootstrapTable('getSelections');
+    if(selected.length == 0) {
+        $MB.n_warning("请先选择一条记录！");
+    }else {
+        window.location.href = "/page/qywxWelcome/edit?id=" + selected[0].id;
+    }
+}

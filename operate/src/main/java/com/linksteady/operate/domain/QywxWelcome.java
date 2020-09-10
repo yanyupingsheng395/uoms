@@ -51,4 +51,8 @@ public class QywxWelcome {
     private String validFlag;
 
     private String status;
+
+    private String updateBy;
+
+    private Date updateDt;
 }

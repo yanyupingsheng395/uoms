@@ -10,11 +10,15 @@ import java.util.List;
  */
 public interface QywxWelcomeService {
 
-    void saveData(QywxWelcome qywxWelcome);
+    Integer saveData(QywxWelcome qywxWelcome);
 
     int getDataCount();
 
     List<QywxWelcome> getDataList(Integer limit, Integer offset);
 
     void deleteById(String id);
+
+    QywxWelcome getDataById(String id);
+
+    void updateData(QywxWelcome qywxWelcome);
 }

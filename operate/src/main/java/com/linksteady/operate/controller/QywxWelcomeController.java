@@ -21,7 +21,12 @@ public class QywxWelcomeController {
 
     @PostMapping("/saveData")
     public ResponseBo saveData(QywxWelcome qywxWelcome) {
-        qywxWelcomeService.saveData(qywxWelcome);
+        return ResponseBo.okWithData(null, qywxWelcomeService.saveData(qywxWelcome));
+    }
+
+    @PostMapping("/updateData")
+    public ResponseBo updateData(QywxWelcome qywxWelcome) {
+        qywxWelcomeService.updateData(qywxWelcome);
         return ResponseBo.ok();
     }
 

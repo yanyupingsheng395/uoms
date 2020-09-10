@@ -263,14 +263,42 @@ function getTabFormData() {
     return tabFormData;
 }
 
-function saveData() {
-    $.post("/welcome/saveData", $("#welcomeFormData").serialize() + getTabFormData(), function (r) {
-        if(r.code == 200) {
-            $MB.n_success("保存成功！");
-        }else {
-            $MB.n_danger("保存失败！");
+function saveData(dom) {
+    var operate = $(dom).attr('name');
+    if(operate === 'save') {
+        if(validWelcomeForm()) {
+            $MB.confirm({
+                title: "<i class='mdi mdi-alert-outline'></i>提示：",
+                content: "确定保存当前记录?"
+            }, function () {
+                $.post("/welcome/saveData", $("#welcomeFormData").serialize() + getTabFormData(), function (r) {
+                    if(r.code == 200) {
+                        $MB.n_success("保存成功！");
+                        $("#qywxWelcomeId").val(r.data);
+                    }else {
+                        $MB.n_danger("保存失败！");
+                    }
+                });
+            });
         }
-    });
+    }
+
+    if(operate === 'update') {
+        if(validWelcomeForm()) {
+            $MB.confirm({
+                title: "<i class='mdi mdi-alert-outline'></i>提示：",
+                content: "确定更新当前记录?"
+            }, function () {
+                $.post("/welcome/updateData", $("#welcomeFormData").serialize() + getTabFormData(), function (r) {
+                    if(r.code == 200) {
+                        $MB.n_success("更新成功！");
+                    }else {
+                        $MB.n_danger("更新失败！");
+                    }
+                });
+            });
+        }
+    }
 }
 
 function saveProductData() {
@@ -433,12 +461,138 @@ $("#myTabs").on('shown.bs.tab', function (e) {
         '<div id="chatSend" class="send" style="position: relative;margin-top: ' + height + 'px;">\n' +
         '<div class="arrow"></div>\n' +
         '<p class="h5">送你一张五元券</p>\n' +
-        '<div style=" width: 230px;height: 170px;background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1599631614507&di=8bb19956eab55733b1e8d9b7ae75d1ea&imgtype=0&src=http%3A%2F%2Fpicture.ik123.com%2Fuploads%2Fallimg%2F160812%2F4-160Q2151302.jpg);-webkit-background-size:cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;"></div>\n' +
+        '<div style=" width: 230px;height: 170px;background-image: url(https://qzh.faisys.com/image/baiduHome/pro1/v3/pic03.png);-webkit-background-size:cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;"></div>\n' +
         '<hr style="background: #b0b0b0;margin-top: 6px;margin-bottom: 6px;"/>\n' +
         '<p style="margin-bottom: 0px;color: #838383"><i class="fa fa-skyatlas" style="color: #1296db"></i>&nbsp;小程序</p>\n' +
         '</div>\n' +
         '</div>');
     }
-
-    console.log()
 });
+
+// 图片+网页+小程序 切换
+function cardChatChange(imgUrl, title, type) {
+    var res = "";
+    if(type === 'image') {
+        $("#wxChat").attr("style", "height: auto;width: 100%;background-color: rgb(235,235,235);border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;padding-bottom: 15px");
+        $("#chatDiv").html('<div style="overflow:hidden;">\n' +
+            '<div id="chatSend" class="send" style="position: relative;margin-top: ' + height + 'px;">\n' +
+            '<div class="arrow"></div>\n' +
+            '<p class="h5">送你一张五元券</p>\n' +
+            '<div style=" width: 230px;height: 170px;background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1599631614507&di=8bb19956eab55733b1e8d9b7ae75d1ea&imgtype=0&src=http%3A%2F%2Fpicture.ik123.com%2Fuploads%2Fallimg%2F160812%2F4-160Q2151302.jpg);-webkit-background-size:cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;"></div>\n' +
+            '<hr style="background: #b0b0b0;margin-top: 6px;margin-bottom: 6px;"/>\n' +
+            '<p style="margin-bottom: 0px;color: #838383"><i class="fa fa-skyatlas" style="color: #1296db"></i>&nbsp;小程序</p>\n' +
+            '</div>\n' +
+            '</div>');
+    }
+    if(type === 'web') {
+
+    }
+    if(type === 'miniprogram') {
+
+    }
+}
+
+// 选定优惠券
+function setCoupon() {
+    var selected = $("#couponDataTable").bootstrapTable('getSelections');
+    if(selected.length == 0) {
+        $MB.n_warning("请先选择一条记录！");
+    }else {
+        $MB.confirm({
+            title: "<i class='mdi mdi-alert-outline'></i>提示：",
+            content: "确定设置当前选中的记录?"
+        }, function () {
+            $("input[name='miniprogramTitle']").val("送您一张" + selected[0]['couponDeno'] + "元券");
+            $("input[name='miniprogramPage']").val(selected[0]['couponUrl']);
+            $("#couponModal").modal('hide');
+            $("#myTabs").find("li").eq(3).addClass("active");
+            $("#myTabContent").find("div.tab-pane").eq(3).addClass("active in");
+            $("#myTabContent").find("div.tab-pane").eq(3).siblings().removeClass("active in");
+            $("#myTabs").find("li").eq(3).siblings().removeClass("active");
+            updateWelcomeInfo();
+        });
+    }
+}
+
+function setProduct() {
+    var selected = $("#productDataTable").bootstrapTable('getSelections');
+    if(selected.length == 0) {
+        $MB.n_warning("请先选择一条记录！");
+    }else {
+        $MB.confirm({
+            title: "<i class='mdi mdi-alert-outline'></i>提示：",
+            content: "确定设置当前选中的记录?"
+        }, function () {
+            $("input[name='miniprogramTitle']").val(selected[0]['productName']);
+            $("input[name='miniprogramPage']").val(selected[0]['productUrl']);
+            $("#productModal").modal('hide');
+            $("#myTabs").find("li").eq(3).addClass("active");
+            $("#myTabContent").find("div.tab-pane").eq(3).addClass("active in");
+            $("#myTabContent").find("div.tab-pane").eq(3).siblings().removeClass("active in");
+            $("#myTabs").find("li").eq(3).siblings().removeClass("active");
+            updateWelcomeInfo();
+        });
+    }
+}
+
+// 验证欢迎语表单
+function validWelcomeForm() {
+    var welcomeName = $("input[name='welcomeName']").val();
+    var policyType = $("input[name='policyType']:checked").val();
+    var policyTypeTmp = $("input[name='policyTypeTmp']:checked").val();
+
+    if(welcomeName === '') {
+        $MB.n_warning("请输入欢迎语名称！");
+        return false;
+    }
+
+    if(policyType !== 'M') {
+        if(policyTypeTmp === undefined) {
+            $MB.n_warning("请选择欢迎语配置策略！");
+            return false;
+        }
+    }
+
+    var content = $("textarea[name='content']").val();
+    var picUrl = $("input[name='picUrl']").val();
+    var linkDesc = $("input[name='linkDesc']").val();
+    var linkUrl = $("input[name='linkUrl']").val();
+    var linkTitle = $("input[name='linkTitle']").val();
+    var linkPicurl = $("input[name='linkPicurl']").val();
+    var miniprogramTitle = $("input[name='miniprogramTitle']").val();
+    var miniprogramPage = $("input[name='miniprogramPage']").val();
+
+    if(content === '' && picUrl === '' && linkTitle ==='' && linkDesc ==='' && linkUrl ==='' && linkPicurl ==='' && miniprogramTitle ==='' && miniprogramPage ==='') {
+        $MB.n_warning("欢迎语素材内容不能同时为空！");
+        return false;
+    }
+
+    if((linkDesc !=='' || linkUrl !=='' || linkTitle !== '' || linkPicurl !== '') && !(linkDesc !=='' && linkUrl !=='' && linkTitle !== '' && linkPicurl !== '')) {
+        if(!(linkDesc ==='' && linkUrl ==='' && linkTitle === '' && linkPicurl === '')) {
+            $MB.n_warning("欢迎语网页素材都是必填项！");
+            return false;
+        }
+    }
+
+    if((miniprogramTitle !=='' || miniprogramPage !=='') && !(miniprogramTitle !=='' && miniprogramPage !=='')) {
+        if(!(miniprogramTitle ==='' && miniprogramPage ==='')) {
+            $MB.n_warning("欢迎语小程序素材都是必填项！");
+            return false;
+        }
+    }
+    return true;
+}
+
+// 更新欢迎语信息
+function updateWelcomeInfo() {
+    var id = $("#qywxWelcomeId").val();
+    if(id !== '') {
+        $.post("/welcome/updateData", $("#welcomeFormData").serialize() + getTabFormData(), function (r) {
+            if(r.code == 200) {
+                $MB.n_success("更新成功！");
+            }else {
+                $MB.n_danger("更新失败！");
+            }
+        });
+    }
+}

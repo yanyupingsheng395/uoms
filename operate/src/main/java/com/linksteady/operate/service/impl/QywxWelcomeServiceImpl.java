@@ -20,12 +20,14 @@ public class QywxWelcomeServiceImpl implements QywxWelcomeService {
     private QywxWelcomeMapper qywxWelcomeMapper;
 
     @Override
-    public void saveData(QywxWelcome qywxWelcome) {
+    public Integer saveData(QywxWelcome qywxWelcome) {
         String policyType = qywxWelcome.getPolicyType();
-        if(StringUtils.isNotEmpty(policyType) && policyType.equalsIgnoreCase("A")) {
+        if (StringUtils.isNotEmpty(policyType) && policyType.equalsIgnoreCase("A")) {
             qywxWelcome.setPolicyType(qywxWelcome.getPolicyTypeTmp());
         }
         qywxWelcomeMapper.saveData(qywxWelcome);
+        System.out.println(qywxWelcome);
+        return qywxWelcome.getId();
     }
 
     @Override
@@ -41,5 +43,20 @@ public class QywxWelcomeServiceImpl implements QywxWelcomeService {
     @Override
     public void deleteById(String id) {
         qywxWelcomeMapper.deleteById(id);
+    }
+
+    @Override
+    public QywxWelcome getDataById(String id) {
+        List<QywxWelcome> welcomeList = qywxWelcomeMapper.getDataById(id);
+        return welcomeList.size() > 0 ? welcomeList.get(0) : null;
+    }
+
+    @Override
+    public void updateData(QywxWelcome qywxWelcome) {
+        String policyType = qywxWelcome.getPolicyType();
+        if (StringUtils.isNotEmpty(policyType) && policyType.equalsIgnoreCase("A")) {
+            qywxWelcome.setPolicyType(qywxWelcome.getPolicyTypeTmp());
+        }
+        qywxWelcomeMapper.updateData(qywxWelcome);
     }
 }

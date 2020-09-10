@@ -54,6 +54,9 @@ public class PageController extends BaseController {
     @Autowired
     private QywxParamService qywxParamService;
 
+    @Autowired
+    private QywxWelcomeService qywxWelcomeService;
+
     @Log(value = "用户成长监控",location = "用户成长系统")
     @RequestMapping("/operator/user")
     public String userOperator() {
@@ -579,7 +582,9 @@ public class PageController extends BaseController {
     }
 
     @RequestMapping("/qywxWelcome/edit")
-    public String editWelcome() {
+    public String editWelcome(Model model, String id) {
+        QywxWelcome qywxWelcome = qywxWelcomeService.getDataById(id);
+        model.addAttribute("welcome", qywxWelcome);
         return "operate/welcome/edit";
     }
 
