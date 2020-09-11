@@ -233,7 +233,7 @@
                                     <div id='wxChat' style="height: 300px;width: 100%;background-color: rgb(235,235,235);border-bottom-left-radius: 10px;border-bottom-right-radius: 10px">
                                         <div class="send" id="preview">
                                             <div class="arrow"></div>
-                                            <span id="wxPreview">请输入消息内容</span>
+                                            <span id="wxPreview" th:text="${welcome.content}">请输入消息内容</span>
                                         </div>
 
                                         <div id="chatDiv">
