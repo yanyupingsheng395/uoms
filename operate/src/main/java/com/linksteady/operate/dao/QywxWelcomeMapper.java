@@ -17,4 +17,12 @@ public interface QywxWelcomeMapper {
     List<QywxWelcome> getDataList(Integer limit, Integer offset);
 
     void deleteById(String id);
+
+    List<QywxWelcome> getDataById(String id);
+
+    void updateData(QywxWelcome qywxWelcome);
+
+    void updateStartStatus(String id, String status);
+
+    void updateStopStatus(String id, String status);
 }

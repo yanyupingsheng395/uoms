@@ -3,8 +3,11 @@
 <mapper namespace="com.linksteady.operate.dao.QywxWelcomeMapper">
 
     <insert id="saveData">
-        insert into uo_qywx_welcome (welcome_name, content, insert_by, insert_dt, policy_type, pic_url, pic_id, link_title, link_picurl, link_desc, link_url, miniprogram_title, miniprogram_page, qywx_coupon_id, qywx_product_id)
-        values (#{welcomeName}, #{content}, #{insertBy}, now(), #{policyType}, #{picUrl}, #{picId}::integer, #{linkTitle}, #{linkPicurl}, #{linkDesc}, #{linkUrl}, #{miniprogramTitle}, #{miniprogramPage}, #{qywxCouponId}, #{qywxProductId})
+        <selectKey keyColumn="id" resultType="int" order="BEFORE" keyProperty="id">
+            select nextval('uo_qywx_welcome_id_seq'::regclass)
+        </selectKey>
+        insert into uo_qywx_welcome (id, welcome_name, content, insert_by, insert_dt, policy_type, pic_url, pic_id, link_title, link_picurl, link_desc, link_url, miniprogram_title, miniprogram_page, qywx_coupon_id, qywx_product_id)
+        values (#{id}, #{welcomeName}, #{content}, #{insertBy}, now(), #{policyType}, #{picUrl}, #{picId}::integer, #{linkTitle}, #{linkPicurl}, #{linkDesc}, #{linkUrl}, #{miniprogramTitle}, #{miniprogramPage}, #{qywxCouponId}, #{qywxProductId})
     </insert>
 
     <select id="getDataCount" resultType="int">
@@ -19,4 +22,23 @@
     <delete id="deleteById">
         delete from uo_qywx_welcome where id = #{id}::integer
     </delete>
+
+    <select id="getDataById" resultType="com.linksteady.operate.domain.QywxWelcome">
+        select id, welcome_name, content, insert_by, insert_dt, policy_type, pic_url, pic_id, link_title, link_picurl, link_desc, link_url, miniprogram_title, miniprogram_page, qywx_coupon_id, qywx_product_id, update_dt, update_by, valid_flag, status from uo_qywx_welcome where id = #{id}::integer
+    </select>
+
+    <update id="updateData">
+        update uo_qywx_welcome set (welcome_name, content, update_by, update_dt, policy_type, pic_url, pic_id, link_title, link_picurl, link_desc, link_url, miniprogram_title, miniprogram_page, qywx_coupon_id, qywx_product_id)
+        = (#{welcomeName}, #{content}, #{updateBy}, now(), #{policyType}, #{picUrl}, #{picId}::integer, #{linkTitle}, #{linkPicurl}, #{linkDesc}, #{linkUrl}, #{miniprogramTitle}, #{miniprogramPage}, #{qywxCouponId}, #{qywxProductId})
+        where id = #{id}
+    </update>
+
+    <update id="updateStartStatus">
+        update uo_qywx_welcome set status = '1' where id = #{id}::integer;
+        update uo_qywx_welcome set status = '0' where id &lt;&gt; #{id}::integer;
+    </update>
+
+    <update id="updateStopStatus">
+        update uo_qywx_welcome set status = '0' where id = #{id}::integer
+    </update>
 </mapper>

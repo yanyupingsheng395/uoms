@@ -21,7 +21,12 @@ public class QywxWelcomeController {
 
     @PostMapping("/saveData")
     public ResponseBo saveData(QywxWelcome qywxWelcome) {
-        qywxWelcomeService.saveData(qywxWelcome);
+        return ResponseBo.okWithData(null, qywxWelcomeService.saveData(qywxWelcome));
+    }
+
+    @PostMapping("/updateData")
+    public ResponseBo updateData(QywxWelcome qywxWelcome) {
+        qywxWelcomeService.updateData(qywxWelcome);
         return ResponseBo.ok();
     }
 
@@ -35,6 +40,12 @@ public class QywxWelcomeController {
     @PostMapping("/deleteById")
     public ResponseBo deleteById(String id) {
         qywxWelcomeService.deleteById(id);
+        return ResponseBo.ok();
+    }
+
+    @PostMapping("/updateStatus")
+    public ResponseBo updateStatus(String id, String status) {
+        qywxWelcomeService.updateStatus(id, status);
         return ResponseBo.ok();
     }
 }
