@@ -216,7 +216,6 @@ $("#navTabs1").find('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         } else if (e.target.href.endWith("#overview")) {
             $("#selectCondition1").show();
             $("#selectCondition2").hide();
-            load_jsmind();
         } else if (e.target.href.endWith("#retention")) { // 留存率变化
             // todo 初始化日期
             $("#selectCondition1").hide();
