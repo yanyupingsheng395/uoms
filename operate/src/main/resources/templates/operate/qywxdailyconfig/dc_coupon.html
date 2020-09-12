@@ -1,0 +1,76 @@
+<div class="modal" tabindex="-1" role="dialog" id="intel_coupon_modal" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title">智能补贴操作</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 table-striped">
+                        <table id="intelCouponTable" class="table  table-striped table-bordered table-hover"></table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" onclick="saveIntelCoupon()">确定</button>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="coupon_add_modal" data-backdrop="static">
+    <div class="modal-dialog" role="document" style="width: 60%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title" id="myLargeModalLabel">新建补贴</h5>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="coupon_edit">
+                    <input type="hidden" id="couponId" name="couponId"/>
+                    <input type="hidden" id="validStatus" name="validStatus"/>
+                    <div class="form-group mg-stop">
+                        <label class="col-md-3 control-label">补贴名称：</label>
+                        <div class="col-md-8 input-group">
+                            <input class="form-control" type="text" id="couponDisplayName" name="couponDisplayName" placeholder="xx元"/>
+                        </div>
+                    </div>
+                    <div class="form-group mg-stop">
+                        <label class="col-md-3 control-label">门槛(元)：</label>
+                        <div class="col-md-8 input-group">
+                            <input class="form-control" type="text" id="couponThreshold" name="couponThreshold"/>
+                        </div>
+                    </div>
+                    <div class="form-group mg-stop">
+                        <label class="col-md-3 control-label">面额(元)：</label>
+                        <div class="col-md-8 input-group">
+                            <input class="form-control" type="text" id="couponDenom" name="couponDenom"/>
+                        </div>
+                    </div>
+                    <div id="taokeDiv" th:if="${sourceConfig.couponSendType eq 'A'}">
+                        <div class="form-group mg-stop">
+                            <label class="col-md-3 control-label">补贴链接：</label>
+                            <div class="col-md-8 input-group">
+                                <input class="form-control" type="text" id="couponUrl" name="couponUrl"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mg-stop">
+                        <label class="col-md-3 control-label">有效截止期：</label>
+                        <div class="col-md-8 input-group">
+                            <input class="form-control" type="text" id="validEnd" name="validEnd" onchange="removeValid()" onblur="resetValidEndVal()"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" id="btn_save_coupon" name="save">确定</button>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>

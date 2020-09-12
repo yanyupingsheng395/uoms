@@ -1,0 +1,293 @@
+<style>
+    .send {
+        position: absolute;
+        max-width: 200px;
+        width: auto;
+        height: auto;
+        background: #fff;
+        border-radius: 5px; /* 圆角 */
+        margin-top: 30px;
+        margin-left: 20px;
+        padding: 10px;
+        font-size: 12px;
+        color: #000;
+        word-wrap: break-word;
+    }
+
+    .send .arrow {
+        position: absolute;
+        top: 9px;
+        left: -16px; /* 圆角的位置需要细心调试哦 */
+        width: 0;
+        height: 0;
+        font-size: 0;
+        border: solid 8px;
+        border-color: rgb(235, 235, 235) #fff rgb(235, 235, 235) rgb(235, 235, 235);
+    }
+</style>
+<div class="modal fade" id="wxMsgListModal" data-keyboard="false" data-backdrop="static" tabindex="-1"
+     style="overflow: auto">
+    <div class="modal-dialog" style="width: 945px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h5 class="modal-title">配置个性化消息</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="table-striped">
+                            <div class="table-responsive">
+                                <p class="h6">理解选定的用户群组</p>
+                                <table class="table text-nowrap table-bordered h6" style="width: 70%;" id="selectedGroupInfo2"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row m-t-10">
+                    <div class="col-sm-12">
+                        <p class="h6">使用过的个性化消息</p>
+                        <div class="btn-group-sm" id="toolbar" role="group">
+                            <a class="btn btn-success btn-edit" id="btn_add" onclick="openWxMsgAddModal()">
+                                <i class="fa fa-pencil"></i> 新增消息
+                            </a>
+                            <button class="btn btn-primary" id="btn_view" onclick="editDataById()">
+                                <i class="fa fa-edit"></i> 编辑消息
+                            </button>
+                            <button class="btn btn-danger btn-view" id="btn_delete" onclick="deleteDataById()">
+                                <i class="fa fa-close"></i> 删除消息
+                            </button>
+                            <a class="btn btn-info btn-edit" id="btn_plan">
+                                <i class="fa fa-refresh"></i> 解除引用
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="row m-t-10">
+                    <div class="col-md-12 table-striped">
+                        <table id="msgListDataTable" class="table table-hover table-bordered"></table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" onclick="updateWxMsg()">确定</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="wxMsgAddModal"
+     data-backdrop="static" style="overflow-y: scroll;">
+    <div class="modal-dialog" role="document" style="width: 70%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title" id="myLargeModalLabel3">新增消息</h5>
+            </div>
+            <div class="modal-body" style="padding-left: 10px;padding-right: 10px;padding-top: 0px;padding-bottom: 0px;">
+                <div class="row">
+                    <div class="col-md-8">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="active"><a href="#home" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">
+                                文本要素配置
+                            </a></li>
+                            <li class=""><a href="#profile" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">
+                                媒体要素配置
+                            </a></li>
+                        </ul>
+                        <div id="myTabContent" class="tab-content">
+                            <div class="tab-pane fade active in" id="home">
+                                <form class="form-horizontal" id="wxMsgAddForm" novalidate="novalidate">
+                                    <div class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <div>
+                                                        <label class="control-label">文案体现的个性化要素</label>
+                                                    </div>
+                                                    <div>
+                                                        <div style="border: solid 1px #ebebeb;padding: 8px; float: left;width: 100%" id="config-box">
+                                                            <input type="hidden" name="qywxId" value="0"/>
+                                                            <div class="example-box">
+                                                                <label class="control-label">商品名称：</label>
+                                                                <label class="lyear-radio radio-inline radio-primary">
+                                                                    <input type="radio" name="productName" value="1"><span>是</span>
+                                                                </label>
+                                                                <label class="lyear-radio radio-inline radio-primary">
+                                                                    <input type="radio" name="productName" value="0"><span>否</span>
+                                                                </label>
+                                                                &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${商品名称} 粘贴到期望位置；</span>
+                                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${商品名称}" class="copy_btn">复制</a>
+                                                            </div>
+                                                            <div class="example-box">
+                                                                <label class="control-label">补贴名称：</label>
+                                                                <label class="lyear-radio radio-inline radio-primary">
+                                                                    <input type="radio" name="couponName" value="1"><span>是</span>
+                                                                </label>
+                                                                <label class="lyear-radio radio-inline radio-primary">
+                                                                    <input type="radio" name="couponName" value="0"><span>否</span>
+                                                                </label>
+                                                                &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${补贴名称} 粘贴到期望位置；</span>
+                                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${补贴名称}" class="copy_btn">复制</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div>
+                                                        <label class="control-label">文案内容</label>
+                                                    </div>
+                                                    <div style="padding: 5px 0; color: #ccc"></div>
+                                                    <div class="form-control" style="height: 200px;" contenteditable="true" id="textContent1"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr class="hr m-t-0 m-b-5"/>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group mg-stop">
+                                                <div class="col-md-12 control-label" style="text-align: left;">
+                                                    <p class="small">
+                                                        个性化变量说明：
+                                                        &nbsp;&nbsp;&nbsp;<br/>${商品名称}:系统个性化填充商品短名称变量，不同用户看到不同商品短名称；
+                                                        &nbsp;&nbsp;&nbsp;<br/>${补贴名称}:系统会个性化填充券名称，不同用户看到不同优惠券；
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="tab-pane fade" id="profile">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <form class="form-horizontal" novalidate="novalidate" id="mediaForm">
+                                            <div style="border: solid 1px #ebebeb;padding: 8px;margin-top:0px; float: left;width: 400px;">
+                                                <div class="example-box">
+                                                    <label class="control-label">个性化商品详情页：</label>
+                                                    <label class="lyear-radio radio-inline radio-primary">
+                                                        <input type="radio" name="isPersonal" value="1" readonly disabled checked><span>是</span>
+                                                    </label>
+                                                    <label class="lyear-radio radio-inline radio-primary">
+                                                        <input type="radio" name="isPersonal" value="0" readonly disabled><span>否</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="row m-t-10">
+                                    <div class="col-md-12">
+                                        <p class="small">
+                                            个性化素才说明：
+                                            <br>系统会个性化填充商品详细页，不同用户看到不同商品
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4" style="margin-top: 30px;">
+                        <div style="height:360px;width:265px;margin-left: 20px;border-radius: 10px;">
+                            <div style="height: 50px;width: 100%;background-color: rgb(49,46,51);border-top-right-radius: 10px;border-top-left-radius: 10px;"
+                                 class="text-center">
+                                <p style="color: #fff;line-height: 50px;">linksteady</p>
+                            </div>
+                            <div style="height: 300px;width: 100%;background-color: rgb(235,235,235);border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;">
+                                <div class="send" id="preview">
+                                    <div class="arrow"></div>
+                                    <span id="wxPreview">请输入消息内容</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" name="save" id="btn_save_qywx">确定</button>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="selectModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>×</span></button>
+                <h4 class="modal-title modal-title1">
+                    选择
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div id='imgTextAdd' class="row">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info ensure">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="reminderModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>×</span></button>
+                <h4 class="modal-title">
+                    温馨提示
+                </h4>
+            </div>
+            <div class="modal-body">
+                <h5>添加子菜单后，一级菜单的内容将被清除。确定添加子菜单？</h5>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info reminder">确定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="abnormalModal" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>×</span></button>
+                <h4 class="modal-title">
+                    温馨提示
+                </h4>
+            </div>
+            <div class="modal-body">
+                <h5>数据异常</h5>
+            </div>
+            <div class="modal-footer">
+
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mobile_preview" id="mobileDiv" style="display: none;">
+    <div class="mobile_preview_hd">
+        <strong class="nickname"></strong>
+    </div>
+    <div class="mobile_preview_bd">
+        <ul id="viewShow" class="show_list"></ul>
+    </div>
+    <div class="mobile_preview_ft">
+        <ul class="pre_menu_list grid_line" id="viewList">
+        </ul>
+    </div>
+    <div class="moblie_preview_weapp js_preview_weapp_wrapper" style="display: none">
+        <div class="weapp_hd">
+            <i class="icon_back_weapp js_preview_weapp_close">返回</i>
+            <p class="weapp_title js_preview_weapp_title"></p>
+        </div>
+        <div class="preview_extra">电脑端暂不支持预览小程序</div>
+    </div>
+    <a href="javascript:void(0);" class="mobile_preview_closed btn btn_default" id="viewClose">退出预览</a>
+</div>

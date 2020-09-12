@@ -57,61 +57,62 @@ public class PageController extends BaseController {
     @Autowired
     private QywxWelcomeService qywxWelcomeService;
 
-    @Log(value = "用户成长监控",location = "用户成长系统")
+    @Log(value = "用户成长监控", location = "用户成长系统")
     @RequestMapping("/operator/user")
     public String userOperator() {
         return "operate/useroperator/monitor";
     }
 
 
-    @Log(value = "每日用户运营",location = "用户成长系统")
+    @Log(value = "每日用户运营", location = "用户成长系统")
     @RequestMapping("/daily/task")
     public String daily() {
         return "operate/daily/list";
     }
 
-    @Log(value = "每日运营配置",location = "用户成长系统")
+    @Log(value = "每日运营配置", location = "用户成长系统")
     @RequestMapping("/dailyconfig")
     public String dailyGroupConfig(Model model) {
-        SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
-        model.addAttribute("sourceConfig",sourceConfigVO);
+        SourceConfigVO sourceConfigVO = SourceConfigVO.getInstance(pushConfig);
+        model.addAttribute("sourceConfig", sourceConfigVO);
         return "operate/dailyconfig/config";
     }
 
-
-
     /**
      * 短信模板配置
+     *
      * @param
      * @return
      */
-    @Log(value = "每日运营文案",location = "用户成长系统")
+    @Log(value = "每日运营文案", location = "用户成长系统")
     @RequestMapping("/cfg/smsTemplate")
     public String smsTemplateList(Model model) {
-        SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
-        model.addAttribute("sourceConfig",sourceConfigVO);
+        SourceConfigVO sourceConfigVO = SourceConfigVO.getInstance(pushConfig);
+        model.addAttribute("sourceConfig", sourceConfigVO);
         return "operate/config/smstemplate";
     }
 
     /**
      * 优惠券配置
+     *
      * @param
      * @return
      */
-    @Log(value = "每日运营优惠券",location = "用户成长系统")
+    @Log(value = "每日运营优惠券", location = "用户成长系统")
     @RequestMapping("/cfg/coupon")
     public String couponList(Model model) {
-        SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
-        model.addAttribute("sourceConfig",sourceConfigVO);
+        SourceConfigVO sourceConfigVO = SourceConfigVO.getInstance(pushConfig);
+        model.addAttribute("sourceConfig", sourceConfigVO);
         return "operate/config/coupon";
     }
 
     /**
      * 推送设置
+     *
      * @param
      * @return
      */
-    @Log(value = "推送设置",location = "用户成长系统")
+    @Log(value = "推送设置", location = "用户成长系统")
     @RequestMapping("/cfg/pushConfigList")
     public String pushConfigList() {
         return "operate/config/pushConfigList";
@@ -119,19 +120,20 @@ public class PageController extends BaseController {
 
     /**
      * 日运营-效果跟踪
+     *
      * @return
      */
-    @Log(value = "每日用户运营-任务效果",location = "用户成长系统")
+    @Log(value = "每日用户运营-任务效果", location = "用户成长系统")
     @RequestMapping("/daily/task/effect")
     public String effectTrack(Model model, @RequestParam("id") Long headId) {
         String status = dailyService.getDailyHeadById(headId).getStatus();
-        if(StringUtils.isNotEmpty(status)) {
-            if(status.equals("done") || status.equals("finished") || status.equals("doing")) {
+        if (StringUtils.isNotEmpty(status)) {
+            if (status.equals("done") || status.equals("finished") || status.equals("doing")) {
                 model.addAttribute("headId", headId);
                 DailyHead dailyHead = dailyService.getEffectById(headId);
-                if(dailyHead != null) {
+                if (dailyHead != null) {
                     model.addAttribute("dailyHead", dailyHead);
-                }else {
+                } else {
                     return "redirect:/page/daily/task";
                 }
                 return "operate/daily/effect";
@@ -139,28 +141,30 @@ public class PageController extends BaseController {
         }
         return "redirect:/page/daily/task";
     }
+
     /**
      * 活动运营
+     *
      * @return
      */
     @RequestMapping("/activity")
-    @Log(value = "活动运营",location = "用户成长系统")
+    @Log(value = "活动运营", location = "用户成长系统")
     public String activity() {
         return "operate/activity/list";
     }
 
     /**
      * 活动运营新增
+     *
      * @param model
      * @return
      */
     @RequestMapping("/activity/add")
-    @Log(value = "活动运营-新增",location = "用户成长系统")
-    public String activityAdd(Model model)
-    {
+    @Log(value = "活动运营-新增", location = "用户成长系统")
+    public String activityAdd(Model model) {
         model.addAttribute("operateType", "save");
-        SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
-        model.addAttribute("sourceConfig",sourceConfigVO);
+        SourceConfigVO sourceConfigVO = SourceConfigVO.getInstance(pushConfig);
+        model.addAttribute("sourceConfig", sourceConfigVO);
         model.addAttribute("preheatStatus", "");
         model.addAttribute("preheatNotifyStatus", "");
         model.addAttribute("formalStatus", "");
@@ -170,9 +174,10 @@ public class PageController extends BaseController {
 
     /**
      * 短信推送列表页
+     *
      * @return
      */
-    @Log(value = "推送记录",location = "用户成长系统")
+    @Log(value = "推送记录", location = "用户成长系统")
     @RequestMapping("/push")
     public String push() {
         return "operate/push/list";
@@ -180,17 +185,18 @@ public class PageController extends BaseController {
 
     /**
      * 活动编辑
+     *
      * @param headId
      * @param model
      * @return
      */
-    @Log(value = "活动用户运营-编辑",location = "用户成长系统")
+    @Log(value = "活动用户运营-编辑", location = "用户成长系统")
     @RequestMapping("/activity/edit")
     public String activityEdit(@RequestParam("headId") Long headId, Model model) {
         ActivityHead activityHead = activityHeadService.findById(headId);
         List<ActivityCoupon> activityCouponList = activityHeadService.findCouponList(headId);
-        List<ActivityCoupon> platCouponList = activityCouponList.stream().filter(x->x.getCouponType().equalsIgnoreCase("P")).collect(Collectors.toList());
-        List<ActivityCoupon> shopCouponList = activityCouponList.stream().filter(x->x.getCouponType().equalsIgnoreCase("S")).collect(Collectors.toList());
+        List<ActivityCoupon> platCouponList = activityCouponList.stream().filter(x -> x.getCouponType().equalsIgnoreCase("P")).collect(Collectors.toList());
+        List<ActivityCoupon> shopCouponList = activityCouponList.stream().filter(x -> x.getCouponType().equalsIgnoreCase("S")).collect(Collectors.toList());
         String preheatStatus = activityHead.getPreheatStatus();
         String preheatNotifyStatus = activityHead.getPreheatNotifyStatus();
         String formalStatus = activityHead.getFormalStatus();
@@ -206,23 +212,23 @@ public class PageController extends BaseController {
         model.addAttribute("formalNotifyStatus", formalNotifyStatus);
 
         //文案相关变量
-        SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
-        model.addAttribute("sourceConfig",sourceConfigVO);
+        SourceConfigVO sourceConfigVO = SourceConfigVO.getInstance(pushConfig);
+        model.addAttribute("sourceConfig", sourceConfigVO);
         return "operate/activity/add/add";
     }
 
     /**
-     * @Log("活动用户运营-查看")
      * @param headId
      * @param model
      * @return
+     * @Log("活动用户运营-查看")
      */
     @RequestMapping("/activity/view")
     public String activityView(@RequestParam("headId") Long headId, Model model) {
         ActivityHead activityHead = activityHeadService.findById(headId);
         List<ActivityCoupon> activityCouponList = activityHeadService.findCouponList(headId);
-        List<ActivityCoupon> platCouponList = activityCouponList.stream().filter(x->x.getCouponType().equalsIgnoreCase("P")).collect(Collectors.toList());
-        List<ActivityCoupon> shopCouponList = activityCouponList.stream().filter(x->x.getCouponType().equalsIgnoreCase("S")).collect(Collectors.toList());
+        List<ActivityCoupon> platCouponList = activityCouponList.stream().filter(x -> x.getCouponType().equalsIgnoreCase("P")).collect(Collectors.toList());
+        List<ActivityCoupon> shopCouponList = activityCouponList.stream().filter(x -> x.getCouponType().equalsIgnoreCase("S")).collect(Collectors.toList());
         String preheatStatus = activityHead.getPreheatStatus();
         String preheatNotifyStatus = activityHead.getPreheatNotifyStatus();
         String formalStatus = activityHead.getFormalStatus();
@@ -238,24 +244,24 @@ public class PageController extends BaseController {
         model.addAttribute("formalNotifyStatus", formalNotifyStatus);
 
         //文案相关变量
-        SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
-        model.addAttribute("sourceConfig",sourceConfigVO);
+        SourceConfigVO sourceConfigVO = SourceConfigVO.getInstance(pushConfig);
+        model.addAttribute("sourceConfig", sourceConfigVO);
         return "operate/activity/view/view";
     }
 
     /**
-     *  活动用户运行 -执行计划
+     * 活动用户运行 -执行计划
+     *
      * @param model
      * @param id
      * @return
      */
-    @Log(value = "活动用户运营-执行计划",location = "用户成长系统")
+    @Log(value = "活动用户运营-执行计划", location = "用户成长系统")
     @RequestMapping("/activity/plan")
-    public String activityPlan(Model model, @RequestParam String id)
-    {
+    public String activityPlan(Model model, @RequestParam String id) {
         int count = activityHeadService.getActivityStatus(id);
-        if(count == 0) {
-            model.addAttribute("errormsg","无已经生成的执行计划!");
+        if (count == 0) {
+            model.addAttribute("errormsg", "无已经生成的执行计划!");
             return "operate/activity/list";
         }
         model.addAttribute("headId", id);
@@ -264,9 +270,10 @@ public class PageController extends BaseController {
 
     /**
      * 活动运营-效果统计页
+     *
      * @return
      */
-    @Log(value = "活动用户运营-任务效果",location = "用户成长系统")
+    @Log(value = "活动用户运营-任务效果", location = "用户成长系统")
     @RequestMapping("/activity/effect")
     public String activityEffect(@RequestParam("headId") String headId, Model model) {
         model.addAttribute("headId", headId);
@@ -275,19 +282,18 @@ public class PageController extends BaseController {
 
     /**
      * 活动运营-计划效果
+     *
      * @return
      */
-    @Log(value = "活动用户运营-执行计划效果",location = "用户成长系统")
+    @Log(value = "活动用户运营-执行计划效果", location = "用户成长系统")
     @RequestMapping("/activity/planEffect")
     public String planEffect(@RequestParam("planId") Long planId, Model model) {
-        ActivityPlan activityPlan=activityPlanService.getPlanInfo(planId);
+        ActivityPlan activityPlan = activityPlanService.getPlanInfo(planId);
 
-        if(null==activityPlan)
-        {
+        if (null == activityPlan) {
             return "redirect:/page/activity";
-        }else if("N".equals(activityPlan.getEffectFlag()))
-        {
-          //转跳到计划列表页
+        } else if ("N".equals(activityPlan.getEffectFlag())) {
+            //转跳到计划列表页
             model.addAttribute("headId", activityPlan.getHeadId());
             return "operate/activity/plan";
 
@@ -300,12 +306,11 @@ public class PageController extends BaseController {
     }
 
     /**
-    * 从活动计划效果页返回到 活动计划列表  (此url不用加log)
+     * 从活动计划效果页返回到 活动计划列表  (此url不用加log)
      */
     @RequestMapping("/activity/backToPlanList")
-    public String backToPlanList(Model model, @RequestParam Long planId)
-    {
-        ActivityPlan activityPlan=activityPlanService.getPlanInfo(planId);
+    public String backToPlanList(Model model, @RequestParam Long planId) {
+        ActivityPlan activityPlan = activityPlanService.getPlanInfo(planId);
         model.addAttribute("headId", activityPlan.getHeadId());
         return "operate/activity/plan";
     }
@@ -313,9 +318,10 @@ public class PageController extends BaseController {
 
     /**
      * 用户成长洞察页
+     *
      * @return
      */
-    @Log(value = "用户成长洞察",location = "用户成长系统")
+    @Log(value = "用户成长洞察", location = "用户成长系统")
     @RequestMapping("/insight")
     public String insight() {
         return "operate/insight/insight";
@@ -323,13 +329,14 @@ public class PageController extends BaseController {
 
     /**
      * 手动短信推送
+     *
      * @return
      */
-    @Log(value = "手工短信推送",location = "用户成长系统")
+    @Log(value = "手工短信推送", location = "用户成长系统")
     @RequestMapping("/manual")
     public String manual(Model model) {
-        SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
-        model.addAttribute("sourceConfig",sourceConfigVO);
+        SourceConfigVO sourceConfigVO = SourceConfigVO.getInstance(pushConfig);
+        model.addAttribute("sourceConfig", sourceConfigVO);
         return "operate/manual/manual";
     }
 
@@ -337,8 +344,8 @@ public class PageController extends BaseController {
      * 单一用户的成长洞察
      */
     @RequestMapping("/personInsight")
-    @Log(value = "单一用户成长洞察",location = "用户成长系统")
-    public String personInsight(@RequestParam("headId") String headId,@RequestParam("userId") String userId, @RequestParam("taskDt") String taskDt, Model model) {
+    @Log(value = "单一用户成长洞察", location = "用户成长系统")
+    public String personInsight(@RequestParam("headId") String headId, @RequestParam("userId") String userId, @RequestParam("taskDt") String taskDt, Model model) {
         model.addAttribute("userId", userId);
         model.addAttribute("taskDt", taskDt);
         model.addAttribute("headId", headId);
@@ -348,26 +355,29 @@ public class PageController extends BaseController {
 
     /**
      * 系统消息
+     *
      * @return
      */
     @RequestMapping("/msg")
-    @Log(value = "系统消息",location = "用户成长系统")
+    @Log(value = "系统消息", location = "用户成长系统")
     public String msgPage() {
         return "operate/msg/list";
     }
 
     /**
      * 短链生成页面
+     *
      * @return
      */
     @RequestMapping("/shorturl")
-    @Log(value = "短链生成",location = "用户成长系统")
+    @Log(value = "短链生成", location = "用户成长系统")
     public String shorturl() {
         return "operate/shorturl/shorturl";
     }
 
     /**
      * 黑名单
+     *
      * @return
      */
     @Log(value = "黑名单", location = "用户成长系统")
@@ -379,7 +389,7 @@ public class PageController extends BaseController {
     /**
      * 每日用户运营(企业微信)
      */
-    @Log(value = "每日用户运营(企业微信)",location = "用户成长系统")
+    @Log(value = "每日用户运营(企业微信)", location = "用户成长系统")
     @RequestMapping("/qywxDaily/list")
     public String qywxDailyList() {
         return "operate/qywx/list";
@@ -387,9 +397,10 @@ public class PageController extends BaseController {
 
     /**
      * 每日运营[企业微信]-效果跟踪
+     *
      * @return
      */
-    @Log(value = "每日用户运营[企业微信]-任务效果",location = "用户成长系统")
+    @Log(value = "每日用户运营[企业微信]-任务效果", location = "用户成长系统")
     @RequestMapping("/qywxDaily/effect")
     public String qywxDailyEffect(Model model, @RequestParam("headId") Long headId) {
         String status = qywxDailyService.getHeadInfo(headId).getStatus();
@@ -408,14 +419,14 @@ public class PageController extends BaseController {
 //        }
 //        return "redirect:/page/qywxDaily/list";
 
-        QywxDailyHeader qywxDailyHeader=qywxDailyService.getHeadInfo(headId);
+        QywxDailyHeader qywxDailyHeader = qywxDailyService.getHeadInfo(headId);
         model.addAttribute("headId", headId);
         model.addAttribute("qywxDailyHeader", qywxDailyHeader);
         return "operate/qywx/effect";
     }
 
     /**
-     *添加外部联系人-列表
+     * 添加外部联系人-列表
      */
     @RequestMapping("/addUser")
     public String addUserList() {
@@ -423,39 +434,35 @@ public class PageController extends BaseController {
     }
 
     /**
-     *添加外部联系人-新增
+     * 添加外部联系人-新增
      */
     @RequestMapping("/addUser/add")
     public String addUserAdd(Model model) {
-        QywxParam qywxParam=qywxParamService.getQywxParam();
+        QywxParam qywxParam = qywxParamService.getQywxParam();
         model.addAttribute("qywxParam", qywxParam);
-        SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
-        model.addAttribute("sourceConfig",sourceConfigVO);
+        SourceConfigVO sourceConfigVO = SourceConfigVO.getInstance(pushConfig);
+        model.addAttribute("sourceConfig", sourceConfigVO);
         model.addAttribute("opType", "save");
         return "operate/addUser/add";
     }
 
     /**
-     *添加外部联系人-效果
+     * 添加外部联系人-效果
      */
     @RequestMapping("/addUser/effect")
     public String addUserEffect(String id, Model model) {
         AddUserHead addUserHead = addUserService.getHeadById(Long.parseLong(id));
 
-        if(null==addUserHead||"edit".equals(addUserHead.getTaskStatus()))
-        {
-            model.addAttribute("msg","计划中的任务不支持查看效果！");
+        if (null == addUserHead || "edit".equals(addUserHead.getTaskStatus())) {
+            model.addAttribute("msg", "计划中的任务不支持查看效果！");
             return "operate/addUser/list";
-        }else
-        {
+        } else {
             //判断是否存在已经执行的记录
-            int count=addUserService.getScheduleCount(Long.parseLong(id));
-            if(count==0)
-            {
-                model.addAttribute("msg","任务至少被执行一次后才能查看效果！");
+            int count = addUserService.getScheduleCount(Long.parseLong(id));
+            if (count == 0) {
+                model.addAttribute("msg", "任务至少被执行一次后才能查看效果！");
                 return "operate/addUser/list";
-            }else
-            {
+            } else {
                 Map<String, Object> data = addUserService.getTaskResultData(id);
                 model.addAttribute("id", id);
                 model.addAttribute("data", data);
@@ -465,28 +472,26 @@ public class PageController extends BaseController {
     }
 
     /**
-     *添加外部联系人-编辑
+     * 添加外部联系人-编辑
      */
     @RequestMapping("/addUser/edit")
     public String addUserEdit(@RequestParam String id, Model model) {
         model.addAttribute("opType", "update");
         AddUserHead addUserHead = addUserService.getHeadById(Long.parseLong(id));
 
-        if(null==addUserHead||"abort".equals(addUserHead.getTaskStatus()))
-        {
-            model.addAttribute("msg","已终止的任务不允许被编辑！");
+        if (null == addUserHead || "abort".equals(addUserHead.getTaskStatus())) {
+            model.addAttribute("msg", "已终止的任务不允许被编辑！");
             return "operate/addUser/list";
-        }else
-        {
-            SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
-            model.addAttribute("sourceConfig",sourceConfigVO);
+        } else {
+            SourceConfigVO sourceConfigVO = SourceConfigVO.getInstance(pushConfig);
+            model.addAttribute("sourceConfig", sourceConfigVO);
             model.addAttribute("addUserHead", addUserHead);
             return "operate/addUser/add";
         }
     }
 
     /**
-     *添加外部联系人-列表
+     * 添加外部联系人-列表
      */
     @RequestMapping("/addUserTrigger")
     public String addUserTriggerList() {
@@ -494,39 +499,35 @@ public class PageController extends BaseController {
     }
 
     /**
-     *添加外部联系人-新增
+     * 添加外部联系人-新增
      */
     @RequestMapping("/addUserTrigger/add")
     public String addUserTriggerAdd(Model model) {
-        QywxParam qywxParam=qywxParamService.getQywxParam();
+        QywxParam qywxParam = qywxParamService.getQywxParam();
         model.addAttribute("qywxParam", qywxParam);
-        SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
-        model.addAttribute("sourceConfig",sourceConfigVO);
+        SourceConfigVO sourceConfigVO = SourceConfigVO.getInstance(pushConfig);
+        model.addAttribute("sourceConfig", sourceConfigVO);
         model.addAttribute("opType", "save");
         return "operate/addUserTrigger/add";
     }
 
     /**
-     *添加外部联系人-效果
+     * 添加外部联系人-效果
      */
     @RequestMapping("/addUserTrigger/effect")
     public String addUserTriggerEffect(String id, Model model) {
         AddUserHead addUserHead = addUserTriggerService.getHeadById(Long.parseLong(id));
 
-        if(null==addUserHead||"edit".equals(addUserHead.getTaskStatus()))
-        {
-            model.addAttribute("msg","计划中的任务不支持查看效果！");
+        if (null == addUserHead || "edit".equals(addUserHead.getTaskStatus())) {
+            model.addAttribute("msg", "计划中的任务不支持查看效果！");
             return "operate/addUserTrigger/list";
-        }else
-        {
+        } else {
             //判断是否存在已经执行的记录
-            int count=addUserTriggerService.getScheduleCount(Long.parseLong(id));
-            if(count==0)
-            {
-                model.addAttribute("msg","任务至少被执行一次后才能查看效果！");
+            int count = addUserTriggerService.getScheduleCount(Long.parseLong(id));
+            if (count == 0) {
+                model.addAttribute("msg", "任务至少被执行一次后才能查看效果！");
                 return "operate/addUserTrigger/list";
-            }else
-            {
+            } else {
                 Map<String, Object> data = addUserTriggerService.getTaskResultData(id);
                 model.addAttribute("id", id);
                 model.addAttribute("data", data);
@@ -536,22 +537,21 @@ public class PageController extends BaseController {
     }
 
     /**
-     *添加外部联系人-编辑
+     * 添加外部联系人-编辑
      */
     @RequestMapping("/addUserTrigger/edit")
     public String addUserTriggerEdit(@RequestParam String id, Model model) {
-        QywxParam qywxParam=qywxParamService.getQywxParam();
+        QywxParam qywxParam = qywxParamService.getQywxParam();
         model.addAttribute("qywxParam", qywxParam);
         model.addAttribute("opType", "update");
         AddUserHead addUserHead = addUserTriggerService.getHeadById(Long.parseLong(id));
 
-        if(null==addUserHead||"abort".equals(addUserHead.getTaskStatus()))
-        {
-            model.addAttribute("msg","已终止的任务不允许被编辑！");
+        if (null == addUserHead || "abort".equals(addUserHead.getTaskStatus())) {
+            model.addAttribute("msg", "已终止的任务不允许被编辑！");
             return "operate/addUserTrigger/list";
         } else {
-            SourceConfigVO sourceConfigVO=SourceConfigVO.getInstance(pushConfig);
-            model.addAttribute("sourceConfig",sourceConfigVO);
+            SourceConfigVO sourceConfigVO = SourceConfigVO.getInstance(pushConfig);
+            model.addAttribute("sourceConfig", sourceConfigVO);
             model.addAttribute("addUserHead", addUserHead);
             return "operate/addUserTrigger/add";
         }
@@ -560,7 +560,7 @@ public class PageController extends BaseController {
     /**
      * 渠道活码
      */
-    @Log(value = "渠道活码",location = "用户成长系统")
+    @Log(value = "渠道活码", location = "用户成长系统")
     @RequestMapping("/contactWay/list")
     public String contactWayList() {
         return "operate/contactWay/list";
@@ -595,6 +595,7 @@ public class PageController extends BaseController {
 
     /**
      * 企业微信素材(图片)上传
+     *
      * @return
      */
     @RequestMapping("/qywxMediaImage")
@@ -604,10 +605,19 @@ public class PageController extends BaseController {
 
     /**
      * 企业微信部门和导购列表
+     *
      * @return
      */
     @RequestMapping("/qywxDeptAndUser/list")
     public String qywxDeptAndUserList() {
         return "operate/qywxConfig/deptAndUser";
+    }
+
+    @Log(value = "企业微信-每日运营配置", location = "用户成长系统")
+    @RequestMapping("/qywxDailyConfig")
+    public String qywxDailyConfig(Model model) {
+        SourceConfigVO sourceConfigVO = SourceConfigVO.getInstance(pushConfig);
+        model.addAttribute("sourceConfig", sourceConfigVO);
+        return "operate/qywxdailyconfig/config";
     }
 }

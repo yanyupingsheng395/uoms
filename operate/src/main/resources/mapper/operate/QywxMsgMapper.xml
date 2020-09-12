@@ -21,7 +21,7 @@
     </insert>
 
     <select id="getDataListPage" resultMap="BaseResultMap">
-        select qywx_id, text_content, insert_dt, insert_by, update_dt, update_by, product_url, product_name, coupon_url, coupon_name, is_personal, material_type, material_content, (date_part('day', now() - cast(insert_dt as TIMESTAMP)) + 1) used_days
+        select qywx_id, text_content, insert_dt, insert_by, update_dt, update_by, product_url, product_name, coupon_url, coupon_name, (date_part('day', now() - cast(insert_dt as TIMESTAMP)) + 1) used_days
         from uo_qywx_msg_template
         order by insert_dt desc
         limit #{limit} offset #{offset}

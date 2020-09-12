@@ -25,66 +25,24 @@ function getTableData() {
         columns: [
             [
                 {
-                    title: '成长目标',
-                    colspan: 1
+                    title: '个性化文案用户群组',
+                    colspan: 3
                 },
                 {
-                    title: '用户差异',
-                    colspan: 4
-                },
-                {
-                    title: '个性化推送(消息)',
-                    colspan: 4
+                    title: '为群组配置个性化消息',
+                    colspan: 2
                 }
-            ], [
-                {
-                    title: '购买商品与时间',
-                    field: 'timeAndShop',
+            ], [{
+                    field: 'lifecycle',
+                    title: '在成长类目所处生命周期阶段',
                     align: 'center',
                     valign: 'middle',
-                    formatter: function (value, row, index) {
-                        return "<a href='/page/insight' target='_blank' style='color: #48b0f7;text-decoration: underline;'>系统配置</a>";
-                    }
-                },
-                {
-                    field: 'userValue',
-                    title: '用户对类目的<br/>价值/沉默成本',
-                    align: 'center',
-                    formatter: function (value, row, index) {
-                        var res = "";
-                        switch (value) {
-                            case "ULC_01":
-                                res = "高价值低敏感";
-                                break;
-                            case "ULC_02":
-                                res = "高价值较敏感";
-                                break;
-                            case "ULC_03":
-                                res = "中价值高敏感";
-                                break;
-                            case "ULC_04":
-                                res = "低价值低敏感";
-                                break;
-                            case "ULC_05":
-                                res = "低价值高敏感";
-                                break;
-                            default:
-                                res = "-";
-                        }
-                        return res;
-                    }
-                },
-                {
-                    field: 'lifecycle',
-                    title: '用户对类目的<br/>生命周期阶段',
-                    align: 'center',
-                    valign: "middle",
                     formatter: function (value, row, index) {
                         if (value == "1") {
                             return "新手期";
                         }
                         if (value == "0") {
-                            return "成长期";
+                            return "成长期；成熟期；衰退期";
                         }
                         return "";
                     }
@@ -92,24 +50,15 @@ function getTableData() {
                 {
                     field: 'pathActive',
                     align: 'center',
-                    title: '用户下一次转化<br/>的活跃度节点',
+                    title: '完成下一次购买前的活跃度状态',
                     formatter: function (value, row, index) {
                         var res = "";
                         switch (value) {
                             case "UAC_01":
-                                res = "促活节点";
+                                res = "活跃状态";
                                 break;
-                            case "UAC_02":
-                                res = "留存节点";
-                                break;
-                            case "UAC_03":
-                                res = "弱流失预警";
-                                break;
-                            case "UAC_04":
-                                res = "强流失预警";
-                                break;
-                            case "UAC_05":
-                                res = "沉睡预警";
+                            case "UAC_02,UAC_03":
+                                res = "留存状态；流失状态";
                                 break;
                             default:
                                 res = "-";
@@ -121,59 +70,49 @@ function getTableData() {
                     align: 'center',
                     valign: 'middle',
                     formatter: function (value, row, index) {
-                        return "<a style='color: #4c4c4c' onclick='openSelectedGroupModal(\""+row['userValue']+"\", \""+row['lifecycle']+"\", \""+row['pathActive']+"\")'><i class='mdi mdi-account mdi-18px'></i></a>";
+                        return "<a style='color: #4c4c4c' onclick='openSelectedGroupModal()'><i class='mdi mdi-account mdi-18px'></i></a>";
                     }
                 },
                 {
-                    title: '短信',
+                    title: '企业微信',
                     align: 'center',
-                    field: 'smsCode',
+                    field: 'qywxId',
                     valign: 'middle',
                     formatter: function (value, row, index) {
                         if(value === null || value === undefined || value === '') {
-                            return "<a style='color: #4c4c4c' onclick='openSmsTemplateModal(\""+row['groupId']+"\", null, \""+row['userValue']+"\", \""+row['lifecycle']+"\", \""+row['pathActive']+"\")'>" +
-                                "<i class='mdi mdi-email-variant mdi-18px'></i><span style='color: #f96868'>&nbsp;[未配置]</span>" +
+                            return "<a  style='color: #4c4c4c' onclick='openWxMsgModal("+value+", \""+row['lifecycle']+"\", \""+row['pathActive']+"\")'>" +
+                                "<i class='mdi mdi-wechat mdi-18px'></i><span style='color:#f96868;'>&nbsp;[未配置]</span>" +
                                 "</a>";
                         }else {
-                            return "<a style='color: #4c4c4c' onclick='openSmsTemplateModal(\""+row['groupId']+"\", \""+value+"\", \""+row['userValue']+"\", \""+row['lifecycle']+"\", \""+row['pathActive']+"\")'>" +
-                                "<i class='mdi mdi-email-variant mdi-18px'></i><span style='color: #52c41a'>&nbsp;[已配置]</span>" +
+                            return "<a  style='color: #4c4c4c' onclick='openWxMsgModal("+value+", \""+row['lifecycle']+"\", \""+row['pathActive']+"\")'>" +
+                                "<i class='mdi mdi-wechat mdi-18px'></i><span style='color: #52c41a'>&nbsp;[已配置]</span>" +
                                 "</a>";
                         }
                     }
                 },
                 {
-                    title: '短信最后配置时间',
+                    title: '最近一次配置时间',
                     align: 'center',
-                    field: 'smsOpDt',
+                    field: 'qywxOpDt',
                     valign: 'middle'
                 }
             ]
         ]
     };
     $( "#userGroupTable" ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
-    $.get( "/dailyConfig/userGroupList", {}, function (r) {
+    $.get( "/qywxDailyConfig/userGroupList", {}, function (r) {
         var dataList = r.data;
-        var total = dataList.length;
         $( "#userGroupTable" ).bootstrapTable( 'load', dataList );
         $( "a[data-toggle='tooltip']" ).tooltip();
-        // 合并单元格
-        let data = $( '#userGroupTable' ).bootstrapTable( 'getData', true );
-        mergeCells( data, "userValue", 1, $( '#userGroupTable' ) );
-        for (let i = 0; i < 10; i++) {
+        $( '#userGroupTable' ).bootstrapTable( 'getData', true );
+        for (let i = 0; i < 2; i++) {
             $( "#userGroupTable" ).bootstrapTable( 'mergeCells', {
-                index: i * 3,
+                index: i * 2,
                 field: "lifecycle",
                 colspan: 1,
-                rowspan: 3
+                rowspan: 2
             } );
         }
-        $( "#userGroupTable" ).bootstrapTable( 'mergeCells', {
-            index: 0,
-            field: "timeAndShop",
-            colspan: 1,
-            rowspan: total
-        } );
-        $("#userGroupTable").find("tr[data-index=0]").find("td").first().attr('style', 'text-align: center; vertical-align: top; display: table-cell;');
     } );
 }
 
@@ -209,25 +148,53 @@ function mergeCells(data, fieldName, colspan, target) {
  * @param pathActive
  * @param tableId
  */
-function getGroupDescription(userValue, lifecycle, pathActive, tableId) {
+function getGroupDescription(tableId) {
     let settings = {
-        url: '/dailyConfig/getGroupDescription',
+        url: '/qywxDailyConfig/getGroupDescription',
         pagination: false,
         singleSelect: false,
-        queryParams: function() {
-            return {
-                userValue: userValue,
-                lifecycle: lifecycle,
-                pathActive: pathActive
-            }
-        },
         columns: [
             {
-                title: '差异特征维度',
+                title: '群组特征',
                 field: 'colName'
             },
             {
-                title: '用户群组特征值',
+                title: '特征值',
+                field: 'colValue'
+            },
+            {
+                title: '特征值业务理解',
+                field: 'colDesc'
+            },{
+                title: '推送配置建议',
+                field: 'colAdvice'
+            }
+        ],
+        onLoadSuccess: function () {
+            for (let i = 0; i < 2; i++) {
+                $( "#" + tableId).bootstrapTable( 'mergeCells', {
+                    index: i * 3,
+                    field: "colName",
+                    colspan: 1,
+                    rowspan: 3
+                } );
+            }
+        }
+    };
+    $( "#" + tableId).bootstrapTable( 'destroy' ).bootstrapTable( settings );
+}
+
+function getQywxGroupDescription(tableId) {
+    let settings = {
+        pagination: false,
+        singleSelect: false,
+        columns: [
+            {
+                title: '群组特征',
+                field: 'colName'
+            },
+            {
+                title: '特征值',
                 field: 'colValue'
             },
             {
@@ -240,16 +207,34 @@ function getGroupDescription(userValue, lifecycle, pathActive, tableId) {
         ]
     };
     $( "#" + tableId).bootstrapTable( 'destroy' ).bootstrapTable( settings );
+    var dataList = [
+        {colName: '在成长类目所处生命周期阶段', colValue:'新手期', colDesc:'', colAdvice:''},
+        {colName: '在成长类目所处生命周期阶段', colValue:'成长期；成熟期', colDesc:'', colAdvice:''},
+        {colName: '完成下一次购买前的活跃度状态', colValue:'活跃状态', colDesc:'', colAdvice:''},
+        {colName: '完成下一次购买前的活跃度状态', colValue:'留存状态', colDesc:'', colAdvice:''},
+    ];
+    $( "#" + tableId).bootstrapTable( 'load', dataList );
+    for (let i = 0; i < 2; i++) {
+        $( "#" + tableId).bootstrapTable( 'mergeCells', {
+            index: i * 2,
+            field: "colName",
+            colspan: 1,
+            rowspan: 2
+        } );
+    }
 }
 
 /**
  * 微信消息窗口
  */
-function openWxMsgModal(groupId, qywxId, userValue, lifecycle, pathActive) {
-    $( "#currentGroupId").val(groupId);
+var current_lifeCycle;
+var current_pathActive;
+function openWxMsgModal(qywxId, lifeCycle, pathActive) {
     getWxMsgTableData(qywxId);
-    getGroupDescription(userValue, lifecycle, pathActive, 'selectedGroupInfo2');
+    getQywxGroupDescription('selectedGroupInfo2');
     $( '#wxMsgListModal' ).modal( 'show' );
+    current_lifeCycle = lifeCycle;
+    current_pathActive = pathActive;
 }
 
 /**
@@ -266,8 +251,8 @@ function openWxMsgAddModal() {
  * @param lifecycle
  * @param pathActive
  */
-function openSelectedGroupModal(userValue, lifecycle, pathActive) {
-    getGroupDescription(userValue, lifecycle, pathActive, 'userGroupDescTable');
+function openSelectedGroupModal() {
+    getGroupDescription('userGroupDescTable');
     $( "#selectedGroupModal" ).modal( 'show' );
 }
 
@@ -301,7 +286,7 @@ function nextStep(stepNum) {
     if (stepNum === 2) {
         step.setActive( 1 );
         //将文案的修改标记进行恢复
-        $.get("/dailyConfig/resetOpFlag", {}, function (r) {
+        $.get("/qywxDailyConfig/resetOpFlag", {}, function (r) {
             couponTable();
             $( "#step1" ).attr( "style", "display:none;" );
             $( "#step2" ).attr( "style", "display:block;" );
@@ -309,7 +294,7 @@ function nextStep(stepNum) {
         });
     }
     if(stepNum === 3) {
-        $.get("/dailyConfig/autoSetGroupCoupon", {}, function (r) {
+        $.get("/qywxDailyConfig/autoSetGroupCoupon", {}, function (r) {
             if(r.code === 200) {
                 $MB.n_success("根据您的当前补贴信息，系统已自动配置补贴到用户群组上！");
                 step.setActive( 2);
@@ -388,7 +373,7 @@ function updateWxMsg() {
         return;
     }
     var qywxId = selected[0]['qywxId'];
-    $.get("/dailyConfig/updateWxMsgId", {qywxId: qywxId, groupId: $("#currentGroupId").val()}, function (r) {
+    $.get("/qywxDailyConfig/updateWxMsgId", {qywxId: qywxId, lifeCycle: current_lifeCycle, pathActive: current_pathActive}, function (r) {
         if(r.code === 200) {
             $MB.n_success("更新成功！");
             $("#wxMsgListModal").modal('hide');
