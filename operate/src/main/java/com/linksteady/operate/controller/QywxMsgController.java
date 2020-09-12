@@ -45,6 +45,12 @@ public class QywxMsgController {
         return ResponseBo.ok();
     }
 
+    @RequestMapping("/refreshDataById")
+    public ResponseBo refreshDataById(@RequestParam("id") String id) {
+        qywxMsgService.refreshDataById(id);
+        return ResponseBo.ok();
+    }
+
     @RequestMapping("/getDataById")
     public ResponseBo getDataById(@RequestParam("id") String id) {
         return ResponseBo.okWithData(null, qywxMsgService.getDataById(id));

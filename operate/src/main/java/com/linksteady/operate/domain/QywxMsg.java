@@ -22,8 +22,6 @@ public class QywxMsg {
     private String productName;
     private String couponUrl;
     private String couponName;
-    private String isPersonal;
-    private String materialType;
-    private String materialContent;
     private String usedDays;
+    private String usedGroups;
 }

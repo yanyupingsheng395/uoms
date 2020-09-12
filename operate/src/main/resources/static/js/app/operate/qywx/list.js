@@ -41,53 +41,23 @@ function initTable() {
             visible: false
         }, {
             field: 'taskDateStr',
-            title: '日期'
+            title: '推送日期'
         }, {
+            field: 'qywxMessageCount',
+            title: '个性化消息数（条）'
+        },{
             field: 'totalNum',
-            title: '建议推送人数（人）'
+            title: '消息所覆盖的用户数（人）'
         }, {
-            field: 'successNum',
-            title: '实际成功推送人数（人）'
+            field: 'staffCnt',
+            title: '需要推送消息的成员数（人）'
         }, {
             field: 'convertNum',
-            title: '推送转化人数（人）'
-        }, {
-            field: 'convertRate',
-            title: '推送转化率（%）'
+            title: '消息实际推送到达用户数（人）'
         }, {
             field: 'convertAmount',
-            title: '推送转化金额（元）'
+            title: '个性化消息转化金额（元）'
         }, {
-            field: 'effectDays',
-            title: '效果观察天数（天）'
-        }, {
-            title: '配置校验状态',
-            align: 'center',
-            formatter: function (value, row, indx) {
-                var currDate=getNowFormatDate();
-                var res = "-";
-                if("通过"===row.validateLabel) {
-                    res = "<span class=\"badge bg-success\"><a style='text-decoration: none;cursor: pointer;pointer-events: none;color:#fff;'>"+row.validateLabel+"</a></span>";
-                }else if("未通过"===row.validateLabel)
-                {
-                    res = "<span class=\"badge bg-danger\"><a onclick='gotoConfig()' style='color: #fff;text-decoration: underline;cursor: pointer;'>"+row.validateLabel+"</a></span>";
-                }else
-                {
-                    res='-';
-                }
-
-                // if(row.touchDtStr ===currDate&&"通过"===row.validateLabel) {
-                //     res = "<span class=\"badge bg-success\"><a style='text-decoration: none;cursor: pointer;pointer-events: none;color:#fff;'>"+row.validateLabel+"</a></span>";
-                // }else if(row.touchDtStr ===currDate&&"未通过"===row.validateLabel)
-                // {
-                //     res = "<span class=\"badge bg-danger\"><a onclick='gotoConfig()' style='color: #fff;text-decoration: underline;cursor: pointer;'>"+row.validateLabel+"</a></span>";
-                // }else
-                // {
-                //     res='-';
-                // }
-                return res;
-            }
-        },{
             field: 'status',
             title: '任务执行状态',
             align: 'center',
@@ -112,6 +82,25 @@ function initTable() {
                 }
                 return res;
             }
+        }, {
+            title: '配置校验状态',
+            align: 'center',
+            formatter: function (value, row, indx) {
+                var res = "-";
+                if("通过"===row.validateLabel) {
+                    res = "<span class=\"badge bg-success\"><a style='text-decoration: none;cursor: pointer;pointer-events: none;color:#fff;'>"+row.validateLabel+"</a></span>";
+                }else if("未通过"===row.validateLabel)
+                {
+                    res = "<span class=\"badge bg-danger\"><a onclick='gotoConfig()' style='color: #fff;text-decoration: underline;cursor: pointer;'>"+row.validateLabel+"</a></span>";
+                }else
+                {
+                    res='-';
+                }
+                return res;
+            }
+        }, {
+            title: '配置校验结果',
+            field: 'checkDesc'
         }]
     };
     $MB.initTable('qywxDailyTable', settings);
@@ -702,9 +691,9 @@ function setStep(status,taskDate) {
         stepObj=steps({
             el: "#pushSteps",
             data: [
-                { title: "概要",description:""},
-                { title: "明细",description:""},
-                { title: "推送",description:"" }
+                { title: "今日成长用户详情",description:""},
+                { title: "向成员派发推送任务",description:""},
+                { title: "任务推送",description:"" }
             ],
             center: true,
             dataOrder: ["title", "line", "description"]
@@ -713,8 +702,8 @@ function setStep(status,taskDate) {
         stepObj=steps({
             el: "#pushSteps",
             data: [
-                { title: "概要",description:""},
-                { title: "明细",description:""}
+                { title: "今日成长用户详情",description:""},
+                { title: "向成员派发推送任务",description:""}
             ],
             center: true,
             dataOrder: ["title", "line", "description"]

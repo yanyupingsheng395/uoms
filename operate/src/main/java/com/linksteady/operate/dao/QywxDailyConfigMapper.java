@@ -61,4 +61,8 @@ public interface QywxDailyConfigMapper {
      * 恢复文案的修改标记
      */
     void resetOpFlag();
+
+    int validGroupCoupon();
+
+    int validGroupContext();
 }

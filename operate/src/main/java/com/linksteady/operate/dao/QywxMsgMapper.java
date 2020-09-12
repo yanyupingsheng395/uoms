@@ -21,4 +21,6 @@ public interface QywxMsgMapper {
     void deleteDataById(String id);
 
     QywxMsg getDataById(String id);
+
+    void refreshDataById(String id);
 }

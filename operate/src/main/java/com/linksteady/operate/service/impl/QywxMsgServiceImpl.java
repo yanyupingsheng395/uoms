@@ -47,4 +47,9 @@ public class QywxMsgServiceImpl implements QywxMsgService {
     public QywxMsg getDataById(String id) {
         return qywxMsgMapper.getDataById(id);
     }
+
+    @Override
+    public void refreshDataById(String id) {
+        qywxMsgMapper.refreshDataById(id);
+    }
 }

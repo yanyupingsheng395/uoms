@@ -9,10 +9,7 @@ import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.domain.QywxDailyDetail;
 import com.linksteady.operate.domain.QywxDailyHeader;
 import com.linksteady.operate.exception.OptimisticLockException;
-import com.linksteady.operate.service.DailyConfigService;
-import com.linksteady.operate.service.QywxDailyDetailService;
-import com.linksteady.operate.service.QywxDailyService;
-import com.linksteady.operate.service.QywxMessageService;
+import com.linksteady.operate.service.*;
 import com.linksteady.operate.vo.QywxUserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,10 +55,13 @@ public class QywxDailyController {
     private ConfigService configService;
 
     @Autowired
-    private DailyConfigService dailyConfigService;
+    private QywxDailyConfigService dailyConfigService;
 
     @Autowired
     private QywxMessageService qywxMessageService;
+
+    @Autowired
+    private QywxDailyCouponService qywxDailyCouponService;
 
     /**
      * 获取每日成长任务分页列表
@@ -77,14 +77,17 @@ public class QywxDailyController {
         int count = qywxDailyService.getTotalCount(taskDate);
         List<QywxDailyHeader> dailyInfos = qywxDailyService.getHeadList(limit, offset, taskDate);
 
+        // 先校验一遍补贴数据
+        qywxDailyCouponService.validCoupon();
         //设置当前天记录的 校验状态
-        String validateLabel = dailyConfigService.validUserGroupForQywx() ? "未通过" : "通过";
+        Map<String, Object> validMap = dailyConfigService.validUserGroupForQywx();
 
         dailyInfos.stream().forEach(p -> {
-            p.setValidateLabel(validateLabel);
+            p.setValidateLabel(validMap.get("flag").toString());
+            p.setCheckDesc(validMap.get("desc").toString());
         });
 
-        return ResponseBo.okOverPaging(validateLabel, count, dailyInfos);
+        return ResponseBo.okOverPaging(validMap.get("flag").toString(), count, dailyInfos);
     }
 
     /**
@@ -105,7 +108,8 @@ public class QywxDailyController {
         if("todo".equals(qywxDailyHeader.getStatus())&&currentDay.equals(qywxDailyHeader.getTaskDateStr()))
         {
             //验证配置是否通过校验
-            if( dailyConfigService.validUserGroupForQywx())
+            Map<String, Object> validMap = dailyConfigService.validUserGroupForQywx();
+            if(validMap.get("flag").equals("未通过"))
             {
                 return ResponseBo.error("成长组尚未完成配置，请先进行配置!");
             }else
@@ -210,10 +214,10 @@ public class QywxDailyController {
 //            return ResponseBo.error("当前任务非待执行状态，请返回刷新后重试！");
 //        }
 
-        String validateLabel = dailyConfigService.validUserGroupForQywx() ? "未通过" : "通过";
-        if (validateLabel.equalsIgnoreCase("未通过")) {
-            return ResponseBo.error("成长组配置验证未通过！");
-        }
+//        String validateLabel = dailyConfigService.validUserGroupForQywx() ? "未通过" : "通过";
+//        if (validateLabel.equalsIgnoreCase("未通过")) {
+//            return ResponseBo.error("成长组配置验证未通过！");
+//        }
 
         //todo 此处考虑是否再对文案进行校验
 

@@ -74,4 +74,13 @@ public class QywxDailyHeader {
     private Date insertDt;
 
     private Date updateDt;
+
+    private Integer qywxMessageCount;
+
+    private Integer staffCnt;
+
+    /**
+     * 校验结果描述
+     */
+    private String checkDesc;
 }

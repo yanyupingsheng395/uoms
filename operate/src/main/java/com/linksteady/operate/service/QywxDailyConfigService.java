@@ -25,7 +25,7 @@ public interface QywxDailyConfigService {
      * 针对企业微信的成长组校验
      * @return
      */
-    boolean validUserGroupForQywx();
+    Map<String,Object> validUserGroupForQywx();
 
     void updateWxMsgId(String lifeCycle, String pathActive, Long qywxId);
 

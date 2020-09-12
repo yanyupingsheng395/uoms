@@ -21,4 +21,6 @@ public interface QywxMsgService {
     void deleteDataById(String id);
 
     QywxMsg getDataById(String id);
+
+    void refreshDataById(String id);
 }

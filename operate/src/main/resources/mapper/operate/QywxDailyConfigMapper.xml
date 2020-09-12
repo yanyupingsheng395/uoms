@@ -109,4 +109,17 @@
         update UO_OP_DAILY_TEMPLATE_CONFIG set
            sms_op_flag='N',qywx_op_flag='N'
     </update>
+
+    <select id="validGroupCoupon" resultType="int">
+        select count(1)
+        from uo_op_daily_template_config uodtc
+                 left join uo_qywx_group_coupon uqgc on uodtc.group_id = uqgc.group_id
+        where uqgc.group_id is null and uodtc.lifecycle in ('0', '1') and uodtc.path_active in ('UAC_01', 'UAC_02', 'UAC_03')
+    </select>
+
+    <select id="validGroupContext" resultType="int">
+        select count(1)
+        from uo_op_daily_template_config
+        where qywx_id is null and lifecycle in ('0', '1') and path_active in ('UAC_01', 'UAC_02', 'UAC_03')
+    </select>
 </mapper>
