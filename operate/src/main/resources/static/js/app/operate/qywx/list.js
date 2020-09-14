@@ -9,14 +9,7 @@ $(function () {
     initTable();
 });
 
-let chart1;
-let chart1a;
-let chart1b;
-let chart2;
-let chart3;
 let userValueOption;
-let chart4;
-
 function initTable() {
     var settings = {
         url: '/qywxDaily/getHeadList',
@@ -311,7 +304,6 @@ function changeStep(count) {
     if(current_step < 0) {
         current_step = 0;
     }
-    console.log(current_step)
     if(current_step === 0) {
         $("#prevStepBtn").attr("style", "display:none;");
         $("#pushMsgBtn").attr("style", "display:none;");
@@ -408,8 +400,8 @@ function getUserStrategyList(pheadId) {
                 pageNum: (params.offset / params.limit) + 1,
                 param: {
                     headId: pheadId,
-                    qywxUserId: $("#qywxUserSelect").find("option:selected").val(),
-                    }
+                    qywxUserId: $("#qywxUserSelect").find("option:selected").val()
+                }
             };
         },
         columns: [
@@ -475,7 +467,6 @@ function growthInsight(user_id,head_id)
             $MB.n_warning("获取任务日期有误！");
         }
     });
-
 }
 
 function getAllQywxUserList(pheadId) {

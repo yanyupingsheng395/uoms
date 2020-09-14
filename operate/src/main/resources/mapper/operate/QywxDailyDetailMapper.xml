@@ -221,6 +221,6 @@
     </select>
 
     <select id="getDailyStaffEffect" resultType="com.linksteady.operate.domain.QywxDailyStaffEffect">
-        select * from uo_qywx_daily_staff_effect where head_id = #{headId} and qywx_user_id = #{qywxUserId}
+        select head_id, qywx_user_id, qywx_user_name, msg_num, execute_msg_num, cover_num, execute_cover_num, convert_num, convert_amount, convert_rate, convert_spu_num, convert_spu_amount, convert_spu_rate, stat_date from uo_qywx_daily_staff_effect where head_id = #{headId} and qywx_user_id = #{qywxUserId}
     </select>
 </mapper>

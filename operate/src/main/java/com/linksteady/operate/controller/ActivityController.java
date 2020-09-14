@@ -30,6 +30,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -44,6 +45,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/activity")
 public class ActivityController {
+    Hashtable hashTable = null;
 
     @Autowired
     private ActivityHeadService activityHeadService;

@@ -79,7 +79,7 @@
                                                 <td>推送转化用户数（人）</td>
                                                 <td data-th-text="${qywxDailyHeader.convertNum}"></td>
                                                 <td>推送转化率（%）</td>
-                                                <td></td>
+                                                <td data-th-text="${qywxDailyHeader.convertRate}"></td>
                                             </tr>
                                             <tr>
                                                 <td>推送转化金额（元）</td>
@@ -94,9 +94,7 @@
                                                 <td>推送且购买推荐SPU转化率（%）</td>
                                                 <td data-th-text="${qywxDailyHeader.convertSpuRate}"></td>
                                             </tr>
-
                                             <tr>
-
                                                 <td>推送并购买转化金额（元）</td>
                                                 <td data-th-text="${qywxDailyHeader.convertSpuAmount}"></td>
                                                 <td></td>
@@ -107,7 +105,6 @@
                                         <small class="help-block"></small>
                                     </div>
                                 </div>
-
                                 <div class="row" style="margin-top: 20px;">
                                     <div class="col-md-12">
                                         <h5>推送结果变化</h5>
@@ -172,7 +169,7 @@
                                                 <ul>
                                                     <li>
                                                         推送成员：<select id="qywxUserIdSelect" name="qywxUserIdSelect">
-                                                        <option value="">所有</option>
+                                                        <option value="">请选择</option>
                                                     </select>
                                                     </li>
                                                 </ul>
