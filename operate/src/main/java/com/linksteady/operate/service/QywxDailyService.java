@@ -39,12 +39,10 @@ public interface QywxDailyService {
     /**
      * 企业微信消息推送
      * @param qywxDailyHeader
-     * @param pushMethod
-     * @param pushPeriod
      * @param effectDays
      * @throws Exception
      */
-    void push(QywxDailyHeader qywxDailyHeader, String pushMethod, String pushPeriod, Long effectDays) throws Exception;
+    void push(QywxDailyHeader qywxDailyHeader,Long effectDays) throws Exception;
 
     /**
      * 获取推送变化数据

@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.QywxMessage;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.common.domain.enums.ConfigEnum;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.domain.QywxDailyDetail;
@@ -189,17 +190,8 @@ public class QywxDailyController {
      * @return
      */
     @GetMapping("/submitTask")
-    public ResponseBo submitTask(Long headId, String pushMethod, String pushPeriod, Long effectDays) {
-        //对参数进行校验
-        if (null==headId || StringUtils.isEmpty(pushMethod)) {
-            return ResponseBo.error("参数错误，请通过系统界面进行操作！");
-        }
-
+    public ResponseBo submitTask(Long headId,Long effectDays) {
         if (null == effectDays || effectDays < 1 || effectDays > 10) {
-            return ResponseBo.error("参数错误，请通过系统界面进行操作！");
-        }
-
-        if ("FIXED".equals(pushMethod) && StringUtils.isEmpty(pushPeriod)) {
             return ResponseBo.error("参数错误，请通过系统界面进行操作！");
         }
 
@@ -220,16 +212,12 @@ public class QywxDailyController {
 //            return ResponseBo.error("成长组配置验证未通过！");
 //        }
 
-        //todo 此处考虑是否再对文案进行校验
-
         try {
-            //qywxDailyService.push(qywxDailyHeader, pushMethod, pushPeriod, effectDays);
-
-            //todo 临时代码 后续删除
+            qywxDailyService.push(qywxDailyHeader,effectDays);
             testPush();
             return ResponseBo.ok();
         } catch (Exception e) {
-            log.error("每日运营推送错误，错误堆栈为{}", e);
+            log.error("企业微信每日运营推送错误，错误堆栈为{}", e);
             if (e instanceof OptimisticLockException) {
                 return ResponseBo.error(e.getMessage());
             } else {

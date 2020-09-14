@@ -4,6 +4,8 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Table;
+import com.linksteady.common.domain.QywxMessage;
+import com.linksteady.common.domain.enums.ConfigEnum;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.dao.QywxDailyDetailMapper;
 import com.linksteady.operate.dao.QywxDailyMapper;
@@ -27,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static java.util.Arrays.asList;
 
 /**
  * 日运营头表
@@ -220,12 +224,10 @@ public class QywxDailyServiceImpl implements QywxDailyService {
     /**
      * 对每日运营进行推送
      * @param qywxDailyHeader
-     * @param pushMethod
-     * @param pushPeriod
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void push(QywxDailyHeader qywxDailyHeader, String pushMethod, String pushPeriod, Long effectDays) throws Exception{
+    public void push(QywxDailyHeader qywxDailyHeader,Long effectDays) throws Exception{
         //更新状态为已执行
         int count=qywxDailyMapper.updateStatus(qywxDailyHeader.getHeadId(), "done",qywxDailyHeader.getVersion());
 
@@ -234,26 +236,32 @@ public class QywxDailyServiceImpl implements QywxDailyService {
             throw new OptimisticLockException("记录已被其他用户修改，请返回刷新后重试");
         }
 
-        // 推送方式 IMME立即推送 AI智能推送 FIXED固定时间推送
-        String pushOrderPeriod = "";
-        // 立即推送：当前时间往后顺延10分钟
-        if ("IMME".equalsIgnoreCase(pushMethod)) {
-            pushOrderPeriod = String.valueOf(LocalTime.now().plusMinutes(10).getHour());
-        }
+        //更新效果计算天数到头表
+        qywxDailyMapper.updateHeaderPushInfo(qywxDailyHeader.getHeadId(),effectDays);
 
-        // 固定时间推送：参数获取
-        if ("FIXED".equalsIgnoreCase(pushMethod)) {
-            pushOrderPeriod = String.valueOf(LocalTime.parse(pushPeriod, DateTimeFormatter.ofPattern("HH:mm")).getHour());
-        }
+        //按导购和消息分组 (qywx_user_id,qywx_msg_sign)
 
-        //更新时间戳、推送方式、推送时段到头表
-        qywxDailyMapper.updateHeaderPushInfo(qywxDailyHeader.getHeadId(),pushMethod,pushOrderPeriod,effectDays);
+        //获取每个分组下人员数（按10000人分组）
 
-        //更新行上的push_order_period
-        qywxDailyDetailMapper.updatePushOrderPeriod(qywxDailyHeader.getHeadId());
+        //写入push_list
 
-        //复制写入待推送列表
-        qywxDailyDetailMapper.copyToPushList(qywxDailyHeader.getHeadId());
+        //调用企业微信接口
+
+//        QywxMessage qywxMessage=new QywxMessage();
+//        qywxMessage.setText("您好，520活动季，您关注的提花浴巾低至35元，欢迎购买！");
+//
+//        qywxMessage.setMpTitle("测试小程序卡片");
+//        qywxMessage.setMpPicMediaId(qywxMdiaService.getMminiprogramMediaId(););
+//        qywxMessage.setMpAppid(configService.getValueByName(ConfigEnum.qywxMiniProgramAppId.getKeyCode()));
+//
+//        qywxMessage.setMpPage("pages/about/about");
+//
+//        List<String> externalContactList=asList("wmXfFiDwAAIoOS6g8UB2tHo2pZKT0zfQ","wmXfFiDwAA2R-zN-afopB1W0aunsLowg");
+//        String result=qywxMessageService.pushQywxMessage(qywxMessage,"brandonz",externalContactList);
+          //todo 这个result含有失败列表，需要自行处理
+        // // return ResponseBo.okWithData(resultObject.getString("msgid"),resultObject.getString("fail_list"));
+
+        //回写调用结果(push_status,msg_id,faild_list)
 
     }
 

@@ -136,12 +136,6 @@
     <update id="updateHeaderPushInfo">
         update uo_qywx_daily_header
         <set>
-            <if test="pushMethod!=null and pushMethod!=''">
-                push_method=#{pushMethod},
-            </if>
-            <if test="pushPeriod!=null and pushPeriod!=''">
-                push_period=#{pushPeriod},
-            </if>
             <if test="effectDays!=null and effectDays!=''">
                 EFFECT_DAYS=#{effectDays},
             </if>

@@ -140,40 +140,6 @@
          limit #{limit} offset #{offset}
     </select>
 
-    <insert id="copyToPushList">
-        INSERT INTO uo_qywx_push_list(
-            qywx_contract_id,
-            qywx_user_id,
-            text_content,
-            PUSH_STATUS,
-            SOURCE_CODE,
-            SOURCE_ID,
-            PUSH_PERIOD,
-            IS_PUSH
-        )
-        select
-               C.qywx_contract_id,
-               C.qywx_user_id,
-               C.text_content,
-               'P',
-               'D',
-               C.DETAIL_ID,
-               C.PUSH_ORDER_PERIOD::int4,
-               '0'
-        FROM uo_qywx_daily_detail C
-        WHERE C.HEAD_ID = #{headId}
-    </insert>
-
-    <update id="updatePushOrderPeriod">
-        update uo_qywx_daily_detail as d set PUSH_ORDER_PERIOD=d2.PUSH_ORDER_PERIOD
-        from (
-             SELECT
-				   d1.detail_id,
-                   (CASE WHEN H.PUSH_METHOD IN('IMME','FIXED') THEN H.PUSH_PERIOD ELSE D1.ORDER_PERIOD END) PUSH_ORDER_PERIOD
-              FROM uo_qywx_daily_header H,uo_qywx_daily_detail d1 WHERE H.HEAD_ID=d1.HEAD_ID and H.head_id=#{headId}
-        ) as d2 WHERE d.detail_id=d2.detail_id and d.head_id=#{headId}
-    </update>
-
     <select id="getConversionCount" resultType="int">
         select
         count(*)
