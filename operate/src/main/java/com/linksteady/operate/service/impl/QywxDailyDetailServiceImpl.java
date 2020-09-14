@@ -272,7 +272,7 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
                     textContent = textContent.replace("${补贴名称}", convertNullToEmpty(couponTemp.getCouponDisplayName()));
 
                     temp.setCouponId(couponTemp.getCouponId());
-                    temp.setCouponDeno(String.valueOf(couponTemp.getCouponDenom()));
+                    temp.setCouponDeno(couponTemp.getCouponDenom());
                     //补贴门槛
                     temp.setCouponMin(String.valueOf(couponTemp.getCouponThreshold()));
                 }else

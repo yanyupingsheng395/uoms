@@ -83,4 +83,10 @@ public class QywxDailyHeader {
      * 校验结果描述
      */
     private String checkDesc;
+
+    private Double pushSuccessRate;
+
+    private Integer executeStaffCnt;
+
+    private Double executeRate;
 }

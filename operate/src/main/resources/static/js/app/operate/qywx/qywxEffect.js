@@ -6,10 +6,28 @@ $(function () {
     getEffectPersonalPage();
 
     $("#qywxUserIdSelect").change(function() {
-        //重新加载数据
-        $MB.refreshTable('effectPersonalTable');
+        getUserStatics($(this).find("option:selected").val());
     });
 });
+
+function getUserStatics(qywxUserId) {
+    if(qywxUserId !== '') {
+        $.get("/qywxDaily/getUserStatics", {headId: headId, qywxUserId:qywxUserId}, function (r) {
+            console.log(r);
+            var data = r.data;
+            $("#msgNum").text(data['msgNum']);
+            $("#executeMsgNum").text(data['executeMsgNum']);
+            $("#coverNum").text(data['coverNum']);
+            $("#executeCoverNum").text(data['executeCoverNum']);
+            $("#convertNum").text(data['convertNum']);
+            $("#convertAmount").text(data['convertAmount']);
+            $("#convertRate").text(data['convertRate']);
+            $("#convertSpuNum").text(data['convertSpuNum']);
+            $("#convertSpuAmount").text(data['convertSpuAmount']);
+            $("#convertSpuRate").text(data['convertSpuRate']);
+        });
+    }
+}
 
 // 获取页面头的当前日期和任务日期
 function getTaskDt() {

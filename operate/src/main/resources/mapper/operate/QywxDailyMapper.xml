@@ -21,6 +21,9 @@
         <result column="EFFECT_DAYS" property="effectDays" jdbcType="DECIMAL"/>
         <result column="QYWX_MESSAGE_COUNT" property="qywxMessageCount" jdbcType="DECIMAL"/>
         <result column="STAFF_CNT" property="staffCnt" jdbcType="DECIMAL"/>
+        <result column="PUSH_SUCCESS_RATE" property="pushSuccessRate" jdbcType="DECIMAL"/>
+        <result column="EXECUTE_STAFF_CNT" property="executeStaffCnt" jdbcType="DECIMAL"/>
+        <result column="EXECUTE_RATE" property="executeRate" jdbcType="DECIMAL"/>
     </resultMap>
 
     <resultMap id="QywxUserStats" type="com.linksteady.operate.vo.QywxUserStatsVO">
@@ -39,7 +42,7 @@
     </resultMap>
 
     <select id="getHeadList" resultMap="baseResult">
-        SELECT HEAD_ID,TASK_DATE_STR,TASK_DATE, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, STATUS,EFFECT_DAYS,QYWX_MESSAGE_COUNT, staff_cnt
+        SELECT HEAD_ID,TASK_DATE_STR,TASK_DATE, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, STATUS,EFFECT_DAYS,QYWX_MESSAGE_COUNT, staff_cnt, execute_staff_cnt, execute_rate
         FROM uo_qywx_daily_header t
         <where>
             <if test="taskDate != null and taskDate != ''">
@@ -59,7 +62,7 @@
     </select>
 
     <select id="getHeadInfo" resultMap="baseResult">
-        SELECT HEAD_ID,TASK_DATE_STR,TASK_DATE, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, STATUS,EFFECT_DAYS,VERSION
+        SELECT HEAD_ID,TASK_DATE_STR,TASK_DATE, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, STATUS,EFFECT_DAYS,VERSION, push_success_rate, execute_rate, execute_staff_cnt, staff_cnt
         FROM uo_qywx_daily_header t where HEAD_ID=#{headId}
     </select>
 

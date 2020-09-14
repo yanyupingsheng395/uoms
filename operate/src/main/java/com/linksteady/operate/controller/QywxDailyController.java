@@ -8,6 +8,7 @@ import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.domain.QywxDailyDetail;
 import com.linksteady.operate.domain.QywxDailyHeader;
+import com.linksteady.operate.domain.QywxDailyStaffEffect;
 import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.*;
 import com.linksteady.operate.vo.QywxUserVO;
@@ -348,6 +349,11 @@ public class QywxDailyController {
         return result;
     }
 
+    @GetMapping("/getUserStatics")
+    public ResponseBo getUserStatics(Long headId, String qywxUserId) {
+        QywxDailyStaffEffect qywxDailyStaffEffect = qywxDailyService.getDailyStaffEffect(headId, qywxUserId);
+        return ResponseBo.okWithData(null, qywxDailyStaffEffect);
+    }
 
 
 }
