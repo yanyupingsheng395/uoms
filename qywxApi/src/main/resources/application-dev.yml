@@ -19,6 +19,7 @@ mybatis:
     # 注意这里需要加单引号
     jdbc-type-for-null: 'null'
     call-setters-on-nulls: true
+    map-underscore-to-camel-case: true
 
 sys:
   #当前应用名称

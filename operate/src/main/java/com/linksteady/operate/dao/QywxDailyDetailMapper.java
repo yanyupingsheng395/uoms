@@ -65,13 +65,6 @@ public interface QywxDailyDetailMapper {
                                             @Param("qywxUserId") String qywxUserId);
 
     /**
-     * 将当前每日运营的推送数据复制到推送列表中
-     */
-    void copyToPushList(long headId);
-
-    void updatePushOrderPeriod(long headId);
-
-    /**
      * 获取当前header_id下转化的用户列表
      * @param headId
      * @return

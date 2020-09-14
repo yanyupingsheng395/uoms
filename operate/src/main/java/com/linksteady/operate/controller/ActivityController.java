@@ -45,7 +45,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/activity")
 public class ActivityController {
-    Hashtable hashTable = null;
 
     @Autowired
     private ActivityHeadService activityHeadService;
@@ -58,9 +57,6 @@ public class ActivityController {
 
     @Autowired
     private ActivityPlanService activityPlanService;
-
-    @Autowired
-    private PushConfig pushConfig;
 
     @Autowired
     private ActivityEffectService activityEffectService;

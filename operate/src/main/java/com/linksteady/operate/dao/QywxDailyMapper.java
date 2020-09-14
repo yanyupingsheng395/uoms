@@ -79,12 +79,10 @@ public interface QywxDailyMapper {
 
 
     /**
-     * 更新头表的操作时间戳、推送时段、推送方式
+     * 更新头表的操作时间戳
      * @param headId
      */
     void updateHeaderPushInfo(@Param("headId") long headId,
-                              @Param("pushMethod") String pushMethod,
-                              @Param("pushPeriod") String pushPeriod,
                               @Param("effectDays") Long effectDays);
 
 
