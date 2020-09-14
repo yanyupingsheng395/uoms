@@ -22,7 +22,7 @@ function getBrand() {
     var code = "";
     $.get("/useroperator/getBrand", {}, function (r) {
         $.each(r.data, function (k, v) {
-            code += "<option value='" + v["BRAND_ID"] + "'>" + v["BRAND_NAME"] + " </option>";
+            code += "<option value='" + v["brand_id"] + "'>" + v["brand_name"] + " </option>";
         });
         $("#brand").html("").html(code);
     });
@@ -33,7 +33,7 @@ function getSource() {
     var code = "<option value=''>所有</option>";
     $.get("/useroperator/getSource", {}, function (r) {
         $.each(r.data, function (k, v) {
-            code += "<option value='" + v["SOURCE_ID"] + "'>" + v["SOURCE_NAME"] + " </option>";
+            code += "<option value='" + v["source_id"] + "'>" + v["source_name"] + " </option>";
         });
         $("#source").html("").html(code);
     });

@@ -844,6 +844,13 @@ function init_chart_event() {
             let nextProductId = nextProductIdArray[params.dataIndex];
             let spuId = $("#convertSpu").val();
             let purchOrder = $("#purchOrder").val();
+
+            //防止首次进入页面 用户没点击第一个图，ebpProductId为空的bug.
+            if(typeof(ebpProductId)=="undefined" || ebpProductId=='' || ebpProductId==null)
+            {
+                ebpProductId = ebpProductIdArray[1];
+            }
+
             // 获取表格
             getGrowthPoint(spuId, purchOrder, ebpProductId, nextProductId);
             // 获取转化概率
