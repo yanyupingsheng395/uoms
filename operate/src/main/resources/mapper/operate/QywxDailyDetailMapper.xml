@@ -20,7 +20,7 @@
         <result column="USER_OPENID" jdbcType="VARCHAR" property="userOpenid"></result>
         <result column="TAR_PRODUCT_NUM" jdbcType="VARCHAR" property="tarProductNum"></result>
         <result column="COUPON_MIN" jdbcType="VARCHAR" property="couponMin"></result>
-        <result column="COUPON_DENO" jdbcType="VARCHAR" property="couponDeno"></result>
+        <result column="COUPON_DENO" jdbcType="DECIMAL" property="couponDeno"></result>
         <result column="REC_PROD_ID" jdbcType="VARCHAR" property="recProdId"></result>
         <result column="REC_PROD_NAME" jdbcType="VARCHAR" property="recProdName"></result>
         <result column="COMPLETE_PURCH" jdbcType="VARCHAR" property="completePurch"></result>
@@ -128,7 +128,8 @@
              T2.REC_PROD_NAME,
              T2.COUPON_ID,
              T2.REC_PIECE_PRICE,
-             T2.GROUP_ID
+             T2.GROUP_ID,
+             T2.coupon_deno
          FROM
               uo_qywx_daily_detail T2
          WHERE  T2.HEAD_ID = #{headId}
@@ -217,5 +218,9 @@
 
     <select id="getTestPushData" resultType="map">
       select qywx_contract_id,qywx_user_id,text_content from uo_qywx_push_list WHERE PUSH_id=1
+    </select>
+
+    <select id="getDailyStaffEffect" resultType="com.linksteady.operate.domain.QywxDailyStaffEffect">
+        select * from uo_qywx_daily_staff_effect where head_id = #{headId} and qywx_user_id = #{qywxUserId}
     </select>
 </mapper>

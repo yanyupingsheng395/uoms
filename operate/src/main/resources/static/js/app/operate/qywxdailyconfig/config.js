@@ -208,10 +208,10 @@ function getQywxGroupDescription(tableId) {
     };
     $( "#" + tableId).bootstrapTable( 'destroy' ).bootstrapTable( settings );
     var dataList = [
-        {colName: '在成长类目所处生命周期阶段', colValue:'新手期', colDesc:'', colAdvice:''},
-        {colName: '在成长类目所处生命周期阶段', colValue:'成长期；成熟期', colDesc:'', colAdvice:''},
-        {colName: '完成下一次购买前的活跃度状态', colValue:'活跃状态', colDesc:'', colAdvice:''},
-        {colName: '完成下一次购买前的活跃度状态', colValue:'留存状态', colDesc:'', colAdvice:''},
+        {colName: '在成长类目所处生命周期阶段', colValue:'新手期', colDesc:'在所购买类目的忠诚度极低，流失概率大；', colAdvice:'用一定补贴降低复购门槛尽快进入成长期；'},
+        {colName: '在成长类目所处生命周期阶段', colValue:'成长期；成熟期', colDesc:'在所购买类目开始快速建立忠诚度；在所购买类目忠诚度较高，复购率较高；', colAdvice:'逐步减少补贴让用户持续复购进入成熟期；原商品无需补贴、也可通过补贴提升件单价；'},
+        {colName: '完成下一次购买前的活跃度状态', colValue:'活跃状态', colDesc:'当前购买间隔状态，用户再次购买概率较高；', colAdvice:'用一定补贴尽可能引导用户完成购买；'},
+        {colName: '完成下一次购买前的活跃度状态', colValue:'留存状态', colDesc:'防止用户流失的最佳、最后合理时机；', colAdvice:'需大力补贴防止用户进入流失状态；'},
     ];
     $( "#" + tableId).bootstrapTable( 'load', dataList );
     for (let i = 0; i < 2; i++) {
@@ -377,7 +377,10 @@ function updateWxMsg() {
         if(r.code === 200) {
             $MB.n_success("更新成功！");
             $("#wxMsgListModal").modal('hide');
-            getTableData();
         }
     });
 }
+
+$("#wxMsgListModal").on('hidden.bs.modal', function () {
+    getTableData();
+});

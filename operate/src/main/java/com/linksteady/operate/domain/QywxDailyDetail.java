@@ -116,7 +116,7 @@ public class QywxDailyDetail implements Serializable {
     /**
      * 优惠券面额
      */
-    private String couponDeno;
+    private Double couponDeno;
 
     private String tarOrderPrice;
 

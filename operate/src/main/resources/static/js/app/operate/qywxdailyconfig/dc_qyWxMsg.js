@@ -40,6 +40,16 @@ function getWxMsgTableData(qywxId) {
             {
                 title: '使用天数',
                 field: 'usedDays',
+                align: 'center',
+                formatter: function (value, row, index) {
+                    if(value !== '' && value !== null) {
+                        return parseFloat(Number(value).toFixed(0));
+                    }
+                }
+            },
+            {
+                title: '被引用组数',
+                field: 'usedGroups',
                 align: 'center'
             }
         ]
@@ -65,24 +75,14 @@ $("#btn_save_qywx").click(function () {
 
 function qywxValid() {
     var smsContent = $("#textContent1").html();
-    let couponUrl = $("input[name='couponUrl']:checked").val();
     let couponName = $("input[name='couponName']:checked").val();
-    let productUrl = $("input[name='productUrl']:checked").val();
     let productName = $("input[name='productName']:checked").val();
     if(productName === undefined) {
         $MB.n_warning("请选择商品名称！");
         return false;
     }
-    if(productUrl === undefined) {
-        $MB.n_warning("请选择商品详情页短链接！");
-        return false;
-    }
     if(couponName === undefined) {
         $MB.n_warning("请选择补贴名称！");
-        return false;
-    }
-    if(couponUrl === undefined) {
-        $MB.n_warning("请选择补贴短链接！");
         return false;
     }
     if(smsContent === '') {
@@ -97,19 +97,6 @@ function qywxValid() {
         }
     }
 
-    if(productUrl === '0') {
-        if(smsContent.indexOf("${{商品详情页短链}") > -1) {
-            $MB.n_warning("选择'商品详情页链接:否'，文案内容不能出现${商品详情页短链}");
-            return false;
-        }
-    }
-
-    if(couponUrl === '0') {
-        if(smsContent.indexOf("${补贴短链}") > -1) {
-            $MB.n_warning("选择'补贴短链接:否'，文案内容不能出现${补贴短链}");
-            return false;
-        }
-    }
     if(couponName === '0') {
         if(smsContent.indexOf("${补贴名称}") > -1) {
             $MB.n_warning("选择'补贴名称:否'，文案内容不能出现${补贴名称}");
@@ -124,19 +111,6 @@ function qywxValid() {
         }
     }
 
-    if(productUrl === '1') {
-        if(smsContent.indexOf("${{商品详情页短链}") == -1) {
-            $MB.n_warning("选择'商品详情页链接:是'，文案内容没有发现${商品详情页短链}");
-            return false;
-        }
-    }
-
-    if(couponUrl === '1') {
-        if(smsContent.indexOf("${补贴短链}") == -1) {
-            $MB.n_warning("选择'补贴短链接:是'，文案内容没有发现${补贴短链}");
-            return false;
-        }
-    }
     if(couponName === '1') {
         if(smsContent.indexOf("${补贴名称}") == -1) {
             $MB.n_warning("选择'补贴名称:是'，文案内容没有发现${补贴名称}");
@@ -201,6 +175,28 @@ function deleteDataById() {
             if(r.code === 200) {
                 $MB.n_success("删除成功！");
                 getWxMsgTableData();
+            }
+        });
+    });
+}
+
+// 解除引用
+function refreshDataById() {
+    var selected = $("#msgListDataTable").bootstrapTable('getSelections');
+    if(selected.length === 0) {
+        $MB.n_warning("请先选择要解除引用的记录！");
+        return;
+    }
+
+    $MB.confirm({
+        title: '提示',
+        content: '确定要解除所选记录？'
+    }, function () {
+        $.post("/qywx/refreshDataById", {id:selected[0]['qywxId']}, function (r) {
+            if(r.code === 200) {
+                $MB.n_success("解除成功！");
+                getWxMsgTableData();
+                $MB.refreshTable('userGroupTable');
             }
         });
     });

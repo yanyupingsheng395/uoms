@@ -1,9 +1,6 @@
 package com.linksteady.operate.service;
 
-import com.linksteady.operate.domain.DailyDetail;
-import com.linksteady.operate.domain.DailyHead;
-import com.linksteady.operate.domain.QywxDailyDetail;
-import com.linksteady.operate.domain.QywxDailyHeader;
+import com.linksteady.operate.domain.*;
 
 import java.util.List;
 import java.util.Map;
@@ -55,4 +52,6 @@ public interface QywxDailyService {
      * @return
      */
     Map<String, Object> getPushEffectChange(Long headId);
+
+    QywxDailyStaffEffect getDailyStaffEffect(Long headId, String qywxUserId);
 }

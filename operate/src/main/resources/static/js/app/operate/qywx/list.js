@@ -41,53 +41,23 @@ function initTable() {
             visible: false
         }, {
             field: 'taskDateStr',
-            title: '日期'
+            title: '推送日期'
         }, {
+            field: 'qywxMessageCount',
+            title: '个性化消息数（条）'
+        },{
             field: 'totalNum',
-            title: '建议推送人数（人）'
+            title: '消息所覆盖的用户数（人）'
         }, {
-            field: 'successNum',
-            title: '实际成功推送人数（人）'
+            field: 'staffCnt',
+            title: '需要推送消息的成员数（人）'
         }, {
             field: 'convertNum',
-            title: '推送转化人数（人）'
-        }, {
-            field: 'convertRate',
-            title: '推送转化率（%）'
+            title: '消息实际推送到达用户数（人）'
         }, {
             field: 'convertAmount',
-            title: '推送转化金额（元）'
+            title: '个性化消息转化金额（元）'
         }, {
-            field: 'effectDays',
-            title: '效果观察天数（天）'
-        }, {
-            title: '配置校验状态',
-            align: 'center',
-            formatter: function (value, row, indx) {
-                var currDate=getNowFormatDate();
-                var res = "-";
-                if("通过"===row.validateLabel) {
-                    res = "<span class=\"badge bg-success\"><a style='text-decoration: none;cursor: pointer;pointer-events: none;color:#fff;'>"+row.validateLabel+"</a></span>";
-                }else if("未通过"===row.validateLabel)
-                {
-                    res = "<span class=\"badge bg-danger\"><a onclick='gotoConfig()' style='color: #fff;text-decoration: underline;cursor: pointer;'>"+row.validateLabel+"</a></span>";
-                }else
-                {
-                    res='-';
-                }
-
-                // if(row.touchDtStr ===currDate&&"通过"===row.validateLabel) {
-                //     res = "<span class=\"badge bg-success\"><a style='text-decoration: none;cursor: pointer;pointer-events: none;color:#fff;'>"+row.validateLabel+"</a></span>";
-                // }else if(row.touchDtStr ===currDate&&"未通过"===row.validateLabel)
-                // {
-                //     res = "<span class=\"badge bg-danger\"><a onclick='gotoConfig()' style='color: #fff;text-decoration: underline;cursor: pointer;'>"+row.validateLabel+"</a></span>";
-                // }else
-                // {
-                //     res='-';
-                // }
-                return res;
-            }
-        },{
             field: 'status',
             title: '任务执行状态',
             align: 'center',
@@ -112,6 +82,25 @@ function initTable() {
                 }
                 return res;
             }
+        }, {
+            title: '配置校验状态',
+            align: 'center',
+            formatter: function (value, row, indx) {
+                var res = "-";
+                if("通过"===row.validateLabel) {
+                    res = "<span class=\"badge bg-success\"><a style='text-decoration: none;cursor: pointer;pointer-events: none;color:#fff;'>"+row.validateLabel+"</a></span>";
+                }else if("未通过"===row.validateLabel)
+                {
+                    res = "<span class=\"badge bg-danger\"><a onclick='gotoConfig()' style='color: #fff;text-decoration: underline;cursor: pointer;'>"+row.validateLabel+"</a></span>";
+                }else
+                {
+                    res='-';
+                }
+                return res;
+            }
+        }, {
+            title: '配置校验结果',
+            field: 'checkDesc'
         }]
     };
     $MB.initTable('qywxDailyTable', settings);
@@ -174,23 +163,13 @@ $("#btn_insight").click(function () {
     //获取预览数据
     $.get("/qywxDaily/getTaskOverViewData", {headId: headId}, function (r) {
         if(r.code == 200) {
-             let chartTitle="<i class='mdi mdi-alert-circle-outline'></i>当前任务日期："+r.data.taskDate+"，根据用户成长引擎的计算，有"+r.data.userNum+"个用户到达成长的节点，需要通过企业微信进行个性化沟通。";
-            $("#overviewInfo").html('').append(chartTitle);
-
-             //本日用户成长目标
-             initUserTargetChart(r.data);
-
-            //本日用户差异群组
-            initUserDiffChart(r.data);
-
-            //本日用户推送策略
-            initUserStrategy(r.data);
-
             //初始化步骤组件
             setStep(status,taskDate);
 
             //加载当前任务所涉及的成员
             getAllQywxUserList(headId);
+
+            getUserStrategyList(headId);
 
             //打开modal
             $("#viewPush_modal").modal('show');
@@ -202,401 +181,6 @@ $("#btn_insight").click(function () {
     });
 
 });
-
-function initUserTargetChart(data) {
-    chart1 = echarts.init(document.getElementById("chart1"), 'macarons');
-    let option = getChart1Option(data.spuList,data.spuCountList,"成长目标的类目分布");
-    chart1.setOption( option );
-
-    //为chart1增加点击事件
-    chart1.on('click', function(params) {
-        //刷新右侧产品条图
-        refreshChart2(params.name);
-    });
-
-
-    chart1a = echarts.init(document.getElementById("chart1a"), 'macarons');
-    let optionChart1a = getChart1aOption(data,"成长目标的类型分布(1)");
-    chart1a.setOption( optionChart1a );
-
-    chart1b = echarts.init(document.getElementById("chart1b"), 'macarons');
-    let optionChart1b = getChart1bOption(data,"成长目标的类型分布(2)");
-    chart1b.setOption( optionChart1b );
-
-    chart2 = echarts.init(document.getElementById("chart2"), 'macarons');
-    option = getChart2Option(data.prodList,data.prodCountList,"成长目标的商品分布");
-    chart2.setOption( option );
-}
-
-/**
- * 刷新按产品展示的条形图
- */
-function refreshChart2(spuName)
-{
-    $.get("/qywxDaily/getProdCountBySpu", {headId:  $("#headId").val(),spuName:spuName}, function (r) {
-        chart2 = echarts.init(document.getElementById("chart2"), 'macarons');
-        let option = getChart2Option(r.data.prodList,r.data.prodCountList,"成长目标的商品分布");
-        chart2.setOption( option );
-    });
-}
-
-function initUserDiffChart(data)
-{
-    chart3 = echarts.init(document.getElementById("chart3"), 'macarons');
-    userValueOption = getChart3Option(data.userValueList,data.userValueLabelList,data.userValueCountList,"类目用户的价值分布");
-    chart3.setOption( userValueOption );
-
-    //为chart1增加点击事件
-    chart3.on('click', function(params) {
-        //获取当前点击的userValue
-        let userValue=userValueOption.series[params.seriesIndex].userValues[params.dataIndex];
-        //刷新右侧表格
-        refreshMatrixTable(userValue);
-    });
-
-    //渲染表格数据
-    applyMatrixTable(data.matrixResult);
-}
-
-function refreshMatrixTable(userValue) {
-    $.get("/qywxDaily/getMatrixData", {headId:  $("#headId").val(),userValue:userValue}, function (r) {
-        applyMatrixTable(r.data);
-    });
-}
-
-function applyMatrixTable(matrixResult)
-{
-    //构造表格的数据
-    let code="<tr><th>项目</th><th colspan='"+matrixResult.columnTitle.length+"'>用户对类目的生命周期阶段</th></tr><tr><th>用户下一次转化的活跃度节点</th>";
-    $.each(matrixResult.columnTitle,function(index,value){
-        code+="<th>"+value+"</th>";
-    });
-    code+="</tr>";
-
-    $("#matrixHead").html('').append(code);
-
-    code='';
-    $.each(matrixResult.rows,function(index,value){
-        let row=value;
-        code+="<tr>";
-        $.each(row,function (index,value) {
-            code+="<td>"+value+"</td>";
-        })
-        code+="</tr>";
-    });
-    $("#matrixTableData").html('').append(code);
-
-}
-
-function initUserStrategy(data)
-{
-    chart4 = echarts.init(document.getElementById("chart4"), 'macarons');
-    let option = getChart4Option(data,"需要执行推送的成员分布");
-    chart4.setOption( option );
-
-    var settings = {
-        pagination: true,
-        sidePagination: "client",
-        pageNumber: 1,
-        pageSize: 5,
-        pageList: [5, 10, 25, 50, 100],
-        columns: [{
-            field: 'couponMin',
-            title: '门槛'
-        }, {
-            field: 'couponDeno',
-            title: '面额'
-        }, {
-            field: 'ucnt',
-            title: '人数'
-        }]
-    };
-    $("#couponStatTable").bootstrapTable('destroy').bootstrapTable(settings);
-    $("#couponStatTable").bootstrapTable('load', data.statsByCoupon);
-
-}
-
-function getChart1Option(spuList,spuCountList,chartTitle)
-{
-    var option = {
-        title: {
-            text: chartTitle,
-            x: 'center',
-            y: 'bottom',
-            textStyle: {
-                //文字颜色
-                color: '#000',
-                //字体风格,'normal','italic','oblique'
-                fontStyle: 'normal',
-                //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
-                fontWeight: 'normal',
-                //字体系列
-                fontFamily: 'sans-serif',
-                //字体大小
-                fontSize: 12
-            }
-        },
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'shadow'
-            }
-        },
-        grid: {left:100,right:45},
-        xAxis: {
-            name: '人数',
-            type: 'value'
-        },
-        yAxis: {
-            name: '类目',
-            type: 'category',
-            data: spuList
-        },
-        series: [
-            {
-                type: 'bar',
-                data: spuCountList
-            }
-        ]
-    };
-    return option;
-}
-
-
-function getChart1aOption(data,chartTitle)
-{
-    var option = {
-        title: {
-            text: chartTitle,
-            x: 'center',
-            y: 'bottom',
-            textStyle: {
-                //文字颜色
-                color: '#000',
-                //字体风格,'normal','italic','oblique'
-                fontStyle: 'normal',
-                //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
-                fontWeight: 'normal',
-                //字体系列
-                fontFamily: 'sans-serif',
-                //字体大小
-                fontSize: 12
-            }
-        },
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'shadow'
-            }
-        },
-        grid: {left:100,right:45},
-        xAxis: {
-            name: '人数',
-            type: 'value'
-        },
-        yAxis: {
-            name: '类型',
-            type: 'category',
-            data: data.growthTypeLabelList
-        },
-        series: [
-            {
-                type: 'bar',
-                data: data.growthTypeCountList
-            }
-        ]
-    };
-    return option;
-}
-
-
-
-function getChart1bOption(data,chartTitle)
-{
-    var option = {
-        title: {
-            text: chartTitle,
-            x: 'center',
-            y: 'bottom',
-            textStyle: {
-                //文字颜色
-                color: '#000',
-                //字体风格,'normal','italic','oblique'
-                fontStyle: 'normal',
-                //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
-                fontWeight: 'normal',
-                //字体系列
-                fontFamily: 'sans-serif',
-                //字体大小
-                fontSize: 12
-            }
-        },
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'shadow'
-            }
-        },
-        grid: {left:100,right:45},
-        xAxis: {
-            name: '人数',
-            type: 'value'
-        },
-        yAxis: {
-            name: '类型',
-            type: 'category',
-            data: data.growthSeriesTypeLabelList
-        },
-        series: [
-            {
-                type: 'bar',
-                data: data.growthSeriesTypeCountList
-            }
-        ]
-    };
-    return option;
-}
-
-
-
-function getChart2Option(prodList,prodCountList,chartTitle)
-{
-    var option = {
-        title: {
-            text: chartTitle,
-            x: 'center',
-            y: 'bottom',
-            textStyle: {
-                //文字颜色
-                color: '#000',
-                //字体风格,'normal','italic','oblique'
-                fontStyle: 'normal',
-                //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
-                fontWeight: 'normal',
-                //字体系列
-                fontFamily: 'sans-serif',
-                //字体大小
-                fontSize: 12
-            }
-        },
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'shadow'
-            }
-        },
-        grid: {left:100,right:45},
-        xAxis: {
-            name: '人数',
-            type: 'value'
-        },
-        yAxis: {
-            name: '商品',
-            type: 'category',
-            data: prodList
-        },
-        series: [
-            {
-                type: 'bar',
-                data: prodCountList
-            }
-        ]
-    };
-    return option;
-}
-
-function getChart3Option(userValueList,userValueLabelList,userValueCountList,chartTitle)
-{
-    return {
-        title: {
-            text: chartTitle,
-            x: 'center',
-            y: 'bottom',
-            textStyle: {
-                //文字颜色
-                color: '#000',
-                //字体风格,'normal','italic','oblique'
-                fontStyle: 'normal',
-                //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
-                fontWeight: 'normal',
-                //字体系列
-                fontFamily: 'sans-serif',
-                //字体大小
-                fontSize: 12
-            }
-        },
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'shadow'
-            }
-        },
-        grid: {left:100,right:45},
-        xAxis: {
-            name: '人数',
-            type: 'value'
-        },
-        yAxis: {
-            name: '用户价值',
-            type: 'category',
-            data: userValueLabelList
-        },
-        series: [
-            {
-                type: 'bar',
-                data: userValueCountList,
-                userValues:userValueList
-            }
-        ]
-    };
-}
-
-function getChart4Option(data,chartTitle)
-{
-    return {
-        title: {
-            text: chartTitle,
-            x: 'center',
-            y: 'bottom',
-            textStyle: {
-                //文字颜色
-                color: '#000',
-                //字体风格,'normal','italic','oblique'
-                fontStyle: 'normal',
-                //字体粗细 'normal','bold','bolder','lighter',100 | 200 | 300 | 400...
-                fontWeight: 'normal',
-                //字体系列
-                fontFamily: 'sans-serif',
-                //字体大小
-                fontSize: 12
-            }
-        },
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: {
-                type: 'shadow'
-            }
-        },
-        grid: {left:100,right:45},
-        xAxis: {
-            name: '人数',
-            type: 'value'
-        },
-        yAxis: {
-            name: '成员',
-            type: 'category',
-            data: data.qywxUserList
-        },
-        series: [
-            {
-                type: 'bar',
-                data: data.qywxCountList
-            }
-        ]
-    };
-
-}
-
 
 function gotoConfig() {
     $MB.confirm({
@@ -635,13 +219,6 @@ $("#viewPush_modal").on("shown.bs.modal", function () {
         skin: "modern"
     });
     init();
-
-    chart1.resize();
-    chart1a.resize();
-    chart1b.resize();
-    chart2.resize();
-    chart3.resize();
-    chart4.resize();
 });
 
 /**
@@ -702,23 +279,23 @@ function setStep(status,taskDate) {
         stepObj=steps({
             el: "#pushSteps",
             data: [
-                { title: "概要",description:""},
-                { title: "明细",description:""},
-                { title: "推送",description:"" }
+                { title: "今日成长用户详情",description:""},
+                { title: "向成员派发推送任务",description:""}
             ],
             center: true,
             dataOrder: ["title", "line", "description"]
         });
     }else {
-        stepObj=steps({
-            el: "#pushSteps",
-            data: [
-                { title: "概要",description:""},
-                { title: "明细",description:""}
-            ],
-            center: true,
-            dataOrder: ["title", "line", "description"]
-        });
+        // stepObj=steps({
+        //     el: "#pushSteps",
+        //     data: [
+        //         { title: "今日成长用户详情",description:""},
+        //         { title: "向成员派发推送任务",description:""}
+        //     ],
+        //     center: true,
+        //     dataOrder: ["title", "line", "description"]
+        // });
+        $("#nextStepBtn").attr("style", "display:none;");
     }
 }
 
@@ -728,48 +305,28 @@ function setStep(status,taskDate) {
 var current_step = 0;
 function changeStep(count) {
     current_step = current_step + count;
-    if(current_step > 3) {
-        current_step = 3;
+    if(current_step >= 2) {
+        current_step = 1;
     }
     if(current_step < 0) {
         current_step = 0;
     }
-    //概要
+    console.log(current_step)
     if(current_step === 0) {
         $("#prevStepBtn").attr("style", "display:none;");
-        $("#nextStepBtn").attr("style", "display:inline-block");
         $("#pushMsgBtn").attr("style", "display:none;");
         $("#step1").attr("style", "display:block;");
         $("#step2").attr("style", "display:none;");
-        $("#step3").attr("style", "display:none;");
-        stepObj.setActive(0);
-    }
-    //明细
-    if(current_step === 1) {
-        $("#prevStepBtn").attr("style", "display:inline-block");
-        $("#pushMsgBtn").attr("style", "display:none;");
-        $("#step1").attr("style", "display:none;");
-        $("#step2").attr("style", "display:block;");
-        $("#step3").attr("style", "display:none;");
 
         //todo 此两行代码后续删除
         $("#nextStepBtn").attr("style", "display:inline-block;");
         getUserStrategyList($("#headId").val());
-
-        // if(current_status === 'todo'&&current_taskDt==currDay) {
-        //     $("#nextStepBtn").attr("style", "display:inline-block;");
-        //     getUserStrategyList($("#headId").val());
-        // }else {
-        //     $("#nextStepBtn").attr("style", "display:none;");
-        //     getUserStrategyList($("#headId").val());
-        // }
         stepObj.setActive(1);
     }
-    //推送
-    if(current_step === 2) {
+    if(current_step === 1) {
         $.get("/qywxDaily/validUserGroupForQywx", {}, function(r) {
             if(r.code == 200) {
-                if(r.data) {
+                if(r.data['flag'] === '未通过') {
                     $MB.n_warning("成长组配置验证未通过！");
                     return false;
                 }else {
@@ -777,15 +334,11 @@ function changeStep(count) {
                     $("#nextStepBtn").attr("style", "display:none;");
                     $("#pushMsgBtn").attr("style", "display:inline-block;");
                     $("#step1").attr("style", "display:none;");
-                    $("#step2").attr("style", "display:none;");
-                    $("#step3").attr("style", "display:block;");
+                    $("#step2").attr("style", "display:block;");
                     stepObj.setActive(2);
                 }
             }
         });
-        // if(current_status === 'todo'&&current_taskDt==currDay) {
-        //
-        // }
     }
 }
 
@@ -861,25 +414,39 @@ function getUserStrategyList(pheadId) {
         },
         columns: [
             {
-                field: 'qywxContractId',
-                title: '企业微信客户ID',
-                valign: "middle",
-                width: 100
-            },
-            {
-                field: 'qywxUserName',
-                title: '推送成员',
-                width: 300
-            },
-            {
                 field: 'textContent',
-                title: '推送预览',
+                title: '个性化消息内容',
                 formatter: function (value, row, index) {
                     return longTextFormat(value, row, index);
                 }
             },
             {
-                title: '成长洞察',
+                field: 'qywxUserName',
+                title: '推送消息的成员',
+                align: "center",
+            },
+            {
+                field: 'qywxContractId',
+                title: '成员推送消息的用户',
+                align: "center",
+            },{
+                field: 'recProdName',
+                title: '推荐购买的商品',
+                align: "center",
+            },{
+                field: 'couponDeno',
+                title: '基于商品的补贴',
+                align: "center",
+                formatter: function (value, row, index) {
+                    if(value !== '' && value !== null) {
+                        return value + '元券';
+                    }else {
+                        return '无';
+                    }
+                }
+            },
+            {
+                title: '为什么这样做',
                 width: 80,
                 formatter: function (value, row, idx)
                 {

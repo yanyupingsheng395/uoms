@@ -8,39 +8,65 @@
         <result property="productName" jdbcType="VARCHAR" column="product_name"/>
         <result property="couponUrl" jdbcType="VARCHAR" column="coupon_url"/>
         <result property="couponName" jdbcType="VARCHAR" column="coupon_name"/>
-        <result property="isPersonal" jdbcType="VARCHAR" column="is_personal"/>
-        <result property="materialType" jdbcType="VARCHAR" column="material_type"/>
-        <result property="materialContent" jdbcType="VARCHAR" column="material_content"/>
         <result property="insertDt" jdbcType="TIMESTAMP" column="insert_dt"/>
         <result property="usedDays" jdbcType="VARCHAR" column="used_days"/>
+        <result property="usedGroups" jdbcType="VARCHAR" column="used_groups"/>
     </resultMap>
 
     <insert id="saveData">
-        insert into uo_qywx_msg_template(text_content, insert_by, product_url, product_name, coupon_url, coupon_name, is_personal, material_type, material_content)
-        values (#{textContent}, #{insertBy}, #{productUrl}, #{productName}, #{couponUrl}, #{couponName}, #{isPersonal}, #{materialType}, #{materialContent})
+        insert into uo_qywx_msg_template(text_content, insert_by, product_url, product_name, coupon_url, coupon_name)
+        values (#{textContent}, #{insertBy}, #{productUrl}, #{productName}, #{couponUrl}, #{couponName})
     </insert>
 
     <select id="getDataListPage" resultMap="BaseResultMap">
-        select qywx_id, text_content, insert_dt, insert_by, update_dt, update_by, product_url, product_name, coupon_url, coupon_name, (date_part('day', now() - cast(insert_dt as TIMESTAMP)) + 1) used_days
+        select qywx_id,
+               text_content,
+               insert_dt,
+               insert_by,
+               update_dt,
+               update_by,
+               product_url,
+               product_name,
+               coupon_url,
+               coupon_name,
+               (date_part('day', now() - cast(insert_dt as TIMESTAMP)) + 1) used_days,
+               (select count(1) from uo_op_daily_template_config where uo_op_daily_template_config.qywx_id = uo_qywx_msg_template.qywx_id) used_groups
         from uo_qywx_msg_template
         order by insert_dt desc
-        limit #{limit} offset #{offset}
+        limit #{limit}
+        offset
+        #{offset}
     </select>
 
     <select id="getTotalCount" resultType="int">
-        select count(1) from uo_qywx_msg_template
+        select count(1)
+        from uo_qywx_msg_template
     </select>
 
     <update id="updateQywxMsg">
-        update uo_qywx_msg_template set(text_content, product_url, product_name, coupon_url, coupon_name, is_personal, material_type, material_content) =
-        (#{textContent}, #{productUrl}, #{productName}, #{couponUrl}, #{couponName}, #{isPersonal}, #{materialType}, #{materialContent}) where qywx_id = #{qywxId}
+        update uo_qywx_msg_template
+        set (text_content, product_url, product_name, coupon_url, coupon_name) =
+                (#{textContent}, #{productUrl}, #{productName}, #{couponUrl}, #{couponName})
+        where qywx_id = #{qywxId}
     </update>
 
     <delete id="deleteDataById">
-        delete from uo_qywx_msg_template where qywx_id = #{id}::integer
+        delete
+        from uo_qywx_msg_template
+        where qywx_id = #{id}::integer
     </delete>
 
     <select id="getDataById" resultMap="BaseResultMap">
-        select * from uo_qywx_msg_template where qywx_id = #{id}::integer
+        select *
+        from uo_qywx_msg_template
+        where qywx_id = #{id}::integer
     </select>
+
+    <update id="refreshDataById">
+        update uo_op_daily_template_config
+        set qywx_id     = null,
+            qywx_op_flag='Y',
+            qywx_op_dt=now()
+        where qywx_id = #{id}::integer
+    </update>
 </mapper>

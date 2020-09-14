@@ -13,81 +13,7 @@
                         <p class="h5" id="overviewInfo"></p>
                     </div>
                 </div>
-
                 <div id="step1">
-                    <div class="row m-t-10">
-                            <h5 class="navbar-page-title">
-                                本日用户成长目标&nbsp;
-                                <a style='color: #48b0f7;font-size: 16px;' data-toggle="tooltip" data-html="true" title="" data-placement="top" data-original-title="无；" data-trigger="click">
-                                    <i class="fa fa-question-circle"></i>
-                                </a>
-                            </h5>
-                            <hr class="hr m-t-0 m-b-5"/>
-
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div id="chart1a" style="width: 100%;height: 300px;"></div>
-                        </div>
-                        <div class="col-md-6">
-                            <div id="chart1b" style="width: 100%;height: 300px;"></div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div id="chart1" style="width: 100%;height: 300px;"></div>
-                        </div>
-                        <div class="col-md-6">
-                            <div id="chart2" style="width: 100%;height: 300px;"></div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <h5 class="navbar-page-title">本日用户差异群组
-                            <a style='color: #48b0f7;font-size: 16px;' data-toggle="tooltip" data-html="true" title="" data-placement="top" data-original-title="无；" data-trigger="click">
-                                <i class="fa fa-question-circle"></i>
-                            </a>
-                        </h5>
-                        <hr class="hr m-t-0 m-b-5"/>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div id="chart3" style="width: 100%;height: 300px;"></div>
-                        </div>
-
-                        <div class="col-md-6 table-responsive">
-                            <table id="matrixTable" class="table table-bordered table-striped">
-                                <thead id="matrixHead">
-                                </thead>
-                                <tbody id="matrixTableData">
-
-                                </tbody>
-                            </table>
-                            <h6 class="text-center">指定类目价值用户群组在其他特征的分布</h6>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <h5 class="navbar-page-title">本日用户推送策略
-                            <a style='color: #48b0f7;font-size: 16px;' data-toggle="tooltip" data-html="true" title="" data-placement="top" data-original-title="无；" data-trigger="click">
-                                <i class="fa fa-question-circle"></i>
-                            </a>
-                        </h5>
-                        <hr class="hr m-t-0 m-b-5"/>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div id="chart4" style="width: 100%;height: 300px;"></div>
-                        </div>
-                        <div class="col-md-6">
-                            <table class="table  table-striped table-bordered text-nowrap" id="couponStatTable"></table>
-                            <h6 class="text-center">个性化补贴的用户分布</h6>
-                        </div>
-                    </div>
-                </div>
-                <div id="step2" style="display:none;">
                     <div class="row">
                         <h5 class="navbar-page-title">用户明细</h5>
                         <hr class="hr m-t-0 m-b-5"/>
@@ -105,30 +31,18 @@
                                     </ul>
                                 </div>
                             </form>
-                            <table id="userListTable" class="table  table-striped table-bordered table-hover"></table>
+                            <div class="table-striped">
+                                <table id="userListTable" class="table  table-striped table-bordered table-hover"></table>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div id="step3" style="display: none;">
+                <div id="step2" style="display: none;">
                     <div class="row">
                         <h5 class="navbar-page-title">用户推送</h5>
                         <hr class="hr m-t-0 m-b-5"/>
                     </div>
                     <form class="form-horizontal">
-                        <div class="form-group">
-                            <label class="col-md-3 control-label">推送方式</label>
-                            <div class="col-md-7 mt7">
-                                <label class="lyear-radio radio-inline radio-primary">
-                                    <input type="radio" name="pushMethod" value="AI"><span>智能推送</span>
-                                </label>
-                                <label class="lyear-radio radio-inline radio-primary">
-                                    <input type="radio" name="pushMethod" value="IMME"><span>立刻推送</span>
-                                </label>
-                                <label class="lyear-radio radio-inline radio-primary">
-                                    <input type="radio" name="pushMethod" value="FIXED"><span>定时推送</span>
-                                </label>
-                            </div>
-                        </div>
                         <div class="form-group" id="pushPeriodDiv" hidden>
                             <label class="col-md-3 control-label">推送时间</label>
                             <div class="col-md-7">

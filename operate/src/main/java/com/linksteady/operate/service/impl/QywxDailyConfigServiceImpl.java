@@ -86,13 +86,32 @@ public class QywxDailyConfigServiceImpl implements QywxDailyConfigService {
     }
 
     /**
-     * 验证
+     * 校验每日任务：
+     * 是否配置了优惠券；
+     * 优惠券是否在有效期；
+     * 是否配置了文案（校验文本）
      * @return
      */
     @Override
-    public boolean validUserGroupForQywx() {
-        //todo 后续待补充
-        return false;
+    public Map<String,Object> validUserGroupForQywx() {
+        Map<String, Object> result = Maps.newHashMap();
+        int couponCnt = couponMapper.getValidCoupon();
+        int groupCouponCnt =  dailyConfigMapper.validGroupCoupon();
+        int groupContextCnt =  dailyConfigMapper.validGroupContext();
+        if(couponCnt == 0) {
+            result.put("flag", "未通过");
+            result.put("desc", "当前没有有效的补贴");
+        }else if(groupCouponCnt > 0) {
+            result.put("flag", "未通过");
+            result.put("desc", "部分群组尚未配置补贴");
+        } else if(groupContextCnt > 0) {
+            result.put("flag", "未通过");
+            result.put("desc", "部分群组尚未配置文案");
+        }else {
+            result.put("flag", "通过");
+            result.put("desc", "");
+        }
+        return result;
     }
 
     @Override

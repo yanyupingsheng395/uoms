@@ -9,6 +9,7 @@ import com.linksteady.operate.dao.QywxDailyDetailMapper;
 import com.linksteady.operate.dao.QywxDailyMapper;
 import com.linksteady.operate.domain.DailyStatis;
 import com.linksteady.operate.domain.QywxDailyHeader;
+import com.linksteady.operate.domain.QywxDailyStaffEffect;
 import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.QywxDailyService;
 import com.linksteady.operate.vo.QywxUserStatsVO;
@@ -327,6 +328,11 @@ public class QywxDailyServiceImpl implements QywxDailyService {
         result.put("ydata3", convertSpuNumList);
         result.put("ydata4", convertSpuRateList);
         return result;
+    }
+
+    @Override
+    public QywxDailyStaffEffect getDailyStaffEffect(Long headId, String qywxUserId) {
+        return qywxDailyDetailMapper.getDailyStaffEffect(headId, qywxUserId);
     }
 
 }

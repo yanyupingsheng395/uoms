@@ -1,6 +1,7 @@
 package com.linksteady.operate.dao;
 
 import com.linksteady.operate.domain.QywxDailyDetail;
+import com.linksteady.operate.domain.QywxDailyStaffEffect;
 import com.linksteady.operate.vo.QywxUserVO;
 import io.lettuce.core.dynamic.annotation.Param;
 
@@ -93,4 +94,6 @@ public interface QywxDailyDetailMapper {
 
 
     List<Map<String,String>> getTestPushData();
+
+    QywxDailyStaffEffect getDailyStaffEffect(Long headId, String qywxUserId);
 }

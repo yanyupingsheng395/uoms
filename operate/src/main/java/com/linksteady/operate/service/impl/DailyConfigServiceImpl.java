@@ -7,6 +7,7 @@ import com.linksteady.common.domain.Dict;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.dao.CouponMapper;
 import com.linksteady.operate.dao.DailyConfigMapper;
+import com.linksteady.operate.dao.QywxDailyCouponMapper;
 import com.linksteady.operate.domain.CouponInfo;
 import com.linksteady.operate.domain.DailyGroupTemplate;
 import com.linksteady.common.domain.enums.ConfigEnum;
@@ -32,7 +33,7 @@ public class DailyConfigServiceImpl implements DailyConfigService {
     private ConfigService configService;
 
     @Autowired
-    private CouponMapper couponMapper;
+    private QywxDailyCouponMapper couponMapper;
 
     @Autowired
     private DictMapper dictMapper;
@@ -92,12 +93,15 @@ public class DailyConfigServiceImpl implements DailyConfigService {
     }
 
     /**
-     * 验证
+     * 校验每日任务：
+     * 是否配置了优惠券；
+     * 优惠券是否在有效期；
+     * 是否配置了文案（校验文本）
      * @return
      */
     @Override
     public boolean validUserGroupForQywx() {
-        //todo 后续待补充
+
         return false;
     }
 

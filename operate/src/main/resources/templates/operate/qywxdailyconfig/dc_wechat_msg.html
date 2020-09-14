@@ -30,7 +30,8 @@
     <div class="modal-dialog" style="width: 945px;">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
                 <h5 class="modal-title">配置个性化消息</h5>
             </div>
             <div class="modal-body">
@@ -39,7 +40,8 @@
                         <div class="table-striped">
                             <div class="table-responsive">
                                 <p class="h6">理解选定的用户群组</p>
-                                <table class="table text-nowrap table-bordered h6" style="width: 70%;" id="selectedGroupInfo2"></table>
+                                <table class="table text-nowrap table-bordered h6" style="width: 70%;"
+                                       id="selectedGroupInfo2"></table>
                             </div>
                         </div>
                     </div>
@@ -57,7 +59,7 @@
                             <button class="btn btn-danger btn-view" id="btn_delete" onclick="deleteDataById()">
                                 <i class="fa fa-close"></i> 删除消息
                             </button>
-                            <a class="btn btn-info btn-edit" id="btn_plan">
+                            <a class="btn btn-info btn-edit" onclick="refreshDataById()">
                                 <i class="fa fa-refresh"></i> 解除引用
                             </a>
                         </div>
@@ -85,109 +87,101 @@
                         aria-hidden="true">×</span></button>
                 <h5 class="modal-title" id="myLargeModalLabel3">新增消息</h5>
             </div>
-            <div class="modal-body" style="padding-left: 10px;padding-right: 10px;padding-top: 0px;padding-bottom: 0px;">
+            <div class="modal-body"
+                 style="padding-left: 10px;padding-right: 10px;padding-top: 0px;padding-bottom: 0px;">
                 <div class="row">
                     <div class="col-md-8">
-                        <ul class="nav nav-tabs" role="tablist">
-                            <li class="active"><a href="#home" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">
-                                文本要素配置
-                            </a></li>
-                            <li class=""><a href="#profile" role="tab" id="profile-tab" data-toggle="tab" aria-expanded="false">
-                                媒体要素配置
-                            </a></li>
-                        </ul>
-                        <div id="myTabContent" class="tab-content">
-                            <div class="tab-pane fade active in" id="home">
-                                <form class="form-horizontal" id="wxMsgAddForm" novalidate="novalidate">
-                                    <div class="col-md-12">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <div class="form-group">
-                                                    <div>
-                                                        <label class="control-label">文案体现的个性化要素</label>
-                                                    </div>
-                                                    <div>
-                                                        <div style="border: solid 1px #ebebeb;padding: 8px; float: left;width: 100%" id="config-box">
-                                                            <input type="hidden" name="qywxId" value="0"/>
-                                                            <div class="example-box">
-                                                                <label class="control-label">商品名称：</label>
-                                                                <label class="lyear-radio radio-inline radio-primary">
-                                                                    <input type="radio" name="productName" value="1"><span>是</span>
-                                                                </label>
-                                                                <label class="lyear-radio radio-inline radio-primary">
-                                                                    <input type="radio" name="productName" value="0"><span>否</span>
-                                                                </label>
-                                                                &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${商品名称} 粘贴到期望位置；</span>
-                                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${商品名称}" class="copy_btn">复制</a>
-                                                            </div>
-                                                            <div class="example-box">
-                                                                <label class="control-label">补贴名称：</label>
-                                                                <label class="lyear-radio radio-inline radio-primary">
-                                                                    <input type="radio" name="couponName" value="1"><span>是</span>
-                                                                </label>
-                                                                <label class="lyear-radio radio-inline radio-primary">
-                                                                    <input type="radio" name="couponName" value="0"><span>否</span>
-                                                                </label>
-                                                                &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${补贴名称} 粘贴到期望位置；</span>
-                                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${补贴名称}" class="copy_btn">复制</a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="form-group">
-                                                    <div>
-                                                        <label class="control-label">文案内容</label>
-                                                    </div>
-                                                    <div style="padding: 5px 0; color: #ccc"></div>
-                                                    <div class="form-control" style="height: 200px;" contenteditable="true" id="textContent1"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <hr class="hr m-t-0 m-b-5"/>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group mg-stop">
-                                                <div class="col-md-12 control-label" style="text-align: left;">
-                                                    <p class="small">
-                                                        个性化变量说明：
-                                                        &nbsp;&nbsp;&nbsp;<br/>${商品名称}:系统个性化填充商品短名称变量，不同用户看到不同商品短名称；
-                                                        &nbsp;&nbsp;&nbsp;<br/>${补贴名称}:系统会个性化填充券名称，不同用户看到不同优惠券；
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                            <div class="tab-pane fade" id="profile">
+                        <form class="form-horizontal" id="wxMsgAddForm" novalidate="novalidate">
+                            <div class="col-md-12">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <form class="form-horizontal" novalidate="novalidate" id="mediaForm">
-                                            <div style="border: solid 1px #ebebeb;padding: 8px;margin-top:0px; float: left;width: 400px;">
-                                                <div class="example-box">
-                                                    <label class="control-label">个性化商品详情页：</label>
-                                                    <label class="lyear-radio radio-inline radio-primary">
-                                                        <input type="radio" name="isPersonal" value="1" readonly disabled checked><span>是</span>
-                                                    </label>
-                                                    <label class="lyear-radio radio-inline radio-primary">
-                                                        <input type="radio" name="isPersonal" value="0" readonly disabled><span>否</span>
-                                                    </label>
+                                        <div class="form-group">
+                                            <div>
+                                                <label class="control-label">文案体现的个性化要素</label>
+                                            </div>
+                                            <div>
+                                                <div style="border: solid 1px #ebebeb;padding: 8px; float: left;width: 100%"
+                                                     id="config-box">
+                                                    <input type="hidden" name="qywxId" value="0"/>
+                                                    <div class="example-box">
+                                                        <label class="control-label">商品名称：</label>
+                                                        <label class="lyear-radio radio-inline radio-primary">
+                                                            <input type="radio" name="productName"
+                                                                   value="1"><span>是</span>
+                                                        </label>
+                                                        <label class="lyear-radio radio-inline radio-primary">
+                                                            <input type="radio" name="productName"
+                                                                   value="0"><span>否</span>
+                                                        </label>
+                                                        &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${商品名称} 粘贴到期望位置；</span>
+                                                        <a style="text-decoration: underline;cursor: pointer;font-size: 12px;"
+                                                           data-clipboard-text="${商品名称}" class="copy_btn">复制</a>
+                                                    </div>
+                                                    <div class="example-box">
+                                                        <label class="control-label">补贴名称：</label>
+                                                        <label class="lyear-radio radio-inline radio-primary">
+                                                            <input type="radio" name="couponName"
+                                                                   value="1"><span>是</span>
+                                                        </label>
+                                                        <label class="lyear-radio radio-inline radio-primary">
+                                                            <input type="radio" name="couponName"
+                                                                   value="0"><span>否</span>
+                                                        </label>
+                                                        &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${补贴名称} 粘贴到期望位置；</span>
+                                                        <a style="text-decoration: underline;cursor: pointer;font-size: 12px;"
+                                                           data-clipboard-text="${补贴名称}" class="copy_btn">复制</a>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </form>
-                                    </div>
-                                </div>
-                                <div class="row m-t-10">
-                                    <div class="col-md-12">
-                                        <p class="small">
-                                            个性化素才说明：
-                                            <br>系统会个性化填充商品详细页，不同用户看到不同商品
-                                        </p>
+                                        </div>
+                                        <div class="form-group" style="margin-bottom: 0px;">
+                                            <div>
+                                                <label class="control-label">文案内容</label>
+                                            </div>
+                                            <div class="form-control" style="height: 200px;" contenteditable="true"
+                                                 id="textContent1"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group mg-stop" style="margin-bottom: 0px;">
+                                        <div class="col-md-12 control-label" style="text-align: left;">
+                                            <p class="small">
+                                                个性化变量说明：
+                                                &nbsp;&nbsp;&nbsp;<br/>${商品名称}:系统个性化填充商品短名称变量，不同用户看到不同商品短名称；
+                                                &nbsp;&nbsp;&nbsp;<br/>${补贴名称}:系统会个性化填充券名称，不同用户看到不同优惠券；
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                        <form class="form-horizontal" novalidate="novalidate" id="mediaForm">
+                            <div>
+                                <label class="control-label">媒体信息配置</label>
+                            </div>
+                            <div style="border: solid 1px #ebebeb;padding: 8px;margin-top:0px; float: left;width: 100%;">
+                                <div class="example-box">
+                                    <label class="control-label">个性化商品详情页：</label>
+                                    <label class="lyear-radio radio-inline radio-primary">
+                                        <input type="radio" name="isPersonal" value="1" readonly disabled checked><span>是</span>
+                                    </label>
+                                    <label class="lyear-radio radio-inline radio-primary">
+                                        <input type="radio" name="isPersonal" value="0" readonly disabled><span>否</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 m-t-10">
+                                    <p class="small">
+                                        个性化素才说明：
+                                        <br>系统会个性化填充商品详细页，不同用户看到不同商品
+                                    </p>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                     <div class="col-md-4" style="margin-top: 30px;">
                         <div style="height:360px;width:265px;margin-left: 20px;border-radius: 10px;">
