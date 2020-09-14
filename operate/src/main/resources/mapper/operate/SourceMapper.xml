@@ -3,6 +3,6 @@
 <mapper namespace="com.linksteady.operate.dao.SourceMapper">
 
     <select id="findAll" resultType="map">
-        SELECT SOURCE_ID, SOURCE_NAME from W_SOURCE
+        SELECT source_id, source_name from W_SOURCE
     </select>
 </mapper>
