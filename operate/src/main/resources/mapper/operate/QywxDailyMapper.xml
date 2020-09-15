@@ -6,7 +6,7 @@
         <result column="HEAD_ID" property="headId" jdbcType="DECIMAL"/>
         <result column="TOTAL_NUM" property="totalNum" jdbcType="DECIMAL"/>
         <result column="SUCCESS_NUM" property="successNum" jdbcType="DECIMAL"/>
-        <result column="CONVERT_RATE" property="convertRate" jdbcType="DECIMAL"/>
+        <result column="CONVERT_RATE" property="convertRate" jdbcType="VARCHAR"/>
         <result column="CONVERT_AMOUNT" property="convertAmount" jdbcType="DECIMAL"/>
         <result column="TASK_DATE" property="taskDate" jdbcType="DATE"/>
         <result column="TASK_DATE_STR" property="taskDateStr" jdbcType="VARCHAR"/>
@@ -21,9 +21,9 @@
         <result column="EFFECT_DAYS" property="effectDays" jdbcType="DECIMAL"/>
         <result column="QYWX_MESSAGE_COUNT" property="qywxMessageCount" jdbcType="DECIMAL"/>
         <result column="STAFF_CNT" property="staffCnt" jdbcType="DECIMAL"/>
-        <result column="PUSH_SUCCESS_RATE" property="pushSuccessRate" jdbcType="DECIMAL"/>
+        <result column="PUSH_SUCCESS_RATE" property="pushSuccessRate" jdbcType="VARCHAR"/>
         <result column="EXECUTE_STAFF_CNT" property="executeStaffCnt" jdbcType="DECIMAL"/>
-        <result column="EXECUTE_RATE" property="executeRate" jdbcType="DOUBLE"/>
+        <result column="EXECUTE_RATE" property="executeRate" jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap id="QywxUserStats" type="com.linksteady.operate.vo.QywxUserStatsVO">
