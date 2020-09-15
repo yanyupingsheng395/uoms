@@ -42,7 +42,8 @@
     </resultMap>
 
     <select id="getHeadList" resultMap="baseResult">
-        SELECT HEAD_ID,TASK_DATE_STR,TASK_DATE, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, STATUS,EFFECT_DAYS,QYWX_MESSAGE_COUNT, staff_cnt, execute_staff_cnt, execute_rate
+        SELECT HEAD_ID,TASK_DATE_STR,TASK_DATE, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT,
+        STATUS,EFFECT_DAYS,QYWX_MESSAGE_COUNT, staff_cnt, execute_staff_cnt, execute_rate
         FROM uo_qywx_daily_header t
         <where>
             <if test="taskDate != null and taskDate != ''">
@@ -62,75 +63,118 @@
     </select>
 
     <select id="getHeadInfo" resultType="com.linksteady.operate.domain.QywxDailyHeader">
-        SELECT HEAD_ID,TASK_DATE_STR,TASK_DATE, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, STATUS,EFFECT_DAYS,VERSION, push_success_rate, execute_rate, execute_staff_cnt, staff_cnt
-        FROM uo_qywx_daily_header t where HEAD_ID=#{headId}
+        SELECT HEAD_ID,
+               TASK_DATE_STR,
+               TASK_DATE,
+               TOTAL_NUM,
+               SUCCESS_NUM,
+               CONVERT_NUM,
+               CONVERT_RATE,
+               CONVERT_AMOUNT,
+               STATUS,
+               EFFECT_DAYS,
+               VERSION,
+               push_success_rate,
+               execute_rate,
+               execute_staff_cnt,
+               staff_cnt
+        FROM uo_qywx_daily_header t
+        where HEAD_ID = #{headId}
     </select>
 
     <select id="getTargetInfoByGrowthType" resultMap="QywxUserStats">
-        SELECT
-            v2.VALUE growth_type,
-            ucnt
-        FROM
-            ( SELECT growth_type, COUNT ( * ) ucnt FROM uo_qywx_daily_detail WHERE head_id = #{headId} GROUP BY growth_type ) v1
-            RIGHT JOIN ( SELECT CODE, VALUE, ORDER_NO FROM T_DICT WHERE TYPE_CODE = 'GROWTH_TYPE' ) v2 ON v2.code = v1.growth_type
-        ORDER BY
-            v2.order_no desc
+        SELECT v2.VALUE growth_type,
+               ucnt
+        FROM (SELECT growth_type, COUNT(*) ucnt
+              FROM uo_qywx_daily_detail
+              WHERE head_id = #{headId}
+              GROUP BY growth_type) v1
+                 RIGHT JOIN (SELECT CODE, VALUE, ORDER_NO FROM T_DICT WHERE TYPE_CODE = 'GROWTH_TYPE') v2
+                            ON v2.code = v1.growth_type
+        ORDER BY v2.order_no desc
     </select>
 
     <select id="getTargetInfoByGrowthSeriesType" resultMap="QywxUserStats">
-          SELECT
-            v2.VALUE growth_series_type,
-            ucnt
-        FROM
-            ( SELECT growth_series_type, COUNT ( * ) ucnt FROM uo_qywx_daily_detail WHERE head_id =#{headId}  GROUP BY growth_series_type ) v1
-            RIGHT JOIN ( SELECT CODE, VALUE, ORDER_NO FROM T_DICT WHERE TYPE_CODE = 'GROWTH_SERIES_TYPE' ) v2 ON v2.code = v1.growth_series_type
-        ORDER BY
-            v2.order_no desc
+        SELECT v2.VALUE growth_series_type,
+               ucnt
+        FROM (SELECT growth_series_type, COUNT(*) ucnt
+              FROM uo_qywx_daily_detail
+              WHERE head_id = #{headId}
+              GROUP BY growth_series_type) v1
+                 RIGHT JOIN (SELECT CODE, VALUE, ORDER_NO FROM T_DICT WHERE TYPE_CODE = 'GROWTH_SERIES_TYPE') v2
+                            ON v2.code = v1.growth_series_type
+        ORDER BY v2.order_no desc
     </select>
 
     <select id="getTargetInfoBySpu" resultMap="QywxUserStats">
-        select spu_name, ucnt from (
-        select spu_name,count(*) ucnt from uo_qywx_daily_detail where head_id =#{headId} group by spu_name
-        ) t order by ucnt asc
+        select spu_name, ucnt
+        from (
+                 select spu_name, count(*) ucnt from uo_qywx_daily_detail where head_id = #{headId} group by spu_name
+             ) t
+        order by ucnt asc
     </select>
 
     <select id="getTargetInfoByProd" resultMap="QywxUserStats">
-        select rec_prod_name, ucnt from (
-        select rec_prod_name,count(*) ucnt from uo_qywx_daily_detail where head_id =#{headId} and spu_name=#{spuName} group by rec_prod_name
-        ) t order by ucnt asc
+        select rec_prod_name, ucnt
+        from (
+                 select rec_prod_name, count(*) ucnt
+                 from uo_qywx_daily_detail
+                 where head_id = #{headId}
+                   and spu_name = #{spuName}
+                 group by rec_prod_name
+             ) t
+        order by ucnt asc
     </select>
 
     <select id="getTargetInfoByUserValue" resultMap="QywxUserStats">
-        SELECT
-            v2.code user_value,
-            v2.VALUE user_value_label,
-            ucnt
-        FROM
-            ( SELECT user_value, COUNT ( * ) ucnt FROM uo_qywx_daily_detail WHERE head_id = #{headId} GROUP BY user_value ) v1
-            RIGHT JOIN ( SELECT CODE, VALUE, ORDER_NO FROM T_DICT WHERE TYPE_CODE = 'USER_VALUE' ) v2 ON v2.code = v1.user_value
-        ORDER BY
-            v2.order_no desc
+        SELECT v2.code  user_value,
+               v2.VALUE user_value_label,
+               ucnt
+        FROM (SELECT user_value, COUNT(*) ucnt
+              FROM uo_qywx_daily_detail
+              WHERE head_id = #{headId}
+              GROUP BY user_value) v1
+                 RIGHT JOIN (SELECT CODE, VALUE, ORDER_NO FROM T_DICT WHERE TYPE_CODE = 'USER_VALUE') v2
+                            ON v2.code = v1.user_value
+        ORDER BY v2.order_no desc
     </select>
 
     <select id="getTargetInfoMatrix" resultMap="QywxUserStats">
-       select path_active,lifecycle,count(*) ucnt from uo_qywx_daily_detail where head_id =1 and user_value=#{userValue} group by path_active,lifecycle
+        select path_active, lifecycle, count(*) ucnt
+        from uo_qywx_daily_detail
+        where head_id = 1
+          and user_value = #{userValue}
+        group by path_active, lifecycle
     </select>
 
     <select id="getTargetInfoByUser" resultMap="QywxUserStats">
-        select qywx_user_name, ucnt from (
-            select qywx_user_name,count(*) ucnt from uo_qywx_daily_detail where head_id =#{headId} group by qywx_user_name
-            ) t order by ucnt desc
+        select qywx_user_name, ucnt
+        from (
+                 select qywx_user_name, count(*) ucnt
+                 from uo_qywx_daily_detail
+                 where head_id = #{headId}
+                 group by qywx_user_name
+             ) t
+        order by ucnt desc
     </select>
 
     <select id="getTargetInfoByCoupon" resultMap="QywxUserStats">
-        select coupon_min,coupon_deno, ucnt from (
-            select coupon_deno,coupon_min,count(*) ucnt from uo_qywx_daily_detail where head_id =1 group by coupon_deno,coupon_min
-            ) t order by ucnt desc
+        select coupon_min, coupon_deno, ucnt
+        from (
+                 select coupon_deno, coupon_min, count(*) ucnt
+                 from uo_qywx_daily_detail
+                 where head_id = 1
+                 group by coupon_deno, coupon_min
+             ) t
+        order by ucnt desc
     </select>
 
     <update id="updateStatus">
-        update uo_qywx_daily_header set status = #{status},version=version+1
-        where head_id = #{headId} and version=#{version}
+        update uo_qywx_daily_header
+        set status = #{status},
+            version=version + 1
+        where head_id = #{headId}
+          and version = #{version}
     </update>
 
     <update id="updateHeaderPushInfo">
@@ -141,6 +185,25 @@
             </if>
         </set>
         where head_id = #{headId}
+    </update>
+
+    <insert id="insertPushList">
+        insert into uo_qywx_push_list(text_content, push_status, source_code, source_id, qywx_user_id, insert_dt, mp_media_id, mp_appid, mp_title, mp_url)
+        select text_content, 'P', 'D', detail_id, qywx_user_id, now(), #{mediaId}, #{appId}, mp_title, mp_url
+        from uo_qywx_daily_detail
+        where head_id = #{headId}
+    </insert>
+
+    <update id="updatePushList">
+        update uo_qywx_push_list set push_status = t.push_status, msgid = t.msgid, external_contact_ids =
+        t.external_contact_ids, push_date = t.push_date, fail_list = t.fail_list
+        from (
+        values
+            <foreach collection="qywxPushList" item="item" open="(" close=")" separator=",">
+                #{item.sourceId}, #{item.pushStatus}, #{item.msgid}, #{item.externalContactIds}, now(), #{item.failList}
+            </foreach>
+        ) as t(source_id, push_status,msgid, external_contact_ids, push_date, fail_list) where uo_qywx_push_list.source_id =
+        t.source_id
     </update>
 
 </mapper>

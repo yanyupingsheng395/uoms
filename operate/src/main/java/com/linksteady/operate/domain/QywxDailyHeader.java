@@ -36,7 +36,7 @@ public class QywxDailyHeader {
     /**
      * 转化率
      */
-    private Double convertRate;
+    private String convertRate;
 
 
     /**
@@ -84,9 +84,9 @@ public class QywxDailyHeader {
      */
     private String checkDesc;
 
-    private Double pushSuccessRate;
+    private String pushSuccessRate;
 
     private Integer executeStaffCnt;
 
-    private Double executeRate;
+    private String executeRate;
 }

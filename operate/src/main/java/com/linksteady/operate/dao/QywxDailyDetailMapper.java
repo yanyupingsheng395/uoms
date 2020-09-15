@@ -89,4 +89,6 @@ public interface QywxDailyDetailMapper {
     List<Map<String,String>> getTestPushData();
 
     QywxDailyStaffEffect getDailyStaffEffect(Long headId, String qywxUserId);
+
+    List<QywxDailyDetail> getQywxUserListByHeadId(Long headId);
 }

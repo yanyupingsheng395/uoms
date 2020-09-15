@@ -1,6 +1,7 @@
 package com.linksteady.operate.dao;
 
 import com.linksteady.operate.domain.QywxDailyHeader;
+import com.linksteady.operate.domain.QywxPushList;
 import com.linksteady.operate.vo.QywxUserStatsVO;
 import org.apache.ibatis.annotations.Param;
 
@@ -86,4 +87,7 @@ public interface QywxDailyMapper {
                               @Param("effectDays") Long effectDays);
 
 
+    void insertPushList(Long headId, String mediaId, String appId);
+
+    void updatePushList(@Param("qywxPushList") List<QywxPushList> qywxPushList);
 }

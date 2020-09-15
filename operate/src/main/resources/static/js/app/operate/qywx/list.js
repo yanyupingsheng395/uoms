@@ -119,8 +119,8 @@ $("#btn_catch").click(function () {
         return;
     }
     // let status = selected[0].status;
-    // if (status != 'done' && status != 'finished') {
-    //     $MB.n_warning("只有已执行，已结束状态可查看任务效果！");
+    // if (status === 'todo') {
+    //     $MB.n_warning("当前任务状态不支持查看任务效果！");
     //     return;
     // }
     let headId = selected[0].headId;
@@ -354,10 +354,6 @@ function submitData() {
         $MB.n_warning("请先勾选我要推送！");
         return;
     }
-    if($("input[name='pushMethod']:checked").val() === undefined) {
-        $MB.n_warning("请先选择推送方式！");
-        return;
-    }
     $("#btn_push").attr("disabled", true);
     $("#push_msg_modal").modal('hide');
 
@@ -471,13 +467,14 @@ function growthInsight(user_id,head_id)
 
 function getAllQywxUserList(pheadId) {
     $.get("/qywxDaily/getQywxUserList", {headId: pheadId}, function (r) {
+        var code = "";
         $.each(r.data,function (index,value) {
-            $("#qywxUserSelect").append("<option id="+value.qywxUserId+">"+value.qywxUserName+"</option>");
-
-            $("#qywxUserSelect").change(function() {
-                //重新加载数据
-                getUserStrategyList(pheadId);
-            });
-        })
+            code += "<option id="+value.qywxUserId+">"+value.qywxUserName+"</option>";
+        });
+        $("#qywxUserSelect").change(function() {
+            //重新加载数据
+            getUserStrategyList(pheadId);
+        });
+        $("#qywxUserSelect").html('').append(code);
     });
 }

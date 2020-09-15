@@ -147,4 +147,20 @@ public class QywxDailyDetail implements Serializable {
      * 用户生命周期 值参考数据字典 默认为0
      */
     private String lifecycle;
+
+    /**
+     * 小程序标题
+     */
+    private String mpTitle;
+
+    /**
+     * 小程序URL
+     */
+    private String mpUrl;
+
+    /**
+     * 签名
+     */
+    private String qywxMsgSign;
+
 }
