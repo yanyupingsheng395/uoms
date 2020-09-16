@@ -80,10 +80,6 @@ public class UserTaskServiceImpl implements UserTaskService {
         return result;
     }
 
-    public static void main(String[] args) {
-        System.out.println(LocalDate.now().getDayOfWeek().getValue());
-    }
-
     @Override
     public List<Map<String, Object>> getProductData(String userId) {
         return userTaskMapper.getProductData(userId);
