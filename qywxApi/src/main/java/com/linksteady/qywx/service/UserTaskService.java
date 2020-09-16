@@ -1,5 +1,8 @@
 package com.linksteady.qywx.service;
 
+import com.linksteady.qywx.domain.SpuInfo;
+import com.linksteady.qywx.domain.UserBuyHistory;
+
 import java.util.List;
 import java.util.Map;
 
@@ -13,5 +16,12 @@ public interface UserTaskService {
 
     List<Map<String, Object>> getProductData(String userId);
 
-    List<Map<String, Object>> getUserBuyHistory(String userId);
+    List<UserBuyHistory> getUserBuyHistory(String userId);
+
+    /**
+     * 获取当前用户涉及的spu列表
+     */
+    List<SpuInfo> getSpuList(String userId);
+
+    Map<String,String> getUserStatis(String userId);
 }

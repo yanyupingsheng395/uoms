@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.qywx.dao.UserTaskMapper">
+    <resultMap id="userBuyHistoryMap" type="com.linksteady.qywx.domain.UserBuyHistory">
+        <result column="user_id" jdbcType="VARCHAR" property="userId"/>
+        <result column="order_dt" jdbcType="VARCHAR" property="orderDt"/>
+        <result column="spu_id" jdbcType="DECIMAL" property="spuId"/>
+        <result column="spu_name" jdbcType="VARCHAR" property="spuName"/>
+        <result column="product_name" jdbcType="VARCHAR" property="productName"/>
+        <result column="order_fee" jdbcType="DECIMAL" property="orderFee"/>
+        <result column="interval_days" jdbcType="DECIMAL" property="intervalDays"/>
+    </resultMap>
+
+    <resultMap id="spuInfoMap" type="com.linksteady.qywx.domain.SpuInfo">
+        <result column="spu_id" jdbcType="VARCHAR" property="spuId"/>
+        <result column="spu_name" jdbcType="VARCHAR" property="spuName"/>
+    </resultMap>
 
     <select id="getUserTodayStatus" resultType="map">
         with v1 as (
@@ -37,8 +51,25 @@
         select epb_product_id, epb_product_name, priority_no, price, purch_probability, epb_product_url from wp_insight_user_assist where user_id = #{userId}::integer
     </select>
 
-    <select id="getUserBuyHistory" resultType="map">
-        select user_id, to_char(order_dt, 'yyyy年mm月dd日 hh24:mi') order_dt, spu_name, product_name, order_fee, interval_days
-        from wp_insight_user_orderseries where user_id = #{userId}::integer order by order_dt desc
+    <select id="getUserBuyHistory" resultMap="userBuyHistoryMap">
+        select user_id,
+               to_char(order_dt, 'yyyy年mm月dd日 hh24:mi') order_dt,
+               spu_id,
+               spu_name,
+               product_name,
+               order_fee,
+               interval_days
+        from wp_insight_user_orderseries
+        where user_id = #{userId}::integer
+        order by order_dt desc
+    </select>
+
+    <select id="getSpuList" resultMap="spuInfoMap">
+         select distinct
+               spu_id,
+               spu_name
+        from wp_insight_user_orderseries
+        where user_id = #{userId}::integer
+        order by spu_id desc
     </select>
 </mapper>

@@ -1,5 +1,8 @@
 package com.linksteady.qywx.dao;
 
+import com.linksteady.qywx.domain.SpuInfo;
+import com.linksteady.qywx.domain.UserBuyHistory;
+
 import java.util.List;
 import java.util.Map;
 
@@ -8,7 +11,6 @@ import java.util.Map;
  * @date 2020/7/2
  */
 public interface UserTaskMapper {
-
     /**
      * 获取用户今日所处的状态
      * @return
@@ -23,5 +25,7 @@ public interface UserTaskMapper {
 
     List<Map<String, Object>> getProductData(String userId);
 
-    List<Map<String, Object>> getUserBuyHistory(String userId);
+    List<UserBuyHistory> getUserBuyHistory(String userId);
+
+    List<SpuInfo> getSpuList(String userId);
 }

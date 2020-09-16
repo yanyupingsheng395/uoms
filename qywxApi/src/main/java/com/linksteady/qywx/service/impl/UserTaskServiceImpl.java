@@ -2,6 +2,8 @@ package com.linksteady.qywx.service.impl;
 
 import com.google.common.collect.Maps;
 import com.linksteady.qywx.dao.UserTaskMapper;
+import com.linksteady.qywx.domain.SpuInfo;
+import com.linksteady.qywx.domain.UserBuyHistory;
 import com.linksteady.qywx.service.UserTaskService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -49,9 +51,11 @@ public class UserTaskServiceImpl implements UserTaskService {
                     x.put("now_flag", false);
                 }
                 String desc = "";
+                String nextActivityType="";
                 switch (x.get("active_type").toString()) {
                     case "促活节点":
                         desc = "用户刚发生购买不久，后续再购概率很高";
+                        nextActivityType="留存节点";
                         break;
                     case "留存节点":
                         desc = "用户发生购买经过一段时间，且大部分用户会在该阶段再购";
@@ -69,6 +73,7 @@ public class UserTaskServiceImpl implements UserTaskService {
                         break;
                 }
                 x.put("desc", desc);
+                x.put("nextActivityType",nextActivityType);
             }
         }
         // 用户沟通的时间点
@@ -86,7 +91,36 @@ public class UserTaskServiceImpl implements UserTaskService {
     }
 
     @Override
-    public List<Map<String, Object>> getUserBuyHistory(String userId) {
+    public List<UserBuyHistory> getUserBuyHistory(String userId) {
         return userTaskMapper.getUserBuyHistory(userId);
+    }
+
+    @Override
+    public List<SpuInfo> getSpuList(String userId) {
+        return userTaskMapper.getSpuList(userId);
+    }
+
+    @Override
+    public Map<String, String> getUserStatis(String userId) {
+        Map<String,String> result=Maps.newHashMap();
+        result.put("kpi11","购买金额1000元");
+        result.put("kpi12","超过了5%的用户");
+
+        result.put("kpi13","平均每次购买花费200元");
+        result.put("kpi14","超过了5%的用户");
+
+        result.put("kpi21","在商城购买了X次");
+        result.put("kpi22","超过了5%的用户");
+
+        result.put("kpi23","平均X天购买一次");
+        result.put("kpi24","超过了5%的用户");
+
+        result.put("kpi31","在商城的折扣订单比重X%");
+        result.put("kpi32","超过了5%的用户");
+
+        result.put("kpi33","在商城购买的平均折扣率X%");
+        result.put("kpi34","超过了5%的用户");
+
+       return result;
     }
 }
