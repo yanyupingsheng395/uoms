@@ -30,7 +30,7 @@
     </select>
 
     <select id="getCouponListOfProduct" resultType="map">
-        select coupon_id, coupon_deno, coupon_min, coupon_url, epb_product_name, to_char(coupon_valid_end, 'yyyymmdd') coupon_valid_end from wp_insight_user_assist where user_id = #{userId}::integer order by priority_no asc
+        select coupon_id, coupon_deno, coupon_min, coupon_url, epb_product_name, to_char(coupon_valid_end, 'yyyymmdd') coupon_valid_end from wp_insight_user_assist where user_id = #{userId}::integer and epb_product_id = #{productId}::bigint order by priority_no asc
     </select>
 
     <select id="getProductData" resultType="map">

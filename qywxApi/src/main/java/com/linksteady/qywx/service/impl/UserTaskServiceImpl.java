@@ -5,6 +5,7 @@ import com.linksteady.qywx.dao.UserTaskMapper;
 import com.linksteady.qywx.service.UserTaskService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -72,11 +73,15 @@ public class UserTaskServiceImpl implements UserTaskService {
         }
         // 用户沟通的时间点
         List<Map<String, String>> userTimeList = userTaskMapper.getUserTimes(userId);
-        List<Map<String, String>> couponList = userTaskMapper.getCouponListOfProduct(userId);
+        List<Map<String, String>> couponList = userTaskMapper.getCouponListOfProduct(userId, productId);
         result.put("userTodayStatus", userTodayStatusList);
         result.put("userTimeList", userTimeList);
         result.put("couponList", couponList);
         return result;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(LocalDate.now().getDayOfWeek().getValue());
     }
 
     @Override

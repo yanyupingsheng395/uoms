@@ -19,7 +19,7 @@ public interface UserTaskMapper {
 
     List<Map<String, String>> getUserTimes(String userId);
 
-    List<Map<String, String>> getCouponListOfProduct(String userId);
+    List<Map<String, String>> getCouponListOfProduct(String userId, String productId);
 
     List<Map<String, Object>> getProductData(String userId);
 
