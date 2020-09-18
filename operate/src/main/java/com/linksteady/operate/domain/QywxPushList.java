@@ -16,7 +16,7 @@ public class QywxPushList {
     private String sourceCode;
     private long sourceId;
     private Date pushDate;
-    private String qywxUserId;
+    private String followUserId;
     private Date insertDt;
     private String msgid;
     private String mpTitle;

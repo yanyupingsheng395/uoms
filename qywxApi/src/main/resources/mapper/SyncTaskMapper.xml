@@ -61,12 +61,13 @@
                 state,
                 user_phone,
                 add_date,
-                insert_dt
+                insert_dt,
+                name
             ) values
         <foreach collection="externalContactList" item="item" index="index" separator=",">
-            (#{item.followerUserId},#{item.externalUserid},#{item.state},#{item.remark},#{item.addDate},now())
+            (#{item.followerUserId},#{item.externalUserid},#{item.state},#{item.remark},#{item.addDate},now(),#{item.name})
         </foreach>
-        ON CONFLICT(follow_user_id,external_contact_id) DO UPDATE set user_phone=#{item.remark}
+        ON CONFLICT(follow_user_id,external_contact_id) DO UPDATE set user_phone=#{item.remark},name=#{item.name}
     </insert>
 
     <delete id="deleteExternalContact">
@@ -76,15 +77,16 @@
     <insert id="saveExternalContact">
         insert into uo_qywx_external_contact_list
         (
-        follow_user_id,
-        external_contact_id,
-        state,
-        user_phone,
-        add_date,
-        insert_dt
+            follow_user_id,
+            external_contact_id,
+            state,
+            user_phone,
+            add_date,
+            insert_dt,
+            name
         ) values
-         (#{item.followerUserId},#{item.externalUserid},#{item.state},#{item.remark},#{item.addDate},now())
-        ON CONFLICT(follow_user_id,external_contact_id) DO UPDATE set user_phone=#{item.remark}
+         (#{item.followerUserId},#{item.externalUserid},#{item.state},#{item.remark},#{item.addDate},now(),#{item.name})
+        ON CONFLICT(follow_user_id,external_contact_id) DO UPDATE set user_phone=#{item.remark},name=#{item.name}
     </insert>
 
 </mapper>

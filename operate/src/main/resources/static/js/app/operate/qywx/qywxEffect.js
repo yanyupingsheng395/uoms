@@ -2,17 +2,17 @@ $(function () {
     getTaskDt();
     makePushChart();
     //加载所有的企业微信成员
-    getAllQywxUserList();
+    getAllFollowUserList();
     getEffectPersonalPage();
 
-    $("#qywxUserIdSelect").change(function() {
+    $("#followUserIdSelect").change(function() {
         getUserStatics($(this).find("option:selected").val());
     });
 });
 
-function getUserStatics(qywxUserId) {
-    if(qywxUserId !== '') {
-        $.get("/qywxDaily/getUserStatics", {headId: headId, qywxUserId:qywxUserId}, function (r) {
+function getUserStatics(followUserId) {
+    if(followUserId !== '') {
+        $.get("/qywxDaily/getUserStatics", {headId: headId, followUserId:followUserId}, function (r) {
             console.log(r);
             var data = r.data;
             $("#msgNum").text(data['msgNum']);
@@ -37,10 +37,10 @@ function getTaskDt() {
     });
 }
 
-function getAllQywxUserList() {
-    $.get("/qywxDaily/getQywxUserList", {headId: headId}, function (r) {
+function getAllFollowUserList() {
+    $.get("/qywxDaily/getFollowUserList", {headId: headId}, function (r) {
         $.each(r.data,function (index,value) {
-            $("#qywxUserIdSelect").append("<option id="+value.qywxUserId+">"+value.qywxUserName+"</option>");
+            $("#followUserIdSelect").append("<option id="+value.followUserId+">"+value.followUserName+"</option>");
         })
     });
 }
@@ -156,7 +156,7 @@ function getEffectPersonalPage() {
                 pageNum: (params.offset / params.limit) + 1,
                 param: {
                     headId: headId,
-                    qywxUserId: $("#qywxUserIdSelect").find("option:selected").val(),
+                    followUserId: $("#followUserIdSelect").find("option:selected").val(),
                 }
             };
         },
@@ -165,7 +165,7 @@ function getEffectPersonalPage() {
                 field: 'userId',
                 title: '用户ID'
             },{
-                field: 'qywxUserName',
+                field: 'followUserName',
                 title: '推送成员'
             }, {
                 field: 'pushPeriod',

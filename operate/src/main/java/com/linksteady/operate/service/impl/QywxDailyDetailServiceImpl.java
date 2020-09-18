@@ -3,7 +3,6 @@ package com.linksteady.operate.service.impl;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.linksteady.common.service.ConfigService;
-import com.linksteady.operate.dao.CouponMapper;
 import com.linksteady.operate.dao.QywxDailyCouponMapper;
 import com.linksteady.operate.dao.QywxDailyDetailMapper;
 import com.linksteady.operate.domain.QywxDailyDetail;
@@ -11,12 +10,10 @@ import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.QywxDailyDetailService;
 import com.linksteady.operate.service.ShortUrlService;
 import com.linksteady.operate.thread.TransQywxDailyContentThread;
+import com.linksteady.operate.vo.FollowUserVO;
 import com.linksteady.operate.vo.GroupCouponVO;
-import com.linksteady.operate.vo.QywxUserVO;
 import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -129,28 +126,28 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
     }
 
     @Override
-    public List<QywxDailyDetail> getQywxDetailList(Long headId, int limit, int offset, String qywxUserId) {
-        return qywxDailyDetailMapper.getQywxDetailList(headId, limit, offset, qywxUserId);
+    public List<QywxDailyDetail> getQywxDetailList(Long headId, int limit, int offset, String followUserId) {
+        return qywxDailyDetailMapper.getQywxDetailList(headId, limit, offset, followUserId);
     }
 
     @Override
-    public int getQywxDetailCount(Long headId, String qywxUserId) {
-        return qywxDailyDetailMapper.getQywxDetailCount(headId, qywxUserId);
+    public int getQywxDetailCount(Long headId, String followUserId) {
+        return qywxDailyDetailMapper.getQywxDetailCount(headId, followUserId);
     }
 
     @Override
-    public List<QywxDailyDetail> getConversionList(Long headId, int limit, int offset, String qywxUserId) {
-        return qywxDailyDetailMapper.getConversionList(headId, limit, offset, qywxUserId);
+    public List<QywxDailyDetail> getConversionList(Long headId, int limit, int offset, String followUserId) {
+        return qywxDailyDetailMapper.getConversionList(headId, limit, offset, followUserId);
     }
 
     @Override
-    public int getConversionCount(Long headId, String qywxUserId) {
-        return qywxDailyDetailMapper.getConversionCount(headId, qywxUserId);
+    public int getConversionCount(Long headId, String followUserId) {
+        return qywxDailyDetailMapper.getConversionCount(headId, followUserId);
     }
 
     @Override
-    public List<QywxUserVO> getQywxUserList(Long headId) {
-        return qywxDailyDetailMapper.getQywxUserList(headId);
+    public List<FollowUserVO> getFollowUserList(Long headId) {
+        return qywxDailyDetailMapper.getFollowUserList(headId);
     }
 
     @Override

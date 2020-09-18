@@ -31,14 +31,14 @@
         <result column="IS_COUPON" jdbcType="DECIMAL" property="isCoupon"></result>
         <result column="GROUP_ID" jdbcType="DECIMAL" property="groupId"></result>
         <result column="QYWX_CONTRACT_ID" jdbcType="VARCHAR" property="qywxContractId"></result>
-        <result column="QYWX_USER_ID" jdbcType="VARCHAR" property="qywxUserId"></result>
-        <result column="QYWX_USER_NAME" jdbcType="VARCHAR" property="qywxUserName"></result>
+        <result column="FOLLOW_USER_ID" jdbcType="VARCHAR" property="followUserId"></result>
+        <result column="FOLLOW_USER_NAME" jdbcType="VARCHAR" property="followUserName"></result>
         <result column="LIFECYCLE" jdbcType="VARCHAR" property="lifecycle"></result>
     </resultMap>
 
-    <resultMap id="qywxUserResult" type="com.linksteady.operate.vo.QywxUserVO">
-        <result column="QYWX_USER_ID" jdbcType="VARCHAR" property="qywxUserId"></result>
-        <result column="QYWX_USER_NAME" jdbcType="VARCHAR" property="qywxUserName"></result>
+    <resultMap id="followUserResult" type="com.linksteady.operate.vo.FollowUserVO">
+        <result column="FOLLOW_USER_ID" jdbcType="VARCHAR" property="followUserId"></result>
+        <result column="FOLLOW_USER_NAME" jdbcType="VARCHAR" property="followUserName"></result>
     </resultMap>
 
     <select id="getUserCount" resultType="int">
@@ -55,8 +55,8 @@
              T2.DETAIL_ID,
              T2.USER_ID,
              T2.USER_PHONE,
-             T2.qywx_user_id,
-             T2.qywx_user_name,
+             T2.follow_user_id,
+             T2.follow_user_name,
              T2.qywx_contract_id,
              msg.text_content,
              T2.REC_PROD_ID,
@@ -109,8 +109,8 @@
         FROM
               uo_qywx_daily_detail
         WHERE head_id=#{headId}
-        <if test="qywxUserId != '' and qywxUserId != null">
-            and QYWX_USER_ID = #{qywxUserId}
+        <if test="followUserId != '' and followUserId != null">
+            and FOLLOW_USER_ID = #{followUserId}
         </if>
     </select>
 
@@ -120,8 +120,8 @@
              T2.DETAIL_ID,
              T2.USER_ID,
              T2.USER_PHONE,
-             T2.qywx_user_id,
-             T2.qywx_user_name,
+             T2.follow_user_id,
+             T2.follow_user_name,
              T2.qywx_contract_id,
              T2.text_content,
              T2.REC_PROD_ID,
@@ -133,8 +133,8 @@
          FROM
               uo_qywx_daily_detail T2
          WHERE  T2.HEAD_ID = #{headId}
-        <if test="qywxUserId != '' and qywxUserId != null">
-            and T2.QYWX_USER_ID = #{qywxUserId}
+        <if test="followUserId != '' and followUserId != null">
+            and T2.FOLLOW_USER_ID = #{followUserId}
         </if>
          ORDER BY T2.detail_id DESC
          limit #{limit} offset #{offset}
@@ -146,8 +146,8 @@
         FROM
         uo_qywx_daily_detail
         WHERE head_id=#{headId}
-        <if test="qywxUserId != '' and qywxUserId != null">
-            and QYWX_USER_ID = #{qywxUserId}
+        <if test="followUserId != '' and followUserId != null">
+            and FOLLOW_USER_ID = #{followUserId}
         </if>
         and is_conversion='1'
     </select>
@@ -158,8 +158,8 @@
         T2.DETAIL_ID,
         T2.USER_ID,
         T2.USER_PHONE,
-        T2.qywx_user_id,
-        T2.qywx_user_name,
+        T2.follow_user_id,
+        T2.follow_user_name,
         T2.qywx_contract_id,
         T2.text_content,
         T2.REC_PROD_ID,
@@ -170,24 +170,24 @@
         FROM
         uo_qywx_daily_detail T2
         WHERE  T2.HEAD_ID = #{headId}
-        <if test="qywxUserId != '' and qywxUserId != null">
-            and T2.QYWX_USER_ID = #{qywxUserId}
+        <if test="followUserId != '' and followUserId != null">
+            and T2.FOLLOW_USER_ID = #{followUserId}
         </if>
         and t2.is_conversion='1'
         ORDER BY T2.detail_id DESC
         limit #{limit} offset #{offset}
     </select>
 
-    <select id="getQywxUserList" resultMap="qywxUserResult">
-        select distinct qywx_user_id,qywx_user_name from uo_qywx_daily_detail where head_id=#{headId}
+    <select id="getFollowUserList" resultMap="followUserResult">
+        select distinct follow_user_id,follow_user_name from uo_qywx_daily_detail where head_id=#{headId} order by follow_user_id asc
     </select>
 
     <select id="getTestPushData" resultType="map">
-      select qywx_contract_id,qywx_user_id,text_content from uo_qywx_push_list WHERE PUSH_id=1
+      select qywx_contract_id,follow_user_id,text_content from uo_qywx_push_list WHERE PUSH_id=1
     </select>
 
     <select id="getDailyStaffEffect" resultType="com.linksteady.operate.domain.QywxDailyStaffEffect">
-        select head_id, qywx_user_id, qywx_user_name, msg_num, execute_msg_num, cover_num, execute_cover_num, convert_num, convert_amount, convert_rate, convert_spu_num, convert_spu_amount, convert_spu_rate, stat_date from uo_qywx_daily_staff_effect where head_id = #{headId} and qywx_user_id = #{qywxUserId}
+        select head_id, follow_user_id, follow_user_name, msg_num, execute_msg_num, cover_num, execute_cover_num, convert_num, convert_amount, convert_rate, convert_spu_num, convert_spu_amount, convert_spu_rate, stat_date from uo_qywx_daily_staff_effect where head_id = #{headId} and follow_user_id = #{followUserId}
     </select>
 
     <select id="getQywxUserListByHeadId" resultMap="baseResult">

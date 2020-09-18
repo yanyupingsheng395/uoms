@@ -2,7 +2,7 @@ package com.linksteady.operate.dao;
 
 import com.linksteady.operate.domain.QywxDailyDetail;
 import com.linksteady.operate.domain.QywxDailyStaffEffect;
-import com.linksteady.operate.vo.QywxUserVO;
+import com.linksteady.operate.vo.FollowUserVO;
 import io.lettuce.core.dynamic.annotation.Param;
 
 import java.util.List;
@@ -50,7 +50,7 @@ public interface QywxDailyDetailMapper {
      * @param headId
      * @return
      */
-    int getQywxDetailCount(@Param("headId") Long headId,@Param("qywxUserId") String qywxUserId);
+    int getQywxDetailCount(@Param("headId") Long headId,@Param("followUserId") String followUserId);
 
     /**
      * 分页获取当header_id下选中的用户名单
@@ -62,14 +62,14 @@ public interface QywxDailyDetailMapper {
     List<QywxDailyDetail> getQywxDetailList(@Param("headId") Long headId,
                                             @Param("limit") int limit,
                                             @Param("offset") int offset,
-                                            @Param("qywxUserId") String qywxUserId);
+                                            @Param("followUserId") String followUserId);
 
     /**
      * 获取当前header_id下转化的用户列表
      * @param headId
      * @return
      */
-    int getConversionCount(@Param("headId") Long headId,@Param("qywxUserId") String qywxUserId);
+    int getConversionCount(@Param("headId") Long headId,@Param("followUserId") String followUserId);
 
     /**
      * 分页获取当header_id下转化的用户明细
@@ -81,14 +81,14 @@ public interface QywxDailyDetailMapper {
     List<QywxDailyDetail> getConversionList(@Param("headId") Long headId,
                                             @Param("limit") int limit,
                                             @Param("offset") int offset,
-                                            @Param("qywxUserId") String qywxUserId);
+                                            @Param("followUserId") String followUserId);
 
-    List<QywxUserVO> getQywxUserList(Long headId);
+    List<FollowUserVO> getFollowUserList(Long headId);
 
 
     List<Map<String,String>> getTestPushData();
 
-    QywxDailyStaffEffect getDailyStaffEffect(Long headId, String qywxUserId);
+    QywxDailyStaffEffect getDailyStaffEffect(Long headId, String followUserId);
 
     List<QywxDailyDetail> getQywxUserListByHeadId(Long headId);
 }

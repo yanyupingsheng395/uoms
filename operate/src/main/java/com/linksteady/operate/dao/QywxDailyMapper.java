@@ -87,7 +87,7 @@ public interface QywxDailyMapper {
                               @Param("effectDays") Long effectDays);
 
 
-    void insertPushList(Long headId, String mediaId, String appId);
+    void insertPushList(QywxPushList qywxPushList);
 
-    void updatePushList(@Param("qywxPushList") List<QywxPushList> qywxPushList);
+    void updatePushList(@Param("pushId") Long pushId,String status,String msgId,String faildList,String remark);
 }
