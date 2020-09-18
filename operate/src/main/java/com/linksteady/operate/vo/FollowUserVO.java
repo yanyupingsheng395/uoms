@@ -6,15 +6,15 @@ import lombok.Data;
  * 企业微信成员
  */
 @Data
-public class QywxUserVO {
+public class FollowUserVO {
 
     /**
      * 对应企业微信成员ID
      */
-    private String qywxUserId;
+    private String followUserId;
 
     /**
      * 对应企业微信成员名称
      */
-    private String qywxUserName;
+    private String followUserName;
 }

@@ -12,8 +12,8 @@ import java.util.Date;
 public class QywxDailyStaffEffect {
 
     private long headId;
-    private String qywxUserId;
-    private String qywxUserName;
+    private String followUserId;
+    private String followUserName;
     private long msgNum;
     private long executeMsgNum;
     private long coverNum;

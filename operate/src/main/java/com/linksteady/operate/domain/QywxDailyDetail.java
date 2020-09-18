@@ -136,12 +136,12 @@ public class QywxDailyDetail implements Serializable {
     /**
      * 对应企业微信成员ID
      */
-    private String qywxUserId;
+    private String followUserId;
 
     /**
      * 对应企业微信成员名称
      */
-    private String qywxUserName;
+    private String followUserName;
 
     /**
      * 用户生命周期 值参考数据字典 默认为0

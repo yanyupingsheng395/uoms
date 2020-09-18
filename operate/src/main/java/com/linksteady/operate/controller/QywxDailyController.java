@@ -4,7 +4,6 @@ import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.QywxMessage;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.common.domain.enums.ConfigEnum;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.domain.QywxDailyDetail;
@@ -12,10 +11,9 @@ import com.linksteady.operate.domain.QywxDailyHeader;
 import com.linksteady.operate.domain.QywxDailyStaffEffect;
 import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.*;
-import com.linksteady.operate.vo.QywxUserVO;
+import com.linksteady.operate.vo.FollowUserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -171,9 +169,9 @@ public class QywxDailyController {
         int limit = request.getLimit();
         int offset = request.getOffset();
         Long headId = Long.parseLong(request.getParam().get("headId"));
-        String qywxUserId=request.getParam().get("qywxUserId");
-        List<QywxDailyDetail> dataList = qywxDailyDetailService.getQywxDetailList(headId,limit, offset,qywxUserId);
-        int count = qywxDailyDetailService.getQywxDetailCount(headId,qywxUserId);
+        String followUserId=request.getParam().get("followUserId");
+        List<QywxDailyDetail> dataList = qywxDailyDetailService.getQywxDetailList(headId,limit, offset,followUserId);
+        int count = qywxDailyDetailService.getQywxDetailCount(headId,followUserId);
         return ResponseBo.okOverPaging(null, count, dataList);
     }
 
@@ -257,9 +255,9 @@ public class QywxDailyController {
         int limit = request.getLimit();
         int offset = request.getOffset();
         Long headId = Long.parseLong(request.getParam().get("headId"));
-        String qywxUserId=request.getParam().get("qywxUserId");
-        List<QywxDailyDetail> dataList = qywxDailyDetailService.getConversionList(headId,limit, offset,qywxUserId);
-        int count = qywxDailyDetailService.getConversionCount(headId,qywxUserId);
+        String followUserId=request.getParam().get("followUserId");
+        List<QywxDailyDetail> dataList = qywxDailyDetailService.getConversionList(headId,limit, offset,followUserId);
+        int count = qywxDailyDetailService.getConversionCount(headId,followUserId);
         return ResponseBo.okOverPaging(null, count, dataList);
     }
 
@@ -268,9 +266,9 @@ public class QywxDailyController {
      *
      * @return
      */
-    @GetMapping("/getQywxUserList")
-    public ResponseBo getQywxUserList(Long headId) {
-        List<QywxUserVO> dataList = qywxDailyDetailService.getQywxUserList(headId);
+    @GetMapping("/getFollowUserList")
+    public ResponseBo getFollowUserList(Long headId) {
+        List<FollowUserVO> dataList = qywxDailyDetailService.getFollowUserList(headId);
         return ResponseBo.okWithData(null, dataList);
     }
 
@@ -338,8 +336,8 @@ public class QywxDailyController {
     }
 
     @GetMapping("/getUserStatics")
-    public ResponseBo getUserStatics(Long headId, String qywxUserId) {
-        QywxDailyStaffEffect qywxDailyStaffEffect = qywxDailyService.getDailyStaffEffect(headId, qywxUserId);
+    public ResponseBo getUserStatics(Long headId, String followUserId) {
+        QywxDailyStaffEffect qywxDailyStaffEffect = qywxDailyService.getDailyStaffEffect(headId, followUserId);
         return ResponseBo.okWithData(null, qywxDailyStaffEffect);
     }
 

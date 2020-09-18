@@ -160,7 +160,7 @@ $("#btn_insight").click(function () {
             setStep(status,taskDate);
 
             //加载当前任务所涉及的成员
-            getAllQywxUserList(headId);
+            getAllFollowUserList(headId);
 
             getUserStrategyList(headId);
 
@@ -396,7 +396,7 @@ function getUserStrategyList(pheadId) {
                 pageNum: (params.offset / params.limit) + 1,
                 param: {
                     headId: pheadId,
-                    qywxUserId: $("#qywxUserSelect").find("option:selected").val()
+                    followUserId: $("#followUserSelect").find("option:selected").val()
                 }
             };
         },
@@ -409,7 +409,7 @@ function getUserStrategyList(pheadId) {
                 }
             },
             {
-                field: 'qywxUserName',
+                field: 'followUserName',
                 title: '推送消息的成员',
                 align: "center",
             },
@@ -465,16 +465,16 @@ function growthInsight(user_id,head_id)
     });
 }
 
-function getAllQywxUserList(pheadId) {
-    $.get("/qywxDaily/getQywxUserList", {headId: pheadId}, function (r) {
+function getAllFollowUserList(pheadId) {
+    $.get("/qywxDaily/getFollowUserList", {headId: pheadId}, function (r) {
         var code = "";
         $.each(r.data,function (index,value) {
-            code += "<option id="+value.qywxUserId+">"+value.qywxUserName+"</option>";
+            code += "<option id="+value.followUserId+">"+value.followUserName+"</option>";
         });
-        $("#qywxUserSelect").change(function() {
+        $("#followUserSelect").change(function() {
             //重新加载数据
             getUserStrategyList(pheadId);
         });
-        $("#qywxUserSelect").html('').append(code);
+        $("#followUserSelect").html('').append(code);
     });
 }

@@ -51,5 +51,5 @@ public interface QywxDailyService {
      */
     Map<String, Object> getPushEffectChange(Long headId);
 
-    QywxDailyStaffEffect getDailyStaffEffect(Long headId, String qywxUserId);
+    QywxDailyStaffEffect getDailyStaffEffect(Long headId, String followUserId);
 }

@@ -1,7 +1,7 @@
 package com.linksteady.operate.service;
 
 import com.linksteady.operate.domain.QywxDailyDetail;
-import com.linksteady.operate.vo.QywxUserVO;
+import com.linksteady.operate.vo.FollowUserVO;
 
 import java.util.List;
 import java.util.Map;
@@ -25,14 +25,14 @@ public interface QywxDailyDetailService {
      * @param headId
      * @return
      */
-    List<QywxDailyDetail> getQywxDetailList(Long headId, int limit, int offset, String qywxUserId);
+    List<QywxDailyDetail> getQywxDetailList(Long headId, int limit, int offset, String followUserId);
 
     /**
      * 推送列表记录数
      * @param headId
      * @return
      */
-    int getQywxDetailCount(Long headId,String qywxUserId);
+    int getQywxDetailCount(Long headId,String followUserId);
 
 
     /**
@@ -42,20 +42,20 @@ public interface QywxDailyDetailService {
      * @param headId
      * @return
      */
-    List<QywxDailyDetail> getConversionList(Long headId, int limit, int offset, String qywxUserId);
+    List<QywxDailyDetail> getConversionList(Long headId, int limit, int offset, String followUserId);
 
     /**
      * 转化记录数
      * @param headId
      * @return
      */
-    int getConversionCount(Long headId,String qywxUserId);
+    int getConversionCount(Long headId,String followUserId);
 
 
     /**
      * 获取微信企业成员列表
      */
-    List<QywxUserVO> getQywxUserList(Long headId);
+    List<FollowUserVO> getFollowUserList(Long headId);
 
     /**
      * 获取推送的测试数据

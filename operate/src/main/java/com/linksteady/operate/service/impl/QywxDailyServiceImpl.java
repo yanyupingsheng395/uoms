@@ -249,16 +249,15 @@ public class QywxDailyServiceImpl implements QywxDailyService {
         Long headId = qywxDailyHeader.getHeadId();
         //更新效果计算天数到头表
         qywxDailyMapper.updateHeaderPushInfo(headId, effectDays);
-        //按导购和消息分组 (qywx_user_id,qywx_msg_sign)
+        //按导购和消息分组 (follow_user_id,qywx_msg_sign)
         List<QywxDailyDetail> userList = qywxDailyDetailMapper.getQywxUserListByHeadId(headId);
         // 写入push_list
         String mediaId = qywxMdiaService.getMminiprogramMediaId();
         String appId = configService.getValueByName(ConfigEnum.qywxMiniProgramAppId.getKeyCode());
-        qywxDailyMapper.insertPushList(headId, mediaId, appId);
-        List<QywxPushList> qywxPushList = Lists.newArrayList();
-        Map<String, List<QywxDailyDetail>> qywxUserIdList = userList.stream().collect(Collectors.groupingBy(QywxDailyDetail::getQywxUserId));
-        qywxUserIdList.entrySet().forEach(x -> {
-            String qywxUserId = x.getKey();
+
+        Map<String, List<QywxDailyDetail>> followUserIdList = userList.stream().collect(Collectors.groupingBy(QywxDailyDetail::getFollowUserId));
+        followUserIdList.entrySet().forEach(x -> {
+            String followUserId = x.getKey();
             List<QywxDailyDetail> qywxDailyDetails = x.getValue();
             // 推送消息
             Map<String, List<QywxDailyDetail>> signUserList = qywxDailyDetails.stream().collect(Collectors.groupingBy(QywxDailyDetail::getQywxMsgSign));
@@ -268,7 +267,20 @@ public class QywxDailyServiceImpl implements QywxDailyService {
                 if (lastUserList.size() <= pageSize) {
                     log.info("当前推送数据量<=10000");
                     if(lastUserList.size() > 0) {
-                        pushQywxMsg(lastUserList, qywxUserId, qywxPushList);
+                        //获取逗号分割的外部联系人ID列表
+                        List<String> contactIdList=lastUserList.stream().map(QywxDailyDetail::getQywxContractId).collect(Collectors.toList());
+                        QywxPushList qywxPushList=new QywxPushList();
+                        qywxPushList.setTextContent(lastUserList.get(0).getTextContent());
+                        qywxPushList.setMpTitle(lastUserList.get(0).getMpTitle());
+                        qywxPushList.setMpUrl(lastUserList.get(0).getMpUrl());
+                        qywxPushList.setMpMediaId(mediaId);
+                        qywxPushList.setMpAppid(appId);
+                        qywxPushList.setExternalContactIds(StringUtils.join(contactIdList,","));
+                        qywxPushList.setFollowUserId(followUserId);
+                        qywxPushList.setSourceId(lastUserList.get(0).getDetailId());
+                        qywxDailyMapper.insertPushList(qywxPushList);
+                        //推送并更新状态
+                        pushQywxMsg(qywxPushList,contactIdList);
                     }
                 } else {
                     int totalSize = lastUserList.size();
@@ -280,60 +292,83 @@ public class QywxDailyServiceImpl implements QywxDailyService {
                         log.info("当前文本推送数据页[{}]", start + ":" + end);
                         List<QywxDailyDetail> tmpUserList = lastUserList.subList(start, end);
                         if(tmpUserList.size() > 0) {
-                            pushQywxMsg(tmpUserList, qywxUserId, qywxPushList);
+                            //获取逗号分割的外部联系人ID列表
+                            List<String> contactIdList=tmpUserList.stream().map(QywxDailyDetail::getQywxContractId).collect(Collectors.toList());
+                            String contactIds=StringUtils.join(contactIdList,",");
+                            QywxPushList qywxPushList=new QywxPushList();
+                            qywxPushList.setTextContent(tmpUserList.get(0).getTextContent());
+                            qywxPushList.setMpTitle(tmpUserList.get(0).getMpTitle());
+                            qywxPushList.setMpUrl(tmpUserList.get(0).getMpUrl());
+                            qywxPushList.setMpMediaId(mediaId);
+                            qywxPushList.setMpAppid(appId);
+                            qywxPushList.setExternalContactIds(contactIds);
+                            qywxPushList.setFollowUserId(followUserId);
+                            qywxPushList.setSourceId(tmpUserList.get(0).getDetailId());
+                            qywxDailyMapper.insertPushList(qywxPushList);
+                            //推送并更新状态
+                            pushQywxMsg(qywxPushList,contactIdList);
                         }
                     }
                 }
             });
         });
-        if (qywxPushList.size() > 0) {
-            qywxDailyMapper.updatePushList(qywxPushList);
-        }
     }
 
     /**
      * 推送企业微信消息
      *
-     * @param tmpUserList
-     * @param qywxUserId
-     * @param qywxPushList
+     * @param qywxPushList (待推送的对象)
      */
-    private void pushQywxMsg(List<QywxDailyDetail> tmpUserList, String qywxUserId, List<QywxPushList> qywxPushList) {
-        String mediaId = qywxMdiaService.getMminiprogramMediaId();
-        String appId = configService.getValueByName(ConfigEnum.qywxMiniProgramAppId.getKeyCode());
-        String msgContent = tmpUserList.get(0).getTextContent();
-        String mpTitle = tmpUserList.get(0).getMpTitle();
-        String mpUrl = tmpUserList.get(0).getMpUrl();
+    private void pushQywxMsg(QywxPushList qywxPushList,List<String> contactIdList) {
+        if(null==contactIdList||contactIdList.size()==0)
+        {
+            qywxDailyMapper.updatePushList(qywxPushList.getPushId(),"F","","","推送列表为空");
+            return;
+        }
+
+        String msgContent = qywxPushList.getTextContent();
+        String mpTitle = qywxPushList.getMpTitle();
+        String mpUrl = qywxPushList.getMpUrl();
+        String mediaId =qywxPushList.getMpMediaId();
+        String appId = qywxPushList.getMpAppid();
+
+        boolean flag=true;
+        QywxMessage qywxMessage = new QywxMessage();
+
         if (StringUtils.isNotEmpty(msgContent)) {
-            QywxMessage qywxMessage = new QywxMessage();
             qywxMessage.setText(msgContent);
+            flag=false;
+        }
+        if(StringUtils.isNotEmpty(mpTitle))
+        {
             qywxMessage.setMpTitle(mpTitle);
             qywxMessage.setMpPicMediaId(mediaId);
             qywxMessage.setMpAppid(appId);
             qywxMessage.setMpPage(mpUrl);
-            List<String> externalContactList = tmpUserList.stream().map(QywxDailyDetail::getQywxContractId).collect(Collectors.toList());
-            String result = qywxMessageService.pushQywxMessage(qywxMessage, qywxUserId, externalContactList);
+            flag=false;
+        }
+
+        //消息中至少有文本、小程序中的任何一个，才进行推送
+        if(flag)
+        {
+            qywxDailyMapper.updatePushList(qywxPushList.getPushId(),"F","","","消息为空");
+
+        }else
+        {
+            String result = qywxMessageService.pushQywxMessage(qywxMessage, qywxPushList.getFollowUserId(), contactIdList);
             log.info("日运营企微：推送结果【{}】", result);
             JSONObject jsonObject = JSON.parseObject(result);
             String msgId = jsonObject.getString("msg");
             String code = jsonObject.getString("code");
             String failList = jsonObject.getString("data");
-            tmpUserList.stream().forEach(k -> {
-                QywxPushList tmp = new QywxPushList();
-                tmp.setPushDate(new Date());
-                tmp.setExternalContactIds(StringUtils.join(externalContactList, ","));
-                tmp.setSourceId(k.getDetailId());
-                if (StringUtils.isNotEmpty(code)) {
-                    if (code.equalsIgnoreCase("200")) {
-                        tmp.setMsgid(msgId);
-                        tmp.setPushStatus("S");
-                    } else {
-                        tmp.setPushStatus("F");
-                        tmp.setFailList(failList);
-                    }
-                }
-                qywxPushList.add(tmp);
-            });
+
+            if(StringUtils.isNotEmpty(code)&&code.equalsIgnoreCase("200"))
+            {
+                qywxDailyMapper.updatePushList(qywxPushList.getPushId(),"S",msgId,failList,"推送成功");
+            }else
+            {
+                qywxDailyMapper.updatePushList(qywxPushList.getPushId(),"F","","","调用企业微信接口失败");
+            }
         }
     }
 
@@ -407,8 +442,8 @@ public class QywxDailyServiceImpl implements QywxDailyService {
     }
 
     @Override
-    public QywxDailyStaffEffect getDailyStaffEffect(Long headId, String qywxUserId) {
-        return qywxDailyDetailMapper.getDailyStaffEffect(headId, qywxUserId);
+    public QywxDailyStaffEffect getDailyStaffEffect(Long headId, String followUserId) {
+        return qywxDailyDetailMapper.getDailyStaffEffect(headId, followUserId);
     }
 
 }

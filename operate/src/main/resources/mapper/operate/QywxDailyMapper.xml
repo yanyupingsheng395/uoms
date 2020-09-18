@@ -187,23 +187,41 @@
         where head_id = #{headId}
     </update>
 
-    <insert id="insertPushList">
-        insert into uo_qywx_push_list(text_content, push_status, source_code, source_id, qywx_user_id, insert_dt, mp_media_id, mp_appid, mp_title, mp_url)
-        select text_content, 'P', 'D', detail_id, qywx_user_id, now(), #{mediaId}, #{appId}, mp_title, mp_url
-        from uo_qywx_daily_detail
-        where head_id = #{headId}
+    <insert id="insertPushList" useGeneratedKeys="true" keyProperty="pushId" keyColumn="push_id">
+        insert into uo_qywx_push_list(
+           text_content,
+           push_status,
+           source_code,
+           source_id,
+           follow_user_id,
+           insert_dt,
+           mp_media_id,
+           mp_appid,
+           mp_title,
+           mp_url,
+           external_contact_ids)
+        values(#{item.textContent},
+                 'P',
+                 'D',
+                 #{item.sourceId},
+                 #{item.followUserId},
+                 now(),
+                 #{item.mediaId},
+                 #{item.appId},
+                 #{item.mpTitle},
+                 #{item.mpUrl},
+                 #{item.externalContactIds})
     </insert>
 
     <update id="updatePushList">
-        update uo_qywx_push_list set push_status = t.push_status, msgid = t.msgid, external_contact_ids =
-        t.external_contact_ids, push_date = t.push_date, fail_list = t.fail_list
-        from (
-        values
-            <foreach collection="qywxPushList" item="item" open="(" close=")" separator=",">
-                #{item.sourceId}, #{item.pushStatus}, #{item.msgid}, #{item.externalContactIds}, now(), #{item.failList}
-            </foreach>
-        ) as t(source_id, push_status,msgid, external_contact_ids, push_date, fail_list) where uo_qywx_push_list.source_id =
-        t.source_id
+        update uo_qywx_push_list set
+           push_status = #{status},
+           msgid = #{msgId},
+           push_date = now(),
+           fail_list = #{faildList},
+           remark=#{remark}
+        where
+           push_id=#{pushId}
     </update>
 
 </mapper>
