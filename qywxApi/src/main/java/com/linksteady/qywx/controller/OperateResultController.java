@@ -23,12 +23,12 @@ public class OperateResultController extends ApiBaseController {
 
     @GetMapping("/getResultData")
     public ResponseBo getResultData(HttpServletRequest request,
-                                    @RequestParam("signature")String signature,
-                                    @RequestParam("timestamp")String timestamp,
-                                    @RequestParam("userId")String userId,
+                                    @RequestParam("signature") String signature,
+                                    @RequestParam("timestamp") String timestamp,
+                                    @RequestParam("userId") String userId,
                                     @RequestParam("startDt") String startDt, @RequestParam("endDt") String endDt) {
         try {
-            validateLegality(request,signature,timestamp,userId);
+            validateLegality(request, signature, timestamp, userId);
         } catch (Exception e) {
             return ResponseBo.error(e.getMessage());
         }
