@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.QywxActivityPushMapper">
+
+    <resultMap id="activityDetailResult" type="com.linksteady.operate.domain.ActivityDetail">
+        <result column="EPB_PRODUCT_NAME" jdbcType="VARCHAR" property="epbProductName"/>
+        <result column="EPB_PRODUCT_ID" jdbcType="DECIMAL" property="epbProductId"/>
+        <result column="GROUP_ID" jdbcType="DECIMAL" property="groupId"/>
+        <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent"/>
+        <result column="USER_ID" jdbcType="DECIMAL" property="userId"/>
+        <result column="IS_PUSH" jdbcType="VARCHAR" property="isPush"/>
+        <result column="PUSH_DATE_STR" jdbcType="VARCHAR" property="pushDateStr"/>
+        <result column="PUSH_STATUS" jdbcType="VARCHAR" property="pushStatus"/>
+        <result column="HEAD_ID" jdbcType="VARCHAR" property="headId"/>
+        <result column="ACTIVITY_DETAIL_ID" jdbcType="VARCHAR" property="activityDetailId"/>
+        <result column="ACTIVITY_STAGE" jdbcType="VARCHAR" property="activityStage"/>
+        <result column="PLAN_TYPE" jdbcType="VARCHAR" property="planType"/>
+        <result column="PLAN_ID" jdbcType="DECIMAL" property="planId"/>
+        <result column="ORDER_PERIOD" jdbcType="VARCHAR" property="orderPeriod"/>
+        <result column="GROUP_NAME" jdbcType="VARCHAR" property="groupName"/>
+        <result column="ACTIVITY_PROFIT" jdbcType="DECIMAL" property="activityProfit"/>
+        <result column="ACTIVITY_PRICE" jdbcType="DECIMAL" property="activityPrice"/>
+    </resultMap>
+
+    <delete id="deleteContentTmp">
+        DELETE FROM UO_OP_ACTIVITY_CONTENT_TMP WHERE PLAN_ID=#{planId}::int4
+    </delete>
+
+    <select id="getAllTemplate"  resultType="map">
+        select GROUP_ID,
+               TMP_CONTENT
+       from (
+           (SELECT
+               UO_OP_ACTIVITY_GROUP.group_id,
+               UO_OP_ACTIVITY_GROUP.sms_template_code
+            FROM UO_OP_ACTIVITY_GROUP
+                where
+                      UO_OP_ACTIVITY_GROUP.HEAD_ID=#{headId}::int4
+              AND UO_OP_ACTIVITY_GROUP.ACTIVITY_STAGE=#{activityStage}
+              AND  UO_OP_ACTIVITY_GROUP.ACTIVITY_TYPE=#{activityType}) t1
+                join UO_OP_ACTIVITY_TEMPLATE
+            on t1.SMS_TEMPLATE_CODE =UO_OP_ACTIVITY_TEMPLATE.TMP_CODE) t2
+    </select>
+
+    <select id="getPushCount" resultType="int">
+        select count(1) from UO_OP_ACTIVITY_DETAIL,UO_OP_ACTIVITY_GROUP,UO_OP_ACTIVITY_PLAN
+       where
+             UO_OP_ACTIVITY_DETAIL.HEAD_ID=UO_OP_ACTIVITY_GROUP.HEAD_ID
+        AND  UO_OP_ACTIVITY_DETAIL.GROUP_ID= UO_OP_ACTIVITY_GROUP.GROUP_ID
+        AND  UO_OP_ACTIVITY_PLAN.PLAN_TYPE=UO_OP_ACTIVITY_GROUP.ACTIVITY_TYPE
+        AND  UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE=UO_OP_ACTIVITY_GROUP.ACTIVITY_STAGE
+        AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = UO_OP_ACTIVITY_PLAN.PLAN_ID
+        AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = #{planId}
+    </select>
+
+    <select id="getPushList" resultMap="activityDetailResult">
+        select UO_OP_ACTIVITY_DETAIL.IS_PUSH,
+           to_char(UO_OP_ACTIVITY_DETAIL.PUSH_DATE, 'yyyy-mm-dd hh24:mi') PUSH_DATE_STR,
+           UO_OP_ACTIVITY_DETAIL.PUSH_STATUS,
+           UO_OP_ACTIVITY_DETAIL.EPB_PRODUCT_NAME,
+           UO_OP_ACTIVITY_DETAIL.EPB_PRODUCT_ID,
+           UO_OP_ACTIVITY_DETAIL.USER_ID,
+           UO_OP_ACTIVITY_DETAIL.GROUP_ID,
+           UO_OP_ACTIVITY_DETAIL.SMS_CONTENT,
+           UO_OP_ACTIVITY_DETAIL.HEAD_ID,
+           UO_OP_ACTIVITY_DETAIL.ACTIVITY_DETAIL_ID,
+           UO_OP_ACTIVITY_DETAIL.ACTIVITY_STAGE,
+           UO_OP_ACTIVITY_PLAN.PLAN_TYPE,
+           UO_OP_ACTIVITY_DETAIL.ORDER_PERIOD,
+           UO_OP_ACTIVITY_GROUP.GROUP_NAME,
+           UO_OP_ACTIVITY_DETAIL.PLAN_ID,
+           UO_OP_ACTIVITY_DETAIL.ACTIVITY_PROFIT,
+           UO_OP_ACTIVITY_DETAIL.ACTIVITY_PRICE
+    from UO_OP_ACTIVITY_DETAIL,UO_OP_ACTIVITY_PLAN,UO_OP_ACTIVITY_GROUP
+        where
+             UO_OP_ACTIVITY_DETAIL.HEAD_ID=UO_OP_ACTIVITY_GROUP.HEAD_ID
+        AND  UO_OP_ACTIVITY_DETAIL.GROUP_ID= UO_OP_ACTIVITY_GROUP.GROUP_ID
+        AND  UO_OP_ACTIVITY_PLAN.PLAN_TYPE=UO_OP_ACTIVITY_GROUP.ACTIVITY_TYPE
+        AND  UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE=UO_OP_ACTIVITY_GROUP.ACTIVITY_STAGE
+        AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = UO_OP_ACTIVITY_PLAN.PLAN_ID
+        AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = #{planId}
+        ORDER BY UO_OP_ACTIVITY_DETAIL.GROUP_ID ASC,UO_OP_ACTIVITY_DETAIL.ACTIVITY_DETAIL_ID ASC
+        limit #{limit} offset #{offset}
+    </select>
+
+    <insert id="insertPushContentTemp">
+        insert into UO_OP_ACTIVITY_CONTENT_TMP(activity_detail_id,plan_id,sms_content,sms_billing_count) values
+        <foreach collection="list" item="item" index="index"
+                 separator=",">
+            (#{item.activityDetailId},
+            #{item.planId},
+            #{item.smsContent},
+            #{item.smsBillingCount})
+        </foreach>
+    </insert>
+
+    <update id="updatePushContentFromTemp">
+        UPDATE UO_OP_ACTIVITY_DETAIL SET SMS_CONTENT=TMP.SMS_CONTENT,sms_billing_count=TMP.sms_billing_count
+        FROM UO_OP_ACTIVITY_CONTENT_TMP AS TMP
+        WHERE UO_OP_ACTIVITY_DETAIL.ACTIVITY_DETAIL_ID=TMP.ACTIVITY_DETAIL_ID
+        AND UO_OP_ACTIVITY_DETAIL.PLAN_ID=#{planId}::int4
+    </update>
+
+
+    <update id="updateStatus">
+        update UO_OP_ACTIVITY_PLAN set PLAN_STATUS = #{status},VERSION=VERSION+1
+        where PLAN_ID = #{planId}::int4  AND VERSION=#{version}::int4
+    </update>
+
+    <update id="updatePushScheduleDate">
+        UPDATE UO_OP_ACTIVITY_DETAIL C SET PUSH_SCHEDULING_DATE=(
+                                           SELECT
+            (CASE WHEN P.PUSH_METHOD='IMME' OR P.PUSH_METHOD='FIXED' THEN
+                                           P.PUSH_PERIOD
+                                           ELSE
+                                           P.PUSH_PERIOD||C.ORDER_PERIOD||'00' END)::int8
+                                           FROM UO_OP_ACTIVITY_PLAN P WHERE C.PLAN_ID=P.PLAN_ID
+            ) where
+            PLAN_ID=#{planId}::int4
+    </update>
+
+    <insert id="insertToPushListLarge">
+        INSERT INTO uo_op_push_list_large(
+            PUSH_CONTENT,
+            PUSH_STATUS,
+            SOURCE_CODE,
+            SOURCE_ID,
+            USER_PHONE,
+            IS_PUSH,
+            PUSH_SCHEDULING_DATE
+        )
+        SELECT UO_OP_ACTIVITY_DETAIL.SMS_CONTENT,
+               'P',
+               'ACTIVITY',
+               UO_OP_ACTIVITY_DETAIL.ACTIVITY_DETAIL_ID,
+               UO_OP_ACTIVITY_DETAIL.USER_PHONE,
+               '0',
+               UO_OP_ACTIVITY_DETAIL.PUSH_SCHEDULING_DATE
+        FROM UO_OP_ACTIVITY_DETAIL,UO_OP_ACTIVITY_GROUP,UO_OP_ACTIVITY_PLAN
+       where
+             UO_OP_ACTIVITY_DETAIL.HEAD_ID=UO_OP_ACTIVITY_GROUP.HEAD_ID
+        AND  UO_OP_ACTIVITY_DETAIL.GROUP_ID= UO_OP_ACTIVITY_GROUP.GROUP_ID
+        AND  UO_OP_ACTIVITY_PLAN.PLAN_TYPE=UO_OP_ACTIVITY_GROUP.ACTIVITY_TYPE
+        AND  UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE=UO_OP_ACTIVITY_GROUP.ACTIVITY_STAGE
+        AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = UO_OP_ACTIVITY_PLAN.PLAN_ID
+        AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = #{planId}
+    </insert>
+
+    <update id="updatePushMethod">
+        update UO_OP_ACTIVITY_PLAN set
+                      PUSH_METHOD = #{pushMethod},PUSH_PERIOD=#{pushPeriod}
+        where plan_id = #{planId}
+    </update>
+
+    <select id="validateSmsConfig" resultType="int">
+        select count(*) from UO_OP_ACTIVITY_GROUP
+          where head_id=#{headId}
+            and activity_stage=#{activityStage}
+            and activity_type=#{planType}
+            and sms_template_code is null
+             and group_id in (
+                 select group_id from uo_op_activity_product p
+                 where p.head_id=#{headId}
+                 and p.activity_type=#{planType}
+                 and p.activity_stage=#{activityStage}
+
+              )
+    </select>
+
+</mapper>

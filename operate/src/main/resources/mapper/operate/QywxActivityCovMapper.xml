@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.QywxActivityCovMapper">
+
+    <resultMap id="listMap" type="com.linksteady.operate.domain.ActivityCovInfo">
+        <result column="COV_LIST_ID" jdbcType="VARCHAR" property="covListId"/>
+        <result column="COV_RATE" property="covRate" jdbcType="VARCHAR"/>
+        <result column="EXPECT_PUSHNUM" property="expectPushNum" jdbcType="VARCHAR"/>
+        <result column="EXPECT_COVNUM" property="expectCovNum" jdbcType="VARCHAR"/>
+        <result column="IS_DEFAULT" property="isDefault" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <resultMap id="infoMap" type="com.linksteady.operate.domain.ActivityCovInfo">
+        <result column="PREHEAT_NOTIFY_COVID" jdbcType="VARCHAR" property="covListId"/>
+        <result column="PREHEAT_NOTIFY_COV" property="covRate" jdbcType="VARCHAR"/>
+        <result column="PREHEAT_NOTIFY_PUSHNUM" property="expectPushNum" jdbcType="VARCHAR"/>
+        <result column="PREHEAT_NOTIFY_COVNUM" property="expectCovNum" jdbcType="VARCHAR"/>
+
+        <result column="NORMAL_NOTIFY_COVID" jdbcType="VARCHAR" property="covListId"/>
+        <result column="NORMAL_NOTIFY_COV" property="covRate" jdbcType="VARCHAR"/>
+        <result column="NORMAL_NOTIFY_PUSHNUM" property="expectPushNum" jdbcType="VARCHAR"/>
+        <result column="NORMAL_NOTIFY_COVNUM" property="expectCovNum" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getCovList" resultMap="listMap">
+        select COV_LIST_ID, COV_RATE, EXPECT_PUSHNUM, EXPECT_COVNUM, IS_DEFAULT from UO_QYWX_ACTIVITY_COV_LIST
+        where 1=1
+        <if test="isDefault != null and isDefault != ''">
+            and IS_DEFAULT = #{isDefault}
+        </if>
+        order by COV_LIST_ID desc
+    </select>
+
+    <select id="getCovInfo" resultMap="infoMap">
+        ${sql}
+    </select>
+
+    <select id="getCovId" resultType="string">
+        <if test="stage == 'preheat'">
+            select PREHEAT_NOTIFY_COVID from UO_QYWX_ACTIVITY_COVINFO where ACTIVITY_HEAD_ID = #{headId}::int4
+        </if>
+        <if test="stage == 'formal'">
+            select NORMAL_NOTIFY_COVID from UO_QYWX_ACTIVITY_COVINFO where ACTIVITY_HEAD_ID = #{headId}::int4
+        </if>
+    </select>
+
+    <select id="getCovInfoById" resultMap="listMap">
+        select COV_RATE, EXPECT_PUSHNUM, EXPECT_COVNUM from UO_QYWX_ACTIVITY_COV_LIST where COV_LIST_ID = #{covId}::int4
+        and activity_head_id = #{headId}::integer and stage = #{stage}
+    </select>
+
+    <update id="updatePreheatCovInfo">
+        insert into UO_QYWX_ACTIVITY_COVINFO(ACTIVITY_HEAD_ID,
+                                   PREHEAT_NOTIFY_COVID,
+                                   PREHEAT_NOTIFY_COV,
+                                   PREHEAT_NOTIFY_PUSHNUM,
+                                   PREHEAT_NOTIFY_COVNUM) select #{headId}::int4, COV_LIST_ID, COV_RATE, EXPECT_PUSHNUM, EXPECT_COVNUM from UO_OP_ACTIVITY_COV_LIST t where COV_LIST_ID = #{covId}::int4 and activity_head_id = #{headId} and stage = #{stage}
+        on conflict(ACTIVITY_HEAD_ID) do update set (PREHEAT_NOTIFY_COVID, PREHEAT_NOTIFY_COV, PREHEAT_NOTIFY_PUSHNUM, PREHEAT_NOTIFY_COVNUM) = (select COV_LIST_ID, COV_RATE, EXPECT_PUSHNUM, EXPECT_COVNUM from UO_OP_ACTIVITY_COV_LIST t where COV_LIST_ID = #{covId}::int4 and activity_head_id = #{headId} and stage = #{stage})
+    </update>
+
+    <update id="updateFormalCovInfo">
+        insert into UO_QYWX_ACTIVITY_COVINFO(ACTIVITY_HEAD_ID,
+                                   NORMAL_NOTIFY_COVID,
+                                   NORMAL_NOTIFY_COV,
+                                   NORMAL_NOTIFY_PUSHNUM,
+                                   NORMAL_NOTIFY_COVNUM) select #{headId}::int4, COV_LIST_ID, COV_RATE, EXPECT_PUSHNUM, EXPECT_COVNUM from UO_OP_ACTIVITY_COV_LIST t where COV_LIST_ID = #{covId}::int4 and activity_head_id = #{headId} and stage = #{stage}
+        on conflict(ACTIVITY_HEAD_ID) do update set (NORMAL_NOTIFY_COVID, NORMAL_NOTIFY_COV, NORMAL_NOTIFY_PUSHNUM, NORMAL_NOTIFY_COVNUM) = (select COV_LIST_ID, COV_RATE, EXPECT_PUSHNUM, EXPECT_COVNUM from UO_OP_ACTIVITY_COV_LIST t where COV_LIST_ID = #{covId}::int4 and activity_head_id = #{headId} and stage = #{stage})
+    </update>
+
+    <select id="getCovListByHeadId" resultMap="listMap">
+        select COV_LIST_ID, COV_RATE, EXPECT_PUSHNUM, EXPECT_COVNUM, IS_DEFAULT from UO_QYWX_ACTIVITY_COV_LIST
+            where activity_head_id = #{headId}::integer and stage = #{stage}
+        order by COV_LIST_ID desc
+    </select>
+
+    <select id="checkCovInfo" resultType="int">
+        select count(1) from UO_QYWX_activity_covinfo where activity_head_id = #{headId}::int4
+    </select>
+
+    <delete id="deleteData">
+        delete from UO_QYWX_ACTIVITY_COVINFO where ACTIVITY_HEAD_ID=#{headId}
+    </delete>
+</mapper>

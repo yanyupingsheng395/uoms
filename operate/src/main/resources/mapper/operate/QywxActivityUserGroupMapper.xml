@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.QywxActivityUserGroupMapper">
+    <resultMap id="base" type="com.linksteady.operate.domain.ActivityGroup">
+        <result column="GROUP_ID" jdbcType="DECIMAL" property="groupId"></result>
+        <result column="GROUP_NAME" jdbcType="VARCHAR" property="groupName"></result>
+        <result column="HEAD_ID" jdbcType="DECIMAL" property="headId"></result>
+        <result column="GROUP_NAME" jdbcType="VARCHAR" property="groupName"></result>
+        <result column="SMS_TEMPLATE_CODE" jdbcType="DECIMAL" property="smsTemplateCode"></result>
+        <result column="TMP_CONTENT" jdbcType="VARCHAR" property="smsTemplateContent"></result>
+        <result column="ACTIVITY_TYPE" jdbcType="VARCHAR" property="activityType"></result>
+        <result column="CHECK_FLAG" jdbcType="VARCHAR" property="checkFlag"></result>
+        <result column="CHECK_COMMENTS" jdbcType="VARCHAR" property="checkComments"></result>
+        <result column="GROUP_INFO" jdbcType="VARCHAR" property="groupInfo"></result>
+    </resultMap>
+
+    <select id="getCount" resultType="int">
+        select count(1) from UO_qywx_ACTIVITY_GROUP where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage}
+    </select>
+
+    <select id="getUserGroupList" resultMap="base">
+        select case when group_id = 13 then 99 else group_id end order_id, group_id, group_name, tmp_content, activity_type, sms_template_code, check_flag, check_comments, group_info from (select UO_OP_ACTIVITY_GROUP.GROUP_ID, GROUP_NAME, TMP_CONTENT, ACTIVITY_TYPE, SMS_TEMPLATE_CODE,CHECK_FLAG,CHECK_COMMENTS, GROUP_INFO
+                       from UO_qywx_ACTIVITY_GROUP left join UO_OP_ACTIVITY_TEMPLATE
+                                                           on SMS_TEMPLATE_CODE = TMP_CODE where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage} order by group_id asc) t
+        order by order_id asc
+    </select>
+
+    <update id="updateGroupTemplate">
+        update UO_qywx_ACTIVITY_GROUP set SMS_TEMPLATE_CODE = #{code}
+        where head_id = #{headId} and GROUP_ID = #{groupId} and ACTIVITY_STAGE = #{stage}
+    </update>
+
+    <insert id="saveGroupData">
+        insert  into UO_qywx_ACTIVITY_GROUP(
+        GROUP_ID,
+        HEAD_ID,
+        GROUP_NAME,
+        ACTIVITY_STAGE,
+        INSERT_DT,
+        INSERT_BY,
+        ACTIVITY_TYPE,
+        GROUP_INFO
+        )
+        values
+        <foreach collection="list" item="item" separator=",">
+           (#{item.groupId}, #{item.headId}, #{item.groupName}, #{item.activityStage}, #{item.insertDt}, #{item.insertBy}, #{item.activityType}, #{item.groupInfo})
+        </foreach>
+    </insert>
+
+    <delete id="deleteData">
+        delete from UO_qywx_ACTIVITY_GROUP where head_id = #{headId}
+    </delete>
+
+    <select id="validGroupTemplateWithGroup" resultType="int">
+        select count(1) from UO_qywx_ACTIVITY_GROUP
+        where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage} and ACTIVITY_TYPE = #{type}
+        and GROUP_ID IN
+        (
+           select distinct group_id from uo_op_activity_product where
+           head_id=#{headId}
+           and activity_stage=#{stage}
+           and activity_type=#{type}
+        )
+        and SMS_TEMPLATE_CODE is null
+    </select>
+</mapper>

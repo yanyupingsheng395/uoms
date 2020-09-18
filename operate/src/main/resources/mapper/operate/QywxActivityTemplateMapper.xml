@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.QywxActivityTemplateMapper">
+
+    <resultMap id="base" type="com.linksteady.operate.domain.ActivityTemplate">
+        <result column="TMP_CODE" jdbcType="DECIMAL" property="code"/>
+        <result column="TMP_NAME" jdbcType="VARCHAR" property="name"/>
+        <result column="TMP_CONTENT" jdbcType="VARCHAR" property="content"/>
+        <result column="IS_PROD_URL" jdbcType="VARCHAR" property="isProdUrl"/>
+        <result column="IS_PROD_NAME" jdbcType="VARCHAR" property="isProdName"/>
+        <result column="IS_PRICE" jdbcType="VARCHAR" property="isPrice"/>
+        <result column="IS_PROFIT" jdbcType="VARCHAR" property="isProfit"/>
+        <result column="REMARK" jdbcType="VARCHAR" property="remark"></result>
+        <result column="IS_PERSONAL" jdbcType="VARCHAR" property="isPersonal"></result>
+        <result column="IS_CURRENT" jdbcType="VARCHAR" property="isCurrent"></result>
+        <result column="op_dt"  jdbcType="TIMESTAMP" property="opDt"></result>
+        <result column="insert_dt" jdbcType="TIMESTAMP" property="insertDt" />
+        <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
+        <result column="insert_by" jdbcType="VARCHAR" property="insertBy" />
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
+    </resultMap>
+
+
+    <insert id="saveTemplate">
+        <selectKey keyProperty="code" resultType="java.lang.Long" order="AFTER">
+            SELECT currval('uo_op_activity_template_seq'::regclass) as code
+        </selectKey>
+        insert into UO_qywx_ACTIVITY_TEMPLATE(
+            TMP_CONTENT,
+            IS_PERSONAL,
+            TMP_NAME,
+            IS_PROD_NAME,
+            IS_PROD_URL,
+            IS_PRICE,
+            IS_PROFIT,
+            INSERT_DT,
+            UPDATE_DT,
+            INSERT_BY,
+            UPDATE_BY
+        ) values (
+            #{content},
+            #{isPersonal},
+            #{name},
+            #{isProdName},
+            #{isProdUrl},
+            #{isPrice},
+            #{isProfit},
+            #{insertDt},
+            #{updateDt},
+            #{insertBy},
+            #{updateBy}
+        )
+    </insert>
+
+    <delete id="deleteActivityTemplate">
+        delete from UO_qywx_ACTIVITY_TEMPLATE where TMP_CODE = #{code}
+    </delete>
+
+    <select id="getTemplate" resultMap="base">
+        select
+            TMP_CONTENT,
+            REMARK,
+            INSERT_DT,
+            INSERT_BY,
+            UPDATE_DT,
+            UPDATE_BY,
+            TMP_CODE,
+            IS_PERSONAL,
+            RELATION,
+            TMP_NAME,
+            SCENE,
+            IS_PROD_NAME,
+            IS_PROD_URL,
+            IS_PRICE,
+            is_profit
+        from UO_qywx_ACTIVITY_TEMPLATE where
+        TMP_CODE = #{code}
+    </select>
+
+    <update id="update" parameterType="com.linksteady.operate.domain.ActivityTemplate">
+        update UO_qywx_ACTIVITY_TEMPLATE set TMP_CONTENT = #{content}, TMP_NAME = #{name}, IS_PROD_URL = #{isProdUrl},
+        IS_PROD_NAME = #{isProdName}, IS_PRICE = #{isPrice}, IS_PROFIT = #{isProfit}, IS_PERSONAL = #{isPersonal},
+        UPDATE_DT=#{updateDt},UPDATE_BY=#{updateBy}
+        where TMP_CODE = #{code}
+    </update>
+
+    <select id="getTemplateTableData" resultMap="base">
+        with v1 as (
+           select tmp_code, string_agg(activity_type, ' ' order by tmp_code ) SCENE
+            from (
+                    select t1.tmp_code,t2.activity_type
+                    from UO_qywx_ACTIVITY_TEMPLATE t1
+                    left join UO_qywx_ACTIVITY_GROUP t2
+                    on t1.tmp_code = t2.sms_template_code
+                    group by t1.tmp_code,t2.activity_type order by t1.tmp_code,t2.activity_type) c
+             group by c.tmp_code
+        ),
+        v2 as(
+           select distinct sms_template_code from UO_qywx_ACTIVITY_GROUP
+           where head_id=#{headId}
+           and activity_stage=#{stage}
+           and activity_type=#{type}
+           and sms_template_code is not null
+        ),
+        v3 as(
+            select
+                t.tmp_code,
+                t.TMP_NAME,
+                t.TMP_CONTENT,
+                t.IS_PERSONAL,
+                v1.SCENE,
+                (case when t.update_dt is null then t.insert_dt else t.update_dt end) op_dt,
+                (case when v2.sms_template_code is not null then '1' else '0' end) IS_CURRENT
+            from UO_qywx_ACTIVITY_TEMPLATE t join v1 on t.TMP_CODE = v1.TMP_CODE
+                 left join v2 on t.TMP_CODE=v2.sms_template_code
+        )
+        select * from v3 where 1=1
+        <if test="isPersonal != null and isPersonal != ''">
+            and IS_PERSONAL = #{isPersonal}
+        </if>
+        <if test="scene != null and scene != ''">
+            and scene like concat('%', #{scene} ,'%')
+        </if>
+        order by IS_CURRENT desc,op_dt desc
+    </select>
+
+    <update id="setSmsCode">
+        update UO_qywx_ACTIVITY_GROUP set
+        SMS_TEMPLATE_CODE = #{tmpCode},update_by=#{currentUserName},update_dt=now()
+        where GROUP_ID = #{groupId} and HEAD_ID = #{headId}
+        and ACTIVITY_TYPE = #{type} and ACTIVITY_STAGE = #{stage}
+    </update>
+
+    <select id="checkTemplateUsed" resultType="int">
+        select count(1) from UO_qywx_ACTIVITY_GROUP t1
+         where sms_template_code=#{templateCode} and
+              (head_id,activity_stage,activity_type) not in (
+                 select distinct head_id,activity_stage,activity_type from UO_qywx_ACTIVITY_GROUP  t2 where
+                   t2.head_id=#{headId}
+                 and t2.activity_stage=#{stage}
+                 and t2.activity_type=#{type}
+             )
+    </select>
+
+    <update id="validUserGroup">
+         update UO_qywx_ACTIVITY_GROUP
+              set
+                  check_flag=t3.check_flag,
+                  check_comments=t3.check_comments
+            from (
+                  select
+                    t1.group_id,
+                    (case when t1.SMS_TEMPLATE_CODE is null and t2.group_id is not null then 'N'
+                      when t1.SMS_TEMPLATE_CODE is not null and t2.group_id is not null then 'Y'
+                      else 'NA' end) check_flag,
+                    (case when t1.SMS_TEMPLATE_CODE is null and t2.group_id is not null then '群组文案未配置'
+                      else '' end ) check_comments
+                  from
+                      UO_qywx_ACTIVITY_GROUP t1 left join
+                  ( select distinct group_id from UO_qywx_ACTIVITY_PRODUCT where
+                     HEAD_ID = #{headId} and activity_stage=#{stage} and activity_type=#{type}) t2
+                  on t1.group_id=t2.group_id where t1.head_id=#{headId} and t1.activity_stage = #{stage} and t1.activity_type = #{type}
+            ) t3
+              where   UO_qywx_ACTIVITY_GROUP.group_id=t3.group_id
+                  and UO_qywx_ACTIVITY_GROUP.HEAD_ID = #{headId}
+                  and UO_qywx_ACTIVITY_GROUP.ACTIVITY_STAGE = #{stage}
+                  and UO_qywx_ACTIVITY_GROUP.activity_type=#{type}
+    </update>
+
+    <update id="removeSmsSelected">
+        update UO_qywx_ACTIVITY_GROUP set
+         SMS_TEMPLATE_CODE = null,
+         CHECK_FLAG = 'N',
+         CHECK_COMMENTS = '群组文案没有配置',
+         update_by=#{currentUserName},
+         update_dt=now()
+        where head_id = #{headId} and ACTIVITY_STAGE = #{stage} and GROUP_ID = #{groupId} and activity_type = #{type}
+    </update>
+
+    <select id="templateContentChanged" resultType="int">
+        select count(*) from uo_qywx_activity_template where tmp_code=#{templateCode} and tmp_content=#{content}
+    </select>
+
+</mapper>

@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.QywxActivityProductMapper">
+
+    <resultMap id="base" type="com.linksteady.operate.domain.ActivityProduct">
+        <result property="id" jdbcType="DECIMAL" column="ID"/>
+        <result property="headId" jdbcType="DECIMAL" column="HEAD_ID"/>
+        <result property="productId" jdbcType="DECIMAL" column="EPB_PRODUCT_ID"/>
+        <result property="minPrice" jdbcType="DECIMAL" column="MIN_PRICE"/>
+        <result property="productName" jdbcType="VARCHAR" column="PRODUCT_NAME"/>
+        <result property="formalPrice" jdbcType="DECIMAL" column="FORMAL_PRICE"/>
+        <result property="productUrl" jdbcType="VARCHAR" column="PRODUCT_URL"/>
+        <result property="checkFlag" jdbcType="VARCHAR" column="CHECK_FLAG"/>
+        <result property="checkComments" jdbcType="VARCHAR" column="CHECK_COMMENTS"/>
+        <result property="alikeProdId" jdbcType="VARCHAR" column="ALIKE_PROD_ID"/>
+        <result property="groupId" jdbcType="VARCHAR" column="GROUP_ID"/>
+        <result property="activityProfit" jdbcType="DECIMAL" column="ACTIVITY_PROFIT"/>
+        <result property="activityPrice" jdbcType="DECIMAL" column="ACTIVITY_PRICE"/>
+        <result property="discountSize" jdbcType="DECIMAL" column="DISCOUNT_SIZE"/>
+        <result property="discountAmount" jdbcType="DECIMAL" column="DISCOUNT_AMOUNT"/>
+        <result property="notifyProfit" jdbcType="DECIMAL" column="NOTIFY_PROFIT"/>
+        <result property="duringProfit" jdbcType="DECIMAL" column="DURING_PROFIT"/>
+        <result property="notifyMinPrice" jdbcType="DECIMAL" column="NOTIFY_MIN_PRICE"/>
+        <result property="duringMinPrice" jdbcType="DECIMAL" column="DURING_MIN_PRICE"/>
+        <result property="activityType" jdbcType="VARCHAR" column="ACTIVITY_TYPE"/>
+        <result property="activityStage" jdbcType="VARCHAR" column="ACTIVITY_STAGE"/>
+        <result property="spCouponFlag" jdbcType="VARCHAR" column="SP_COUPON_FLAG"/>
+        <result property="spCouponThreshold" jdbcType="DECIMAL" column="SP_COUPON_THRESHOLD"/>
+        <result property="spCouponDenom" jdbcType="DECIMAL" column="SP_COUPON_DENOM"/>
+        <result property="discountCnt" jdbcType="DECIMAL" column="discount_cnt"/>
+    </resultMap>
+
+    <select id="getActivityProductListPage" resultMap="base">
+        select t.* from (select
+        id,
+        epb_product_id,
+        product_name,
+        min_price,
+        group_id,
+        activity_profit,
+        check_flag,
+        check_comments,
+        insert_dt,
+        case when check_flag = 'Y' then '1' else '0' end order_col
+        from uo_qywx_activity_product
+        where head_id = #{headId}::integer
+        and activity_stage = #{activityStage}
+        and activity_type = #{activityType}
+        <if test="productId != null and productId != ''">
+            and EPB_PRODUCT_ID = #{productId}
+        </if>
+        <if test="productName != null and productName != ''">
+            and product_name like concat('%', #{productName}, '%')
+        </if>
+        <if test="groupId != null and groupId != ''">
+            and group_id = #{groupId}::int4
+        </if>
+        order by order_col asc, insert_dt desc
+        ) t
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="getCount" resultType="int">
+        select count(1)
+        from uo_qywx_activity_product
+        where head_id = #{headId}::integer
+        and activity_stage = #{activityStage}
+        and activity_type = #{activityType}
+        <if test="productId != null and productId != ''">
+            and EPB_PRODUCT_ID = #{productId}
+        </if>
+        <if test="productName != null and productName != ''">
+            and product_name like concat('%', #{productName}, '%')
+        </if>
+        <if test="groupId != null and groupId != ''">
+            and group_id = #{groupId}::int4
+        </if>
+    </select>
+
+    <delete id="deleteByHeadId">
+        delete
+        from uo_qywx_activity_product
+        where head_id = #{headId}
+    </delete>
+
+    <insert id="saveActivityProduct">
+        insert into uo_qywx_activity_product(HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, ACTIVITY_PRICE, FORMAL_PRICE,
+                                           PRODUCT_URL, GROUP_ID, discount_size, discount_amount, activity_profit, min_price, activity_type,
+                                           activity_stage, sp_coupon_flag,sp_coupon_threshold,sp_coupon_denom, discount_cnt)
+        values (#{headId}, #{productId}, #{productName}, #{activityPrice}, #{formalPrice}, #{productUrl},
+                #{groupId}::int4, #{discountSize}, #{discountAmount}, #{activityProfit}, #{minPrice}, #{activityType}, #{activityStage},
+                #{spCouponFlag},#{spCouponThreshold},#{spCouponDenom}, #{discountCnt})
+    </insert>
+
+    <select id="getProductById" resultMap="base">
+        select * from uo_qywx_activity_product where id = #{id}::integer
+    </select>
+
+    <update id="updateActivityProduct">
+        update uo_qywx_activity_product
+        set product_name        = #{productName},
+            activity_price      = #{activityPrice},
+            formal_price        = #{formalPrice},
+            min_price           = #{minPrice},
+            group_id            = #{groupId}::integer,
+            discount_size       = #{discountSize},
+            discount_amount     = #{discountAmount},
+            activity_profit     = #{activityProfit},
+            sp_coupon_flag      = #{spCouponFlag},
+            sp_coupon_threshold = #{spCouponThreshold},
+            sp_coupon_denom     = #{spCouponDenom},
+            discount_cnt        = #{discountCnt}
+        where id = #{id}::integer
+    </update>
+
+    <insert id="saveActivityProductList">
+        insert into uo_qywx_activity_product(HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, PRODUCT_URL, GROUP_ID, discount_size,discount_amount,
+        activity_profit, activity_price, activity_type, activity_stage, sp_coupon_flag,sp_coupon_threshold,sp_coupon_denom, discount_cnt) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.headId}::int4,
+            #{item.productId},
+            #{item.productName},
+            #{item.minPrice},
+            #{item.formalPrice},
+            #{item.productUrl},
+            #{item.groupId}::int4,
+            #{item.discountSize},#{item.discountAmount},
+            #{item.activityProfit}, #{item.activityPrice}, #{item.activityType}, #{item.activityStage}, #{item.spCouponFlag},#{item.spCouponThreshold},#{item.spCouponDenom}, #{item.discountCnt})
+        </foreach>
+    </insert>
+
+    <delete id="deleteProduct">
+        delete from uo_qywx_activity_product where id in
+        <foreach collection="idList" item="item" separator="," open="(" close=")">
+            #{item}::integer
+        </foreach>
+    </delete>
+
+    <select id="validProductNum" resultType="int">
+        select count(1)
+        from uo_qywx_activity_product
+        where HEAD_ID = #{headId}::int4
+    </select>
+
+    <select id="getSameProductCount" resultType="int">
+        select count(1) from uo_qywx_activity_product
+        where head_id = #{headId} and activity_stage = #{stage} and EPB_PRODUCT_ID in
+        <foreach collection="productIdList" separator="," open="(" close=")" item="item">
+            #{item}
+        </foreach>
+    </select>
+
+    <delete id="deleteRepeatData">
+        delete from uo_qywx_activity_product where EPB_PRODUCT_ID in
+        <foreach collection="productList" item="item" open="(" close=")" separator=",">
+            #{item.productId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteData">
+        delete
+        from uo_qywx_activity_product
+        where HEAD_ID = #{headId}::int4
+    </delete>
+
+    <select id="getProductIdByHeadId" resultType="string">
+        select EPB_PRODUCT_ID
+        from uo_qywx_activity_product
+        where head_id = #{headId}::int4 and activity_stage = #{stage} and activity_type = #{activityType}
+    </select>
+
+    <delete id="deleteDataList">
+        delete from uo_qywx_activity_product where head_id = #{headId}::integer and EPB_PRODUCT_ID in
+        <foreach collection="productIdList" separator="," item="item" open="(" close=")">
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="updateValidInfo">
+        update uo_qywx_activity_product
+        set CHECK_FLAG     = 'N',
+            CHECK_COMMENTS = '活动商品在在售商品库中不存在'
+        where HEAD_ID = #{headId}::int4 and activity_stage = #{stage}
+          and EPB_PRODUCT_ID in (
+            with v1 as (select EPB_PRODUCT_ID
+                        from uo_qywx_activity_product t1,
+                             (select distinct EBP_PRODUCT_ID from W_PRODUCT where UP_FLAG = 1) t2
+                        where t1.EPB_PRODUCT_ID = t2.EBP_PRODUCT_ID::varchar
+                          and t1.HEAD_ID = #{headId}::int4 and activity_stage = #{stage})
+            select t3.EPB_PRODUCT_ID
+            from uo_qywx_activity_product t3
+                     left join v1 on t3.EPB_PRODUCT_ID = v1.EPB_PRODUCT_ID::varchar
+            where t3.HEAD_ID = #{headId}::int4 and activity_stage = #{stage}
+              and v1.EPB_PRODUCT_ID is null)
+    </update>
+
+    <update id="updateAllValidInfo">
+        update uo_qywx_activity_product
+        set CHECK_FLAG     = 'Y',
+            CHECK_COMMENTS = ''
+        where HEAD_ID = #{headId}::int4 and activity_stage = #{stage}
+    </update>
+
+    <select id="getCountByHeadId" resultType="int">
+        select count(1)
+        from uo_qywx_activity_product
+        where HEAD_ID = #{headId}::int4
+    </select>
+
+    <select id="validProduct" resultType="int">
+        select count(1)
+        from uo_qywx_activity_product
+        where HEAD_ID = #{headId}::int4 and activity_stage = #{stage} and CHECK_FLAG = 'N'
+    </select>
+
+    <select id="getGroupIds" resultType="string">
+        select DISTINCT GROUP_ID
+        from uo_qywx_activity_product
+        where HEAD_ID = #{headId}::int4
+          and CHECK_FLAG = 'Y'
+    </select>
+
+    <select id="checkProductId" resultType="int">
+        select count(1) from uo_qywx_activity_product where head_id = #{headId}::integer and activity_stage = #{activityStage}
+        <if test="activityType != null and activityType != 'ALL'">
+            and activity_type = #{activityType}
+        </if>
+    </select>
+
+    <select id="ifCalculate" resultType="int">
+        with v1 as (select epb_product_id
+                    from uo_qywx_activity_product
+                    where head_id = #{headId}::integer
+                      and activity_type = 'NOTIFY'
+                      and activity_stage = #{stage}),
+             v2 as (select epb_product_id from uo_qywx_activity_product_history where head_id = #{headId}::integer and activity_stage = #{stage})
+        select count(1) from v1 full join v2 on v1.epb_product_id = v2.epb_product_id where v1.epb_product_id is null or v2.epb_product_id is null
+    </select>
+
+    <select id="getNotValidProduct" resultType="string">
+        select check_flag
+        from uo_qywx_activity_product
+        where head_id = #{headId}::int4 and activity_stage = #{stage} and activity_type = #{type}
+    </select>
+
+    <update id="updateValidRepeatSkuInfo">
+        update uo_qywx_activity_product
+        set CHECK_FLAG     = 'N',
+            CHECK_COMMENTS = '存在与当前商品类似的在售商品，当前活动商品建议删除'
+        where HEAD_ID = #{headId}::int4 and activity_stage = #{stage}
+          and EPB_PRODUCT_ID in (
+            select EPB_PRODUCT_ID from (
+               with v1 as (select EPB_PRODUCT_ID
+                           from uo_qywx_activity_product t1,
+                                (select distinct EBP_PRODUCT_ID from W_PRODUCT where UP_FLAG = 1) t2
+                           where t1.EPB_PRODUCT_ID = t2.EBP_PRODUCT_ID::varchar
+                             and t1.HEAD_ID = #{headId}::int4
+                             and activity_stage = #{stage})
+               select t3.EPB_PRODUCT_ID, count(t4.goods_id) cnt
+               from uo_qywx_activity_product t3
+                        left join v1 on t3.EPB_PRODUCT_ID = v1.EPB_PRODUCT_ID::varchar
+                        left join (SELECT goods_id FROM o_dapu_product_onsale WHERE INSERT_DT::date &gt;= (
+                   select max(insert_dt::date) from o_dapu_product_onsale
+               )) t4 on t3.epb_product_id = t4.goods_id::varchar
+               where t3.HEAD_ID = #{headId}::int4
+                 and activity_stage = #{stage}
+                 and v1.EPB_PRODUCT_ID is null
+               group by t3.EPB_PRODUCT_ID
+           ) t where t.cnt &gt; 0)
+    </update>
+</mapper>

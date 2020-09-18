@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge"/>
+    <title>用户成长系统</title>
+    <th:block th:include="common/include :: common-css" />
+    <th:block th:include="common/include::jquery-confirm-css" />
+    <th:block th:include="common/include::rangeslider-css" />
+    <th:block th:include="common/include::step-css" />
+    <th:block th:include="common/include::bootstrap-table-css" />
+    <th:block th:include="common/include::datepicker-css" />
+    <th:block th:include="common/include::clipboard-js" />
+    <style>
+        .step-icon-number {
+            cursor: pointer;
+        }
+
+        .irs--flat .irs-bar {
+            background-color: #33cabb;
+        }
+
+        .irs-single {
+            background-color: #33cabb;
+        }
+
+        .irs--flat .irs-from:before, .irs--flat .irs-to:before, .irs--flat .irs-single:before {
+            background-top-color: #33cabb;
+        }
+
+        .irs--flat .irs-from, .irs--flat .irs-to, .irs--flat .irs-single {
+            background-color: #33cabb;
+        }
+
+        .tag {
+            border: none;
+            -moz-border-radius: 2px;
+            -webkit-border-radius: 2px;
+            display: block;
+            float: left;
+            padding: 2px 5px;
+            text-decoration: none;
+            background: #33cabb;
+            color: #fff;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            font-family: 'Microsoft yahei', Roboto, sans-serif;
+            font-size: 13px;
+            line-height: 18px;
+        }
+        .steps{padding:0 !important;}
+        .toolbar{border:1px solid #ccc;}.text{border:1px solid #ccc;height:400px;}
+        .send{position:absolute;max-width:200px;width:auto;height:auto;background:#fff;border-radius:5px;margin-top:30px;margin-left:20px;padding:10px;font-size:12px;color:#000;word-wrap:break-word;}
+        .send .arrow{position:absolute;top:9px;left:-16px;width:0;height:0;font-size:0;border:solid 8px;border-color:rgb(235,235,235) #fff rgb(235,235,235) rgb(235,235,235);}
+        .msg-panel__context{background:#f5f5f5;}
+        .cm-edit-content-con{background:#f5f5f5;}img{border-radius:5px;}
+        .wx-audio-content{border-radius:5px;}
+        .panel .panel-body{padding:0 !important;}
+        .weui-media-box__title{font-size:15px !important;}
+        .newtitle{font-size:15px !important;}
+        .panel-heading{padding:0;}
+        .steps{padding:0 !important;}
+        .bubble{width:320px;}
+        .demo{margin-bottom:20px;padding-left:50px;position:relative;}
+        .triangle{word-break: break-all;position:absolute;top:50%;margin-top:-8px;left:42px;display:block;width:0;height:0;overflow:hidden;line-height:0;font-size:0;border-bottom:8px solid #FFF;border-top:8px solid #FFF;border-left:none;border-right:8px solid #409eff;}
+        .demo .article{word-break: break-all;float:left;color:#FFF;display:inline-block;*display:inline;zoom:1;padding:5px 10px;border:1px solid #409eff;background:#eee;border-radius:5px;background-color:#4D90FE;background-image:-webkit-gradient(linear,left top,left bottom,from(#4D90FE),to(#4787ED));background-image:-webkit-linear-gradient(top,#4D90FE,#4787ED);background-image:-moz-linear-gradient(center top,#4D90FE,#4787ED);background-image:linear-gradient(top,#4D90FE,#4787ED);}.fr{padding-left:0px;padding-right:50px;}.fr .triangle{left:auto;right:42px;border-bottom:8px solid #FFF;border-top:8px solid #FFF;border-right:none;border-left:8px solid #3079ED;}.fr .article{float:right;}
+        .smscomments {
+            font-size: 12px;
+            padding-bottom: 2px;
+        }
+
+        .smsvariable {
+            font-size: 12px;
+            padding-bottom: 2px;
+        }
+        .wordstatis {
+            font-size: 12px;
+            padding-top: 2px;
+        }
+    </style>
+</head>
+
+<body class="gray-bg">
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-div ui-layout-center">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <div class="row">
+                            <div class="col-md-3 pull-left">
+                                <h5 id='stageName' class="modal-title" style="margin-left: 0;margin-top: 20px;"
+                                    th:if="${operateType} eq 'update'">修改活动</h5>
+                                <h5 id='stageName' class="modal-title" style="margin-left: 0;margin-top: 20px;"
+                                    th:if="${operateType} eq 'save'">新建活动</h5>
+                            </div>
+                            <div class="col-md-3 pull-right">
+                                <div id="addStep"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 select-table" id="step1">
+                        <div data-th-include="operate/qywxactivity/add/step1"></div>
+                    </div>
+
+                    <div id="step2" style="display: none;">
+                        <div data-th-include="operate/qywxactivity/add/step2"></div>
+                    </div>
+
+                    <div id="step3" style="display: none;">
+                        <div class="col-md-12 select-table">
+<!--                            <div data-th-include="operate/qywxactivity/add/step3"></div>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div class="modal fade" id="userMapModal" data-keyboard="false" data-backdrop="static" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title pull-left">优惠分析</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div id="userMapChart" style="width:100%;height: 200px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-save" id="activity-add-btn" name="save">保存</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="smsTemplateModal" data-keyboard="false" data-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title pull-left">选择消息模板</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 table-striped">
+                        <input type="hidden" id="selectGroupId"/>
+                        <table id="templateDataTable" class="table table-bordered table-striped text-nowrap"></table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-save" id="template-add-btn" name="save">保存</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="uploadProduct" data-keyboard="false" data-backdrop="static" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title pull-left">活动商品上传</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 table-striped">
+                        <form class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-md-4 control-label">上传文件</label>
+                                <div class="col-md-7">
+                                    <button class="btn btn-primary btn-sm" type="button"
+                                            onclick="$('#uploadFile').click()">
+                                        <i class="fa fa-file-excel-o"></i> 选择文件
+                                    </button>
+                                    <input id="uploadFile" type="file" style="display:none"/>
+                                    <span id="filename" style="color: #8a6d3b" class="h6"></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-4 control-label">文件中商品<br/>重复处理规则</label>
+                                <div class="col-md-7">
+                                    <label class="lyear-radio radio-inline radio-primary">
+                                        <input type="radio" name="repeatProduct" value="0" checked><span>忽略</span>
+                                    </label>
+                                    <label class="lyear-radio radio-inline radio-primary">
+                                        <input type="radio" name="repeatProduct" value="1"><span>覆盖</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <label class="h6" style="color: #7c7c7c; display: inline-block;" hidden=""><i class="fa fa-info-circle"></i>
+                                上传文件中存在重复商品时(商品ID相同界定为重复)，忽略表示以先出现的商品为准，忽略掉后续重复商品；覆盖表示以最后出现的商品为准，忽略掉先出现的。
+                            </label>
+                            <div class="form-group">
+                                <label class="col-md-4 control-label">文件中商品与已有商品<br/>重复处理规则</label>
+                                <div class="col-md-7 mt7">
+                                    <label class="lyear-radio radio-inline radio-primary">
+                                        <input type="radio" name="uploadMethod" value="0" checked><span>忽略</span>
+                                    </label>
+                                    <label class="lyear-radio radio-inline radio-primary">
+                                        <input type="radio" name="uploadMethod" value="1"><span>覆盖</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <label class="h6" style="color: #7c7c7c; display: inline-block;" hidden=""><i class="fa fa-info-circle"></i>
+                                上传文件中的活动商品和已有的活动商品重复时(商品ID相同界定为重复), 覆盖则会用上传文件中的覆盖掉已经存在的记录，忽略则会忽略掉重复商品，不做处理。
+                            </label>
+                            <div class="form-group">
+                                <hr style="margin-top: 0px;margin-bottom: 0px;"/>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 0px;">
+                                <label class="col-md-4 control-label">模板文件</label>
+                                <div class="col-md-7">
+                                    <button class="btn btn-secondary btn-sm" id="btn_download_template" type="button"
+                                            onclick="window.location.href='/activity/downloadFile'">
+                                        <i class="fa fa-download"></i> 下载模板
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-save btn-sm" id="btn_upload" name="save">确定</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="msg_modal" id="sms_add_modal" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document" style="width: 80%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h5 class="modal-title">配置个性化消息</h5>
+            </div>
+            <div class="modal-body" style="padding-left: 10px;padding-right: 10px;padding-top: 0px;padding-bottom: 0px;">
+                <form class="form-horizontal" id="tmp_add_form" novalidate="novalidate">
+                    <input type="hidden" id="code" name="code"/>
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <div>
+                                        <label class="control-label">文案体现的个性化要素</label>
+                                    </div>
+                                    <div>
+                                        <input type="hidden" name="smsCode" id="smsCode"/>
+                                        <div style="width:554px;border: solid 1px #ebebeb;padding: 8px; float: left;" id="config-box">
+                                            <div class="example-box">
+                                                <label class="control-label">　　　　商品名称：</label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isProdName" value="1"/><span>是</span>
+                                                </label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isProdName" value="0"/><span>否</span>
+                                                </label>
+                                                &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${商品名称} 粘贴到期望位置；</span>
+                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${商品名称}" class="copy_btn">复制</a>
+                                            </div>
+                                            <div class="example-box" id="produrlDiv">
+                                                <label class="control-label">　商品详情页短链：</label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isProdUrl" value="1"/><span>是</span>
+                                                </label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isProdUrl" value="0"/><span>否</span>
+                                                </label>
+                                                &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${商品详情页短链} 粘贴到期望位置；</span>
+                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${商品详情页短链}" class="copy_btn">复制</a>
+                                            </div>
+                                            <div class="example-box">
+                                                <label class="control-label">　　　商品利益点：</label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isProfit" value="1"/><span>是</span>
+                                                </label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isProfit" value="0"/><span>否</span>
+                                                </label>
+                                                &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${商品利益点} 粘贴到期望位置；</span>
+                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${商品利益点}" class="copy_btn">复制</a>
+                                            </div>
+                                            <div class="example-box">
+                                                <label class="control-label">　　商品最低单价：</label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isPrice" value="1"/><span>是</span>
+                                                </label>
+                                                <label class="lyear-radio radio-inline radio-primary">
+                                                    <input type="radio" name="isPrice" value="0"/><span>否</span>
+                                                </label>
+                                                &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${商品最低单价} 粘贴到消息期望位置；</span>
+                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${商品最低单价}" class="copy_btn">复制</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div>
+                                        <label class="control-label">文案内容</label>
+                                    </div>
+                                    <div>
+                                        <textarea class="form-control" id="content" name="content" style="width:554px;height: 102px;" oninput="contextOnChange()"></textarea>
+                                        <input type="hidden" id="smsContentInput" name="smsContentInput"/>
+                                        <div class="wordstatis">
+                                            长度估算：当前内容字数<span id="snum1" style="color:rgb(255, 152, 0);"></span>
+                                            ,签名+填充变量+退订信息 三部分总字数<span id="snum2" style="color:rgb(255, 152, 0);"></span>
+                                            ,按照<span id="snum3" style="color:rgb(255, 0, 0);font-size: 14px;font-weight: bold"></span>条消息发送并计费。本估算依变量的最大占用长度估算，与实际会有偏差。
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-center" style="position:absolute;height: 470px;width:100%;background:url(/images/app_content_01.png) no-repeat -23px -39px;}"></div>
+                                <div class="bubble" style="position: relative;margin-top: 140px;width: 233px;">
+                                    <div class="demo clearfix">
+                                        <span class="triangle" style="left: 42px"></span>
+                                        <div class="article" id="article" style="font-size: 12px;">请输入短信内容</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="hr m-t-0 m-t-5"/>
+                    <div class="row">
+                        <div class="col-md-12 control-label" style="text-align: left;margin-left: 15px;padding-left: 5px;">
+                            <ol class="list-inline">文案编写说明：</ol>
+                            <ol style="padding-inline-start: 20px">
+                                <li class="smscomments">1.文案字数=运营者编写内容的字数+系统填充的变量占用的长度+签名长度+退订信息长度；</li>
+                                <li class="smscomments">2.计费规则：文案字数<=70个字数，按照70个字数一条计算；文案字数>70个字数，即为长信息，按照67个字数记为一条；</li>
+
+                                <li class="smscomments">3.当前系统支持在文案中使用的变量及其占用长度、签名长度、退订信息长度情况如下：</li>
+                                <ul>
+                                    <li class="smsvariable">&nbsp;&nbsp;${商品名称}：商品短名称，占<font color="red">[[${sourceConfig.prodNameLen}]]</font>个字符；例如:[[${sourceConfig.prodName}]]</li>
+                                    <li id="produrlComments" class="smsvariable">&nbsp;&nbsp;${商品详情页短链}：商品购买详情页短链接，占<font color="red">[[${sourceConfig.shortUrlLen}]]</font>个字符；例如:[[${sourceConfig.url}]]</li>
+                                    <li class="smsvariable">&nbsp;&nbsp;${商品利益点}：商品利益点，占<font color="red">[[${sourceConfig.profitLen}]]</font>个字符；例如:[[${sourceConfig.profit}]]</li>
+                                    <li class="smsvariable">&nbsp;&nbsp;${商品最低单价}：商品最低单价，占<font color="red">[[${sourceConfig.priceLen}]]</font>个字符；例如:[[${sourceConfig.price}]]</li>
+                                    <li class="smsvariable">&nbsp;&nbsp;签名：[[${sourceConfig.signature}]]，占<font color="red">[[${sourceConfig.signatureLen}]]</font>个字符；</li>
+                                    <li class="smsvariable">&nbsp;&nbsp;退订信息：[[${sourceConfig.unsubscribe}]]，占<font color="red">[[${sourceConfig.unsubscribeLen}]]</font>个字符；
+                                </ul>
+
+                                <li  class="smscomments">4.编写文案时起始位置请<font color="red">不要包含</font>签名信息[[${sourceConfig.signature}]]</li>
+                                <li  class="smscomments">5.编写文案时结束位置请<font color="red">不要包含</font>退订信息 [[${sourceConfig.unsubscribe}]]</li>
+                            </ol>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" id="btn_save_sms" name="save">确定</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="msg_modal" id="smstemplate_modal" data-backdrop="static">
+    <div class="modal-dialog modal-lg" role="document" style="width: 75%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h5 class="modal-title">配置个性化消息</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <form id="sms-form">
+                            <div class="select-list">
+                                <ul>
+                                    <li>
+                                        使用场景：<select name="scene">
+                                        <option value="">所有</option>
+                                        <option value="NOTIFY">活动通知</option>
+                                        <option value="DURING">活动期间</option>
+                                    </select>
+                                    </li>
+                                    <li>
+                                        个性化：<select name="isPersonal">
+                                        <option value="">所有</option>
+                                        <option value="1">是</option>
+                                        <option value="0">否</option>
+                                    </select>
+                                    </li>
+                                    <li>
+                                        <a class="btn btn-primary btn-rounded btn-sm" onclick="getTmpTableData()"><i
+                                                class="fa fa-search"></i>&nbsp;搜索</a>
+                                        <a class="btn btn-warning btn-rounded btn-sm" onclick="resetTmpInfo()"><i
+                                                class="fa fa-refresh"></i>&nbsp;重置</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <hr class="hr" style="margin-bottom: 0px;"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12 table-striped">
+                        <div class="row m-t-10">
+                            <div class="col-sm-12">
+                                <div class="btn-group-sm" id="toolbar" role="group">
+                                    <a class="btn btn-success" id="btn_add" onclick="addTemplate()">
+                                        <i class="fa fa-pencil"></i> 新增文案
+                                    </a>
+                                    <a class="btn btn-primary" id="btn_edit" onclick="editTemplate()">
+                                        <i class="fa fa-edit"></i> 编辑文案
+                                    </a>
+                                    <a class="btn btn-cyan" id="btn_send" onclick="testSend()">
+                                        <i class="fa fa-puzzle-piece"></i> 屏蔽测试
+                                    </a>
+                                    <a class="btn btn-danger" id="btn_delete" onclick="deleteTemplate()">
+                                        <i class="fa fa-close"></i> 删除文案
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row m-t-10">
+                            <div class="col-sm-12 ">
+                                <table id="tmpTable" class="table table-striped table-bordered"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" onclick="setTemplateCode()">确定</button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="closeTemplateCode()">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="plan_change_modal" data-backdrop="static">
+    <div class="modal-dialog" role="document" style="width: 920px">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title">调整推送计划</h5>
+            </div>
+            <div class="modal-body" style="padding-left: 10px;padding-right: 10px;padding-top: 0px;padding-bottom: 0px;">
+                <div class="row">
+                    <div class="col-sm-12 table-striped">
+                        <div class="row m-t-10">
+                            <div class="col-sm-7">
+                                <h6>推送计划一览</h6>
+                                <table id="table3" class="table table-striped table-bordered"></table>
+                            </div>
+                            <div class="col-sm-5">
+                                <h6>调整计划测算</h6>
+                                <table id="table4" class="table table-striped table-bordered"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="margin-top: 10px;">
+                <button type="button" class="btn btn-primary btn-sm" onclick="updateCovInfo()">确定</button>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="send_modal" data-backdrop="static">
+    <div class="modal-dialog" role="document" style="width: 50%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title" id="myLargeModalLabel4">屏蔽测试</h5>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <input type="hidden" name="testSmsCode" id="testSmsCode"/>
+                    <div class="form-group mg-stop">
+                        <label class="col-md-4 control-label" for="smsContent1">文案内容：</label>
+                        <div class="col-md-6 input-group">
+                            <textarea class="form-control" id="smsContent1" name="example-textarea-input"
+                                      rows="6" readonly></textarea>
+                            <span class="wordwrap h6" style="color: #7c7c7c">*上述内容中系统填充变量并非真实，而是选择变量字符最大值示例进行填充</span>
+                        </div>
+                    </div>
+                    <div class="form-group mg-stop">
+                        <label class="col-md-4 control-label">测试建议：</label>
+                        <div class="col-md-6 input-group">
+                            <h5 style="color: #7c7c7c;">建议不同的手机号体现不同的机型与操作系统，根据短信的收取情况判断是否有屏蔽，以便于调整文案内容；</h5>
+                            <!--                            <input class="form-control" type="text" readonly value=""/>-->
+                        </div>
+                    </div>
+                    <div class="form-group mg-stop">
+                        <label class="col-md-3 col-md-offset-1 control-label">手机号1：</label>
+                        <div class="col-md-6 input-group">
+                            <input class="form-control" type="text" name="phoneNum"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group mg-stop">
+                        <label class="col-md-4 control-label">手机号2：</label>
+                        <div class="col-md-6 input-group">
+                            <input class="form-control" type="text" name="phoneNum"/>
+                        </div>
+                    </div>
+                    <div class="form-group mg-stop">
+                        <label class="col-md-4 control-label">手机号3：</label>
+                        <div class="col-md-6 input-group">
+                            <input class="form-control" type="text" name="phoneNum"/>
+                        </div>
+                    </div>
+                    <div class="form-group mg-stop">
+                        <label class="col-md-4 control-label">手机号4：</label>
+                        <div class="col-md-6 input-group">
+                            <input class="form-control" type="text" name="phoneNum"/>
+                        </div>
+                    </div>
+                    <div class="form-group mg-stop">
+                        <label class="col-md-4 control-label">手机号5：</label>
+                        <div class="col-md-6 input-group">
+                            <input class="form-control" type="text" name="phoneNum"/>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" onclick="sendMessage()">测试推送</button>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="upload_error_modal" data-backdrop="static">
+    <div class="modal-dialog" role="document" style="width: 50%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title">文件校验失败，描述如下</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 table-striped">
+                        <table id="errorDataTable" class="table table-striped table-bordered"></table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const preheatStatus = "";
+    const preheatNotifyStatus = "";
+    const formalStatus = "";
+    const formalNotifyStatus = "";
+    const operate_type = "[[${operateType}]]";
+    const PROD_NAME_LEN = [[${sourceConfig.prodNameLen}]];
+    const PROFIT_LEN = [[${sourceConfig.profitLen}]];
+    const PROD_URL_LEN = [[${sourceConfig.shortUrlLen}]];
+    const PRICE_LEN = [[${sourceConfig.priceLen}]];
+    const prodUrlEnabled='[[${sourceConfig.prodUrlEnabled}]]';
+    let signatureLen = [[${sourceConfig.signatureLen}]];
+    let unsubscribeLen = [[${sourceConfig.unsubscribeLen}]];
+    let signature='[[${sourceConfig.signature}]]';
+    let unsubscribe='[[${sourceConfig.unsubscribe}]]';
+
+    var clipboard1 = new ClipboardJS('.copy_btn', {
+        container: document.getElementById('sms_add_modal')
+    });
+    clipboard1.on('success', function(e) {
+        $MB.n_success("成功复制到粘贴板！");
+    });
+</script>
+
+<th:block th:include="common/include::footer" />
+<th:block th:include="common/include::perfect-scrollbar" />
+<th:block th:include="common/include::jquery-validate-js" />
+<th:block th:include="common/include::bootstrap-table-js" />
+<th:block th:include="common/include::jquery-confirm-js" />
+<th:block th:include="common/include::echarts" />
+<th:block th:include="common/include::step-js" />
+<th:block th:include="common/include::datepicker-js" />
+<th:block th:include="common/include::rangeslider-js" />
+<th:block th:include="common/include::common-js" />
+<script data-th-src="@{/js/app/operate/common/template.js}"></script>
+<script data-th-src="@{/js/app/operate/qywxactivity/add.js}"></script>
+</body>
+</html>

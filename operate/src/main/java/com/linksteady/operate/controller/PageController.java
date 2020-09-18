@@ -620,4 +620,19 @@ public class PageController extends BaseController {
         model.addAttribute("sourceConfig", sourceConfigVO);
         return "operate/qywxdailyconfig/config";
     }
+
+    @RequestMapping("/qywxActivity/add")
+    @Log(value = "活动运营-新增", location = "用户成长系统")
+    public String qywxActivityAdd(Model model) {
+        model.addAttribute("operateType", "save");
+        SourceConfigVO sourceConfigVO = SourceConfigVO.getInstance(pushConfig);
+        model.addAttribute("sourceConfig", sourceConfigVO);
+        return "operate/qywxactivity/add/add";
+    }
+
+    @RequestMapping("/qywxActivity")
+    @Log(value = "企业微信-活动运营", location = "用户成长系统")
+    public String qywxActivity() {
+        return "operate/qywxactivity/list";
+    }
 }

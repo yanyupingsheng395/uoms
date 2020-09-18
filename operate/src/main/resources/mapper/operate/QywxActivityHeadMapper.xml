@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.QywxActivityHeadMapper">
+    <resultMap id="baseResult" type="com.linksteady.operate.domain.ActivityHead">
+        <result property="headId" jdbcType="DECIMAL" column="HEAD_ID"></result>
+        <result property="activityName" jdbcType="VARCHAR" column="ACTIVITY_NAME"></result>
+        <result property="hasPreheat" jdbcType="VARCHAR" column="HAS_PREHEAT"></result>
+        <result property="preheatStatus" jdbcType="VARCHAR" column="PREHEAT_STATUS"></result>
+        <result property="preheatStartDt" jdbcType="VARCHAR" column="PREHEAT_START_DT"></result>
+        <result property="preheatEndDt" jdbcType="VARCHAR" column="PREHEAT_END_DT"></result>
+        <result property="formalStatus" jdbcType="VARCHAR" column="FORMAL_STATUS"></result>
+        <result property="formalStartDt" jdbcType="VARCHAR" column="FORMAL_START_DT"></result>
+        <result property="formalEndDt" jdbcType="VARCHAR" column="FORMAL_END_DT"></result>
+        <result property="activityflag" jdbcType="VARCHAR" column="ACTIVITYFLAG"></result>
+        <result property="preheatNotifyDt" jdbcType="VARCHAR" column="PREHEAT_NOTIFY_DT"></result>
+        <result property="formalNotifyDt" jdbcType="VARCHAR" column="FORMAL_NOTIFY_DT"></result>
+        <result property="formalNotifyStatus" jdbcType="VARCHAR" column="FORMAL_NOTIFY_STATUS"></result>
+        <result property="preheatNotifyStatus" jdbcType="VARCHAR" column="PREHEAT_NOTIFY_STATUS"></result>
+        <result property="effectFlag" jdbcType="VARCHAR" column="EFFECT_FLAG"></result>
+        <result property="activitySource" jdbcType="VARCHAR" column="activity_source"></result>
+        <result property="platDiscount" jdbcType="VARCHAR" column="plat_discount"></result>
+        <result property="shopDiscount" jdbcType="VARCHAR" column="shop_discount"></result>
+        <result property="platThreshold" jdbcType="VARCHAR" column="plat_threshold"></result>
+        <result property="platDeno" jdbcType="VARCHAR" column="plat_deno"></result>
+    </resultMap>
+
+    <resultMap id="couponMap" type="com.linksteady.operate.domain.ActivityCoupon">
+        <result property="activityCouponId" jdbcType="DECIMAL" column="activity_coupon_id"></result>
+        <result property="headId" jdbcType="DECIMAL" column="head_id"></result>
+        <result property="couponThreshold" jdbcType="VARCHAR" column="coupon_threshold"></result>
+        <result property="couponDenom" jdbcType="VARCHAR" column="coupon_denom"></result>
+        <result property="couponType" jdbcType="VARCHAR" column="coupon_type"></result>
+        <result property="addFlag" jdbcType="VARCHAR" column="add_flag"></result>
+    </resultMap>
+
+    <select id="getDataListOfPage" resultMap="baseResult">
+        select HEAD_ID, ACTIVITY_NAME, HAS_PREHEAT, PREHEAT_STATUS, to_char(PREHEAT_START_DT, 'yyyymmdd') PREHEAT_START_DT, to_char(PREHEAT_END_DT, 'yyyymmdd') PREHEAT_END_DT, FORMAL_STATUS,
+        to_char(FORMAL_START_DT, 'yyyymmdd') FORMAL_START_DT, to_char(FORMAL_END_DT, 'yyyymmdd') FORMAL_END_DT,
+        to_char(PREHEAT_NOTIFY_DT, 'yyyymmdd') PREHEAT_NOTIFY_DT, to_char(FORMAL_NOTIFY_DT, 'yyyymmdd') FORMAL_NOTIFY_DT,
+        FORMAL_NOTIFY_STATUS, PREHEAT_NOTIFY_STATUS,EFFECT_FLAG
+        from UO_QYWX_ACTIVITY_HEADER where 1=1
+        <if test="name != '' and name != null">
+            and ACTIVITY_NAME = #{name}
+        </if>
+        <if test="date != '' and date != null">
+            and ((date_trunc('day', PREHEAT_START_DT) &lt;= date_trunc('day', to_date(#{date}, 'yyyy-mm-dd')) and date_trunc('day', PREHEAT_END_DT) &gt;= date_trunc('day', to_date(#{date}, 'yyyy-mm-dd')))
+             or (date_trunc('day', FORMAL_START_DT) &lt;= date_trunc('day', to_date(#{date}, 'yyyy-mm-dd')) and date_trunc('day', FORMAL_END_DT) &gt;= date_trunc('day', to_date(#{date}, 'yyyy-mm-dd'))))
+        </if>
+        <if test="status != '' and status != null">
+            and (PREHEAT_STATUS = #{status} or FORMAL_STATUS = #{status})
+        </if>
+        order by HEAD_ID desc
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="getDataCount" resultType="int">
+        select count(1) from UO_QYWX_ACTIVITY_HEADER where 1=1
+        <if test="name != '' and name != null">
+            and ACTIVITY_NAME = #{name}
+        </if>
+    </select>
+
+    <select id="findById" resultMap="baseResult">
+        select
+           head_id,
+           activity_name,
+           has_preheat,
+           preheat_status,
+           to_char(preheat_start_dt, 'yyyy-mm-dd') preheat_start_dt,
+           to_char(preheat_end_dt, 'yyyy-mm-dd') preheat_end_dt,
+           formal_status,
+           to_char(formal_start_dt, 'yyyy-mm-dd') formal_start_dt,
+           to_char(formal_end_dt, 'yyyy-mm-dd') formal_end_dt,
+           activityflag,
+           to_char(preheat_notify_dt, 'yyyy-mm-dd') preheat_notify_dt,
+           to_char(formal_notify_dt, 'yyyy-mm-dd') formal_notify_dt,
+           formal_notify_status,
+           preheat_notify_status,
+           activity_source,
+           plat_discount,
+           plat_threshold,
+           plat_deno,
+           shop_discount
+        from UO_QYWX_ACTIVITY_HEADER
+        where head_id = #{headId}::int4
+    </select>
+
+    <insert id="saveActivityHead">
+        <selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="headId">
+            select nextval('uo_op_activity_head_id_seq')
+        </selectKey>
+        insert into UO_QYWX_ACTIVITY_HEADER(
+        head_id,
+        activity_name,
+        has_preheat,
+        preheat_status,
+        preheat_start_dt,
+        preheat_end_dt,
+        formal_status,
+        formal_start_dt,
+        formal_end_dt,
+        insert_dt,
+        insert_by,
+        preheat_notify_dt,
+        formal_notify_dt,
+        formal_notify_status,
+        preheat_notify_status,
+        activityflag,
+        activity_source,
+        plat_discount,
+        plat_threshold,
+        plat_deno)
+        values (#{headId}, #{activityName}, #{hasPreheat}, #{preheatStatus}, to_date(#{preheatStartDt}, 'yyyy-mm-dd'), to_date(#{preheatEndDt}, 'yyyy-mm-dd'), #{formalStatus}, to_date(#{formalStartDt}, 'yyyy-mm-dd'), to_date(#{formalEndDt}, 'yyyy-mm-dd'),
+        #{insertDt}, #{insertBy}, to_date(#{preheatNotifyDt}, 'yyyy-mm-dd'), to_date(#{formalNotifyDt}, 'yyyy-mm-dd'), #{formalNotifyStatus}, #{preheatNotifyStatus},#{activityflag}, #{activitySource}, #{platDiscount}, #{platThreshold}, #{platDeno})
+    </insert>
+
+    <update id="updateActiveHead">
+        update UO_QYWX_ACTIVITY_HEADER set
+        ACTIVITY_NAME = #{activityName},
+        HAS_PREHEAT = #{hasPreheat},
+        PREHEAT_STATUS = #{preheatStatus},
+        PREHEAT_START_DT = to_date(#{preheatStartDt}, 'yyyy-mm-dd'),
+        PREHEAT_END_DT = to_date(#{preheatEndDt}, 'yyyy-mm-dd'),
+        FORMAL_STATUS = #{formalStatus},
+        FORMAL_START_DT = to_date(#{formalStartDt}, 'yyyy-mm-dd'),
+        FORMAL_END_DT = to_date(#{formalEndDt}, 'yyyy-mm-dd')
+        where HEAD_ID = #{headId}::int4
+    </update>
+
+    <select id="getActivityName" resultType="string">
+        select ACTIVITY_NAME from UO_QYWX_ACTIVITY_HEADER where head_id = #{headId}::int4
+    </select>
+
+    <select id="getActivityStatus" resultType="int">
+        select count(1) from UO_QYWX_ACTIVITY_HEADER
+        where head_id = #{id}::int4 and (PREHEAT_STATUS in ('todo', 'doing', 'done') or FORMAL_STATUS in ('todo', 'doing', 'done') or
+        PREHEAT_NOTIFY_STATUS in ('todo', 'doing', 'done') or FORMAL_NOTIFY_STATUS in ('todo', 'doing', 'done'))
+    </select>
+
+    <select id="getPreheatStatus" resultType="string">
+        select PREHEAT_STATUS from UO_QYWX_ACTIVITY_HEADER where head_id = #{headId}::int4
+    </select>
+
+    <select id="getDataChangedStatus" resultType="map">
+        select
+        <if test="stage == 'preheat'">
+            PREHEAT_CHANGED status, PREHEAT_CHANGED_TIME systime
+        </if>
+        <if test="stage == 'formal'">
+            FORMAL_CHANGED status, FORMAL_CHANGED_TIME systime
+        </if>
+        from UO_QYWX_ACTIVITY_HEADER where HEAD_ID = #{headId}
+    </select>
+
+    <delete id="deleteActivity">
+        delete from UO_QYWX_ACTIVITY_HEADER where head_id = #{headId}
+    </delete>
+
+    <select id="getDeleteCount" resultType="int">
+        select count(1) from UO_QYWX_ACTIVITY_HEADER where
+        HEAD_ID = #{headId}
+        and (
+                    (has_preheat = '1' and preheat_notify_status = 'edit' and preheat_status = 'edit' and
+                     formal_notify_status = 'edit' and formal_status = 'edit') or
+                    (has_preheat = '0' and formal_notify_status = 'edit' and formal_status = 'edit') or
+                    (has_preheat = '1' and preheat_notify_status = 'timeout' and preheat_status = 'timeout' and
+                     formal_notify_status = 'timeout' and formal_status = 'timeout') or
+                    (has_preheat = '0' and formal_notify_status = 'timeout' and formal_status = 'timeout')
+        )
+    </select>
+
+    <update id="updatePreheatStatusHead">
+        UPDATE UO_QYWX_ACTIVITY_HEADER
+        <set>
+            <if test="planType!=null and planType=='NOTIFY'">
+                  PREHEAT_NOTIFY_STATUS=#{status},
+            </if>
+            <if test="planType!=null and planType=='DURING'">
+                  PREHEAT_STATUS=#{status},
+            </if>
+        </set>
+    where head_id=#{headId}
+    </update>
+
+    <update id="updateFormalStatusHead">
+        UPDATE UO_QYWX_ACTIVITY_HEADER
+        <set>
+            <if test="planType!=null and planType=='NOTIFY'">
+                  FORMAL_NOTIFY_STATUS=#{status},
+            </if>
+            <if test="planType!=null and planType=='DURING'">
+                  FORMAL_STATUS=#{status},
+            </if>
+        </set>
+        where head_id=#{headId}
+    </update>
+
+    <update id="expirePreheatNotify">
+        update UO_QYWX_ACTIVITY_HEADER t
+        set preheat_notify_status = 'timeout'
+        where t.has_preheat = '1'
+            and t.preheat_notify_status in('todo','edit')
+            and t.preheat_notify_dt::date&lt;current_date
+    </update>
+
+    <update id="expirePreheatDuring">
+        update UO_QYWX_ACTIVITY_HEADER t
+        set preheat_status = 'timeout'
+        where t.has_preheat = '1'
+            and t.preheat_status in('todo','edit')
+            and t.preheat_end_dt::date&lt;current_date
+    </update>
+
+    <update id="expireFormalNotify">
+        update uo_op_activity_header t
+        set formal_notify_status = 'timeout'
+        where t.formal_notify_status in('todo','edit')
+          and t.formal_notify_dt::date&lt;current_date
+    </update>
+
+    <update id="expireFormalDuring">
+        update UO_QYWX_ACTIVITY_HEADER t
+        set formal_status = 'timeout'
+        where t.formal_status in('todo','edit')
+            and t.formal_end_dt::date&lt;current_date
+    </update>
+
+    <insert id="saveActivityCouponList">
+        insert into uo_qywx_activity_coupon(head_id, coupon_threshold, coupon_denom, add_flag, coupon_type)
+        values
+        <foreach collection="couponList" item="item" separator=",">
+            (#{item.headId}, #{item.couponThreshold}::numeric, #{item.couponDenom}::numeric, #{item.addFlag}, #{item.couponType})
+        </foreach>
+    </insert>
+
+    <select id="getActivityCouponList" resultMap="couponMap">
+        select * from uo_qywx_activity_coupon where head_id = #{headId}
+    </select>
+</mapper>

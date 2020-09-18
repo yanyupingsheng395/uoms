@@ -21,7 +21,7 @@ public class OperateResultController extends ApiBaseController {
     @Autowired
     private OperateResultService operateResultService;
 
-    @GetMapping("/getResultData")
+    @RequestMapping("/getResultData")
     public ResponseBo getResultData(HttpServletRequest request,
                                     @RequestParam("signature") String signature,
                                     @RequestParam("timestamp") String timestamp,
@@ -32,6 +32,6 @@ public class OperateResultController extends ApiBaseController {
         } catch (Exception e) {
             return ResponseBo.error(e.getMessage());
         }
-        return ResponseBo.okWithData(null, operateResultService.getResultData(startDt, endDt));
+        return ResponseBo.okWithData(null, operateResultService.getResultData(userId, startDt, endDt));
     }
 }

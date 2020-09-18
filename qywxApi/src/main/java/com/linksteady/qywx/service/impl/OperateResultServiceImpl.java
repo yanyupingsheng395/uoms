@@ -16,7 +16,7 @@ import java.util.Random;
 public class OperateResultServiceImpl implements OperateResultService {
 
     @Override
-    public OperateResult getResultData(String startDt, String endDt) {
+    public OperateResult getResultData(String userId, String startDt, String endDt) {
         OperateResult operateResult = new OperateResult();
         Field[] declaredFields = operateResult.getClass().getDeclaredFields();
         for (int i = 0; i < declaredFields.length; i++) {

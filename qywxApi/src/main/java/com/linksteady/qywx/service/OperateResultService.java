@@ -6,5 +6,5 @@ import com.linksteady.qywx.domain.OperateResult;
  */
 public interface OperateResultService {
 
-    OperateResult getResultData(String startDt, String endDt);
+    OperateResult getResultData(String userId, String startDt, String endDt);
 }

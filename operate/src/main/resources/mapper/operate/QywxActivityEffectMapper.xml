@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.QywxActivityEffectMapper">
+
+    <resultMap id="base" type="com.linksteady.operate.domain.ActivityEffect">
+        <result property="kpiName" jdbcType="VARCHAR" column="KPI_NAME"/>
+        <result property="allStage" jdbcType="DECIMAL" column="ALLSTAGE"/>
+        <result property="preheatAll" jdbcType="DECIMAL" column="PREHEATALL"/>
+        <result property="preheatNotify" jdbcType="DECIMAL" column="PREHEATNOTIFY"/>
+        <result property="preheatDuring" jdbcType="DECIMAL" column="PREHEATDURING"/>
+        <result property="normalAll" jdbcType="DECIMAL" column="NORMALALL"/>
+        <result property="normalNotify" jdbcType="DECIMAL" column="NORMALNOTIFY"/>
+        <result property="normalDuring" jdbcType="DECIMAL" column="NORMALDURING"/>
+        <result property="successNum" jdbcType="DECIMAL" column="SUCCESS_NUM"/>
+        <result property="pushDate" jdbcType="DATE" column="PUSH_DATE"/>
+    </resultMap>
+
+    <select id="getEffectMainKpi" resultMap="base">
+        SELECT
+            F3.VALUE KPI_NAME,
+            F2.ALLSTAGE,
+            F2.PREHEATALL,
+            F2.PREHEATNOTIFY,
+            F2.PREHEATDURING,
+            F2.NORMALALL,
+            F2.NORMALNOTIFY,
+            F2.NORMALDURING
+        FROM
+            (
+                SELECT
+                    KPI_ID,
+                    ALLSTAGE,
+                    PREHEATALL,
+                    PREHEATNOTIFY,
+                    PREHEATDURING,
+                    NORMALALL,
+                    NORMALNOTIFY,
+                    NORMALDURING
+                FROM UO_OP_ACTIVITY_EFFECT  WHERE HEAD_ID = #{headId} AND KPI_TYPE = #{kpiType}) F2 right join
+            (SELECT CODE::int8, VALUE, ORDER_NO
+             FROM T_DICT
+             WHERE TYPE_CODE = 'ACTIVITY_EFFECT_KPI') F3
+        on F2.KPI_ID = F3.CODE
+        ORDER BY F3.ORDER_NO ASC
+    </select>
+
+    <select id="getEffectInfo" resultMap="base">
+        select sum(t.success_num) SUCCESS_NUM,
+               min(t.plan_date) PUSH_DATE
+        from uo_op_activity_plan t where t.head_id=#{headId} and t.plan_status in ('2', '3')
+    </select>
+
+</mapper>
