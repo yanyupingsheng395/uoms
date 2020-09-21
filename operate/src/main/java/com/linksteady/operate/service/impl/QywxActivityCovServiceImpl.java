@@ -27,14 +27,8 @@ public class QywxActivityCovServiceImpl implements QywxActivityCovService {
     private QywxActivityCovMapper activityCovMapper;
 
     @Override
-    public ActivityCovInfo getConvertInfo(String headId, String stage) {
-        String sql = "";
-        if (ActivityStageEnum.preheat.getStageCode().equals(stage)) {
-            sql = "select ACTIVITY_HEAD_ID,PREHEAT_NOTIFY_COVID,PREHEAT_NOTIFY_COV,PREHEAT_NOTIFY_PUSHNUM,PREHEAT_NOTIFY_COVNUM from UO_OP_ACTIVITY_COVINFO where ACTIVITY_HEAD_ID = '" + headId + "'";
-        }
-        if (ActivityStageEnum.formal.getStageCode().equals(stage)) {
-            sql = "select ACTIVITY_HEAD_ID,NORMAL_NOTIFY_COVID,NORMAL_NOTIFY_COV,NORMAL_NOTIFY_PUSHNUM,NORMAL_NOTIFY_COVNUM from UO_OP_ACTIVITY_COVINFO where ACTIVITY_HEAD_ID = '" + headId + "'";
-        }
+    public ActivityCovInfo getConvertInfo(String headId) {
+        String sql = "select ACTIVITY_HEAD_ID,NORMAL_NOTIFY_COVID,NORMAL_NOTIFY_COV,NORMAL_NOTIFY_PUSHNUM,NORMAL_NOTIFY_COVNUM from UO_OP_ACTIVITY_COVINFO where ACTIVITY_HEAD_ID = '" + headId + "'";
         List<ActivityCovInfo> covInfos = activityCovMapper.getCovInfo(sql);
         return covInfos.size() > 0 ? covInfos.get(0) : new ActivityCovInfo();
     }

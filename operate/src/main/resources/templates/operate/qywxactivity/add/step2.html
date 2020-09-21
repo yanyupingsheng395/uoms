@@ -13,15 +13,15 @@
                 <div class="select-list">
                     <ul>
                         <li>
-                            商品名称：<input type="text" id="productName2"/>
+                            商品名称：<input type="text" id="productName"/>
                         </li>
                         <li>
                             商品ID：
-                            <input type="text" id="productId2"/>
+                            <input type="text" id="productId"/>
                         </li>
                         <li>
                             店铺活动机制：
-                            <select name="groupId" id="groupId2">
+                            <select name="groupId" id="groupId">
                                 <option value="">所有</option>
                                 <option value="9">满件打折</option>
                                 <option value="14">立减特价</option>
@@ -30,8 +30,8 @@
                         </li>
                         <li class="pull-right">
                             <a class="btn btn-primary btn-rounded btn-sm"
-                               onclick="searchActivityProduct2()"><i class="fa fa-search"></i>&nbsp;搜索</a>
-                            <a class="btn btn-warning btn-rounded btn-sm" onclick="resetActivityProduct2()"><i
+                               onclick="searchActivityProduct()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="resetActivityProduct()"><i
                                     class="fa fa-refresh"></i>&nbsp;重置</a>
                         </li>
                     </ul>
@@ -47,25 +47,25 @@
     <div class="row">
         <div class="col-sm-12">
             <div class="btn-group-sm" id="toolbar" role="group">
-                <a class="btn btn-success" id="btn_add_shop2">
+                <a class="btn btn-success" id="btn_add_shop">
                     <i class="fa fa-pencil"></i> 新增商品
                 </a>
-                <a class="btn btn-primary" id="btn_edit_shop2">
+                <a class="btn btn-primary" id="btn_edit_shop">
                     <i class="fa fa-edit"></i> 编辑商品
                 </a>
-                <a class="btn btn-danger" id="btn_delete_shop2">
+                <a class="btn btn-danger" id="btn_delete_shop">
                     <i class="fa fa-close"></i> 删除商品
                 </a>
-                <a class="btn btn-secondary" id="btn_batch_upload2">
+                <a class="btn btn-secondary" id="btn_batch_upload">
                     <i class="fa fa-file-archive-o"></i> 批量上传
                 </a>
-                <button class="btn btn-secondary" id="btn_download_data2">
+                <button class="btn btn-secondary" id="btn_download_data">
                     <i class="fa fa-download"></i> 下载数据
                 </button>
             </div>
         </div>
         <div class="col-md-12 table-striped m-t-10">
-            <table id="activityProductTable2" class="table table-bordered table-striped text-nowrap"></table>
+            <table id="activityProductTable" class="table table-bordered table-striped text-nowrap"></table>
         </div>
     </div>
     <div class="row m-t-10">
@@ -73,7 +73,7 @@
             <button class="btn btn-secondary btn-sm" onclick="stepBreak(0)"><i class="fa fa-arrow-left"></i>上一步</button>
             <button class="btn btn-secondary btn-sm" onclick="stepBreak(2)"><i class="fa fa-arrow-right"></i>下一步
             </button>
-            <a class="btn btn-secondary btn-sm" href="/page/activity">
+            <a class="btn btn-secondary btn-sm" href="/page/qywxActivity">
                 <i class="fa fa-backward"></i>&nbsp;返回
             </a>
         </div>
@@ -132,23 +132,25 @@
                     <div class="form-group">
                         <label class="col-md-4 control-label">单品券</label>
                         <div class="col-md-7">
-                            <select name="spCouponFlag" id="spCouponFlag" class="form-control">
+                            <select name="spCouponFlag" id="spCouponFlag" class="form-control" onchange="spCouponFlagChange(this)">
                                 <option value="">请选择</option>
                                 <option value="1">有</option>
                                 <option value="0">无</option>
                             </select>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="col-md-4 control-label">单品券门槛（元）</label>
-                        <div class="col-md-7">
-                            <input class="form-control" type="text" name="spCouponThreshold">
+                    <div id="spCouponDiv">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">单品券门槛（元）</label>
+                            <div class="col-md-7">
+                                <input class="form-control" type="text" name="spCouponThreshold">
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-4 control-label">单品券面额（元）</label>
-                        <div class="col-md-7">
-                            <input class="form-control" type="text" name="spCouponDenom">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">单品券面额（元）</label>
+                            <div class="col-md-7">
+                                <input class="form-control" type="text" name="spCouponDenom">
+                            </div>
                         </div>
                     </div>
                 </form>

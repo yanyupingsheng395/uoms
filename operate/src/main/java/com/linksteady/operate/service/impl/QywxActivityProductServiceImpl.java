@@ -51,13 +51,13 @@ public class QywxActivityProductServiceImpl implements QywxActivityProductServic
     private QywxActivityHeadMapper activityHeadMapper;
 
     @Override
-    public int getCount(String headId, String productId, String productName, String groupId, String activityStage, String activityType) {
-        return activityProductMapper.getCount(headId, productId, productName, groupId, activityStage, activityType);
+    public int getCount(String headId, String productId, String productName, String groupId) {
+        return activityProductMapper.getCount(headId, productId, productName, groupId);
     }
 
     @Override
-    public List<ActivityProduct> getActivityProductListPage(int limit, int offset, String headId, String productId, String productName, String groupId, String activityStage, String activityType) {
-        return activityProductMapper.getActivityProductListPage(limit, offset, headId, productId, productName, groupId, activityStage, activityType);
+    public List<ActivityProduct> getActivityProductListPage(int limit, int offset, String headId, String productId, String productName, String groupId) {
+        return activityProductMapper.getActivityProductListPage(limit, offset, headId, productId, productName, groupId);
     }
 
     @Override
@@ -661,8 +661,8 @@ public class QywxActivityProductServiceImpl implements QywxActivityProductServic
      * @return
      */
     @Override
-    public int validProduct(String headId, String stage) {
-        return activityProductMapper.validProduct(headId, stage);
+    public int validProduct(String headId) {
+        return activityProductMapper.validProduct(headId);
     }
 
     @Override
@@ -671,13 +671,13 @@ public class QywxActivityProductServiceImpl implements QywxActivityProductServic
     }
 
     @Override
-    public boolean checkProductId(String headId, String activityType, String activityStage, String productId) {
-        return activityProductMapper.checkProductId(headId, activityType, activityStage, productId) == 0;
+    public boolean checkProductId(String headId, String productId) {
+        return activityProductMapper.checkProductId(headId, productId) == 0;
     }
 
     @Override
-    public boolean ifCalculate(String headId, String stage) {
-        return activityProductMapper.ifCalculate(headId, stage) > 0;
+    public boolean ifCalculate(String headId) {
+        return activityProductMapper.ifCalculate(headId) > 0;
     }
 
     @Override

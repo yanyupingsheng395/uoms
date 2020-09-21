@@ -18,9 +18,9 @@ public interface QywxActivityTemplateMapper {
 
     void update(ActivityTemplate activityTemplate);
 
-    List<ActivityTemplate> getTemplateTableData(Long headId, String isPersonal, String scene, String stage, String type);
+    List<ActivityTemplate> getTemplateTableData(Long headId);
 
-    void setSmsCode(Long groupId, Long tmpCode, Long headId, String stage, String type, String currentUserName);
+    void setSmsCode(Long groupId, Long tmpCode, Long headId,String type, String currentUserName);
 
     /**
      * 返回一个文案 在传入的活动阶段之外被引用的次数
@@ -29,7 +29,7 @@ public interface QywxActivityTemplateMapper {
      * @param stage
      * @return
      */
-    int checkTemplateUsed(Long templateCode, Long headId, String stage, String type);
+    int checkTemplateUsed(Long templateCode, Long headId, String type);
 
     /**
      * 对当前活动 stage、type上设置的文案进行校验
@@ -37,9 +37,9 @@ public interface QywxActivityTemplateMapper {
      * @param stage
      * @param type
      */
-    void validUserGroup(Long headId, String stage, String type);
+    void validUserGroup(Long headId, String type);
 
-    void removeSmsSelected(String type, Long headId, String stage, Long groupId, String currentUserName);
+    void removeSmsSelected(String type, Long headId, Long groupId, String currentUserName);
 
     /**
      * 判断活动文案是否发生改变

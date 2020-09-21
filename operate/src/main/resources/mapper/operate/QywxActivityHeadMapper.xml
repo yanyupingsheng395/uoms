@@ -34,17 +34,16 @@
     </resultMap>
 
     <select id="getDataListOfPage" resultMap="baseResult">
-        select HEAD_ID, ACTIVITY_NAME, HAS_PREHEAT, PREHEAT_STATUS, to_char(PREHEAT_START_DT, 'yyyymmdd') PREHEAT_START_DT, to_char(PREHEAT_END_DT, 'yyyymmdd') PREHEAT_END_DT, FORMAL_STATUS,
+        select HEAD_ID, ACTIVITY_NAME, FORMAL_STATUS,
         to_char(FORMAL_START_DT, 'yyyymmdd') FORMAL_START_DT, to_char(FORMAL_END_DT, 'yyyymmdd') FORMAL_END_DT,
-        to_char(PREHEAT_NOTIFY_DT, 'yyyymmdd') PREHEAT_NOTIFY_DT, to_char(FORMAL_NOTIFY_DT, 'yyyymmdd') FORMAL_NOTIFY_DT,
-        FORMAL_NOTIFY_STATUS, PREHEAT_NOTIFY_STATUS,EFFECT_FLAG
+        to_char(FORMAL_NOTIFY_DT, 'yyyymmdd') FORMAL_NOTIFY_DT,
+        FORMAL_NOTIFY_STATUS, PREHEAT_NOTIFY_STATUS,EFFECT_FLAG, activity_source
         from UO_QYWX_ACTIVITY_HEADER where 1=1
         <if test="name != '' and name != null">
             and ACTIVITY_NAME = #{name}
         </if>
         <if test="date != '' and date != null">
-            and ((date_trunc('day', PREHEAT_START_DT) &lt;= date_trunc('day', to_date(#{date}, 'yyyy-mm-dd')) and date_trunc('day', PREHEAT_END_DT) &gt;= date_trunc('day', to_date(#{date}, 'yyyy-mm-dd')))
-             or (date_trunc('day', FORMAL_START_DT) &lt;= date_trunc('day', to_date(#{date}, 'yyyy-mm-dd')) and date_trunc('day', FORMAL_END_DT) &gt;= date_trunc('day', to_date(#{date}, 'yyyy-mm-dd'))))
+            and (date_trunc('day', FORMAL_START_DT) &lt;= date_trunc('day', to_date(#{date}, 'yyyy-mm-dd')) and date_trunc('day', FORMAL_END_DT) &gt;= date_trunc('day', to_date(#{date}, 'yyyy-mm-dd')))
         </if>
         <if test="status != '' and status != null">
             and (PREHEAT_STATUS = #{status} or FORMAL_STATUS = #{status})
@@ -92,26 +91,17 @@
         insert into UO_QYWX_ACTIVITY_HEADER(
         head_id,
         activity_name,
-        has_preheat,
-        preheat_status,
-        preheat_start_dt,
-        preheat_end_dt,
         formal_status,
         formal_start_dt,
         formal_end_dt,
         insert_dt,
         insert_by,
-        preheat_notify_dt,
         formal_notify_dt,
         formal_notify_status,
-        preheat_notify_status,
         activityflag,
-        activity_source,
-        plat_discount,
-        plat_threshold,
-        plat_deno)
-        values (#{headId}, #{activityName}, #{hasPreheat}, #{preheatStatus}, to_date(#{preheatStartDt}, 'yyyy-mm-dd'), to_date(#{preheatEndDt}, 'yyyy-mm-dd'), #{formalStatus}, to_date(#{formalStartDt}, 'yyyy-mm-dd'), to_date(#{formalEndDt}, 'yyyy-mm-dd'),
-        #{insertDt}, #{insertBy}, to_date(#{preheatNotifyDt}, 'yyyy-mm-dd'), to_date(#{formalNotifyDt}, 'yyyy-mm-dd'), #{formalNotifyStatus}, #{preheatNotifyStatus},#{activityflag}, #{activitySource}, #{platDiscount}, #{platThreshold}, #{platDeno})
+        activity_source)
+        values (#{headId}, #{activityName}, #{formalStatus}, to_date(#{formalStartDt}, 'yyyy-mm-dd'), to_date(#{formalEndDt}, 'yyyy-mm-dd'),
+        #{insertDt}, #{insertBy}, to_date(#{formalNotifyDt}, 'yyyy-mm-dd'), #{formalNotifyStatus}, #{activityflag}, #{activitySource})
     </insert>
 
     <update id="updateActiveHead">
@@ -158,15 +148,7 @@
 
     <select id="getDeleteCount" resultType="int">
         select count(1) from UO_QYWX_ACTIVITY_HEADER where
-        HEAD_ID = #{headId}
-        and (
-                    (has_preheat = '1' and preheat_notify_status = 'edit' and preheat_status = 'edit' and
-                     formal_notify_status = 'edit' and formal_status = 'edit') or
-                    (has_preheat = '0' and formal_notify_status = 'edit' and formal_status = 'edit') or
-                    (has_preheat = '1' and preheat_notify_status = 'timeout' and preheat_status = 'timeout' and
-                     formal_notify_status = 'timeout' and formal_status = 'timeout') or
-                    (has_preheat = '0' and formal_notify_status = 'timeout' and formal_status = 'timeout')
-        )
+        HEAD_ID = #{headId} and formal_status in ('edit', 'timeout')
     </select>
 
     <update id="updatePreheatStatusHead">

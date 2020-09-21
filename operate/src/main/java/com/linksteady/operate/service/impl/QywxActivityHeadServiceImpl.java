@@ -59,32 +59,11 @@ public class QywxActivityHeadServiceImpl implements QywxActivityHeadService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int saveActivityHead(ActivityHead activityHead, String coupons) {
-        final String HAS_PREHEAT = "1";
-        final String NO_PREHEAT = "0";
-        String hasPreheat = activityHead.getHasPreheat();
         activityHead.setFormalStatus("edit");
-
-        activityHead.setFormalStatus(ActivityStatusEnum.EDIT.getStatusCode());
-        activityHead.setFormalNotifyStatus(ActivityStatusEnum.EDIT.getStatusCode());
-        if (HAS_PREHEAT.equalsIgnoreCase(activityHead.getHasPreheat())) {
-            activityHead.setPreheatStatus(ActivityStatusEnum.EDIT.getStatusCode());
-            activityHead.setPreheatNotifyStatus(ActivityStatusEnum.EDIT.getStatusCode());
-        }
-        if (NO_PREHEAT.equalsIgnoreCase(hasPreheat)) {
-            activityHead.setPreheatStartDt(null);
-            activityHead.setPreheatEndDt(null);
-            activityHead.setPreheatNotifyDt(null);
-            activityHead.setPreheatNotifyStatus(null);
-        }
         activityHead.setInsertDt(new Date());
         activityHead.setInsertBy(((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername());
         activityHeadMapper.saveActivityHead(activityHead);
-        if(HAS_PREHEAT.equals(hasPreheat)) {
-            saveGroupInfo(activityHead.getHeadId(), ActivityStageEnum.preheat.getStageCode());
-            saveGroupInfo(activityHead.getHeadId(), ActivityStageEnum.formal.getStageCode());
-        }else {
-            saveGroupInfo(activityHead.getHeadId(), ActivityStageEnum.formal.getStageCode());
-        }
+        saveGroupInfo(activityHead.getHeadId());
         List<ActivityCoupon> couponList = JSONArray.parseArray(coupons, ActivityCoupon.class);
         if(couponList.size() > 0) {
             couponList.forEach(x->x.setHeadId(activityHead.getHeadId()));
@@ -183,27 +162,26 @@ public class QywxActivityHeadServiceImpl implements QywxActivityHeadService {
      * 保存群组信息
      * @param headId
      */
-    private void saveGroupInfo(long headId, String activityStage) {
+    private void saveGroupInfo(long headId) {
         //类型 NOTIFY 通知 DURING 期间
         List<ActivityGroup> activityGroups = Lists.newArrayList();
         activityGroups.add(new ActivityGroup(
-                9L,headId, "满件打折", activityStage, "NOTIFY", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "用户对该策略下的商品兴趣较高，且在本次活动中发生购买的概率较大"
+                9L,headId, "NOTIFY", "满件打折" , ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "用户对该策略下的商品兴趣较高，且在本次活动中发生购买的概率较大"
         ));
         activityGroups.add(new ActivityGroup(
-                13L, headId, "仅店铺券", activityStage, "NOTIFY", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "用户当前所处的价值、活跃度、年内购买次数维度，在历史活动中转化率较高,且在该商品上转化较高"
+                13L, headId, "NOTIFY", "仅店铺券", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "用户当前所处的价值、活跃度、年内购买次数维度，在历史活动中转化率较高,且在该商品上转化较高"
         ));
         activityGroups.add(new ActivityGroup(
-                14L, headId, "立减特价", activityStage, "NOTIFY", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "用户对该策略下的商品兴趣较高，且在本次活动中发生购买的概率较大"
-        ));
-
-        activityGroups.add(new ActivityGroup(
-                9L,headId, "满件打折", activityStage, "DURING", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "用户对该策略下的商品兴趣较高，且在本次活动中发生购买的概率较大"
+                14L, headId,"NOTIFY", "立减特价", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "用户对该策略下的商品兴趣较高，且在本次活动中发生购买的概率较大"
         ));
         activityGroups.add(new ActivityGroup(
-                13L, headId, "仅店铺券", activityStage, "DURING", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "用户当前所处的价值、活跃度、年内购买次数维度，在历史活动中转化率较高,且在该商品上转化较高"
+                9L,headId, "DURING", "满件打折" , ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "用户对该策略下的商品兴趣较高，且在本次活动中发生购买的概率较大"
         ));
         activityGroups.add(new ActivityGroup(
-                14L, headId, "立减特价", activityStage, "DURING", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "用户对该策略下的商品兴趣较高，且在本次活动中发生购买的概率较大"
+                13L, headId, "DURING", "仅店铺券", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "用户当前所处的价值、活跃度、年内购买次数维度，在历史活动中转化率较高,且在该商品上转化较高"
+        ));
+        activityGroups.add(new ActivityGroup(
+                14L, headId,"DURING", "立减特价", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "用户对该策略下的商品兴趣较高，且在本次活动中发生购买的概率较大"
         ));
         activityUserGroupMapper.saveGroupData(activityGroups);
     }

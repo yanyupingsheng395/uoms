@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface QywxActivityUserGroupService {
 
-    List<ActivityGroup> getUserGroupList(Long headId, String stage, String type);
+    List<ActivityGroup> getUserGroupList(Long headId, String type);
 
     int getCount(Long headId, String stage);
 
@@ -18,5 +18,5 @@ public interface QywxActivityUserGroupService {
 
     int validGroupTemplateWithGroup(Long headId, String stage, String type);
 
-    void validUserGroup(String headId, String stage);
+    void validUserGroup(String headId);
 }

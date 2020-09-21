@@ -116,7 +116,7 @@
 
                     <div id="step3" style="display: none;">
                         <div class="col-md-12 select-table">
-<!--                            <div data-th-include="operate/qywxactivity/add/step3"></div>-->
+                            <div data-th-include="operate/qywxactivity/add/step3"></div>
                         </div>
                     </div>
                 </div>
@@ -251,7 +251,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                <h5 class="modal-title">配置个性化消息</h5>
+                <h5 class="modal-title">消息文本配置</h5>
             </div>
             <div class="modal-body" style="padding-left: 10px;padding-right: 10px;padding-top: 0px;padding-bottom: 0px;">
                 <form class="form-horizontal" id="tmp_add_form" novalidate="novalidate">
@@ -261,13 +261,13 @@
                             <div class="col-md-8">
                                 <div class="form-group">
                                     <div>
-                                        <label class="control-label">文案体现的个性化要素</label>
+                                        <label class="control-label">选择个性化要素</label>
                                     </div>
                                     <div>
                                         <input type="hidden" name="smsCode" id="smsCode"/>
                                         <div style="width:554px;border: solid 1px #ebebeb;padding: 8px; float: left;" id="config-box">
                                             <div class="example-box">
-                                                <label class="control-label">　　　　商品名称：</label>
+                                                <label class="control-label">　　　　　商品名称：</label>
                                                 <label class="lyear-radio radio-inline radio-primary">
                                                     <input type="radio" name="isProdName" value="1"/><span>是</span>
                                                 </label>
@@ -277,89 +277,62 @@
                                                 &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${商品名称} 粘贴到期望位置；</span>
                                                 <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${商品名称}" class="copy_btn">复制</a>
                                             </div>
-                                            <div class="example-box" id="produrlDiv">
-                                                <label class="control-label">　商品详情页短链：</label>
-                                                <label class="lyear-radio radio-inline radio-primary">
-                                                    <input type="radio" name="isProdUrl" value="1"/><span>是</span>
-                                                </label>
-                                                <label class="lyear-radio radio-inline radio-primary">
-                                                    <input type="radio" name="isProdUrl" value="0"/><span>否</span>
-                                                </label>
-                                                &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${商品详情页短链} 粘贴到期望位置；</span>
-                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${商品详情页短链}" class="copy_btn">复制</a>
-                                            </div>
                                             <div class="example-box">
-                                                <label class="control-label">　　　商品利益点：</label>
+                                                <label class="control-label">　商品的活动利益点：</label>
                                                 <label class="lyear-radio radio-inline radio-primary">
                                                     <input type="radio" name="isProfit" value="1"/><span>是</span>
                                                 </label>
                                                 <label class="lyear-radio radio-inline radio-primary">
                                                     <input type="radio" name="isProfit" value="0"/><span>否</span>
                                                 </label>
-                                                &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${商品利益点} 粘贴到期望位置；</span>
-                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${商品利益点}" class="copy_btn">复制</a>
+                                                &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${商品的活动利益点} 粘贴到期望位置；</span>
+                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${商品的活动利益点}" class="copy_btn">复制</a>
                                             </div>
                                             <div class="example-box">
-                                                <label class="control-label">　　商品最低单价：</label>
+                                                <label class="control-label">商品的入手预估单价：</label>
                                                 <label class="lyear-radio radio-inline radio-primary">
                                                     <input type="radio" name="isPrice" value="1"/><span>是</span>
                                                 </label>
                                                 <label class="lyear-radio radio-inline radio-primary">
                                                     <input type="radio" name="isPrice" value="0"/><span>否</span>
                                                 </label>
-                                                &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${商品最低单价} 粘贴到消息期望位置；</span>
-                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${商品最低单价}" class="copy_btn">复制</a>
+                                                &nbsp;&nbsp;&nbsp;<span style="color: #676a6c;font-size: 12px;">请将 ${商品的入手预估单价} 粘贴到消息期望位置；</span>
+                                                <a style="text-decoration: underline;cursor: pointer;font-size: 12px;" data-clipboard-text="${商品的入手预估单价}" class="copy_btn">复制</a>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div>
-                                        <label class="control-label">文案内容</label>
+                                        <label class="control-label">消息内容</label>
                                     </div>
                                     <div>
                                         <textarea class="form-control" id="content" name="content" style="width:554px;height: 102px;" oninput="contextOnChange()"></textarea>
                                         <input type="hidden" id="smsContentInput" name="smsContentInput"/>
                                         <div class="wordstatis">
-                                            长度估算：当前内容字数<span id="snum1" style="color:rgb(255, 152, 0);"></span>
-                                            ,签名+填充变量+退订信息 三部分总字数<span id="snum2" style="color:rgb(255, 152, 0);"></span>
-                                            ,按照<span id="snum3" style="color:rgb(255, 0, 0);font-size: 14px;font-weight: bold"></span>条消息发送并计费。本估算依变量的最大占用长度估算，与实际会有偏差。
+                                            1.文案字数=运营者编写内容的字数+系统填充的变量占用的长度；<br/>
+                                            2.个性化变量说明：<br/>
+                                            &nbsp;&nbsp;${商品名称}：系统个性化填充商品短名称变量，不同用户看到不同商品短名称；<br/>
+                                            &nbsp;&nbsp;${商品的活动利益点}：系统会个性化填充商品在活动体现的利益点，不同用户看到不同商品的活动利益点；<br/>
+                                            &nbsp;&nbsp;${商品的入手预估单价}：系统会个性化填充商品在活动中购买的预估到手价，不同用户看到不同商品的入手预估单价；<br/>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-4">
-                                <div class="text-center" style="position:absolute;height: 470px;width:100%;background:url(/images/app_content_01.png) no-repeat -23px -39px;}"></div>
-                                <div class="bubble" style="position: relative;margin-top: 140px;width: 233px;">
-                                    <div class="demo clearfix">
-                                        <span class="triangle" style="left: 42px"></span>
-                                        <div class="article" id="article" style="font-size: 12px;">请输入短信内容</div>
+                            <div class="col-md-4 m-t-10">
+                                <div style="height:360px;width:265px;margin-left: 20px;border-radius: 10px;">
+                                    <div style="height: 50px;width: 100%;background-color: rgb(49,46,51);border-top-right-radius: 10px;border-top-left-radius: 10px;"
+                                         class="text-center">
+                                        <p style="color: #fff;line-height: 50px;">linksteady</p>
+                                    </div>
+                                    <div style="height: 300px;width: 100%;background-color: rgb(235,235,235);border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;">
+                                        <div class="send" id="preview">
+                                            <div class="arrow"></div>
+                                            <span id="article">请输入消息内容</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <hr class="hr m-t-0 m-t-5"/>
-                    <div class="row">
-                        <div class="col-md-12 control-label" style="text-align: left;margin-left: 15px;padding-left: 5px;">
-                            <ol class="list-inline">文案编写说明：</ol>
-                            <ol style="padding-inline-start: 20px">
-                                <li class="smscomments">1.文案字数=运营者编写内容的字数+系统填充的变量占用的长度+签名长度+退订信息长度；</li>
-                                <li class="smscomments">2.计费规则：文案字数<=70个字数，按照70个字数一条计算；文案字数>70个字数，即为长信息，按照67个字数记为一条；</li>
-
-                                <li class="smscomments">3.当前系统支持在文案中使用的变量及其占用长度、签名长度、退订信息长度情况如下：</li>
-                                <ul>
-                                    <li class="smsvariable">&nbsp;&nbsp;${商品名称}：商品短名称，占<font color="red">[[${sourceConfig.prodNameLen}]]</font>个字符；例如:[[${sourceConfig.prodName}]]</li>
-                                    <li id="produrlComments" class="smsvariable">&nbsp;&nbsp;${商品详情页短链}：商品购买详情页短链接，占<font color="red">[[${sourceConfig.shortUrlLen}]]</font>个字符；例如:[[${sourceConfig.url}]]</li>
-                                    <li class="smsvariable">&nbsp;&nbsp;${商品利益点}：商品利益点，占<font color="red">[[${sourceConfig.profitLen}]]</font>个字符；例如:[[${sourceConfig.profit}]]</li>
-                                    <li class="smsvariable">&nbsp;&nbsp;${商品最低单价}：商品最低单价，占<font color="red">[[${sourceConfig.priceLen}]]</font>个字符；例如:[[${sourceConfig.price}]]</li>
-                                    <li class="smsvariable">&nbsp;&nbsp;签名：[[${sourceConfig.signature}]]，占<font color="red">[[${sourceConfig.signatureLen}]]</font>个字符；</li>
-                                    <li class="smsvariable">&nbsp;&nbsp;退订信息：[[${sourceConfig.unsubscribe}]]，占<font color="red">[[${sourceConfig.unsubscribeLen}]]</font>个字符；
-                                </ul>
-
-                                <li  class="smscomments">4.编写文案时起始位置请<font color="red">不要包含</font>签名信息[[${sourceConfig.signature}]]</li>
-                                <li  class="smscomments">5.编写文案时结束位置请<font color="red">不要包含</font>退订信息 [[${sourceConfig.unsubscribe}]]</li>
-                            </ol>
                         </div>
                     </div>
                 </form>
@@ -380,56 +353,18 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-md-12">
-                        <form id="sms-form">
-                            <div class="select-list">
-                                <ul>
-                                    <li>
-                                        使用场景：<select name="scene">
-                                        <option value="">所有</option>
-                                        <option value="NOTIFY">活动通知</option>
-                                        <option value="DURING">活动期间</option>
-                                    </select>
-                                    </li>
-                                    <li>
-                                        个性化：<select name="isPersonal">
-                                        <option value="">所有</option>
-                                        <option value="1">是</option>
-                                        <option value="0">否</option>
-                                    </select>
-                                    </li>
-                                    <li>
-                                        <a class="btn btn-primary btn-rounded btn-sm" onclick="getTmpTableData()"><i
-                                                class="fa fa-search"></i>&nbsp;搜索</a>
-                                        <a class="btn btn-warning btn-rounded btn-sm" onclick="resetTmpInfo()"><i
-                                                class="fa fa-refresh"></i>&nbsp;重置</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <hr class="hr" style="margin-bottom: 0px;"/>
-                    </div>
-                </div>
-                <div class="row">
                     <div class="col-sm-12 table-striped">
-                        <div class="row m-t-10">
+                        <div class="row">
                             <div class="col-sm-12">
                                 <div class="btn-group-sm" id="toolbar" role="group">
                                     <a class="btn btn-success" id="btn_add" onclick="addTemplate()">
-                                        <i class="fa fa-pencil"></i> 新增文案
+                                        <i class="fa fa-pencil"></i> 新增消息
                                     </a>
                                     <a class="btn btn-primary" id="btn_edit" onclick="editTemplate()">
-                                        <i class="fa fa-edit"></i> 编辑文案
-                                    </a>
-                                    <a class="btn btn-cyan" id="btn_send" onclick="testSend()">
-                                        <i class="fa fa-puzzle-piece"></i> 屏蔽测试
+                                        <i class="fa fa-edit"></i> 编辑消息
                                     </a>
                                     <a class="btn btn-danger" id="btn_delete" onclick="deleteTemplate()">
-                                        <i class="fa fa-close"></i> 删除文案
+                                        <i class="fa fa-close"></i> 删除消息
                                     </a>
                                 </div>
                             </div>

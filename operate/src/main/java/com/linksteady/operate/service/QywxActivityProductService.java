@@ -12,9 +12,9 @@ import java.util.List;
  */
 public interface QywxActivityProductService {
 
-    int getCount(String headId, String productId, String productName, String groupId, String activityStage, String activityType);
+    int getCount(String headId, String productId, String productName, String groupId);
 
-    List<ActivityProduct> getActivityProductListPage(int limit, int offset, String headId, String productId, String productName, String groupId, String activityStage, String activityType);
+    List<ActivityProduct> getActivityProductListPage(int limit, int offset, String headId, String productId, String productName, String groupId);
 
     /**
      * 保存活动商品
@@ -61,13 +61,13 @@ public interface QywxActivityProductService {
 
     int getCountByHeadId(String headId);
 
-    int validProduct(String headId, String stage);
+    int validProduct(String headId);
 
     List<String> getGroupIds(Long headId);
 
-    boolean checkProductId(String headId, String activityType, String activityStage, String productId);
+    boolean checkProductId(String headId, String productId);
 
-    boolean ifCalculate(String headId, String stage);
+    boolean ifCalculate(String headId);
 
     List<String> getNotValidProductCount(Long headId, String stage, String type);
 }

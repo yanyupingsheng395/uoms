@@ -11,9 +11,9 @@ import java.util.List;
  */
 public interface QywxActivityProductMapper {
 
-    int getCount(String headId, String productId, String productName, String groupId, String activityStage, String activityType);
+    int getCount(String headId, String productId, String productName, String groupId);
 
-    List<ActivityProduct> getActivityProductListPage(int limit, int offset, String headId, String productId, String productName, String groupId, String activityStage, String activityType);
+    List<ActivityProduct> getActivityProductListPage(int limit, int offset, String headId, String productId, String productName, String groupId);
 
 //    void saveDataList(List<ActivityProduct> productList);
 
@@ -49,13 +49,13 @@ public interface QywxActivityProductMapper {
 
     int getCountByHeadId(String headId);
 
-    int validProduct(String headId, String stage);
+    int validProduct(String headId);
 
     List<String> getGroupIds(Long headId);
 
-    int checkProductId(String headId, String activityType, String activityStage, String productId);
+    int checkProductId(String headId, String productId);
 
-    int ifCalculate(String headId, String stage);
+    int ifCalculate(String headId);
 
     List<String> getNotValidProduct(Long headId, String stage, String type);
 

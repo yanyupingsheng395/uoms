@@ -12,7 +12,7 @@ public interface QywxActivityUserGroupMapper {
 
     int getCount(Long headId, String stage);
 
-    List<ActivityGroup> getUserGroupList(Long headId, String stage);
+    List<ActivityGroup> getUserGroupList(Long headId);
 
     void updateGroupTemplate(Long headId, Long groupId, Long code, String stage);
 

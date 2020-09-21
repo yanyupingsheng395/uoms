@@ -29,10 +29,10 @@ public class QywxActivityUserGroupServiceImpl implements QywxActivityUserGroupSe
     private QywxActivityHeadMapper activityHeadMapper;
 
     @Override
-    public List<ActivityGroup> getUserGroupList(Long headId, String stage, String type) {
+    public List<ActivityGroup> getUserGroupList(Long headId, String type) {
         //对活动当前stage的组上配置的文案情况进行一次校验
-        activityTemplateMapper.validUserGroup(headId, stage,type);
-        List<ActivityGroup> userGroupList = activityUserGroupMapper.getUserGroupList(headId, stage);
+        activityTemplateMapper.validUserGroup(headId, type);
+        List<ActivityGroup> userGroupList = activityUserGroupMapper.getUserGroupList(headId);
         //仅返回当前活动类型的组列表
         List<ActivityGroup> result = userGroupList.stream().filter(x -> type.equals(x.getActivityType())).collect(Collectors.toList());
         return result;
@@ -62,28 +62,28 @@ public class QywxActivityUserGroupServiceImpl implements QywxActivityUserGroupSe
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void validUserGroup(String headId, String stage) {
-        ActivityHead activityHead = activityHeadMapper.findById(Long.valueOf(headId));
-        if(stage.equalsIgnoreCase("preheat")) {
-            String preheatNotifyStatus = activityHead.getPreheatNotifyStatus();
-            if(preheatNotifyStatus.equalsIgnoreCase("edit") || preheatNotifyStatus.equalsIgnoreCase("todo")) {
-                activityTemplateMapper.validUserGroup(Long.valueOf(headId), stage, "NOTIFY");
-            }
-            String preheatDuringStatus = activityHead.getPreheatStatus();
-            if(preheatDuringStatus.equalsIgnoreCase("edit") || preheatDuringStatus.equalsIgnoreCase("todo")) {
-                activityTemplateMapper.validUserGroup(Long.valueOf(headId), stage, "DURING");
-            }
-        }
-
-        if(stage.equalsIgnoreCase("formal")) {
-            String formalNotifyStatus = activityHead.getFormalNotifyStatus();
-            if(formalNotifyStatus.equalsIgnoreCase("edit") || formalNotifyStatus.equalsIgnoreCase("todo")) {
-                activityTemplateMapper.validUserGroup(Long.valueOf(headId), stage, "NOTIFY");
-            }
-            String formalStatus = activityHead.getFormalStatus();
-            if(formalStatus.equalsIgnoreCase("edit") || formalStatus.equalsIgnoreCase("todo")) {
-                activityTemplateMapper.validUserGroup(Long.valueOf(headId), stage, "DURING");
-            }
-        }
+    public void validUserGroup(String headId) {
+//        ActivityHead activityHead = activityHeadMapper.findById(Long.valueOf(headId));
+//        if(stage.equalsIgnoreCase("preheat")) {
+//            String preheatNotifyStatus = activityHead.getPreheatNotifyStatus();
+//            if(preheatNotifyStatus.equalsIgnoreCase("edit") || preheatNotifyStatus.equalsIgnoreCase("todo")) {
+//                activityTemplateMapper.validUserGroup(Long.valueOf(headId), stage, "NOTIFY");
+//            }
+//            String preheatDuringStatus = activityHead.getPreheatStatus();
+//            if(preheatDuringStatus.equalsIgnoreCase("edit") || preheatDuringStatus.equalsIgnoreCase("todo")) {
+//                activityTemplateMapper.validUserGroup(Long.valueOf(headId), stage, "DURING");
+//            }
+//        }
+//
+//        if(stage.equalsIgnoreCase("formal")) {
+//            String formalNotifyStatus = activityHead.getFormalNotifyStatus();
+//            if(formalNotifyStatus.equalsIgnoreCase("edit") || formalNotifyStatus.equalsIgnoreCase("todo")) {
+//                activityTemplateMapper.validUserGroup(Long.valueOf(headId), stage, "NOTIFY");
+//            }
+//            String formalStatus = activityHead.getFormalStatus();
+//            if(formalStatus.equalsIgnoreCase("edit") || formalStatus.equalsIgnoreCase("todo")) {
+//                activityTemplateMapper.validUserGroup(Long.valueOf(headId), stage, "DURING");
+//            }
+//        }
     }
 }

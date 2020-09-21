@@ -34,6 +34,9 @@ public class PageController extends BaseController {
     private ActivityHeadService activityHeadService;
 
     @Autowired
+    private QywxActivityHeadService qywxActivityHeadService;
+
+    @Autowired
     private ConfigService configService;
 
     @Autowired
@@ -634,5 +637,23 @@ public class PageController extends BaseController {
     @Log(value = "企业微信-活动运营", location = "用户成长系统")
     public String qywxActivity() {
         return "operate/qywxactivity/list";
+    }
+
+    @Log(value = "企业微信活动用户运营-编辑", location = "用户成长系统")
+    @RequestMapping("/qywxActivity/edit")
+    public String qywxActivityEdit(@RequestParam("headId") Long headId, Model model) {
+        ActivityHead activityHead = qywxActivityHeadService.findById(headId);
+        List<ActivityCoupon> activityCouponList = qywxActivityHeadService.findCouponList(headId);
+        List<ActivityCoupon> shopCouponList = activityCouponList.stream().filter(x -> x.getCouponType().equalsIgnoreCase("S")).collect(Collectors.toList());
+        String formalStatus = activityHead.getFormalStatus();
+        model.addAttribute("activityHead", activityHead);
+        model.addAttribute("shopCouponList", shopCouponList);
+        model.addAttribute("operateType", "update");
+        // 当处于done状态的时候，按钮不显示
+        model.addAttribute("formalStatus", formalStatus);
+        //文案相关变量
+        SourceConfigVO sourceConfigVO = SourceConfigVO.getInstance(pushConfig);
+        model.addAttribute("sourceConfig", sourceConfigVO);
+        return "operate/qywxactivity/add/add";
     }
 }

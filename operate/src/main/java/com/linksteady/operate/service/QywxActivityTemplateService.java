@@ -12,7 +12,7 @@ public interface QywxActivityTemplateService {
 
     void saveTemplate(ActivityTemplate activityTemplate, String currentUser);
 
-    void deleteActivityTemplate(Long code, Long headId, String stage, String type);
+    void deleteActivityTemplate(Long code, Long headId, String type);
 
     ActivityTemplate getTemplate(Long tmpCode);
 
@@ -25,12 +25,12 @@ public interface QywxActivityTemplateService {
      */
     String getActivityTemplateContent(Long code, String scene);
 
-    List<ActivityTemplate> getSmsTemplateList(Long headId, String isPersonal, String scene, String stage, String type);
+    List<ActivityTemplate> getSmsTemplateList(Long headId);
 
-    boolean checkTemplateUsed(Long templateCode, Long headId, String stage, String type);
+    boolean checkTemplateUsed(Long templateCode, Long headId, String type);
 
-    void removeSmsSelected(String type, Long headId, String stage, Long groupId, String currentUserName);
+    void removeSmsSelected(String type, Long headId, Long groupId, String currentUserName);
 
-    void setSmsCode(Long groupId, Long tmpCode, Long headId, String stage, String type, String currentUserName);
+    void setSmsCode(Long groupId, Long tmpCode, Long headId, String type, String currentUserName);
 
 }

@@ -119,9 +119,9 @@ public class QywxActivityController {
      */
     @GetMapping("/getActivityProductPage")
     public ResponseBo getActivityProductPage(Integer limit, Integer offset, String headId, String productId, String productName,
-                                             String groupId, String activityStage, String activityType) {
-        int count = activityProductService.getCount(headId, productId, productName, groupId, activityStage, activityType);
-        List<ActivityProduct> productList = activityProductService.getActivityProductListPage(limit,offset, headId, productId, productName, groupId, activityStage, activityType);
+                                             String groupId) {
+        int count = activityProductService.getCount(headId, productId, productName, groupId);
+        List<ActivityProduct> productList = activityProductService.getActivityProductListPage(limit,offset, headId, productId, productName, groupId);
         return ResponseBo.okOverPaging(null, count, productList);
     }
 
@@ -265,7 +265,7 @@ public class QywxActivityController {
             data.put("error", "存在校验不通过的商品！");
         }
         if(type.equalsIgnoreCase("NOTIFY")) {
-            if(activityProductService.ifCalculate(headId.toString(), stage)) {
+            if(activityProductService.ifCalculate(headId.toString())) {
                 data.put("error", "活动转化率数据不是最新数据，请先获取最新数据！");
             }
         }
@@ -293,7 +293,6 @@ public class QywxActivityController {
         int count = activityHeadService.getDeleteCount(headId);
         if(count == 1) {
             activityHeadService.deleteData(headId);
-
         }else {
             return ResponseBo.error("该活动当前状态不支持删除操作！");
         }
@@ -335,13 +334,12 @@ public class QywxActivityController {
     /**
      * 获取用户群组信息
      * @param headId
-     * @param stage
      * @param type
      * @return
      */
     @GetMapping("/getGroupList")
-    public List<ActivityGroup> getGroupList(@RequestParam("headId") Long headId, @RequestParam("stage") String stage, @RequestParam("type") String type) {
-        return activityUserGroupService.getUserGroupList(headId, stage, type);
+    public List<ActivityGroup> getGroupList(@RequestParam("headId") Long headId, @RequestParam("type") String type) {
+        return activityUserGroupService.getUserGroupList(headId, type);
     }
 
     /**
@@ -351,8 +349,8 @@ public class QywxActivityController {
      * @return
      */
     @GetMapping("/getConvertInfo")
-    public List<ActivityCovInfo> geConvertInfo(@RequestParam("headId") String headId, @RequestParam("stage") String stage) {
-        return Lists.newArrayList(activityCovService.getConvertInfo(headId, stage));
+    public List<ActivityCovInfo> geConvertInfo(@RequestParam("headId") String headId) {
+        return Lists.newArrayList(activityCovService.getConvertInfo(headId));
     }
 
     @GetMapping("/getCovList")
@@ -386,7 +384,7 @@ public class QywxActivityController {
     }
 
     @PostMapping("/downloadExcel")
-    public ResponseBo excel(@RequestParam("headId") String headId, @RequestParam("activityStage") String activityStage, @RequestParam("activityType") String activityType) throws InterruptedException {
+    public ResponseBo excel(@RequestParam("headId") String headId) throws InterruptedException {
         List<ActivityProduct> list = Lists.newLinkedList();
         List<Callable<List<ActivityProduct>>> tmp = Lists.newLinkedList();
         int count = activityProductService.getCountByHeadId(headId);
@@ -399,16 +397,10 @@ public class QywxActivityController {
             tmp.add(() -> {
                 int limit = pageSize;
                 int offset = finalI * pageSize;
-                List<ActivityProduct> activityProductListPage = activityProductService.getActivityProductListPage(limit, offset, headId, "", "", "", activityStage, activityType);
+                List<ActivityProduct> activityProductListPage = activityProductService.getActivityProductListPage(limit, offset, headId, "", "", "");
                 activityProductListPage.stream().forEach(x->{
-                    if(activityType.equalsIgnoreCase("NOTIFY")) {
-                        x.setNotifyMinPrice(df.format(x.getMinPrice()));
-                        x.setNotifyProfit(df.format(x.getActivityProfit()));
-                    }
-                    if(activityType.equalsIgnoreCase("DURING")) {
-                        x.setDuringMinPrice(df.format(x.getMinPrice()));
-                        x.setDuringProfit(df.format(x.getActivityProfit()));
-                    }
+                    x.setNotifyMinPrice(df.format(x.getMinPrice()));
+                    x.setNotifyProfit(df.format(x.getActivityProfit()));
                 });
                 return activityProductListPage;
             });
@@ -433,17 +425,14 @@ public class QywxActivityController {
     }
 
     @GetMapping("/validProduct")
-    public ResponseBo validProduct(@RequestParam String headId, @RequestParam("stage") String stage) {
-        return ResponseBo.okWithData(null, activityProductService.validProduct(headId, stage));
+    public ResponseBo validProduct(@RequestParam String headId) {
+        return ResponseBo.okWithData(null, activityProductService.validProduct(headId));
     }
 
 
     @GetMapping("/checkProductId")
-    public boolean checkProductId(@RequestParam String headId, @RequestParam String activityType, @RequestParam String activityStage, @RequestParam String productId) {
-        if(StringUtils. isEmpty(activityType)) {
-            return true;
-        }
-        return activityProductService.checkProductId(headId, activityType, activityStage, productId);
+    public boolean checkProductId(@RequestParam String headId, @RequestParam String productId) {
+        return activityProductService.checkProductId(headId, productId);
     }
 
     private final ReentrantLock reentrantLock = new ReentrantLock();
@@ -470,13 +459,13 @@ public class QywxActivityController {
     }
 
     @RequestMapping("/ifCalculate")
-    public boolean ifCalculate(@RequestParam String headId, @RequestParam String stage) {
-        return activityProductService.ifCalculate(headId, stage);
+    public boolean ifCalculate(@RequestParam String headId) {
+        return activityProductService.ifCalculate(headId);
     }
 
     @RequestMapping("/validUserGroup")
-    public ResponseBo validUserGroup(@RequestParam String headId, @RequestParam String stage) {
-        activityUserGroupService.validUserGroup(headId, stage);
+    public ResponseBo validUserGroup(@RequestParam String headId) {
+        activityUserGroupService.validUserGroup(headId);
         return ResponseBo.ok();
     }
 }

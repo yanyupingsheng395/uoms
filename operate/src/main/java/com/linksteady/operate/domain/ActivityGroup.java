@@ -40,6 +40,16 @@ public class ActivityGroup implements Cloneable{
 
     public ActivityGroup() {};
 
+    public ActivityGroup(Long groupId, Long headId, String activityType, String groupName, String insertBy, Date insertDt, String groupInfo) {
+        this.groupId = groupId;
+        this.headId = headId;
+        this.activityType = activityType;
+        this.groupName = groupName;
+        this.insertBy = insertBy;
+        this.insertDt = insertDt;
+        this.groupInfo = groupInfo;
+    }
+
     public ActivityGroup(Long groupId, Long headId, String groupName, String activityStage, String activityType,
                          String insertBy, Date insertDt, String groupInfo) {
         this.groupId = groupId;

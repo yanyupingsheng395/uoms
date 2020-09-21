@@ -150,20 +150,9 @@ $( "#btn_delete" ).click( function () {
         return;
     }
     let headId = selected[0].headId;
-    let preheatNotifyStatus = selected[0].preheatNotifyStatus;
-    let formalNotifyStatus = selected[0].formalNotifyStatus;
-    let preheatStatus = selected[0].preheatStatus;
-    let formalStatus = selected[0].formalStatus;
-    let hasPreheat = selected[0].hasPreheat;
-
-    if (!(
-        (hasPreheat === '1' && preheatNotifyStatus === 'edit' && formalNotifyStatus === 'edit' && preheatStatus === 'edit' && formalStatus === 'edit') ||
-        (hasPreheat === '0' && formalStatus === 'edit' && formalNotifyStatus === 'edit') ||
-        (hasPreheat === '1' && preheatNotifyStatus === 'timeout' && formalNotifyStatus === 'timeout' && preheatStatus === 'timeout' && formalStatus === 'timeout') ||
-        (hasPreheat === '0' && formalStatus === 'timeout' && formalNotifyStatus === 'timeout')
-    )
-    ) {
-        $MB.n_warning( "只有全部为待计划或过期未执行的活动才可以被删除！" );
+    let formalStatus = selected[0]['formalStatus'];
+    if (!(formalStatus === 'edit' || formalStatus === 'timeout')) {
+        $MB.n_warning( "只有待计划或过期未执行的活动才可以被删除！" );
         return;
     }
     $MB.confirm( {

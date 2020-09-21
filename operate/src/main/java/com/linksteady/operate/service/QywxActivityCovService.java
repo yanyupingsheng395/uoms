@@ -15,7 +15,7 @@ public interface QywxActivityCovService {
      * 获取默认的转化值
      * @return
      */
-    ActivityCovInfo getConvertInfo(String headId, String stage);
+    ActivityCovInfo getConvertInfo(String headId);
 
     List<ActivityCovInfo> getCovList(String headId, String stage);
 

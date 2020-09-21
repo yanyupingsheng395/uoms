@@ -44,8 +44,6 @@
         case when check_flag = 'Y' then '1' else '0' end order_col
         from uo_qywx_activity_product
         where head_id = #{headId}::integer
-        and activity_stage = #{activityStage}
-        and activity_type = #{activityType}
         <if test="productId != null and productId != ''">
             and EPB_PRODUCT_ID = #{productId}
         </if>
@@ -64,8 +62,6 @@
         select count(1)
         from uo_qywx_activity_product
         where head_id = #{headId}::integer
-        and activity_stage = #{activityStage}
-        and activity_type = #{activityType}
         <if test="productId != null and productId != ''">
             and EPB_PRODUCT_ID = #{productId}
         </if>
@@ -210,7 +206,7 @@
     <select id="validProduct" resultType="int">
         select count(1)
         from uo_qywx_activity_product
-        where HEAD_ID = #{headId}::int4 and activity_stage = #{stage} and CHECK_FLAG = 'N'
+        where HEAD_ID = #{headId}::int4 and CHECK_FLAG = 'N'
     </select>
 
     <select id="getGroupIds" resultType="string">
@@ -221,19 +217,14 @@
     </select>
 
     <select id="checkProductId" resultType="int">
-        select count(1) from uo_qywx_activity_product where head_id = #{headId}::integer and activity_stage = #{activityStage}
-        <if test="activityType != null and activityType != 'ALL'">
-            and activity_type = #{activityType}
-        </if>
+        select count(1) from uo_qywx_activity_product where head_id = #{headId}::integer and epb_product_id = #{productId}
     </select>
 
     <select id="ifCalculate" resultType="int">
         with v1 as (select epb_product_id
                     from uo_qywx_activity_product
-                    where head_id = #{headId}::integer
-                      and activity_type = 'NOTIFY'
-                      and activity_stage = #{stage}),
-             v2 as (select epb_product_id from uo_qywx_activity_product_history where head_id = #{headId}::integer and activity_stage = #{stage})
+                    where head_id = #{headId}::integer),
+             v2 as (select epb_product_id from uo_qywx_activity_product_history where head_id = #{headId}::integer)
         select count(1) from v1 full join v2 on v1.epb_product_id = v2.epb_product_id where v1.epb_product_id is null or v2.epb_product_id is null
     </select>
 

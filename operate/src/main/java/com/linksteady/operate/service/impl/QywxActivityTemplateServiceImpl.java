@@ -36,11 +36,12 @@ public class QywxActivityTemplateServiceImpl implements QywxActivityTemplateServ
 
     /**
      * 获取给定短信的预览文案
+     *
      * @param code
      * @return
      */
     @Override
-    public String getActivityTemplateContent(Long code,String scene) {
+    public String getActivityTemplateContent(Long code, String scene) {
         ActivityTemplate activityTemplate = activityTemplateMapper.getTemplate(code);
         String isProdUrl = activityTemplate.getIsProdUrl();
         String isProdName = activityTemplate.getIsProdName();
@@ -52,7 +53,7 @@ public class QywxActivityTemplateServiceImpl implements QywxActivityTemplateServ
         String profit = "${商品利益点}";
         String content = activityTemplate.getContent();
         if (StringUtils.isNotEmpty(isProdUrl) && isProdUrl.equalsIgnoreCase("1")) {
-            content = content.replace(prodUrl, " "+pushConfig.getUrl()+" ");
+            content = content.replace(prodUrl, " " + pushConfig.getUrl() + " ");
         }
         if (StringUtils.isNotEmpty(isProdName) && isProdName.equalsIgnoreCase("1")) {
             content = content.replace(prodName, pushConfig.getProdName());
@@ -65,27 +66,23 @@ public class QywxActivityTemplateServiceImpl implements QywxActivityTemplateServ
         }
 
         //获取签名
-        String signature=pushConfig.getSignature();
-        String unsubscribe=pushConfig.getUnsubscribe();
+        String signature = pushConfig.getSignature();
+        String unsubscribe = pushConfig.getUnsubscribe();
 
 
-        if("DISPLAY".equals(scene))
-        {
+        if ("DISPLAY".equals(scene)) {
             //(编辑短信时候不需要加上签名和退订信息，则此处预览的时候补上)
-            content = signature+content;
-            content = content+unsubscribe;
-        }else if("SEND".equals(scene))
-        {
+            content = signature + content;
+            content = content + unsubscribe;
+        } else if ("SEND".equals(scene)) {
             //需要系统自动加上签名
-            if(null!=pushConfig.getSendSignatureFlag()&&"Y".equals(pushConfig.getSendSignatureFlag()))
-            {
-                content =signature+content;
+            if (null != pushConfig.getSendSignatureFlag() && "Y".equals(pushConfig.getSendSignatureFlag())) {
+                content = signature + content;
             }
 
             //需要加上退订方式
-            if(null!=pushConfig.getSendUnsubscribeFlag()&&"Y".equals(pushConfig.getSendUnsubscribeFlag()))
-            {
-                content=content+unsubscribe;
+            if (null != pushConfig.getSendUnsubscribeFlag() && "Y".equals(pushConfig.getSendUnsubscribeFlag())) {
+                content = content + unsubscribe;
             }
         }
 
@@ -93,26 +90,17 @@ public class QywxActivityTemplateServiceImpl implements QywxActivityTemplateServ
     }
 
     @Override
-    public List<ActivityTemplate> getSmsTemplateList(Long headId,String isPersonal,String scene,String stage,String type) {
-        List<ActivityTemplate> templateTableData = activityTemplateMapper.getTemplateTableData(headId,isPersonal,scene,stage,type);
-        templateTableData.stream().map(x->{
-            String scene1 = x.getScene();
-            if(StringUtils.isNotEmpty(scene1)) {
-                scene1 = scene1.replace("DURING", "<span class=\"label label-primary\">通知</span>").replace("NOTIFY", "<span class=\"label label-success\">期间</span>");
-            }
-            x.setScene(scene1);
-            return x;
-        }).collect(Collectors.toList());
-        return templateTableData;
+    public List<ActivityTemplate> getSmsTemplateList(Long headId) {
+        return activityTemplateMapper.getTemplateTableData(headId);
     }
 
     @Override
-    public void saveTemplate(ActivityTemplate activityTemplate,String currentUser) {
+    public void saveTemplate(ActivityTemplate activityTemplate, String currentUser) {
         activityTemplate.setInsertBy((((UserBo) SecurityUtils.getSubject().getPrincipal()).getUsername()));
         activityTemplate.setInsertDt(new Date());
-        if("0".equals(activityTemplate.getIsProdUrl()) && "0".equals(activityTemplate.getIsProdName()) && "0".equals(activityTemplate.getIsPrice()) && "0".equalsIgnoreCase(activityTemplate.getIsProfit())) {
+        if ("0".equals(activityTemplate.getIsProdUrl()) && "0".equals(activityTemplate.getIsProdName()) && "0".equals(activityTemplate.getIsPrice()) && "0".equalsIgnoreCase(activityTemplate.getIsProfit())) {
             activityTemplate.setIsPersonal("0");
-        }else {
+        } else {
             activityTemplate.setIsPersonal("1");
         }
         activityTemplate.setInsertBy(currentUser);
@@ -124,10 +112,10 @@ public class QywxActivityTemplateServiceImpl implements QywxActivityTemplateServ
 
 
     @Override
-    public void deleteActivityTemplate(Long code, Long headId, String type, String stage) {
+    public void deleteActivityTemplate(Long code, Long headId, String type) {
         activityTemplateMapper.deleteActivityTemplate(code);
         //对当前活动阶段的文案进行一次校验
-        activityTemplateMapper.validUserGroup(headId,stage,type);
+        activityTemplateMapper.validUserGroup(headId, type);
     }
 
     @Override
@@ -136,21 +124,18 @@ public class QywxActivityTemplateServiceImpl implements QywxActivityTemplateServ
     }
 
     @Override
-    public String  updateSmsTemplate(ActivityTemplate activityTemplate,String flag,String currentUser) {
+    public String updateSmsTemplate(ActivityTemplate activityTemplate, String flag, String currentUser) {
         //判断当前文案是否已经被引用 如果是，则进行新增操作 否则直接更新
-        if(activityTemplateMapper.templateContentChanged(activityTemplate.getCode().longValue(),activityTemplate.getContent())>1)
-        {
+        if (activityTemplateMapper.templateContentChanged(activityTemplate.getCode().longValue(), activityTemplate.getContent()) > 1) {
             return "文案内容未发生改变,无需保存！";
-        }else
-        {
-            if("0".equals(activityTemplate.getIsProdUrl()) && "0".equals(activityTemplate.getIsProdName()) && "0".equals(activityTemplate.getIsPrice()) && "0".equalsIgnoreCase(activityTemplate.getIsProfit())) {
+        } else {
+            if ("0".equals(activityTemplate.getIsProdUrl()) && "0".equals(activityTemplate.getIsProdName()) && "0".equals(activityTemplate.getIsPrice()) && "0".equalsIgnoreCase(activityTemplate.getIsProfit())) {
                 activityTemplate.setIsPersonal("0");
-            }else {
+            } else {
                 activityTemplate.setIsPersonal("1");
             }
 
-            if("Y".equals(flag))
-            {
+            if ("Y".equals(flag)) {
                 //新写入一条记录 并返回主键
                 activityTemplate.setCode(null);
                 activityTemplate.setInsertBy(currentUser);
@@ -159,9 +144,8 @@ public class QywxActivityTemplateServiceImpl implements QywxActivityTemplateServ
                 activityTemplate.setUpdateDt(new Date());
                 activityTemplateMapper.saveTemplate(activityTemplate);
 
-                return "系统已为您生成文案编号为"+activityTemplate.getCode()+"的新文案，请在列表页查看！";
-            }else
-            {
+                return "系统已为您生成文案编号为" + activityTemplate.getCode() + "的新文案，请在列表页查看！";
+            } else {
                 //更新操作
                 activityTemplate.setUpdateBy(currentUser);
                 activityTemplate.setUpdateDt(new Date());
@@ -172,21 +156,21 @@ public class QywxActivityTemplateServiceImpl implements QywxActivityTemplateServ
     }
 
     @Override
-    public void setSmsCode(Long groupId, Long tmpCode, Long headId, String stage,String type,String currentUserName) {
-        activityTemplateMapper.setSmsCode(groupId, tmpCode, headId,stage, type,currentUserName);
+    public void setSmsCode(Long groupId, Long tmpCode, Long headId,String type, String currentUserName) {
+        activityTemplateMapper.setSmsCode(groupId, tmpCode, headId, type, currentUserName);
         //设置完成后对当前活动stage、type上设置的文案情况进行一次校验
-        activityTemplateMapper.validUserGroup(headId,stage,type);
+        activityTemplateMapper.validUserGroup(headId, type);
     }
 
     @Override
-    public boolean checkTemplateUsed(Long templateCode,Long headId,String stage,String type) {
-        return activityTemplateMapper.checkTemplateUsed(templateCode,headId,stage,type) > 0;
+    public boolean checkTemplateUsed(Long templateCode, Long headId, String type) {
+        return activityTemplateMapper.checkTemplateUsed(templateCode, headId, type) > 0;
     }
 
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void removeSmsSelected(String type, Long headId, String stage, Long groupId,String currentUserName) {
-        activityTemplateMapper.removeSmsSelected(type, headId, stage, groupId,currentUserName);
+    public void removeSmsSelected(String type, Long headId, Long groupId, String currentUserName) {
+        activityTemplateMapper.removeSmsSelected(type, headId, groupId, currentUserName);
     }
 }

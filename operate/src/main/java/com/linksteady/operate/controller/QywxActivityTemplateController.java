@@ -43,8 +43,8 @@ public class QywxActivityTemplateController extends BaseController {
      * @return
      */
     @GetMapping("/getSmsTemplateList")
-    public ResponseBo getSmsTemplateList(Long headId,String isPersonal,String scene,String stage,String type) {
-        return ResponseBo.okWithData(null, activityTemplateService.getSmsTemplateList(headId,isPersonal,scene,stage,type));
+    public ResponseBo getSmsTemplateList(Long headId) {
+        return ResponseBo.okWithData(null, activityTemplateService.getSmsTemplateList(headId));
     }
 
     /**
@@ -70,14 +70,14 @@ public class QywxActivityTemplateController extends BaseController {
      * @return stage 活动所处阶段
      */
     @PostMapping("/deleteActivityTemplate")
-    public ResponseBo deleteActivityTemplate(@RequestParam("code") Long code,Long headId,String stage,String type) {
+    public ResponseBo deleteActivityTemplate(@RequestParam("code") Long code,Long headId,String type) {
         //如果文案被当前活动的当前阶段引用的话，可以直接删除，否则给出提示
-        if(activityTemplateService.checkTemplateUsed(code,headId,stage,type))
+        if(activityTemplateService.checkTemplateUsed(code,headId,type))
         {
             return ResponseBo.error("当前文案已在其它活动被引用，无法删除！");
         }else
         {
-            activityTemplateService.deleteActivityTemplate(code,headId,stage,type);
+            activityTemplateService.deleteActivityTemplate(code,headId,type);
             return ResponseBo.ok();
         }
 
@@ -121,8 +121,8 @@ public class QywxActivityTemplateController extends BaseController {
      * @return
      */
     @PostMapping("/removeSmsSelected")
-    public ResponseBo removeSmsSelected(@RequestParam String type,@RequestParam Long headId, @RequestParam String stage, @RequestParam Long groupId) {
-        activityTemplateService.removeSmsSelected(type, headId, stage, groupId,getCurrentUser().getUsername());
+    public ResponseBo removeSmsSelected(@RequestParam String type,@RequestParam Long headId, @RequestParam Long groupId) {
+        activityTemplateService.removeSmsSelected(type, headId, groupId,getCurrentUser().getUsername());
         return ResponseBo.ok();
     }
 
@@ -132,8 +132,8 @@ public class QywxActivityTemplateController extends BaseController {
      */
     @PostMapping("/setSmsCode")
     public ResponseBo setSmsCode(@RequestParam("groupId") Long groupId, @RequestParam("tmpCode") Long tmpCode,
-                                 @RequestParam("headId") Long headId, @RequestParam("type") String type, @RequestParam("stage") String stage) {
-        activityTemplateService.setSmsCode(groupId, tmpCode, headId, stage,type,getCurrentUser().getUsername());
+                                 @RequestParam("headId") Long headId, @RequestParam("type") String type) {
+        activityTemplateService.setSmsCode(groupId, tmpCode, headId,type,getCurrentUser().getUsername());
         return ResponseBo.ok();
     }
 
@@ -142,8 +142,8 @@ public class QywxActivityTemplateController extends BaseController {
      * @return
      */
     @RequestMapping("/checkTemplateUsed")
-    public ResponseBo checkTemplateUsed(@RequestParam("code") Long code,Long headId,String stage,String type) {
-        boolean flag=activityTemplateService.checkTemplateUsed(code, headId, stage,type);
+    public ResponseBo checkTemplateUsed(@RequestParam("code") Long code,Long headId,String type) {
+        boolean flag=activityTemplateService.checkTemplateUsed(code, headId,type);
         //如果flag为true 就表示被其它地方引用了，需要新增
         return ResponseBo.ok(flag==true?"Y":"N");
     }
