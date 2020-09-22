@@ -85,8 +85,8 @@
             insert_dt,
             name
         ) values
-         (#{item.followerUserId},#{item.externalUserid},#{item.state},#{item.remark},#{item.addDate},now(),#{item.name})
-        ON CONFLICT(follow_user_id,external_contact_id) DO UPDATE set user_phone=#{item.remark},name=#{item.name}
+         (#{followerUserId},#{externalUserid},#{state},#{description},#{addDate},now(),#{name})
+        ON CONFLICT(follow_user_id,external_contact_id) DO UPDATE set user_phone=#{description},name=#{name}
     </insert>
 
 </mapper>

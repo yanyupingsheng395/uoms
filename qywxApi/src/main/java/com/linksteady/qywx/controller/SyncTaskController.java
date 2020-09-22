@@ -390,6 +390,7 @@ public class SyncTaskController extends ApiBaseController{
             return ResponseBo.error("参数不能为空!");
         }
         Long userId=null;
+        log.info("同步外部联系人接收到的参数为{}",data);
         ExternalContact externalContact=JSON.parseObject(data,ExternalContact.class);
         //对外部联系人进行insert or update
         syncTaskService.saveExternalContact(externalContact);
