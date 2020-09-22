@@ -16,7 +16,7 @@ public interface QywxActivityUserGroupService {
 
     void updateGroupTemplate(Long headId, Long groupId, Long code, String stage);
 
-    int validGroupTemplateWithGroup(Long headId, String stage, String type);
+    int validGroupTemplateWithGroup(Long headId, String type);
 
     void validUserGroup(String headId);
 }

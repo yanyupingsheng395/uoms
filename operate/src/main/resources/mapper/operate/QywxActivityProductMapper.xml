@@ -162,7 +162,7 @@
     <select id="getProductIdByHeadId" resultType="string">
         select EPB_PRODUCT_ID
         from uo_qywx_activity_product
-        where head_id = #{headId}::int4 and activity_stage = #{stage} and activity_type = #{activityType}
+        where head_id = #{headId}::int4
     </select>
 
     <delete id="deleteDataList">
@@ -176,17 +176,17 @@
         update uo_qywx_activity_product
         set CHECK_FLAG     = 'N',
             CHECK_COMMENTS = '活动商品在在售商品库中不存在'
-        where HEAD_ID = #{headId}::int4 and activity_stage = #{stage}
+        where HEAD_ID = #{headId}::int4
           and EPB_PRODUCT_ID in (
             with v1 as (select EPB_PRODUCT_ID
                         from uo_qywx_activity_product t1,
                              (select distinct EBP_PRODUCT_ID from W_PRODUCT where UP_FLAG = 1) t2
                         where t1.EPB_PRODUCT_ID = t2.EBP_PRODUCT_ID::varchar
-                          and t1.HEAD_ID = #{headId}::int4 and activity_stage = #{stage})
+                          and t1.HEAD_ID = #{headId}::int4)
             select t3.EPB_PRODUCT_ID
             from uo_qywx_activity_product t3
                      left join v1 on t3.EPB_PRODUCT_ID = v1.EPB_PRODUCT_ID::varchar
-            where t3.HEAD_ID = #{headId}::int4 and activity_stage = #{stage}
+            where t3.HEAD_ID = #{headId}::int4
               and v1.EPB_PRODUCT_ID is null)
     </update>
 
@@ -194,7 +194,7 @@
         update uo_qywx_activity_product
         set CHECK_FLAG     = 'Y',
             CHECK_COMMENTS = ''
-        where HEAD_ID = #{headId}::int4 and activity_stage = #{stage}
+        where HEAD_ID = #{headId}::int4
     </update>
 
     <select id="getCountByHeadId" resultType="int">
@@ -231,22 +231,21 @@
     <select id="getNotValidProduct" resultType="string">
         select check_flag
         from uo_qywx_activity_product
-        where head_id = #{headId}::int4 and activity_stage = #{stage} and activity_type = #{type}
+        where head_id = #{headId}::int4
     </select>
 
     <update id="updateValidRepeatSkuInfo">
         update uo_qywx_activity_product
         set CHECK_FLAG     = 'N',
             CHECK_COMMENTS = '存在与当前商品类似的在售商品，当前活动商品建议删除'
-        where HEAD_ID = #{headId}::int4 and activity_stage = #{stage}
+        where HEAD_ID = #{headId}::int4
           and EPB_PRODUCT_ID in (
             select EPB_PRODUCT_ID from (
                with v1 as (select EPB_PRODUCT_ID
                            from uo_qywx_activity_product t1,
                                 (select distinct EBP_PRODUCT_ID from W_PRODUCT where UP_FLAG = 1) t2
                            where t1.EPB_PRODUCT_ID = t2.EBP_PRODUCT_ID::varchar
-                             and t1.HEAD_ID = #{headId}::int4
-                             and activity_stage = #{stage})
+                             and t1.HEAD_ID = #{headId}::int4)
                select t3.EPB_PRODUCT_ID, count(t4.goods_id) cnt
                from uo_qywx_activity_product t3
                         left join v1 on t3.EPB_PRODUCT_ID = v1.EPB_PRODUCT_ID::varchar
@@ -254,7 +253,6 @@
                    select max(insert_dt::date) from o_dapu_product_onsale
                )) t4 on t3.epb_product_id = t4.goods_id::varchar
                where t3.HEAD_ID = #{headId}::int4
-                 and activity_stage = #{stage}
                  and v1.EPB_PRODUCT_ID is null
                group by t3.EPB_PRODUCT_ID
            ) t where t.cnt &gt; 0)

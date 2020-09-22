@@ -14,21 +14,6 @@ $( function () {
     });
 });
 
-// step1:点击预售按钮
-function preheatClick() {
-    CURRENT_ACTIVITY_STAGE = 'preheat';
-    $("#productListTitle1").html('预售期间活动商品列表');
-    $("#productListTitle2").html('预售通知活动商品列表');
-    stepBreak(1);
-}
-// step1:点击正式按钮
-function formalClick() {
-    CURRENT_ACTIVITY_STAGE = 'formal';
-    $("#productListTitle1").html('正式期间活动商品列表');
-    $("#productListTitle2").html('正式通知活动商品列表');
-    stepBreak(1);
-}
-
 // 根据索引跳转到相应的页面
 function stepBreak(index) {
     if(index == 0) {
@@ -39,8 +24,7 @@ function stepBreak(index) {
     }
     if(index == 1) {
         create_step.setActive(1);
-        getProductInfo('NOTIFY', 'activityProductTable1');
-        getProductInfo('DURING', 'activityProductTable2');
+        getProductInfo();
         $("#step1").attr("style", "display:none;");
         $("#step2").attr("style", "display:block;");
         $("#step3").attr("style", "display:none;");
@@ -50,19 +34,12 @@ function stepBreak(index) {
         $("#step1").attr("style", "display:none;");
         $("#step2").attr("style", "display:none;");
         $("#step3").attr("style", "display:block;");
-        createActivity(CURRENT_ACTIVITY_STAGE);
+        createActivity();
     }
 }
 
 // step2:商品信息表
-function getProductInfo(type, tableId) {
-    var title = '活动通知';
-    if(type === 'NOTIFY') {
-        title = '活动通知';
-    }
-    if(type === 'DURING') {
-        title = '活动期间';
-    }
+function getProductInfo() {
     var settings = {
         url: '/qywxActivity/getActivityProductPage',
         pagination: true,
@@ -77,30 +54,14 @@ function getProductInfo(type, tableId) {
                 offset: params.offset,
                 headId: $( "#headId" ).val(),
                 productId: function() {
-                    if(tableId === 'activityProductTable1') {
-                        return $( "#productId1" ).val();
-                    }else if(tableId === 'activityProductTable2') {
-                        return $( "#productId1" ).val();
-                    }
+                    return $("#productId").val();
                 },
                 productName:function() {
-                    if(tableId === 'activityProductTable1') {
-                        return $( "#productName1" ).val();
-                    }else if(tableId === 'activityProductTable2') {
-                        return $( "#productName2" ).val();
-                    }
+                    return $("#productName").val();
                 },
                 groupId: function() {
-                    if(tableId === 'activityProductTable1') {
-                        return $("#groupId1").find("option:selected").val();
-                    }else if(tableId === 'activityProductTable2') {
-                        return $("#groupId2").find("option:selected").val();
-                    }
-                },
-                activityStage: function () {
-                    return CURRENT_ACTIVITY_STAGE;
-                },
-                activityType: type
+                    return $("#groupId").find("option:selected").val();
+                }
             };
         },
         columns: [
@@ -127,26 +88,22 @@ function getProductInfo(type, tableId) {
                     if(value === '9') {
                         res =  "满件打折";
                     }
-                    if(value === '13') {
-                        res =  "仅店铺券";
-                    }
                     if(value === '14') {
                         res =  "立减特价";
+                    }
+                    if(value === '13') {
+                        res = '仅店铺券'
                     }
                     return res;
                 }
             },{
-                field: 'minPrice',
-                title: title + '体现最<br/>低单价（元/件）',
-                align: 'center'
-            },{
                 field: 'activityProfit',
-                title: title + '体现利益点',
+                title: '活动商品体现利益点',
                 valign: 'middle',
                 align: 'center',
                 formatter: function (value, row, index) {
                     if(row['groupId'] == '9') {
-                        return value + '折';
+                        return value +'折';
                     }else {
                         return value +'元';
                     }
@@ -172,20 +129,17 @@ function getProductInfo(type, tableId) {
                 align: 'center'
             }]
     };
-    $( "#" + tableId ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
+    $( "#activityProductTable" ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
 }
-
 // step2:下载商品数据
 $( "#btn_download" ).click( function () {
     window.location.href = "/qywxActivity/downloadFile";
 } );
 
 // step3:初始化
-function createActivity(stage) {
-    CURRENT_ACTIVITY_STAGE = stage;
-    $("#activity_stage").val(stage);
-    getGroupList( stage, 'NOTIFY', 'table1');
-    getGroupList( stage, 'DURING', 'table5');
+function createActivity() {
+    getGroupList( 'NOTIFY', 'table1');
+    getGroupList('DURING', 'table5');
     covertDataTable();
 }
 
@@ -196,7 +150,7 @@ function covertDataTable() {
         pagination: false,
         singleSelect: true,
         queryParams: function () {
-            return {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE}
+            return {headId: $("#headId").val()}
         },
         columns: [
             {
@@ -229,7 +183,7 @@ function covertDataTable() {
 }
 
 // step3:获取群组表
-function getGroupList(stage, type, tableId) {
+function getGroupList(type, tableId) {
     var headId = $( "#headId" ).val();
     var settings = {
         url: '/qywxActivity/getGroupList',
@@ -238,7 +192,6 @@ function getGroupList(stage, type, tableId) {
         queryParams: function () {
             return {
                 headId: headId,
-                stage: stage,
                 type: type
             };
         },
@@ -252,7 +205,7 @@ function getGroupList(stage, type, tableId) {
                 title: '理解用户群组'
             }, {
                 field: 'smsTemplateContent',
-                title: '文案内容',
+                title: '消息内容',
                 //td宽度及内容超过宽度隐藏
                 cellStyle : function(value, row, index, field){
                     return {

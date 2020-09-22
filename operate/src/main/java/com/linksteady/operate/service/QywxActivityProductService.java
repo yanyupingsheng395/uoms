@@ -55,9 +55,9 @@ public interface QywxActivityProductService {
      * 上传商品
      */
     List<ActivityProductUploadError> uploadExcel(MultipartFile file, String headId, String uploadMethod,
-                                                 String repeatProduct, String stage, String activityType) throws Exception;
+                                                 String repeatProduct, String activityType) throws Exception;
 
-    void validProductInfo(String headId, String stage);
+    void validProductInfo(String headId);
 
     int getCountByHeadId(String headId);
 
@@ -69,5 +69,5 @@ public interface QywxActivityProductService {
 
     boolean ifCalculate(String headId);
 
-    List<String> getNotValidProductCount(Long headId, String stage, String type);
+    List<String> getNotValidProductCount(Long headId);
 }

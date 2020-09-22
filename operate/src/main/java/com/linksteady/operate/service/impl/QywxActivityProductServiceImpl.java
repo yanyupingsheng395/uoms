@@ -334,7 +334,7 @@ public class QywxActivityProductServiceImpl implements QywxActivityProductServic
     @Override
     @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRES_NEW)
     public List<ActivityProductUploadError> uploadExcel(MultipartFile file, String headId, String uploadMethod,
-                                                        String repeatProduct, String stage, String activityType) throws Exception {
+                                                        String repeatProduct, String activityType) throws Exception {
         String xlsSuffix = ".xls";
         String xlsxSuffix = ".xlsx";
         // 表头
@@ -597,8 +597,6 @@ public class QywxActivityProductServiceImpl implements QywxActivityProductServic
                     activityProduct.setDiscountCnt(new BigDecimal(discountCnt).setScale(2, RoundingMode.HALF_UP).intValue());
                     activityProduct.setDiscountAmount(new BigDecimal(discountAmount).setScale(2, RoundingMode.HALF_UP).doubleValue());
                     activityProduct.setProductId(productId);
-                    activityProduct.setActivityStage(stage);
-                    activityProduct.setActivityType(activityType);
                     if (StringUtils.isNotEmpty(singleProduct)) {
                         activityProduct.setSpCouponFlag(singleProduct);
                         activityProduct.setSpCouponThreshold((new BigDecimal(singleProductThreadHold).setScale(2, RoundingMode.HALF_UP).doubleValue()));
@@ -610,7 +608,7 @@ public class QywxActivityProductServiceImpl implements QywxActivityProductServic
                     productList.add(activityProduct);
                 }
                 if (productList.size() != 0) {
-                    saveUploadProductData(headId, productList, uploadMethod, repeatProduct, stage, activityType);
+                    saveUploadProductData(headId, productList, uploadMethod, repeatProduct);
                 } else {
                     errorList.add(new ActivityProductUploadError("校验通过的记录条数为0"));
                 }
@@ -642,10 +640,10 @@ public class QywxActivityProductServiceImpl implements QywxActivityProductServic
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void validProductInfo(String headId, String stage) {
-        activityProductMapper.updateAllValidInfo(headId, stage);
-        activityProductMapper.updateValidInfo(headId, stage);
-        activityProductMapper.updateValidRepeatSkuInfo(headId, stage);
+    public void validProductInfo(String headId) {
+        activityProductMapper.updateAllValidInfo(headId);
+        activityProductMapper.updateValidInfo(headId);
+        activityProductMapper.updateValidRepeatSkuInfo(headId);
     }
 
     @Override
@@ -657,7 +655,6 @@ public class QywxActivityProductServiceImpl implements QywxActivityProductServic
      * 判断当前
      *
      * @param headId
-     * @param stage
      * @return
      */
     @Override
@@ -681,21 +678,21 @@ public class QywxActivityProductServiceImpl implements QywxActivityProductServic
     }
 
     @Override
-    public List<String> getNotValidProductCount(Long headId, String stage, String type) {
-        return activityProductMapper.getNotValidProduct(headId, stage, type);
+    public List<String> getNotValidProductCount(Long headId) {
+        return activityProductMapper.getNotValidProduct(headId);
     }
 
     /**
      * 保存上传的数据
      */
-    private boolean saveUploadProductData(String headId, List<ActivityProduct> productList, String uploadMethod, String repeatProduct, String stage, String activityType) {
+    private boolean saveUploadProductData(String headId, List<ActivityProduct> productList, String uploadMethod, String repeatProduct) {
         String uploadMethod0 = "0";
         String repeatProduct0 = "0";
         String repeatProduct1 = "1";
         String uploadMethod1 = "1";
         List<ActivityProduct> insertList = Lists.newArrayList();
         List<ActivityProduct> deleteList = Lists.newArrayList();
-        List<String> oldProductList = activityProductMapper.getProductIdByHeadId(headId, stage, activityType);
+        List<String> oldProductList = activityProductMapper.getProductIdByHeadId(headId);
         // 追加
         if (uploadMethod.equalsIgnoreCase(uploadMethod0)) {
             // 忽略

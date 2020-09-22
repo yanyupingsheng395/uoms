@@ -27,5 +27,5 @@ public interface QywxActivityUserGroupMapper {
      * @param type
      * @return
      */
-    int validGroupTemplateWithGroup(Long headId, String stage, String type);
+    int validGroupTemplateWithGroup(Long headId, String type);
 }

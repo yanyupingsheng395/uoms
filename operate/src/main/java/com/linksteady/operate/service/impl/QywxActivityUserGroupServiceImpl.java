@@ -56,8 +56,8 @@ public class QywxActivityUserGroupServiceImpl implements QywxActivityUserGroupSe
      * @return
      */
     @Override
-    public int validGroupTemplateWithGroup(Long headId, String stage, String type) {
-        return activityUserGroupMapper.validGroupTemplateWithGroup(headId, stage, type);
+    public int validGroupTemplateWithGroup(Long headId, String type) {
+        return activityUserGroupMapper.validGroupTemplateWithGroup(headId, type);
     }
 
     @Override

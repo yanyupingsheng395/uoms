@@ -39,13 +39,13 @@ public interface QywxActivityProductMapper {
 
     void deleteData(String headId);
 
-    List<String> getProductIdByHeadId(String headId, String stage, String activityType);
+    List<String> getProductIdByHeadId(String headId);
 
     void deleteDataList(@Param("headId") String headId, @Param("productIdList") List<String> productIdList);
 
-    void updateValidInfo(String headId, String stage);
+    void updateValidInfo(String headId);
 
-    void updateAllValidInfo(String headId, String stage);
+    void updateAllValidInfo(String headId);
 
     int getCountByHeadId(String headId);
 
@@ -57,7 +57,7 @@ public interface QywxActivityProductMapper {
 
     int ifCalculate(String headId);
 
-    List<String> getNotValidProduct(Long headId, String stage, String type);
+    List<String> getNotValidProduct(Long headId);
 
-    void updateValidRepeatSkuInfo(String headId, String stage);
+    void updateValidRepeatSkuInfo(String headId);
 }

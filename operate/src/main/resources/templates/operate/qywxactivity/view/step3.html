@@ -3,7 +3,7 @@
 </div>
 <div class="row">
     <div class="col-md-12">
-        <hr class="hr m-t-0 m-t-5"/>
+        <hr class="hr m-t-0 m-b-5"/>
     </div>
 </div>
 <div class="row">
@@ -11,12 +11,12 @@
         <table id="covertDataTable" class="table table-hover table-bordered"></table>
     </div>
 </div>
-<div class="row m-t-10">
+<div class="row">
     <span class="navbar-page-title">配置活动通知消息</span>
 </div>
 <div class="row">
     <div class="col-md-12">
-        <hr class="hr" style="margin-bottom: 0px;"/>
+        <hr class="hr m-t-0 m-b-5"/>
     </div>
 </div>
 <div class="row">
@@ -26,12 +26,20 @@
         </div>
     </div>
 </div>
+<div class="row m-t-10 text-center" id="submitBtn1">
+    <div class="col-md-12">
+        <small class="form-text text-muted">确认通知阶段已配置完成?</small>
+        <button class="btn btn-primary btn-sm" onclick="submitActivity('NOTIFY')">
+            确认
+        </button>
+    </div>
+</div>
 <div class="row m-t-10">
     <span class="navbar-page-title">配置活动期间消息</span>
 </div>
 <div class="row">
     <div class="col-md-12">
-        <hr class="hr" style="margin-bottom: 0px;"/>
+        <hr class="hr m-t-0 m-b-5"/>
     </div>
 </div>
 <div class="row">
@@ -41,10 +49,18 @@
         </div>
     </div>
 </div>
+<div class="row m-t-10 text-center" id="submitBtn2">
+    <div class="col-md-12">
+        <small class="form-text text-muted">确认期间阶段已配置完成?</small>
+        <button class="btn btn-primary btn-sm" onclick="submitActivity('DURING')">
+            确认
+        </button>
+    </div>
+</div>
 <div class="row m-t-10">
     <div class="col-md-12 text-right">
         <button class="btn btn-secondary btn-sm" onclick="stepBreak(1)"><i class="fa fa-arrow-left"></i>上一步</button>
-        <a class="btn btn-secondary btn-sm" href="/page/activity">
+        <a class="btn btn-secondary btn-sm" href="/page/qywxActivity">
             <i class="fa fa-backward"></i>&nbsp;返回
         </a>
     </div>

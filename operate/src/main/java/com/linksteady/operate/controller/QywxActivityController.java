@@ -87,12 +87,12 @@ public class QywxActivityController {
     @PostMapping("/uploadExcel")
     public ResponseBo uploadExcel(@RequestParam("file") MultipartFile file, @RequestParam String headId,
                                   @RequestParam("uploadMethod") String uploadMethod,
-                                  @RequestParam("repeatProduct") String repeatProduct, @RequestParam("stage") String stage,
+                                  @RequestParam("repeatProduct") String repeatProduct,
                                   @RequestParam("activityType") String activityType) {
         List<ActivityProductUploadError> errorList;
         try {
-            errorList = activityProductService.uploadExcel(file, headId, uploadMethod, repeatProduct, stage, activityType);
-            validProductInfo(headId, stage);
+            errorList = activityProductService.uploadExcel(file, headId, uploadMethod, repeatProduct, activityType);
+            validProductInfo(headId);
         } catch (Exception e) {
             log.error("上传商品列表出错", e);
             return ResponseBo.error("上传商品出现未知错误！");
@@ -131,8 +131,8 @@ public class QywxActivityController {
      * @return
      */
     @GetMapping("/validProductInfo")
-    public ResponseBo validProductInfo(@RequestParam("headId") String headId, @RequestParam("stage") String stage) {
-        activityProductService.validProductInfo(headId, stage);
+    public ResponseBo validProductInfo(@RequestParam("headId") String headId) {
+        activityProductService.validProductInfo(headId);
         return ResponseBo.ok();
     }
 
@@ -144,7 +144,7 @@ public class QywxActivityController {
     public ResponseBo saveActivityProduct(ActivityProduct activityProduct) {
         activityProduct.setProductUrl(activityProductService.generateProductShortUrl(activityProduct.getProductId(),"S"));
         activityProductService.saveActivityProduct(activityProduct);
-        validProductInfo(activityProduct.getHeadId().toString(), activityProduct.getActivityStage());
+        validProductInfo(activityProduct.getHeadId().toString());
         return ResponseBo.ok();
     }
 
@@ -197,7 +197,7 @@ public class QywxActivityController {
                 throw new LinkSteadyException("商品名称超过系统设置！");
             }
             activityProductService.updateActivityProduct(activityProduct);
-            validProductInfo(String.valueOf(activityProduct.getHeadId()), activityProduct.getActivityStage());
+            validProductInfo(String.valueOf(activityProduct.getHeadId()));
             return ResponseBo.ok();
         } catch (LinkSteadyException e) {
             return ResponseBo.error(e.getMessage());
@@ -248,14 +248,14 @@ public class QywxActivityController {
      * @return
      */
     @GetMapping("/validSubmit")
-    public ResponseBo validSubmit(@RequestParam Long headId, @RequestParam String stage, @RequestParam String type) {
+    public ResponseBo validSubmit(@RequestParam Long headId, @RequestParam String type) {
         Map<String, String> data = Maps.newHashMap();
         // 验证所有群组是否配置消息模板 0：合法，非0不合法
-        int templateIsNullCount = activityUserGroupService.validGroupTemplateWithGroup(headId, stage, type);
+        int templateIsNullCount = activityUserGroupService.validGroupTemplateWithGroup(headId, type);
         if(templateIsNullCount > 0) {
             data.put("error", "部分群组文案没有配置");
         }
-        List<String> products = activityProductService.getNotValidProductCount(headId, stage, type);
+        List<String> products = activityProductService.getNotValidProductCount(headId);
         int totalCount = products.size();
         if(totalCount == 0) {
             data.put("error", "至少需要一个有效商品！");

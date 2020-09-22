@@ -756,18 +756,6 @@ function getPlanStatus(headId, remark) {
 
 /********************************* 活动运营计划 end *********************************/
 
-// 根据当前选择设置标题
-// function setTitle(stage) {
-//     if(stage === 'preheat') {
-//         $("#notifyTimeTile").text("预计在"+timeRevert($("#preheatNotifyDt").val())+"完成对目标用户的活动通知；");
-//         $("#duringTimeTile").text("预计从"+timeRevert($("#preheatStartDt").val())+"至"+timeRevert($("#preheatEndDt").val())+"，对被活动通知过但是没有产生购买行为的用户进行推送；");
-//     }
-//     if(stage === 'formal') {
-//         $("#notifyTimeTile").text("预计在"+timeRevert($("#formalNotifyDt").val())+"完成对目标用户的活动通知；");
-//         $("#duringTimeTile").text("预计从"+timeRevert($("#formalStartDt").val())+"至"+timeRevert($("#formalEndDt").val())+"，对被活动通知过但是没有产生购买行为的用户进行推送；");
-//     }
-// }
-
 // 时间转换
 function timeRevert(dateStr) {
     var dateArr = dateStr.split("-");
@@ -779,19 +767,12 @@ function timeRevert(dateStr) {
 
 // 初始化日期控件
 function initDt() {
-    init_date( 'preheatNotifyDt', 'yyyy-mm-dd', 0, 2, 0 );
     init_date( 'formalNotifyDt', 'yyyy-mm-dd', 0, 2, 0 );
-    init_date_begin( 'preheatStartDt', 'preheatEndDt', 'yyyy-mm-dd', 0, 2, 0 );
-    init_date_end( 'preheatStartDt', 'preheatEndDt', 'yyyy-mm-dd', 0, 2, 0 );
     init_date_begin( 'formalStartDt', 'formalEndDt', 'yyyy-mm-dd', 0, 2, 0 );
     init_date_end( 'formalStartDt', 'formalEndDt', 'yyyy-mm-dd', 0, 2, 0 );
-
     var date = new Date();
-    $( "#preheatStartDt" ).datepicker( 'setStartDate', date );
-    $( "#preheatEndDt" ).datepicker( 'setStartDate', date );
     $( "#formalStartDt" ).datepicker( 'setStartDate', date );
     $( "#formalEndDt" ).datepicker( 'setStartDate', date);
-    $( "#preheatNotifyDt" ).datepicker( 'setStartDate', date );
     $( "#formalNotifyDt" ).datepicker( 'setStartDate', date );
 }
 
@@ -1015,7 +996,7 @@ function setContent(stage, flag, tableId) {
 }
 
 // 选择群组打开model
-function selectGroup(type, tmpCode, groupId, tableId) {
+function selectGroup(type, tmpCode, groupId) {
     CURRENT_TMP_CODE = tmpCode;
     CURRENT_GROUP_ID = groupId;
     CURRENT_TYPE = type;
@@ -1032,8 +1013,7 @@ function getTmpTableData() {
         singleSelect: true,
         queryParams: function () {
             return {
-                isPersonal: $("#sms-form").find("select[name='isPersonal']").val(),
-                scene: $("#sms-form").find("select[name='scene']").val(),
+                groupId: CURRENT_GROUP_ID,
                 headId: $( "#headId" ).val()
             }
         },
@@ -1785,13 +1765,13 @@ function groupIdChange(dom) {
  * 计算商品转化率
  */
 function genCovInfo() {
-    var len = $("#activityProductTable1").bootstrapTable('getData').length;
+    var len = $("#activityProductTable").bootstrapTable('getData').length;
     if(len === 0) {
         $MB.n_warning("没有获取到有效的活动通知商品，请先添加商品！");
         return;
     }
     $MB.loadingDesc('show', '正在计算活动转化率....');
-    $.get("/qywxActivity/genCovInfo", {headId: $("#headId").val(), activityStage: CURRENT_ACTIVITY_STAGE}, function (r) {
+    $.get("/qywxActivity/genCovInfo", {headId: $("#headId").val()}, function (r) {
         if(r.data == 1) {
             $MB.n_success("获取数据成功！");
         }else if(r.data == 0){

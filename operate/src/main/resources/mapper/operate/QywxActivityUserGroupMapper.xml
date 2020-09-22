@@ -53,13 +53,11 @@
 
     <select id="validGroupTemplateWithGroup" resultType="int">
         select count(1) from UO_qywx_ACTIVITY_GROUP
-        where HEAD_ID = #{headId} and ACTIVITY_STAGE = #{stage} and ACTIVITY_TYPE = #{type}
+        where HEAD_ID = #{headId} and ACTIVITY_TYPE = #{type}
         and GROUP_ID IN
         (
            select distinct group_id from uo_op_activity_product where
            head_id=#{headId}
-           and activity_stage=#{stage}
-           and activity_type=#{type}
         )
         and SMS_TEMPLATE_CODE is null
     </select>

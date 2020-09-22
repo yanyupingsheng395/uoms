@@ -59,5 +59,5 @@ public class ActivityTemplate {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
     private Date opDt;
 
-    private String usedDays;
+    private Integer usedDays;
 }

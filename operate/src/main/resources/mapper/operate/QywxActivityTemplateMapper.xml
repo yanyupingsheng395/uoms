@@ -18,7 +18,7 @@
         <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt" />
         <result column="insert_by" jdbcType="VARCHAR" property="insertBy" />
         <result column="update_by" jdbcType="VARCHAR" property="updateBy" />
-        <result column="used_days" jdbcType="VARCHAR" property="usedDays" />
+        <result column="used_days" jdbcType="DECIMAL" property="usedDays" />
     </resultMap>
 
 
@@ -86,7 +86,7 @@
     </update>
 
     <select id="getTemplateTableData" resultMap="base">
-        select tmp_content, insert_dt, (date_part('day', now() - cast(insert_dt as TIMESTAMP)) + 1) used_days from uo_qywx_activity_template
+        select tmp_code, tmp_content, insert_dt, (date_part('day', now() - cast(insert_dt as TIMESTAMP)) + 1) used_days from uo_qywx_activity_template
         order by insert_dt desc
     </select>
 

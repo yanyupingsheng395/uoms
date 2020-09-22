@@ -656,4 +656,21 @@ public class PageController extends BaseController {
         model.addAttribute("sourceConfig", sourceConfigVO);
         return "operate/qywxactivity/add/add";
     }
+
+    @RequestMapping("/qywxActivity/view")
+    public String qywxActivityView(@RequestParam("headId") Long headId, Model model) {
+        ActivityHead activityHead = qywxActivityHeadService.findById(headId);
+        List<ActivityCoupon> activityCouponList = qywxActivityHeadService.findCouponList(headId);
+        List<ActivityCoupon> shopCouponList = activityCouponList.stream().filter(x -> x.getCouponType().equalsIgnoreCase("S")).collect(Collectors.toList());
+        String formalStatus = activityHead.getFormalStatus();
+        model.addAttribute("activityHead", activityHead);
+        model.addAttribute("shopCouponList", shopCouponList);
+        // 当处于done状态的时候，按钮不显示
+        model.addAttribute("formalStatus", formalStatus);
+        //文案相关变量
+        SourceConfigVO sourceConfigVO = SourceConfigVO.getInstance(pushConfig);
+        model.addAttribute("sourceConfig", sourceConfigVO);
+        return "operate/qywxactivity/view/view";
+    }
+
 }
