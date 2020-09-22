@@ -3,9 +3,9 @@
 <mapper namespace="com.linksteady.qywx.dao.SyncTaskMapper">
 
     <insert id="saveFollowUser">
-         insert into uo_qywx_followuser_list(corp_id,user_id,user_name,insert_dt,flag) values
+         insert into uo_qywx_followuser_list(corp_id,user_id,user_name,insert_dt,flag,dept_id) values
         <foreach collection="followUserList" item="item" index="index" separator=",">
-            (#{corpId},#{item},#{item},now(),'Y')
+            (#{corpId},#{item.followUserId},#{item.followUserId},now(),'Y',#{item.mainDeptId}::int4)
         </foreach>
         ON CONFLICT(user_id) DO UPDATE set flag='Y'
     </insert>

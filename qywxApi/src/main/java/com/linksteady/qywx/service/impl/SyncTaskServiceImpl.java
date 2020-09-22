@@ -4,6 +4,7 @@ import com.linksteady.qywx.dao.SyncTaskMapper;
 import com.linksteady.qywx.domain.ExternalContact;
 import com.linksteady.qywx.domain.SyncTask;
 import com.linksteady.qywx.service.SyncTaskService;
+import com.linksteady.qywx.vo.FollowUserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +24,7 @@ public class SyncTaskServiceImpl implements SyncTaskService {
 
     @Override
     @Transactional
-    public void saveFollowUser(String corpId,List<String> followUserList) {
+    public void saveFollowUser(String corpId,List<FollowUserVO> followUserList) {
         //更新所有记录的flag='N'
         syncTaskMapper.updateFollowUserFlag();
         //同步数据，如果insert/update，则更新falg='Y'

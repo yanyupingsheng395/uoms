@@ -3,12 +3,13 @@ package com.linksteady.qywx.dao;
 import com.linksteady.qywx.domain.ExternalContact;
 import com.linksteady.qywx.domain.QywxWelcome;
 import com.linksteady.qywx.domain.SyncTask;
+import com.linksteady.qywx.vo.FollowUserVO;
 
 import java.util.List;
 
 public interface SyncTaskMapper {
 
-    void saveFollowUser(String corpId,List<String> followUserList);
+    void saveFollowUser(String corpId,List<FollowUserVO> followUserList);
 
     void saveSyncTask(List<SyncTask> taskList);
 
