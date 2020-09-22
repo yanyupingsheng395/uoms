@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface QywxContactWayService {
 
-    void saveContactWay(QywxContactWay qywxContactWay) throws Exception;
+    void saveContactWay(QywxContactWay qywxContactWay, String userName) throws Exception;
 
     void updateContractWay(QywxContactWay qywxContactWay)  throws Exception;
 

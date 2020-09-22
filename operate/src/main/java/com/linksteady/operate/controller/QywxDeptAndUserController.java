@@ -43,4 +43,14 @@ public class QywxDeptAndUserController {
         int count = qywxDeptAndUserService.getDeptTableCount();
         return ResponseBo.okOverPaging(null, count, qywxDeptAndUserService.getDeptTableData(limit, offset));
     }
+
+    /**
+     * 获取组织架构数据树
+     * @return
+     */
+    @RequestMapping("/getDeptAndUserTree")
+    @ResponseBody
+    public ResponseBo getDeptAndUserTree() {
+        return ResponseBo.okWithData(null, qywxDeptAndUserService.getDeptAndUserTree());
+    }
 }

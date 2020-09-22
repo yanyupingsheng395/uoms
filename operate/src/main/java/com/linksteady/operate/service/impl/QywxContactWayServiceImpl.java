@@ -2,10 +2,13 @@ package com.linksteady.operate.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.dao.QywxContactWayMapper;
+import com.linksteady.operate.dao.QywxDeptAndUserMapper;
 import com.linksteady.operate.domain.QywxContactWay;
 import com.linksteady.common.domain.enums.ConfigEnum;
+import com.linksteady.operate.domain.QywxDeptAndUser;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.QywxContactWayService;
 import com.linksteady.operate.service.ShortUrlService;
@@ -19,7 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.List;
+import java.util.*;
+import java.util.function.BinaryOperator;
+import java.util.stream.Collectors;
 
 /**
  * @author huang
@@ -62,15 +67,46 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
     @Autowired
     ShortUrlService shortUrlService;
 
+    @Autowired
+    private QywxDeptAndUserMapper qywxDeptAndUserMapper;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void saveContactWay(QywxContactWay qywxContactWay) throws Exception{
+    public void saveContactWay(QywxContactWay qywxContactWay, String userName) throws Exception{
+        //渠道码类型 单人 or 多人
+        String usersListStr = qywxContactWay.getUsersList();
+        String deptListStr = qywxContactWay.getDeptList();
+        HashSet<String> userList = new HashSet<>();
+        if(StringUtils.isNotEmpty(usersListStr)) {
+            userList = new HashSet<>(Arrays.asList(usersListStr.split(",")));
+        }
+        if(StringUtils.isNotEmpty(deptListStr)) {
+            List<String> deptUserIdList = qywxDeptAndUserMapper.getUserIdsByDeptId(Arrays.asList(deptListStr.split(",")));
+            userList.addAll(deptUserIdList);
+        }
+        if(userList.size() > 1) {
+            qywxContactWay.setContactType("2");
+        }else if(userList.size() == 1){
+            qywxContactWay.setContactType("1");
+        }
+
+        //固定值为2 表示生成二维码
+        qywxContactWay.setScene("2");
+        //外部客户添加时是否无需验证，默认为true
+        qywxContactWay.setSkipVerify(true);
+
+        qywxContactWay.setCreateDt(new Date());
+        qywxContactWay.setUpdateDt(new Date());
+        qywxContactWay.setCreateBy(userName);
+        qywxContactWay.setUpdateBy(userName);
+
         //保存渠道活码
         qywxContactWayMapper.saveContactWay(qywxContactWay);
         Long contactWayId=qywxContactWay.getContactWayId();
         String url = configService.getValueByName(ConfigEnum.qywxDomainUrl.getKeyCode()) + ADD_CONTACT_WAY;
-        String param = JSON.toJSONString(qywxContactWay);
 
+        qywxContactWay.setUsersList(StringUtils.join(userList, ","));
+        String param = JSON.toJSONString(qywxContactWay);
         String corpId=configService.getValueByName(ConfigEnum.qywxCorpId.getKeyCode());
         //时间戳
         String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
@@ -153,7 +189,26 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
 
     @Override
     public List<QywxContactWay> getContactWayList(int limit,int offset,String qstate) {
-        return qywxContactWayMapper.getContactWayList(limit,offset,qstate);
+        String corpId = configService.getValueByName(ConfigEnum.qywxCorpId.getKeyCode());
+        List<QywxContactWay> contactWayList = qywxContactWayMapper.getContactWayList(limit, offset, qstate);
+        List<QywxDeptAndUser> deptAndUserData = qywxDeptAndUserMapper.getDeptAndUserData(corpId);
+        Map<String, String> userMap = deptAndUserData.stream().collect(Collectors.toMap(QywxDeptAndUser::getUserId, QywxDeptAndUser::getUserName, BinaryOperator.minBy(Comparator.naturalOrder())));
+        Map<String, String> deptMap = deptAndUserData.stream().collect(Collectors.toMap(QywxDeptAndUser::getDeptId, QywxDeptAndUser::getDeptName, BinaryOperator.minBy(Comparator.naturalOrder())));
+        contactWayList.stream().forEach(x->{
+            String userIds = x.getUsersList();
+            String deptIds = x.getDeptList();
+            if(StringUtils.isNotEmpty(userIds)) {
+                List<String> userIdList = Arrays.asList(userIds.split(","));
+                List<String> userNameList = userIdList.stream().map(k->userMap.get(k)).collect(Collectors.toList());
+                x.setUsersList(StringUtils.join(userNameList, ","));
+            }
+            if(StringUtils.isNotEmpty(deptIds)) {
+                List<String> deptIdList = Arrays.asList(deptIds.split(","));
+                List<String> deptNameList = deptIdList.stream().map(k->deptMap.get(k)).collect(Collectors.toList());
+                x.setDeptList(StringUtils.join(deptNameList, ","));
+            }
+        });
+        return contactWayList;
     }
 
     @Override

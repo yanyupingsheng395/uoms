@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class Tree<T> implements Serializable {
 
@@ -26,6 +27,12 @@ public class Tree<T> implements Serializable {
 	 * 显示节点文本
 	 */
 	private String text;
+
+	/**
+	 * 数据类型
+	 */
+	private String type;
+
 	/**
 	 * 节点状态，open closed
 	 */
@@ -145,14 +152,35 @@ public class Tree<T> implements Serializable {
 		this.url = url;
 	}
 
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
 	public Tree() {
 		super();
 	}
 
 	@Override
 	public String toString() {
-
 		return JSON.toJSONString(this);
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Tree<?> tree = (Tree<?>) o;
+		return id.equals(tree.id) &&
+				text.equals(tree.text) &&
+				parentId.equals(tree.parentId);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, text, parentId);
+	}
 }

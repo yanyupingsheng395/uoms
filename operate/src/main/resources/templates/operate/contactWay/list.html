@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="edge" />
     <title>用户成长系统</title>
     <th:block th:include="common/include :: common-css" />
+    <th:block th:include="common/include::jstree-css" />
     <th:block th:include="common/include::bootstrap-table-css" />
     <th:block th:include="common/include::bootstrap-select-css" />
     <th:block th:include="common/include::jquery-confirm-css" />
@@ -93,11 +94,13 @@
                             <input class="form-control" type="text" id="state" name="state"/>
                         </div>
                     </div>
-                    <div class="form-group mg-stop">
+                    <div class="form-group">
                         <label class="col-md-3 control-label">可联系成员：</label>
                         <div class="col-md-8 input-group">
-                            <select multiple="multiple" name="userSelect" class="selectpicker show-tick form-control"></select>
-                            <input name="usersList" hidden/>
+                            <div id="userSelectTree"></div>
+                            <input type="hidden" name="usersList">
+                            <input type="hidden" name="deptList">
+                            <input type="hidden" name="validUser">
                         </div>
                     </div>
                     <div id="qrCodeDiv">
@@ -131,6 +134,7 @@
 <th:block th:include="common/include::perfect-scrollbar" />
 <th:block th:include="common/include::jquery-validate-js" />
 <th:block th:include="common/include::common-js" />
+<th:block th:include="common/include::jstree-js" />
 <th:block th:include="common/include::bootstrap-table-js" />
 <th:block th:include="common/include::bootstrap-select-js" />
 <th:block th:include="common/include::jquery-confirm-js" />

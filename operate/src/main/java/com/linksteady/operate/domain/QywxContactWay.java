@@ -31,6 +31,8 @@ public class QywxContactWay implements Comparable<QywxContactWay>{
 
     private String usersList;
 
+    private String deptList;
+
     private String party;
 
     private String configId;

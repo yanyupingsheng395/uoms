@@ -1,5 +1,6 @@
 package com.linksteady.operate.dao;
 
+import com.linksteady.operate.domain.QywxDeptAndUser;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -22,4 +23,8 @@ public interface QywxDeptAndUserMapper {
     int getUserTableCount();
 
     int getDeptTableCount();
+
+    List<QywxDeptAndUser> getDeptAndUserData(String corpId);
+
+    List<String> getUserIdsByDeptId(List<String> deptIds);
 }

@@ -37,4 +37,18 @@
     <select id="getDeptTableCount" resultType="int">
         select count(1) from uo_qywx_dept
     </select>
+
+    <select id="getDeptAndUserData" resultType="com.linksteady.operate.domain.QywxDeptAndUser">
+        select uqd.id dept_id, uqd.name dept_name, uqd.parent_id dept_parent_id, user_id, user_name
+        from uo_qywx_followuser_list uqfl
+                 left join uo_qywx_dept uqd on uqfl.dept_id = uqd.id
+        where uqfl.corp_id = #{corpId} and uqd.corp_id = #{corpId}
+    </select>
+
+    <select id="getUserIdsByDeptId" resultType="string">
+        select user_id from uo_qywx_followuser_list where dept_id in
+        <foreach collection="list" separator="," open="(" close=")" item="item">
+            #{item}::integer
+        </foreach>
+    </select>
 </mapper>

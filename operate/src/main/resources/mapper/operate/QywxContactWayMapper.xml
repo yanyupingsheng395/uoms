@@ -10,6 +10,7 @@
         <result property="skipVerify" jdbcType="BOOLEAN" column="skip_verify"/>
         <result property="state" jdbcType="VARCHAR" column="state"/>
         <result property="usersList" jdbcType="VARCHAR" column="user_list"/>
+        <result property="deptList" jdbcType="VARCHAR" column="dept_list"/>
         <result property="party" jdbcType="VARCHAR" column="party"/>
         <result property="configId" jdbcType="VARCHAR" column="config_id"/>
         <result property="createDt" jdbcType="TIMESTAMP" column="create_dt"/>
@@ -32,13 +33,13 @@
     </update>
 
     <select id="getContactWayById" resultMap="BaseResultMap">
-        select contactway_id,qrcode,contact_type,scene,style,skip_verify,state,user_list,party,
+        select contactway_id,qrcode,contact_type,scene,style,skip_verify,state,user_list,party,dept_list,
                 config_id,create_dt,update_dt,create_by,update_by,externaluser_num,short_url
         from uo_qywx_contact_way where  contactway_id=#{contactWayId}
     </select>
 
     <select id="getContactWayList" resultMap="BaseResultMap">
-       select contactway_id,qrcode,contact_type,scene,style,skip_verify,state,user_list,party,
+       select contactway_id,qrcode,contact_type,scene,style,skip_verify,state,user_list,party,dept_list,
                 config_id,create_dt,update_dt,create_by,update_by,externaluser_num,short_url
         from uo_qywx_contact_way
         <where>
@@ -116,6 +117,7 @@
              skip_verify,
              state,
              user_list,
+             dept_list,
              party,
              config_id,
              create_dt,
@@ -129,6 +131,7 @@
             #{skipVerify},
             #{state},
             #{usersList},
+            #{deptList},
             #{party},
             #{configId},
             #{createDt},

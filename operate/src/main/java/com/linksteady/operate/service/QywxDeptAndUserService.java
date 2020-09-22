@@ -1,5 +1,7 @@
 package com.linksteady.operate.service;
 
+import com.linksteady.common.domain.Tree;
+import com.linksteady.operate.domain.QywxDeptAndUser;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -20,4 +22,6 @@ public interface QywxDeptAndUserService {
     int getUserTableCount();
 
     int getDeptTableCount();
+
+    Tree<QywxDeptAndUser> getDeptAndUserTree();
 }
