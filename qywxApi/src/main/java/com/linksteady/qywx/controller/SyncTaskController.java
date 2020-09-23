@@ -13,6 +13,7 @@ import com.linksteady.qywx.service.ApiService;
 import com.linksteady.qywx.service.SyncTaskService;
 import com.linksteady.qywx.service.UserMappingService;
 import com.linksteady.qywx.service.WelcomeMessageService;
+import com.linksteady.qywx.vo.FollowUserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -176,7 +177,7 @@ public class SyncTaskController extends ApiBaseController{
         try{
             validateLegality(request,signature,timestamp,corpId,data);
             //写入本地信息
-            List<String> followUserList=JSONObject.parseArray(data,String.class);
+            List<FollowUserVO> followUserList=JSONObject.parseArray(data,FollowUserVO.class);
             synchronized (externalContactLock)
             {
                 syncTaskService.saveFollowUser(corpId,followUserList);

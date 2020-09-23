@@ -3,6 +3,8 @@ package com.linksteady.qywx.service;
 import com.linksteady.common.domain.QywxMessage;
 import com.linksteady.qywx.domain.ExternalContact;
 import com.linksteady.qywx.domain.SyncTask;
+import com.linksteady.qywx.vo.FollowUserVO;
+
 import java.util.List;
 
 public interface SyncTaskService {
@@ -10,7 +12,7 @@ public interface SyncTaskService {
     /**
      * 保存导购信息
      */
-    void saveFollowUser(String corpId,List<String> followUserList);
+    void saveFollowUser(String corpId,List<FollowUserVO> followUserList);
 
     /**
      * 新增同步任务
