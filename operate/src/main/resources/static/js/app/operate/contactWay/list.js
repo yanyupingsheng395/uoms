@@ -38,7 +38,7 @@ function initTable() {
             field: 'qrCode',
             title: '二维码样式',
             align: 'center',
-            formatter: function (value, row, indx) {
+            formatter: function (value, row, index) {
                 return "<img style='width:120px;height:120px' src='" + value + "'><a href='/contactWay/download?configId=" + row.configId + "' style='font-size: 12px;' target='_blank'>下载</a>" +
                     "&nbsp;&nbsp;<a style='font-size: 12px;cursor: pointer;' data-clipboard-text='" + value + "' class='copy_btn'>复制二维码地址</a>";
             }
@@ -87,10 +87,8 @@ function initTable() {
             formatter: function (value, row, indx) {
                 if (value === '1') {
                     return "<span class=\"badge bg-info\">单人</span>";
-                    ;
                 } else if (value === '2') {
                     return "<span class=\"badge bg-warning\">多人</span>";
-                    ;
                 }
             }
         }, {
