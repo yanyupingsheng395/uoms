@@ -34,7 +34,7 @@
         <result property="spuName" jdbcType="VARCHAR" column="SPU_NAME"></result>
         <result property="prodName" jdbcType="VARCHAR" column="REC_PROD_NAME"></result>
         <result property="userValueLabel" jdbcType="VARCHAR" column="user_value_label"></result>
-        <result property="qywxUser" jdbcType="VARCHAR" column="qywx_user_name"></result>
+        <result property="qywxUser" jdbcType="VARCHAR" column="follow_user_name"></result>
         <result property="couponDeno" jdbcType="DECIMAL" column="coupon_deno"></result>
         <result property="couponMin" jdbcType="DECIMAL" column="coupon_min"></result>
         <result property="growthType" jdbcType="VARCHAR" column="growth_type"></result>
@@ -148,12 +148,12 @@
     </select>
 
     <select id="getTargetInfoByUser" resultMap="QywxUserStats">
-        select qywx_user_name, ucnt
+        select follow_user_name, ucnt
         from (
-                 select qywx_user_name, count(*) ucnt
+                 select follow_user_name, count(*) ucnt
                  from uo_qywx_daily_detail
                  where head_id = #{headId}
-                 group by qywx_user_name
+                 group by follow_user_name
              ) t
         order by ucnt desc
     </select>
