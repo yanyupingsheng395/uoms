@@ -192,8 +192,8 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
         String corpId = configService.getValueByName(ConfigEnum.qywxCorpId.getKeyCode());
         List<QywxContactWay> contactWayList = qywxContactWayMapper.getContactWayList(limit, offset, qstate);
         List<QywxDeptAndUser> deptAndUserData = qywxDeptAndUserMapper.getDeptAndUserData(corpId);
-        Map<String, String> userMap = deptAndUserData.stream().collect(Collectors.toMap(QywxDeptAndUser::getUserId, QywxDeptAndUser::getUserName, BinaryOperator.minBy(Comparator.naturalOrder())));
-        Map<String, String> deptMap = deptAndUserData.stream().collect(Collectors.toMap(QywxDeptAndUser::getDeptId, QywxDeptAndUser::getDeptName, BinaryOperator.minBy(Comparator.naturalOrder())));
+        Map<String, String> userMap = deptAndUserData.stream().filter(x->StringUtils.isNotEmpty(x.getUserId()) && StringUtils.isNotEmpty(x.getUserName())).collect(Collectors.toMap(QywxDeptAndUser::getUserId, QywxDeptAndUser::getUserName, BinaryOperator.minBy(Comparator.naturalOrder())));
+        Map<String, String> deptMap = deptAndUserData.stream().filter(x->StringUtils.isNotEmpty(x.getDeptId()) && StringUtils.isNotEmpty(x.getDeptName())).collect(Collectors.toMap(QywxDeptAndUser::getDeptId, QywxDeptAndUser::getDeptName, BinaryOperator.minBy(Comparator.naturalOrder())));
         contactWayList.stream().forEach(x->{
             String userIds = x.getUsersList();
             String deptIds = x.getDeptList();
