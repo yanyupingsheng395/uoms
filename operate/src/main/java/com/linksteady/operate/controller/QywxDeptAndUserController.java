@@ -2,6 +2,9 @@ package com.linksteady.operate.controller;
 
 import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.common.domain.Tree;
+import com.linksteady.operate.domain.QywxDeptAndUser;
+import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.QywxDeptAndUserService;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +54,12 @@ public class QywxDeptAndUserController {
     @RequestMapping("/getDeptAndUserTree")
     @ResponseBody
     public ResponseBo getDeptAndUserTree() {
-        return ResponseBo.okWithData(null, qywxDeptAndUserService.getDeptAndUserTree());
+        Tree<QywxDeptAndUser> deptAndUserTree = null;
+        try {
+            deptAndUserTree = qywxDeptAndUserService.getDeptAndUserTree();
+        } catch (LinkSteadyException e) {
+            return ResponseBo.error("未获取到可联系成员，请先完成组织架构数据的上传！");
+        }
+        return ResponseBo.okWithData(null, deptAndUserTree);
     }
 }

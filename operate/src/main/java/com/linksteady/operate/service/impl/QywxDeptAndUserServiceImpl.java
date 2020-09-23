@@ -11,6 +11,7 @@ import com.linksteady.common.util.FileUtils;
 import com.linksteady.common.util.TreeUtils;
 import com.linksteady.operate.dao.QywxDeptAndUserMapper;
 import com.linksteady.operate.domain.QywxDeptAndUser;
+import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.QywxDeptAndUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -89,9 +90,12 @@ public class QywxDeptAndUserServiceImpl implements QywxDeptAndUserService {
     }
 
     @Override
-    public Tree<QywxDeptAndUser> getDeptAndUserTree() {
+    public Tree<QywxDeptAndUser> getDeptAndUserTree() throws LinkSteadyException {
         String corpId = configService.getValueByName(ConfigEnum.qywxCorpId.getKeyCode());
         List<QywxDeptAndUser> deptAndUsers = qywxDeptAndUserMapper.getDeptAndUserData(corpId);
+        if(deptAndUsers.size() == 0) {
+            throw new LinkSteadyException();
+        }
         LinkedHashSet<Tree<QywxDeptAndUser>> trees = new LinkedHashSet<>();
         buildTrees(trees, deptAndUsers);
         return TreeUtils.build(new ArrayList<>(trees));

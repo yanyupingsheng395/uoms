@@ -1079,9 +1079,6 @@ $( "#btn_save_sms").click( function () {
             //更新操作 判断当前文案是否在其它地方已被引用
             $.get("/qywxActivity/checkTemplateUsed", {
                 code: $("#code").val(),
-                stage: CURRENT_ACTIVITY_STAGE,
-                headId: $( "#headId" ).val(),
-                type: CURRENT_TYPE
             }, function (r) {
                 let confirmmsg='';
                 let flag='';
@@ -1244,7 +1241,7 @@ function editTemplate() {
         var data = r.data;
         $( "#code" ).val( data.code );
         $( "#content" ).val( data.content );
-        $("#article").html('').append(signature+data.content+unsubscribe);
+        $("#article").html('').append(data.content);
         $( "input[name='isProdName']:radio[value='" + data.isProdName + "']" ).prop( "checked", true );
         $( "input[name='isProdUrl']:radio[value='" + data.isProdUrl + "']" ).prop( "checked", true );
         $( "input[name='isPrice']:radio[value='" + data.isPrice + "']" ).prop( "checked", true );
@@ -1805,7 +1802,7 @@ function addPlatCoupon(idx) {
         '<input type="hidden" name="couponType" value="'+couponType+'"/>\n' +
         '                        <div class="col-md-4">\n' +
         '                            <div class="form-group">\n' +
-        '                                &#12288;&#12288;&#12288;券叠加：<select name="addFlag" class="form-control" style="width: 172px;">\n' +
+        '                                &#12288;券叠加：<select name="addFlag" class="form-control" style="width: 172px;">\n' +
         '                                    <option value="1">是</option>\n' +
         '                                    <option value="0">否</option>\n' +
         '                                </select>\n' +
@@ -1813,12 +1810,12 @@ function addPlatCoupon(idx) {
         '                        </div>\n' +
         '                        <div class="col-md-4">\n' +
         '                            <div class="form-group">\n' +
-        '                                &#12288;&#12288;&#12288;&#12288;门槛：<input type="text" name="couponThreshold" class="form-control"/>\n' +
+        '                                &#12288;&#12288;门槛：<input type="text" name="couponThreshold" class="form-control"/>\n' +
         '                            </div>\n' +
         '                        </div>\n' +
         '                        <div class="col-md-4">\n' +
         '                            <div class="form-group">\n' +
-        '                                &#12288;&#12288;&#12288;&#12288;面额：<input type="text" name="couponDenom" class="form-control"/>\n' +
+        '                                &#12288;&#12288;面额：<input type="text" name="couponDenom" class="form-control"/>\n' +
         '                            </div>\n' +
         '                            &nbsp;&nbsp;<a style="color: #f96868;cursor: pointer;" onclick="deleteCoupon(this)"><i class="fa fa-trash"></i>删除</a>\n' +
         '                        </div>\n' +

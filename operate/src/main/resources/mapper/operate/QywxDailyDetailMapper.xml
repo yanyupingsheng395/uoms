@@ -116,27 +116,27 @@
 
     <select id="getQywxDetailList" resultMap="baseResult">
          select
-             T2.HEAD_ID,
-             T2.DETAIL_ID,
-             T2.USER_ID,
-             T2.USER_PHONE,
-             T2.follow_user_id,
-             T2.follow_user_name,
-             T2.qywx_contract_id,
-             T2.text_content,
-             T2.REC_PROD_ID,
-             T2.REC_PROD_NAME,
-             T2.COUPON_ID,
-             T2.REC_PIECE_PRICE,
-             T2.GROUP_ID,
-             T2.coupon_deno
+             head_id,
+             detail_id,
+             user_id,
+             user_phone,
+             follow_user_id,
+             follow_user_name,
+             qywx_contract_id,
+             text_content,
+             rec_prod_id,
+             rec_prod_name,
+             coupon_id,
+             rec_piece_price,
+             group_id,
+             coupon_deno
          FROM
-              uo_qywx_daily_detail T2
-         WHERE  T2.HEAD_ID = #{headId}
+              uo_qywx_daily_detail
+         WHERE  head_id = #{headId}
         <if test="followUserId != '' and followUserId != null">
-            and T2.FOLLOW_USER_ID = #{followUserId}
+            and follow_user_id = #{followUserId}
         </if>
-         ORDER BY T2.detail_id DESC
+         ORDER BY detail_id DESC
          limit #{limit} offset #{offset}
     </select>
 

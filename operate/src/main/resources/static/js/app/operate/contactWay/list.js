@@ -7,8 +7,6 @@ $( function () {
     validateRule();
     modifyUrlValidateRule();
     initTable();
-    createUserTree();
-    // initFollowUser();
 
     let clipboard1 = new ClipboardJS( '.copy_btn' );
     clipboard1.on( 'success', function (e) {
@@ -143,7 +141,6 @@ $( "#btn_edit" ).click( function () {
     $.post( "/contactWay/getContactWayById", {"contactWayId": contactWayId}, function (r) {
         if (r.code === 200) {
             var $form = $( '#contactWay_edit' );
-            $( "#add_modal" ).modal( 'show' );
             let d = r.data;
             $( "#myLargeModalLabel" ).html( '修改渠道活码' );
             $form.find( "input[name='contactWayId']" ).val( d.contactWayId );
@@ -151,6 +148,7 @@ $( "#btn_edit" ).click( function () {
             $form.find( "input[name='state']" ).val( d.state ).attr( "readOnly", "readOnly" );
             $form.find( "input[name='usersList']" ).val(d.usersList);
             $form.find( "input[name='deptList']" ).val(d.deptList);
+            createUserTree();
             var nodes = $('#userSelectTree').jstree(true);
             nodes.uncheck_all();
             checkTree(d.usersList);
@@ -185,7 +183,7 @@ $( "#btn_add" ).click( function () {
     $( "#qrCodeDiv" ).hide();
     $( "#longUrl" ).val( "" );
     $( "#shortUrl" ).val( "" );
-    $( '#add_modal' ).modal( 'show' );
+    createUserTree();
 } );
 
 $( "#btn_delete" ).click( function () {
@@ -221,7 +219,8 @@ $( "#add_modal" ).on( 'hidden.bs.modal', function () {
     $contactWayForm.find( "input[name='configId']" ).val( "" );
     $contactWayForm.find( "input[name='state']" ).val( "" );
     $contactWayForm.find( "input[name='usersList']" ).val( "" );
-    $contactWayForm.find( "select[name='userSelect']" ).selectpicker( 'val', "" );
+    $contactWayForm.find( "input[name='deptList']" ).val( "" );
+    $contactWayForm.find( "input[name='validUser']" ).val( "" );
 } );
 
 $( "#btn_save" ).click( function () {
@@ -334,8 +333,9 @@ function createUserTree() {
                 },
                 "plugins": ["wholerow", "checkbox"]
             } );
+            $( '#add_modal' ).modal( 'show' );
         } else {
-            $MB.n_danger( r.msg );
+            $MB.n_warning( r.msg );
         }
     } );
 }
@@ -349,26 +349,6 @@ function getDeptAndUserId() {
     $( "input[name='validUser']" ).val( userIds.join( "," ) + deptIds.join( "," ));
 
 }
-
-function initFollowUser() {
-    let data = new Array();
-    data.push( "HuangKun" );
-    data.push( "CaoHuiXue" );
-    data.push( "wake" );
-    data.push( "brandonz" );
-    let option = "";
-
-    $.each( data, function (index, value) {
-        option += "<option value='" + value + "'>" + value + "</option>"
-    } )
-
-    userSelect.html( "" ).append( option );
-    userSelect.selectpicker( 'refresh' );
-}
-
-userSelect.on( 'changed.bs.select', function () {
-    $usersList.val( userSelect.selectpicker( 'val' ) );
-} );
 
 function closeModal() {
     $MB.closeAndRestModal( "add_modal" );

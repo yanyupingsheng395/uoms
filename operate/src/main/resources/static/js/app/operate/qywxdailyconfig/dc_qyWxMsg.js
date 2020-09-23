@@ -233,7 +233,6 @@ $("#wxMsgAddModal").on('hidden.bs.modal', function () {
     $("input[name='productUrl']:radio").removeAttr("checked");
     $("input[name='couponUrl']:radio").removeAttr("checked");
     $("input[name='couponName']:radio").removeAttr("checked");
-    $("input[name='isPersonal']:radio").removeAttr("checked");
     $("input[name='materialType']:radio").removeAttr("checked");
     $("textarea[name='textContent']").val('');
     $("input[name='materialContent']").val('');
