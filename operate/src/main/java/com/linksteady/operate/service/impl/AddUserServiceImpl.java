@@ -121,7 +121,6 @@ public class AddUserServiceImpl implements AddUserService {
                 }
             }
             subWhere.append(" )");
-
             whereInfo.append(subWhere);
         }
 

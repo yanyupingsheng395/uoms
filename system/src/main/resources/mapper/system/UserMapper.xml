@@ -72,10 +72,10 @@
   </select>
 
 	<update id="resetPassword">
-		update t_user t set t.password=#{password},
-							t.update_dt=now(),
-							t.update_by=#{modifyName},
-							t.firstLogin='Y' where t.user_id=#{userId}
+		update t_user t set password=#{password},
+							update_dt=now(),
+							update_by=#{modifyName},
+							firstLogin='Y' where t.user_id=#{userId}
 	</update>
 
 	<select id="findAllUser" resultMap="BaseResultMap">
