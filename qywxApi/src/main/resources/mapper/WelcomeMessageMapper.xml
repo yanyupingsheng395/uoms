@@ -7,6 +7,27 @@
         <result column="wc_media_expire_date" jdbcType="TIMESTAMP" property="wcMediaExpireDate"/>
         <result column="wc_media_content" property="wcMediaContent" typeHandler="org.apache.ibatis.type.ByteArrayTypeHandler"/>
     </resultMap>
+    
+    <resultMap id="welcomeMap" type="com.linksteady.qywx.domain.QywxWelcome">
+        <result column="id" jdbcType="DECIMAL" property="id"/>
+        <result column="welcome_name" jdbcType="VARCHAR" property="welcomeName"/>
+        <result column="content" jdbcType="VARCHAR" property="content"/>
+        <result column="insert_by" jdbcType="VARCHAR" property="insertBy"/>
+        <result column="insert_dt" jdbcType="TIMESTAMP" property="insertDt"/>
+        <result column="policy_type" jdbcType="VARCHAR" property="policyType"/>
+        <result column="pic_url" jdbcType="VARCHAR" property="picUrl"/>
+        <result column="pic_id" jdbcType="VARCHAR" property="picId"/>
+        <result column="link_title" jdbcType="VARCHAR" property="linkTitle"/>
+        <result column="link_picurl" jdbcType="VARCHAR" property="linkPicurl"/>
+        <result column="link_desc" jdbcType="VARCHAR" property="linkDesc"/>
+        <result column="link_url" jdbcType="VARCHAR" property="linkUrl"/>
+        <result column="miniprogram_title" jdbcType="VARCHAR" property="miniprogramTitle"/>
+        <result column="miniprogram_page" jdbcType="VARCHAR" property="miniprogramPage"/>
+        <result column="qywx_coupon_id" jdbcType="VARCHAR" property="qywxCouponId"/>
+        <result column="qywx_product_id" jdbcType="VARCHAR" property="qywxProductId"/>
+        <result column="valid_flag" jdbcType="VARCHAR" property="validFlag"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+    </resultMap>
 
     <select id="getWelcomeMpParam" resultMap="paramMap">
          select wc_media_id,wc_media_expire_date,wc_media_content from uo_qywx_param limit 1
@@ -16,12 +37,27 @@
         update uo_qywx_param set wc_media_id=#{mediaId},wc_media_expire_date=#{expreDt}
     </update>
 
-    <select id="getValidWelcome" resultType="com.linksteady.qywx.domain.QywxWelcome">
-        select id, welcome_name, content, insert_by, insert_dt, policy_type,
-        pic_url, pic_id, link_title, link_picurl, link_desc, link_url,
-         miniprogram_title, miniprogram_page,
-         qywx_coupon_id, qywx_product_id,
-         update_dt, update_by, valid_flag, status
+    <select id="getValidWelcome" resultMap="welcomeMap">
+        select id,
+               welcome_name,
+               content,
+               insert_by,
+               insert_dt,
+               policy_type,
+               pic_url,
+               pic_id,
+               link_title,
+               link_picurl,
+               link_desc,
+               link_url,
+               miniprogram_title,
+               miniprogram_page,
+               qywx_coupon_id,
+               qywx_product_id,
+               update_dt,
+               update_by,
+               valid_flag,
+               status
          from uo_qywx_welcome
           where status='1'
         order by insert_dt desc limit 1

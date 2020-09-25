@@ -11,6 +11,7 @@ import com.linksteady.common.util.crypto.SHA1;
 import com.linksteady.qywx.dao.WelcomeMessageMapper;
 import com.linksteady.qywx.domain.QywxWelcome;
 import com.linksteady.qywx.domain.WelcomeMpParam;
+import com.linksteady.qywx.service.ApiService;
 import com.linksteady.qywx.service.WelcomeMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +32,7 @@ public class WelcomeMessageServiceImpl implements WelcomeMessageService {
     WelcomeMessageMapper welcomeMessageMapper;
 
     @Autowired
-    ConfigService configService;
+    ApiService apiService;
 
     /**
      * 获取小程序卡片封面的mediaId
@@ -48,10 +49,10 @@ public class WelcomeMessageServiceImpl implements WelcomeMessageService {
         if(now>expireTime|| StringUtils.isEmpty(welcomeMpParam.getWcMediaId()))
         {
             //调用企业微信接口，完成临时素材的上传
-            String corpId=configService.getValueByName(ConfigEnum.qywxCorpId.getKeyCode());
+            String corpId=apiService.getQywxCorpId();
             String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
             String signature= SHA1.gen(timestamp);
-            String qywxDomainUrl=configService.getValueByName(ConfigEnum.qywxDomainUrl.getKeyCode());
+            String qywxDomainUrl=apiService.getQywxDomainUrl();
 
             String url=qywxDomainUrl+"/api/uploadTempMedia";
 
@@ -85,7 +86,6 @@ public class WelcomeMessageServiceImpl implements WelcomeMessageService {
                 welcomeMessageMapper.updateWcMediaExpireInfo(mediaId,expreDt);
                 return mediaId;
             }
-
         }else
         {
             return welcomeMpParam.getWcMediaId();
@@ -124,11 +124,10 @@ public class WelcomeMessageServiceImpl implements WelcomeMessageService {
                 qywxMessage.setLinkDesc(qywxWelcome.getLinkDesc());
                 qywxMessage.setLinkUrl(qywxWelcome.getLinkUrl());
             }
-
             //小程序
             if(!org.springframework.util.StringUtils.isEmpty(qywxWelcome.getMiniprogramTitle()))
             {
-                qywxMessage.setMpAppid(configService.getValueByName(ConfigEnum.qywxMiniProgramAppId.getKeyCode()));
+                qywxMessage.setMpAppid(apiService.getMpAppId());
                 qywxMessage.setMpPicMediaId(getWelcomeMpMediaId());
                 qywxMessage.setMpTitle(qywxWelcome.getMiniprogramTitle());
                 qywxMessage.setMpPage(qywxWelcome.getMiniprogramPage());

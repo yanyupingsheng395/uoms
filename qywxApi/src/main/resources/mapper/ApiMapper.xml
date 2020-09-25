@@ -20,4 +20,10 @@
         from t_config where name='qywx.corpid'
     </select>
 
+    <select id="getMpAppId" resultType="string">
+        select
+           value
+        from t_config where name='qywx.miniProgramAppId'
+    </select>
+
 </mapper>

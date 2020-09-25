@@ -26,4 +26,11 @@ public interface ApiMapper {
      */
     String getQywxCorpId();
 
+
+    /**
+     * 获取关联小程序的appid
+     * @return
+     */
+    String getMpAppId();
+
 }

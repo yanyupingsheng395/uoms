@@ -29,4 +29,11 @@ public class ApiServiceImpl implements ApiService {
     public String getQywxCorpId() {
         return apiMapper.getQywxCorpId();
     }
+
+
+    @Override
+    @Cacheable(value="qywx", key="'mpAppId'")
+    public String getMpAppId() {
+        return apiMapper.getMpAppId();
+    }
 }
