@@ -211,7 +211,7 @@ public class QywxDailyController {
 //        }
 
         try {
-            qywxDailyService.push(qywxDailyHeader,effectDays);
+            //qywxDailyService.push(qywxDailyHeader,effectDays);
             testPush();
             return ResponseBo.ok();
         } catch (Exception e) {
@@ -300,7 +300,12 @@ public class QywxDailyController {
      */
     @GetMapping("/validUserGroupForQywx")
     public ResponseBo validUserGroupForQywx() {
-        return ResponseBo.okWithData(null, dailyConfigService.validUserGroupForQywx());
+        //todo 临时修改
+        Map<String, Object> result = Maps.newHashMap();
+        result.put("flag", "通过");
+        result.put("desc", "");
+        return ResponseBo.okWithData("",result);
+       // return ResponseBo.okWithData(null, dailyConfigService.validUserGroupForQywx());
     }
 
     /**

@@ -279,16 +279,17 @@ function setStep(status,taskDate) {
             dataOrder: ["title", "line", "description"]
         });
     }else {
-        // stepObj=steps({
-        //     el: "#pushSteps",
-        //     data: [
-        //         { title: "今日成长用户详情",description:""},
-        //         { title: "向成员派发推送任务",description:""}
-        //     ],
-        //     center: true,
-        //     dataOrder: ["title", "line", "description"]
-        // });
-        $("#nextStepBtn").attr("style", "display:none;");
+        //todo 临时修改
+        stepObj=steps({
+            el: "#pushSteps",
+            data: [
+                { title: "今日成长用户详情",description:""},
+                { title: "向成员派发推送任务",description:""}
+            ],
+            center: true,
+            dataOrder: ["title", "line", "description"]
+        });
+      //  $("#nextStepBtn").attr("style", "display:none;");
     }
 }
 
