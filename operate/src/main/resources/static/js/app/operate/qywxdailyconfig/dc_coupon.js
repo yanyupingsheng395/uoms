@@ -69,14 +69,14 @@ function couponTable() {
             field: 'couponUrl',
             align: 'center',
             title: '链接',
-            formatter: function (value, row, index) {
-                if (value !== undefined && value !== null && value !== '') {
-                    var tmp = value.indexOf("http://") > -1 ? value:"http://"+value;
-                    return "<a target='_blank' href='" + tmp + "' style='color: #48b0f7;border-bottom: solid 1px #48b0f7'>" + value + "</a>";
-                } else {
-                    return "-";
-                }
-            }
+            // formatter: function (value, row, index) {
+            //     if (value !== undefined && value !== null && value !== '') {
+            //         var tmp = value.indexOf("http://") > -1 ? value:"http://"+value;
+            //         return "<a target='_blank' href='" + tmp + "' style='color: #48b0f7;border-bottom: solid 1px #48b0f7'>" + value + "</a>";
+            //     } else {
+            //         return "-";
+            //     }
+            // }
         }, {
             field: 'validEnd',
             align: 'center',
