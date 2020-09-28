@@ -125,4 +125,6 @@ public interface QywxDailyCouponMapper extends MyMapper<CouponInfo> {
     void resetCouponGroupData();
 
     List<CouponInfo> getCouponListByGroup(String userValue, String lifeCycle, String pathActive, String tarType);
+
+   int selectCouponIdentity(String couponIdentity);
 }

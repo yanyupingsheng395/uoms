@@ -14,6 +14,8 @@ public class CouponInfo {
     private String couponInfo2;
     private String couponDisplayName;
     private String validStatus;
+    private String couponIdentity;//优惠券编号
+    private Integer couponSn;//优惠券发放流水号
 
     /**
      * 优惠券来源：0： 智能，1：手动

@@ -36,10 +36,14 @@ function couponTable() {
         columns: [{
             checkbox: true
         },{
+            field: 'couponIdentity',
+            align: 'center',
+            title: '优惠券编号'
+        },{
             field: 'couponDisplayName',
             align: 'center',
             title: '补贴名称'
-        }, {
+        }, /*{
             field: 'couponSource',
             title: '类型',
             align: 'center',
@@ -53,7 +57,7 @@ function couponTable() {
                 }
                 return res;
             }
-        }, {
+        },*/ {
             field: 'couponThreshold',
             align: 'center',
             title: '门槛(元)'
@@ -187,6 +191,7 @@ function closeModal() {
     $form.find("input[name='couponNum']").val("").removeAttr("readOnly");
     $form.find("input[name='couponDisplayName']").val("").removeAttr("readOnly");
     $form.find("input[name='validEnd']").val("").removeAttr("readOnly");
+    $form.find("input[name='couponIdentity']").val("").removeAttr("readOnly");
     $("input[name='validStatus']:radio[value='Y']").prop("checked", true);
     $MB.closeAndRestModal("coupon_add_modal");
     $("#couponValid").hide();
@@ -202,6 +207,9 @@ function validateRule() {
             couponDenom: {
                 required: true,
                 digits: true
+            },
+            couponIdentity : {
+                required: true,
             },
             couponThreshold: {
                 required: true,
@@ -234,6 +242,7 @@ function validateRule() {
                 required: icon + "请输入补贴门槛",
                 digits: icon + "只能是整数"
             },
+            couponIdentity: icon+"请输入优惠券编号",
             couponInfo2: icon + "请输入原链接",
             couponUrl: icon + "请输入短链接",
             couponDisplayName: {
@@ -248,6 +257,11 @@ function validateRule() {
 // 券保存
 $("#btn_save_coupon").click(function () {
     var name = $(this).attr("name");
+    var couponIdentity=$("#couponIdentity").val();
+    if(couponIdentity==null){
+        $MB.n_warning("请填写优惠券编号！");
+        return ;
+    }
     var validator = $couponForm.validate();
     var flag = validator.form();
     if (flag) {
@@ -318,6 +332,7 @@ function updateCoupon() {
             $("#coupon_modal").modal('hide');
             var coupon = r.data;
             $("#myLargeModalLabel").html('修改补贴');
+            $form.find("input[name='couponIdentity']").val(coupon.couponIdentity);
             $form.find("input[name='couponId']").val(coupon.couponId);
             $form.find("input[name='validStatus']").val(coupon.validStatus);
             $form.find("input[name='couponDenom']").val(coupon.couponDenom);
@@ -329,6 +344,7 @@ function updateCoupon() {
             $form.find("input[name='validEnd']").val(coupon.validEnd);
             VALID_END = coupon.validEnd;
             $("input[name='validStatus']:radio[value='"+coupon.validStatus+"']").prop("checked", true);
+            $("#couponIdentity").attr("readonly","readonly");
         } else {
             $MB.n_danger(r['msg']);
         }

@@ -30,4 +30,6 @@ public interface QywxDailyCouponService {
     void validCoupon();
 
     List<CouponInfo> getIntelCouponList();
+
+    boolean selectCouponIdentity(String couponIdentity);
 }
