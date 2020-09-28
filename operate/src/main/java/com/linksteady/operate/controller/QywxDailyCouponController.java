@@ -58,7 +58,7 @@ public class QywxDailyCouponController extends BaseController {
     }
 
     @RequestMapping("/save")
-    public synchronized ResponseBo save(CouponInfo couponInfo) throws InterruptedException {
+    public synchronized ResponseBo save(CouponInfo couponInfo){
         //couponInfo.setCouponSource("1");
       //  couponInfo.setCouponSn(1);
         String couponIdentity = couponInfo.getCouponIdentity();//优惠券编号，必填不能重复
