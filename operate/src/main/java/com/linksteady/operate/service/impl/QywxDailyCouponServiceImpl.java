@@ -140,4 +140,10 @@ public class QywxDailyCouponServiceImpl implements QywxDailyCouponService {
     public List<CouponInfo> getIntelCouponList() {
         return couponMapper.getIntelCouponList();
     }
+
+    @Override
+    public boolean selectCouponIdentity(String couponIdentity) {
+        int count = couponMapper.selectCouponIdentity(couponIdentity);
+        return count>0?true:false;
+    }
 }
