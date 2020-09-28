@@ -29,9 +29,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -445,5 +443,6 @@ public class QywxDailyServiceImpl implements QywxDailyService {
     public QywxDailyStaffEffect getDailyStaffEffect(Long headId, String followUserId) {
         return qywxDailyDetailMapper.getDailyStaffEffect(headId, followUserId);
     }
+
 
 }
