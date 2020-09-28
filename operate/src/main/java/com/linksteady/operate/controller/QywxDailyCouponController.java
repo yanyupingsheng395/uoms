@@ -58,14 +58,16 @@ public class QywxDailyCouponController extends BaseController {
     }
 
     @RequestMapping("/save")
-    public synchronized ResponseBo save(CouponInfo couponInfo){
+    public ResponseBo save(CouponInfo couponInfo){
         //couponInfo.setCouponSource("1");
       //  couponInfo.setCouponSn(1);
-        String couponIdentity = couponInfo.getCouponIdentity();//优惠券编号，必填不能重复
-        //判断优惠券编号是否重复
-        boolean flag = couponService.selectCouponIdentity(couponIdentity);
-        if(flag){
-            return ResponseBo.error("优惠券编号重复！");
+        synchronized(this) {
+            String couponIdentity = couponInfo.getCouponIdentity();//优惠券编号，必填不能重复
+            //判断优惠券编号是否重复
+            boolean flag = couponService.selectCouponIdentity(couponIdentity);
+            if (flag) {
+                return ResponseBo.error("优惠券编号重复！");
+            }
         }
         couponInfo = getCheckInfo(couponInfo);
         couponService.save(couponInfo);
