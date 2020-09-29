@@ -65,7 +65,9 @@ public enum  ConfigEnum {
     qywxCorpId("qywx.corpid"),
     qywxDomainUrl("qywx.domainUrl"),
     qywxDomainIpAddress("qywx.domainIpAddress"),
-    qywxMiniProgramAppId("qywx.miniProgramAppId");
+    qywxMiniProgramAppId("qywx.miniProgramAppId"),
+
+    sendCouponUrl("op.sendCouponUrl");
 
 
     private String keyCode;

@@ -2,10 +2,8 @@ package com.linksteady.operate.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Table;
 import com.linksteady.common.domain.QywxMessage;
 import com.linksteady.common.domain.enums.ConfigEnum;
 import com.linksteady.common.service.ConfigService;
@@ -16,7 +14,7 @@ import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.QywxDailyService;
 import com.linksteady.operate.service.QywxMdiaService;
 import com.linksteady.operate.service.QywxMessageService;
-import com.linksteady.operate.vo.QywxUserStatsVO;
+import com.linksteady.operate.vo.FollowUserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,15 +23,12 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
-import static java.util.Arrays.asList;
 
 /**
  * 日运营头表
@@ -73,145 +68,6 @@ public class QywxDailyServiceImpl implements QywxDailyService {
         return qywxDailyMapper.getTotalCount(touchDt);
     }
 
-    @Override
-    public Map<String, Object> getTaskOverViewData(Long headId) {
-        Map<String, Object> result = Maps.newHashMap();
-
-        //获取按商品、spu的统计数据
-        List<QywxUserStatsVO> statsBySpu = qywxDailyMapper.getTargetInfoBySpu(headId);
-
-        List<String> spuList = statsBySpu.stream().map(QywxUserStatsVO::getSpuName).collect(Collectors.toList());
-        List<Integer> spuCountList = statsBySpu.stream().map(QywxUserStatsVO::getUcnt).collect(Collectors.toList());
-
-        //获取最后一个SPU下的商品信息
-        List<QywxUserStatsVO> statsByProd = qywxDailyMapper.getTargetInfoByProd(headId, spuList.get(spuList.size() - 1));
-
-        List<String> prodList = statsByProd.stream().map(QywxUserStatsVO::getProdName).collect(Collectors.toList());
-        List<Integer> prodCountList = statsByProd.stream().map(QywxUserStatsVO::getUcnt).collect(Collectors.toList());
-
-        //按价值的用户分布
-        List<QywxUserStatsVO> statsByUserValue = qywxDailyMapper.getTargetInfoByUserValue(headId);
-        List<String> userValueList = statsByUserValue.stream().map(QywxUserStatsVO::getUserValue).collect(Collectors.toList());
-        List<String> userValueLabelList = statsByUserValue.stream().map(QywxUserStatsVO::getUserValueLabel).collect(Collectors.toList());
-        List<Integer> userValueCountList = statsByUserValue.stream().map(QywxUserStatsVO::getUcnt).collect(Collectors.toList());
-
-        Map<String, Object> matrixResult = getMatrixData(headId, statsByUserValue.get(statsByUserValue.size() - 1).getUserValue());
-
-        //按成员的分布
-        List<QywxUserStatsVO> statsByUser = qywxDailyMapper.getTargetInfoByUser(headId);
-        List<String> qywxUserList = statsByUser.stream().map(QywxUserStatsVO::getQywxUser).collect(Collectors.toList());
-        List<Integer> qywxCountList = statsByUser.stream().map(QywxUserStatsVO::getUcnt).collect(Collectors.toList());
-
-        //按个性化补贴的分布
-        List<QywxUserStatsVO> statsByCoupon = qywxDailyMapper.getTargetInfoByCoupon(headId);
-
-        //按用户成长目标的分布
-        List<QywxUserStatsVO> statsByGrowthType = qywxDailyMapper.getTargetInfoByGrowthType(headId);
-        List<String> growthTypeLabelList = statsByGrowthType.stream().map(QywxUserStatsVO::getGrowthType).collect(Collectors.toList());
-        List<Integer> growthTypeCountList = statsByGrowthType.stream().map(QywxUserStatsVO::getUcnt).collect(Collectors.toList());
-
-        //按用户成长目标【序列】的分布
-        List<QywxUserStatsVO> statsByGrowthTypeSeries = qywxDailyMapper.getTargetInfoByGrowthSeriesType(headId);
-        List<String> growthSeriesTypeLabelList = statsByGrowthTypeSeries.stream().map(QywxUserStatsVO::getGrowthSeriesType).collect(Collectors.toList());
-        List<Integer> growthSeriesTypeCountList = statsByGrowthTypeSeries.stream().map(QywxUserStatsVO::getUcnt).collect(Collectors.toList());
-
-        QywxDailyHeader qywxDailyHeader = qywxDailyMapper.getHeadInfo(headId);
-
-        result.put("spuList", spuList);
-        result.put("spuCountList", spuCountList);
-
-        result.put("prodList", prodList);
-        result.put("prodCountList", prodCountList);
-
-        result.put("userValueList", userValueList);
-        result.put("userValueLabelList", userValueLabelList);
-        result.put("userValueCountList", userValueCountList);
-
-        result.put("matrixResult", matrixResult);
-
-        result.put("qywxUserList", qywxUserList);
-        result.put("qywxCountList", qywxCountList);
-
-        result.put("growthTypeLabelList", growthTypeLabelList);
-        result.put("growthTypeCountList", growthTypeCountList);
-
-        result.put("growthSeriesTypeLabelList", growthSeriesTypeLabelList);
-        result.put("growthSeriesTypeCountList", growthSeriesTypeCountList);
-
-        result.put("statsByCoupon", statsByCoupon);
-
-        result.put("taskDate", new SimpleDateFormat("yyyy年MM月dd日").format(qywxDailyHeader.getTaskDate()));
-        result.put("userNum", qywxDailyHeader.getTotalNum());
-        return result;
-    }
-
-    /**
-     * 获取给定SPU下的商品分布数据
-     *
-     * @param headId
-     * @param spuName
-     * @return
-     */
-    @Override
-    public Map<String, Object> getProdCountBySpu(Long headId, String spuName) {
-        Map<String, Object> result = Maps.newHashMap();
-        List<QywxUserStatsVO> statsByProd = qywxDailyMapper.getTargetInfoByProd(headId, spuName);
-
-        List<String> prodList = statsByProd.stream().map(QywxUserStatsVO::getProdName).collect(Collectors.toList());
-        List<Integer> prodCountList = statsByProd.stream().map(QywxUserStatsVO::getUcnt).collect(Collectors.toList());
-
-        result.put("prodList", prodList);
-        result.put("prodCountList", prodCountList);
-
-        return result;
-    }
-
-    /**
-     * 根据给定 用户价值 获取 活跃度和生命周期的交叉表格数据
-     *
-     * @param headId
-     * @param userValue
-     * @return
-     */
-    @Override
-    public Map<String, Object> getMatrixData(Long headId, String userValue) {
-        Map<String, String> pathActiveMap = configService.selectDictByTypeCode("PATH_ACTIVE");
-        Map<String, String> lifeCycleMap = configService.selectDictByTypeCode("LIFECYCLE");
-
-        //给定价值下 在生命周期和活跃度上的分布表格
-        List<QywxUserStatsVO> statsMatrix = qywxDailyMapper.getTargetInfoMatrix(headId, userValue);
-        //转化成table 方便同时通过活跃度和生命周期进行查找
-        Table<String, String, Integer> tables = HashBasedTable.create();
-        statsMatrix.forEach(i -> {
-            tables.put(i.getPathActivity(), i.getLifecycle(), i.getUcnt());
-        });
-
-        Map<String, Object> matrixResult = Maps.newHashMap();
-        matrixResult.put("columnTitle", lifeCycleMap.values().toArray());
-        List<List<String>> rows = Lists.newArrayList();
-
-        List<String> row = null;
-        //遍历活跃度
-        for (Map.Entry<String, String> pathActive : pathActiveMap.entrySet()) {
-            row = Lists.newArrayList();
-            row.add(pathActive.getValue());
-
-            //对每一个活跃度遍历 生命周期
-            for (Map.Entry<String, String> lifeCycle : lifeCycleMap.entrySet()) {
-                //判断是否存在对应的值
-                if (tables.contains(pathActive.getKey(), lifeCycle.getKey())) {
-                    row.add(String.valueOf(tables.get(pathActive.getKey(), lifeCycle.getKey())));
-                } else {
-                    row.add("0");
-                }
-
-            }
-            rows.add(row);
-        }
-        matrixResult.put("rows", rows);
-
-        return matrixResult;
-    }
 
     @Override
     public boolean getTransContentLock(String headId) {
@@ -223,7 +79,7 @@ public class QywxDailyServiceImpl implements QywxDailyService {
 
     @Override
     public void delTransLock() {
-        redisTemplate.delete("ywx_daily_trans_lock");
+        redisTemplate.delete("qywx_daily_trans_lock");
     }
 
     @Override
@@ -240,71 +96,67 @@ public class QywxDailyServiceImpl implements QywxDailyService {
     @Transactional(rollbackFor = Exception.class)
     public void push(QywxDailyHeader qywxDailyHeader, Long effectDays) throws Exception {
         //更新状态为已执行
-        int count = qywxDailyMapper.updateStatus(qywxDailyHeader.getHeadId(), "done", qywxDailyHeader.getVersion());
+        int count = qywxDailyMapper.updateStatus(qywxDailyHeader.getHeadId(), "done", effectDays,qywxDailyHeader.getVersion());
         if (count == 0) {
             throw new OptimisticLockException("记录已被其他用户修改，请返回刷新后重试");
         }
         Long headId = qywxDailyHeader.getHeadId();
-        //更新效果计算天数到头表
-        qywxDailyMapper.updateHeaderPushInfo(headId, effectDays);
-        //按导购和消息分组 (follow_user_id,qywx_msg_sign)
-        List<QywxDailyDetail> userList = qywxDailyDetailMapper.getQywxUserListByHeadId(headId);
+
         // 写入push_list
         String mediaId = qywxMdiaService.getMminiprogramMediaId();
         String appId = configService.getValueByName(ConfigEnum.qywxMiniProgramAppId.getKeyCode());
 
-        Map<String, List<QywxDailyDetail>> followUserIdList = userList.stream().collect(Collectors.groupingBy(QywxDailyDetail::getFollowUserId));
-        followUserIdList.entrySet().forEach(x -> {
-            String followUserId = x.getKey();
-            List<QywxDailyDetail> qywxDailyDetails = x.getValue();
-            // 推送消息
-            Map<String, List<QywxDailyDetail>> signUserList = qywxDailyDetails.stream().collect(Collectors.groupingBy(QywxDailyDetail::getQywxMsgSign));
-            signUserList.entrySet().forEach(y -> {
-                List<QywxDailyDetail> lastUserList = y.getValue();
+        //按导购分组
+        List<FollowUserVO> followUserIdList =qywxDailyDetailMapper.getFollowUserList(headId);
+
+        followUserIdList.forEach(x -> {
+            String followUserId = x.getFollowUserId();
+            // 推送消息(按消息分组)
+            List<String> msgSignList =qywxDailyDetailMapper.getMessageSignList(headId,followUserId);
+
+            msgSignList.forEach(y -> {
+
+                //查询当前签名、当前导购下记录的条数
+                int waitCount=qywxDailyDetailMapper.getWaitQywxUserListCount(headId,followUserId,y);
                 int pageSize = 10000;
-                if (lastUserList.size() <= pageSize) {
+                if (waitCount <= pageSize) {
                     log.info("当前推送数据量<=10000");
-                    if(lastUserList.size() > 0) {
-                        //获取逗号分割的外部联系人ID列表
-                        List<String> contactIdList=lastUserList.stream().map(QywxDailyDetail::getQywxContractId).collect(Collectors.toList());
+                    if(waitCount > 0) {
+                        //获取当前待推送的列表
+                        List<QywxDailyDetail> qywxDailyDetailList=qywxDailyDetailMapper.getQywxUserList(headId,followUserId,y,waitCount,0);
+
                         QywxPushList qywxPushList=new QywxPushList();
-                        qywxPushList.setTextContent(lastUserList.get(0).getTextContent());
-                        qywxPushList.setMpTitle(lastUserList.get(0).getMpTitle());
-                        qywxPushList.setMpUrl(lastUserList.get(0).getMpUrl());
+                        qywxPushList.setTextContent(qywxDailyDetailList.get(0).getTextContent());
+                        qywxPushList.setMpTitle(qywxDailyDetailList.get(0).getMpTitle());
+                        qywxPushList.setMpUrl(qywxDailyDetailList.get(0).getMpUrl());
                         qywxPushList.setMpMediaId(mediaId);
                         qywxPushList.setMpAppid(appId);
-                        qywxPushList.setExternalContactIds(StringUtils.join(contactIdList,","));
+                        qywxPushList.setExternalContactIds(StringUtils.join(qywxDailyDetailList.stream().map(QywxDailyDetail::getQywxContractId).collect(Collectors.toList()),","));
                         qywxPushList.setFollowUserId(followUserId);
-                        qywxPushList.setSourceId(lastUserList.get(0).getDetailId());
+                        qywxPushList.setSourceId(qywxDailyDetailList.get(0).getHeadId());
                         qywxDailyMapper.insertPushList(qywxPushList);
                         //推送并更新状态
-                        pushQywxMsg(qywxPushList,contactIdList);
+                        pushQywxMsg(qywxPushList,qywxDailyDetailList);
                     }
                 } else {
-                    int totalSize = lastUserList.size();
-                    int pageNum = totalSize % pageSize == 0 ? (totalSize / pageSize) : ((totalSize / pageSize) + 1);
+
+                    int pageNum = waitCount % pageSize == 0 ? (waitCount / pageSize) : ((waitCount / pageSize) + 1);
                     for (int i = 0; i < pageNum; i++) {
-                        int start = i * pageSize;
-                        int end = (i + 1) * pageSize - 1;
-                        end = Math.min(end, totalSize);
-                        log.info("当前文本推送数据页[{}]", start + ":" + end);
-                        List<QywxDailyDetail> tmpUserList = lastUserList.subList(start, end);
+                        log.info("当前文本推送条数{}，偏移量为{}", pageSize,i*pageSize);
+                        List<QywxDailyDetail> tmpUserList = qywxDailyDetailMapper.getQywxUserList(headId,followUserId,y,pageSize,i * pageSize);
                         if(tmpUserList.size() > 0) {
-                            //获取逗号分割的外部联系人ID列表
-                            List<String> contactIdList=tmpUserList.stream().map(QywxDailyDetail::getQywxContractId).collect(Collectors.toList());
-                            String contactIds=StringUtils.join(contactIdList,",");
                             QywxPushList qywxPushList=new QywxPushList();
                             qywxPushList.setTextContent(tmpUserList.get(0).getTextContent());
                             qywxPushList.setMpTitle(tmpUserList.get(0).getMpTitle());
                             qywxPushList.setMpUrl(tmpUserList.get(0).getMpUrl());
                             qywxPushList.setMpMediaId(mediaId);
                             qywxPushList.setMpAppid(appId);
-                            qywxPushList.setExternalContactIds(contactIds);
+                            qywxPushList.setExternalContactIds(StringUtils.join(tmpUserList.stream().map(QywxDailyDetail::getQywxContractId).collect(Collectors.toList()),","));
                             qywxPushList.setFollowUserId(followUserId);
-                            qywxPushList.setSourceId(tmpUserList.get(0).getDetailId());
+                            qywxPushList.setSourceId(tmpUserList.get(0).getHeadId());
                             qywxDailyMapper.insertPushList(qywxPushList);
                             //推送并更新状态
-                            pushQywxMsg(qywxPushList,contactIdList);
+                            pushQywxMsg(qywxPushList,tmpUserList);
                         }
                     }
                 }
@@ -317,8 +169,8 @@ public class QywxDailyServiceImpl implements QywxDailyService {
      *
      * @param qywxPushList (待推送的对象)
      */
-    private void pushQywxMsg(QywxPushList qywxPushList,List<String> contactIdList) {
-        if(null==contactIdList||contactIdList.size()==0)
+    private void pushQywxMsg(QywxPushList qywxPushList,List<QywxDailyDetail> qywxDailyDetailList) {
+        if(null==qywxDailyDetailList||qywxDailyDetailList.size()==0)
         {
             qywxDailyMapper.updatePushList(qywxPushList.getPushId(),"F","","","推送列表为空");
             return;
@@ -330,6 +182,7 @@ public class QywxDailyServiceImpl implements QywxDailyService {
         String mediaId =qywxPushList.getMpMediaId();
         String appId = qywxPushList.getMpAppid();
 
+        //判断文本或小程序至少有一个的变量
         boolean flag=true;
         QywxMessage qywxMessage = new QywxMessage();
 
@@ -353,6 +206,7 @@ public class QywxDailyServiceImpl implements QywxDailyService {
 
         }else
         {
+            List<String> contactIdList=qywxDailyDetailList.stream().map(QywxDailyDetail::getQywxContractId).collect(Collectors.toList());
             String result = qywxMessageService.pushQywxMessage(qywxMessage, qywxPushList.getFollowUserId(), contactIdList);
             log.info("日运营企微：推送结果【{}】", result);
             JSONObject jsonObject = JSON.parseObject(result);
@@ -367,6 +221,11 @@ public class QywxDailyServiceImpl implements QywxDailyService {
             {
                 qywxDailyMapper.updatePushList(qywxPushList.getPushId(),"F","","","调用企业微信接口失败");
             }
+
+            //更新uo_qywx_daily_detail表上的push_id (这种更新要确保取数的时候是按detail_id进行了排序)
+            long minDetailId=qywxDailyDetailList.stream().mapToLong(QywxDailyDetail::getDetailId).min().getAsLong();
+            long maxDetailId=qywxDailyDetailList.stream().mapToLong(QywxDailyDetail::getDetailId).max().getAsLong();
+            qywxDailyDetailMapper.updatePushId(minDetailId,maxDetailId,qywxPushList.getPushId());
         }
     }
 
@@ -442,6 +301,21 @@ public class QywxDailyServiceImpl implements QywxDailyService {
     @Override
     public QywxDailyStaffEffect getDailyStaffEffect(Long headId, String followUserId) {
         return qywxDailyDetailMapper.getDailyStaffEffect(headId, followUserId);
+    }
+
+    @Override
+    public int getPushErrorCount(long headId) {
+        return qywxDailyMapper.getPushErrorCount(headId);
+    }
+
+    @Override
+    public void updateStatusToDoneCouponError(long headId) {
+        qywxDailyMapper.updateStatusToDoneCouponError(headId);
+    }
+
+    @Override
+    public void updateStatusToDonePushError(long headId) {
+        qywxDailyMapper.updateStatusToDonePushError(headId);
     }
 
 

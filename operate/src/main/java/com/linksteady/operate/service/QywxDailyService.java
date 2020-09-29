@@ -15,12 +15,6 @@ public interface QywxDailyService {
 
     int getTotalCount(String touchDt);
 
-    Map<String, Object> getTaskOverViewData(Long headId);
-
-    Map<String, Object> getProdCountBySpu(Long headId,String spuName);
-
-    Map<String, Object> getMatrixData(Long headId,String userValue);
-
     /**
      * 获取生成文案的锁  true表示加锁成功 false表示加锁失败
      */
@@ -52,4 +46,19 @@ public interface QywxDailyService {
     Map<String, Object> getPushEffectChange(Long headId);
 
     QywxDailyStaffEffect getDailyStaffEffect(Long headId, String followUserId);
+
+    /**
+     * 查看企业微信消息的执行状态
+     */
+    int getPushErrorCount(long headId);
+
+    /**
+     * 更新状态为已执行但发券错误
+     */
+    void updateStatusToDoneCouponError(long headId);
+
+    /**
+     * 更新状态为已执行但推送消息错误
+     */
+    void updateStatusToDonePushError(long headId);
 }

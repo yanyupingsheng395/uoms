@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.QywxSendCouponMapper">
+    
+    <resultMap id="couponInfoVOMap" type="com.linksteady.operate.vo.CouponInfoVO">
+        <result property="couponId" jdbcType="DECIMAL" column="coupon_id"></result>
+        <result property="couponName" jdbcType="VARCHAR" column="coupon_display_name"></result>
+        <result property="couponIdentity" jdbcType="VARCHAR" column="coupon_identity"></result>
+    </resultMap>
+
+    <resultMap id="sendCouponVOMap" type="com.linksteady.operate.vo.SendCouponVO">
+        <result property="businessId" jdbcType="VARCHAR" column="detail_id"></result>
+        <result property="userIdentity" jdbcType="VARCHAR" column="user_phone"></result>
+    </resultMap>
+
+    <select id="getCouponList" resultMap="couponInfoVOMap">
+        select distinct uo_qywx_coupon.coupon_id,
+                        coupon_display_name,
+                        coupon_identity
+        from uo_qywx_daily_detail join uo_qywx_coupon
+          on uo_qywx_daily_detail.coupon_id=uo_qywx_coupon.coupon_id
+         and uo_qywx_daily_detail.head_id=#{headId}
+    </select>
+
+    <select id="getCouponUserCount" resultType="int">
+        select count(*) from uo_qywx_daily_detail where head_id=#{headId} and coupon_id=#{couponId}
+    </select>
+
+    <select id="getCouponUserList" resultMap="sendCouponVOMap">
+        select detail_id,user_phone from uo_qywx_daily_detail where head_id=#{headId} and coupon_id=#{couponId}
+        order by detail_id asc limit #{limit} offset #{offset}
+    </select>
+
+    <insert id="saveSendCouponRecord" useGeneratedKeys="true" keyProperty="sendRecordId" keyColumn="sendrecord_id">
+       insert into  uo_qywx_coupon_sendrecord
+            (
+                business_id,
+                coupon_info,
+                user_info,
+                sendresult,
+                sendresult_desc,
+                insert_dt,
+                business_type
+            )
+       values (
+                #{headId},#{couponInfo},#{userInfo},#{sendResult},#{sendResultDesc},#{insertDt},'DAILY'
+
+       )
+    </insert>
+
+    <update id="updateCouponSendRecord">
+        update uo_qywx_daily_detail set
+                sendrecord_id=tmp.sendrecord_id,
+                sendresult=tmp.sendresult,
+                coupon_sn=tmp.coupon_sn
+        FROM (
+        VALUES
+        <foreach collection="sendCouponVOList" item="item" index="index"
+                 open="" close="" separator=",">
+            (#{sendRecordId},
+            #{sendResult},
+            #{item.couponSn},
+            #{item.businessId})
+        </foreach>
+        ) as tmp(sendrecord_id,sendresult,coupon_sn,detail_id)
+        where tmp.detail_id=uo_qywx_daily_detail.detail_id
+
+    </update>
+
+    <update id="updateSendCouponFlag">
+        update uo_qywx_daily_header set coupon_send_flag='Y' where head_id=#{headId}
+    </update>
+
+</mapper>

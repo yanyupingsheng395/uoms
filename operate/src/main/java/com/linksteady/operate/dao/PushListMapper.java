@@ -8,12 +8,6 @@ import java.util.Map;
 
 public interface PushListMapper {
 
-    /**
-     * 更新推送状态
-     */
-    void updateSendStatus(@Param("list") List<PushListInfo> list);
-
-
     int getTotalCount(String sourceCode, String pushStatus, String pushDateStr);
 
     List<PushListInfo> getPushInfoListPage(int limit, int offset, String sourceCode, String pushStatus, String pushDateStr);

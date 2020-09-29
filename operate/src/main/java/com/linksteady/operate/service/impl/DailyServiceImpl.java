@@ -346,7 +346,6 @@ public class DailyServiceImpl implements DailyService {
         dailyDetailMapper.updateExperimentStatus(dailyHead.getHeadId());
         //复制写入待推送列表(对照组及不参加组)
         dailyDetailMapper.copyToPushList(dailyHead.getHeadId());
-
     }
 
     @Override

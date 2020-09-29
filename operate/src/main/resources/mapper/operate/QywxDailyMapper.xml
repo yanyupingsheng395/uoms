@@ -40,6 +40,12 @@
         <result property="growthType" jdbcType="VARCHAR" column="growth_type"></result>
         <result property="growthSeriesType" jdbcType="VARCHAR" column="growth_series_type"></result>
     </resultMap>
+    
+    <resultMap id="couponInfoVOMap" type="com.linksteady.operate.vo.CouponInfoVO">
+        <result property="couponId" jdbcType="DECIMAL" column="coupon_id"></result>
+        <result property="couponName" jdbcType="VARCHAR" column="coupon_display_name"></result>
+        <result property="couponIdentity" jdbcType="VARCHAR" column="coupon_identity"></result>
+    </resultMap>
 
     <select id="getHeadList" resultMap="baseResult">
         SELECT HEAD_ID,TASK_DATE_STR,TASK_DATE, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT,
@@ -77,114 +83,19 @@
                push_success_rate,
                execute_rate,
                execute_staff_cnt,
-               staff_cnt
+               staff_cnt,
+               coupon_send_flag
         FROM uo_qywx_daily_header t
         where HEAD_ID = #{headId}
-    </select>
-
-    <select id="getTargetInfoByGrowthType" resultMap="QywxUserStats">
-        SELECT v2.VALUE growth_type,
-               ucnt
-        FROM (SELECT growth_type, COUNT(*) ucnt
-              FROM uo_qywx_daily_detail
-              WHERE head_id = #{headId}
-              GROUP BY growth_type) v1
-                 RIGHT JOIN (SELECT CODE, VALUE, ORDER_NO FROM T_DICT WHERE TYPE_CODE = 'GROWTH_TYPE') v2
-                            ON v2.code = v1.growth_type
-        ORDER BY v2.order_no desc
-    </select>
-
-    <select id="getTargetInfoByGrowthSeriesType" resultMap="QywxUserStats">
-        SELECT v2.VALUE growth_series_type,
-               ucnt
-        FROM (SELECT growth_series_type, COUNT(*) ucnt
-              FROM uo_qywx_daily_detail
-              WHERE head_id = #{headId}
-              GROUP BY growth_series_type) v1
-                 RIGHT JOIN (SELECT CODE, VALUE, ORDER_NO FROM T_DICT WHERE TYPE_CODE = 'GROWTH_SERIES_TYPE') v2
-                            ON v2.code = v1.growth_series_type
-        ORDER BY v2.order_no desc
-    </select>
-
-    <select id="getTargetInfoBySpu" resultMap="QywxUserStats">
-        select spu_name, ucnt
-        from (
-                 select spu_name, count(*) ucnt from uo_qywx_daily_detail where head_id = #{headId} group by spu_name
-             ) t
-        order by ucnt asc
-    </select>
-
-    <select id="getTargetInfoByProd" resultMap="QywxUserStats">
-        select rec_prod_name, ucnt
-        from (
-                 select rec_prod_name, count(*) ucnt
-                 from uo_qywx_daily_detail
-                 where head_id = #{headId}
-                   and spu_name = #{spuName}
-                 group by rec_prod_name
-             ) t
-        order by ucnt asc
-    </select>
-
-    <select id="getTargetInfoByUserValue" resultMap="QywxUserStats">
-        SELECT v2.code  user_value,
-               v2.VALUE user_value_label,
-               ucnt
-        FROM (SELECT user_value, COUNT(*) ucnt
-              FROM uo_qywx_daily_detail
-              WHERE head_id = #{headId}
-              GROUP BY user_value) v1
-                 RIGHT JOIN (SELECT CODE, VALUE, ORDER_NO FROM T_DICT WHERE TYPE_CODE = 'USER_VALUE') v2
-                            ON v2.code = v1.user_value
-        ORDER BY v2.order_no desc
-    </select>
-
-    <select id="getTargetInfoMatrix" resultMap="QywxUserStats">
-        select path_active, lifecycle, count(*) ucnt
-        from uo_qywx_daily_detail
-        where head_id = 1
-          and user_value = #{userValue}
-        group by path_active, lifecycle
-    </select>
-
-    <select id="getTargetInfoByUser" resultMap="QywxUserStats">
-        select follow_user_name, ucnt
-        from (
-                 select follow_user_name, count(*) ucnt
-                 from uo_qywx_daily_detail
-                 where head_id = #{headId}
-                 group by follow_user_name
-             ) t
-        order by ucnt desc
-    </select>
-
-    <select id="getTargetInfoByCoupon" resultMap="QywxUserStats">
-        select coupon_min, coupon_deno, ucnt
-        from (
-                 select coupon_deno, coupon_min, count(*) ucnt
-                 from uo_qywx_daily_detail
-                 where head_id = 1
-                 group by coupon_deno, coupon_min
-             ) t
-        order by ucnt desc
     </select>
 
     <update id="updateStatus">
         update uo_qywx_daily_header
         set status = #{status},
+            EFFECT_DAYS=#{effectDays},
             version=version + 1
         where head_id = #{headId}
           and version = #{version}
-    </update>
-
-    <update id="updateHeaderPushInfo">
-        update uo_qywx_daily_header
-        <set>
-            <if test="effectDays!=null and effectDays!=''">
-                EFFECT_DAYS=#{effectDays},
-            </if>
-        </set>
-        where head_id = #{headId}
     </update>
 
     <insert id="insertPushList" useGeneratedKeys="true" keyProperty="pushId" keyColumn="push_id">
@@ -200,17 +111,17 @@
            mp_title,
            mp_url,
            external_contact_ids)
-        values(#{item.textContent},
+        values(#{textContent},
                  'P',
-                 'D',
-                 #{item.sourceId},
-                 #{item.followUserId},
+                 'DAILY',
+                 #{sourceId},
+                 #{followUserId},
                  now(),
-                 #{item.mediaId},
-                 #{item.appId},
-                 #{item.mpTitle},
-                 #{item.mpUrl},
-                 #{item.externalContactIds})
+                 #{mpMediaId},
+                 #{mpAppid},
+                 #{mpTitle},
+                 #{mpUrl},
+                 #{externalContactIds})
     </insert>
 
     <update id="updatePushList">
@@ -222,6 +133,19 @@
            remark=#{remark}
         where
            push_id=#{pushId}
+    </update>
+
+    <select id="getPushErrorCount" resultType="int">
+        select count(*) from uo_qywx_push_list
+        where source_code='DAILY' and push_status='F' and source_id=#{headId}
+    </select>
+
+    <update id="updateStatusToDoneCouponError">
+        update uo_qywx_daily_header set status='done_ce'  where head_id = #{headId}
+    </update>
+
+    <update id="updateStatusToDonePushError">
+       update uo_qywx_daily_header set status='done_pe'  where head_id = #{headId}
     </update>
 
 </mapper>

@@ -182,6 +182,10 @@
         select distinct follow_user_id,follow_user_name from uo_qywx_daily_detail where head_id=#{headId} order by follow_user_id asc
     </select>
 
+    <select id="getMessageSignList" resultType="String">
+         select distinct qywx_msg_sign from uo_qywx_daily_detail where head_id=#{headId} and follow_user_id=#{followUserId}
+    </select>
+
     <select id="getTestPushData" resultType="map">
       select qywx_contract_id,follow_user_id,text_content from uo_qywx_push_list WHERE PUSH_id=1
     </select>
@@ -190,7 +194,16 @@
         select head_id, follow_user_id, follow_user_name, msg_num, execute_msg_num, cover_num, execute_cover_num, convert_num, convert_amount, convert_rate, convert_spu_num, convert_spu_amount, convert_spu_rate, stat_date from uo_qywx_daily_staff_effect where head_id = #{headId} and follow_user_id = #{followUserId}
     </select>
 
-    <select id="getQywxUserListByHeadId" resultMap="baseResult">
-        select * from uo_qywx_daily_detail where head_id = #{headId}
+    <select id="getWaitQywxUserListCount" resultType="int">
+         select count(*) from uo_qywx_daily_detail where head_id = #{headId} and follow_user_id=#{followUserId} and qywx_msg_sign=#{msgSign}
     </select>
+
+    <select id="getQywxUserList" resultMap="baseResult">
+        select * from uo_qywx_daily_detail where
+          head_id = #{headId} and follow_user_id=#{followUserId} and qywx_msg_sign=#{msgSign} order by detail_id asc limit #{limit} offset #{offset}
+    </select>
+
+    <update id="updatePushId">
+        update uo_qywx_daily_detail set push_id=#{pushId} where detail_id &gt;=#{minDetailId} and detail_id &lt;=#{maxDetailId}
+    </update>
 </mapper>

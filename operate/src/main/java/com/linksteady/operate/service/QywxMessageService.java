@@ -13,4 +13,5 @@ public interface QywxMessageService {
      * @param externalUserList
      */
     String pushQywxMessage(QywxMessage message, String sender, List<String> externalUserList);
+
 }

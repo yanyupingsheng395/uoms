@@ -18,19 +18,6 @@
         <result column="PUSH_DATE_STR" jdbcType="VARCHAR" property="pushDateStr"></result>
     </resultMap>
 
-    <update id="updateSendStatus">
-        <foreach collection="list" item="item" index="index" open="begin" close=";end;" separator=";">
-            update UO_OP_PUSH_LIST
-            <set>
-                PUSH_STATUS=#{item.pushStatus},
-                CALLBACK_CODE=#{item.callbackCode},
-                PUSH_DATE=#{item.pushDate},
-                IS_PUSH='1'
-            </set>
-            where PUSH_ID=#{item.pushId}
-        </foreach>
-    </update>
-
     <select id="getTotalCount" resultType="int">
         select count(1)
         FROM UO_OP_PUSH_LIST

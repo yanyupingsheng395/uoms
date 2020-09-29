@@ -85,10 +85,30 @@ public interface QywxDailyDetailMapper {
 
     List<FollowUserVO> getFollowUserList(Long headId);
 
+    /**
+     * 获取当前导购下唯一消息的列表
+     * @return
+     */
+    List<String> getMessageSignList(long headId,String followUserId);
+
 
     List<Map<String,String>> getTestPushData();
 
     QywxDailyStaffEffect getDailyStaffEffect(Long headId, String followUserId);
 
-    List<QywxDailyDetail> getQywxUserListByHeadId(Long headId);
+    /**
+     * 获取当前导购、当前消息有有多少用户要推送
+     * @param headId
+     * @return
+     */
+    int getWaitQywxUserListCount(Long headId, String followUserId,String msgSign);
+
+    /**
+     * 获取当前导购、当前消息下的 分页用户
+     * @param headId
+     * @return
+     */
+    List<QywxDailyDetail> getQywxUserList(Long headId, String followUserId,String msgSign,int limit,int offset);
+
+    void updatePushId(long minDetailId,long maxDetailId,long pushId);
 }

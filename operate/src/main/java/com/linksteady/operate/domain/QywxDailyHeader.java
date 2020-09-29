@@ -89,4 +89,9 @@ public class QywxDailyHeader {
     private Integer executeStaffCnt;
 
     private String executeRate;
+
+    /**
+     * 是否已进行优惠券发放的标记
+     */
+    private String couponSendFlag;
 }
