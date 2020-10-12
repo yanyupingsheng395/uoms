@@ -5,6 +5,7 @@ import com.linksteady.qywx.dao.UserTaskMapper;
 import com.linksteady.qywx.domain.SpuInfo;
 import com.linksteady.qywx.domain.UserBuyHistory;
 import com.linksteady.qywx.service.UserTaskService;
+import com.linksteady.qywx.vo.UserPurchSpuStatsVO;
 import com.linksteady.qywx.vo.UserPurchStatsVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -103,7 +104,6 @@ public class UserTaskServiceImpl implements UserTaskService {
 
     @Override
     public Map<String, String> getUserStatis(String userId) {
-
         Map<String,String> result=Maps.newHashMap();
         //获取统计数据
         UserPurchStatsVO userPurchStatsVO=userTaskMapper.getPurchStats(userId);
@@ -111,27 +111,91 @@ public class UserTaskServiceImpl implements UserTaskService {
         if(null!=userPurchStatsVO)
         {
             result.put("kpi11", String.format("购买金额%.2f元", userPurchStatsVO.getPurchAmout()));
-            result.put("kpi12","超过了5%的用户");
+            result.put("kpi12",String.format("超过了%.0f%的用户", userPurchStatsVO.getPurchAmountLevel()));
 
-            result.put("kpi13","平均每次购买花费200元");
-            result.put("kpi14","超过了5%的用户");
+            result.put("kpi13",String.format("平均每次购买花费%.0f%元" ,userPurchStatsVO.getPurchPrice()));
+            result.put("kpi14",String.format("超过了%.0f%的用户" ,userPurchStatsVO.getPurchPriceLevel()));
 
-            result.put("kpi21","在商城购买了X次");
-            result.put("kpi22","超过了5%的用户");
+            result.put("kpi21",String.format("在商城购买了%.0f次" ,userPurchStatsVO.getPurchTimes()));
+            result.put("kpi22",String.format("超过了%.0f%的用户" ,userPurchStatsVO.getPurchTimesLevel()));
 
-            result.put("kpi23","平均X天购买一次");
-            result.put("kpi24","超过了5%的用户");
+            result.put("kpi23",String.format("平均%.0f天购买一次" ,userPurchStatsVO.getPurchInterval()));
+            result.put("kpi24",String.format("超过了%.0f%的用户" ,userPurchStatsVO.getPurchIntervalLevel()));
 
-            result.put("kpi31","在商城的折扣订单比重X%");
-            result.put("kpi32","超过了5%的用户");
+            result.put("kpi31",String.format("在商城的折扣订单比重%.2f%" ,userPurchStatsVO.getDiscountPct()));
+            result.put("kpi32",String.format("超过了%.0f%的用户" ,userPurchStatsVO.getDiscountPctLevel()));
 
-            result.put("kpi33","在商城购买的平均折扣率X%");
-            result.put("kpi34","超过了5%的用户");
+            result.put("kpi33",String.format("在商城购买的平均折扣率%.2f%" ,userPurchStatsVO.getAvgDiscount()));
+            result.put("kpi34",String.format("超过了%.0f%的用户" ,userPurchStatsVO.getAvgDiscountLevel()));
         }else
         {
-
+            result.put("kpi11", "");
+            result.put("kpi12","");
+            result.put("kpi13","");
+            result.put("kpi14","");
+            result.put("kpi21","");
+            result.put("kpi22","");
+            result.put("kpi23","");
+            result.put("kpi24","");
+            result.put("kpi31","");
+            result.put("kpi32","");
+            result.put("kpi33","");
+            result.put("kpi34","");
         }
 
        return result;
+    }
+
+    @Override
+    public Map<String, String> getUserStatis(String userId, long spuId, String spuName) {
+        Map<String,String> result=Maps.newHashMap();
+        //获取统计数据
+        UserPurchSpuStatsVO userPurchSpuStatsVO=userTaskMapper.getPurchSpuStats(userId,spuId);
+
+        if(null!=userPurchSpuStatsVO)
+        {
+            result.put("kpi11", String.format("在类目%s购买了价值%.0f元的商品", spuName,userPurchSpuStatsVO.getPurchAmout()));
+            result.put("kpi12",String.format("超过了%.0f%的用户", userPurchSpuStatsVO.getPurchAmountLevel()));
+
+            result.put("kpi13",String.format("类目%s消费占自己消费总额%.2f%" ,spuName,userPurchSpuStatsVO.getPurchAmoutPct()));
+            result.put("kpi14",String.format("超过了%.0f%的用户" ,userPurchSpuStatsVO.getPurchAmoutPctLevel()));
+
+            result.put("kpi21",String.format("在类目%s购买最多的商品是%s" ,spuName,userPurchSpuStatsVO.getProdName()));
+            result.put("kpi22",String.format("占类目购买订单总数的%.2f%" ,userPurchSpuStatsVO.getProdNamePct()));
+
+            result.put("kpi23",String.format("在类目%s购买最贵的商品是%s" ,spuName,userPurchSpuStatsVO.getExpensiveProdName()));
+            result.put("kpi24",String.format("占类目购买订单总数的%.2f%" ,userPurchSpuStatsVO.getExpensiveProdNamePct()));
+
+            result.put("kpi31",String.format("在类目%s的折扣订单比重%.2f%" ,spuName,userPurchSpuStatsVO.getDiscountPct()));
+            result.put("kpi32",String.format("超过了%.0f%的用户" ,spuName,userPurchSpuStatsVO.getDiscountPctLevel()));
+
+            result.put("kpi33",String.format("在类目%s的平均折扣率%.2f%" ,userPurchSpuStatsVO.getAvgDiscount()));
+            result.put("kpi34",String.format("超过了%.0f%的用户" ,userPurchSpuStatsVO.getAvgDiscountLevel()));
+        }else
+        {
+            result.put("kpi11", "");
+            result.put("kpi12","");
+            result.put("kpi13","");
+            result.put("kpi14","");
+            result.put("kpi21","");
+            result.put("kpi22","");
+            result.put("kpi23","");
+            result.put("kpi24","");
+            result.put("kpi31","");
+            result.put("kpi32","");
+            result.put("kpi33","");
+            result.put("kpi34","");
+        }
+        return result;
+    }
+
+    @Override
+    public String getSpuName(long spuId) {
+        return userTaskMapper.getSpuName(spuId);
+    }
+
+    @Override
+    public String getFirstBuyDate(String userId) {
+        return userTaskMapper.getFirstBuyDate(userId);
     }
 }

@@ -78,6 +78,9 @@ public class UserTaskController extends ApiBaseController{
         try {
             validateLegality(request,signature,timestamp,userId,String.valueOf(spuId));
             Map<String,Object> result= Maps.newHashMap();
+
+            //用户的购买统计数据
+            Map<String,String> userStats;
             //整体
             if(null==spuId||spuId==-1l)
             {
@@ -85,23 +88,30 @@ public class UserTaskController extends ApiBaseController{
                 result.put("userValue","");
                 //用户在类目上的生命周期阶段
                 result.put("lifeCycle","");
+                result.put("spuName","");
+
+                userStats=userTaskService.getUserStatis(userId);
             }else
             {
                 //用户在类目上的价值敏感度
                 result.put("userValue","高价值低敏感");
                 //用户在类目上的生命周期阶段
                 result.put("lifeCycle","成长期");
+                //类目名称
+                String spuName=userTaskService.getSpuName(spuId);
+                result.put("spuName",spuName);
+
+                userStats=userTaskService.getUserStatis(userId,spuId,spuName);
             }
 
             //用户涉及的类目
             List<SpuInfo> spuList=userTaskService.getSpuList(userId);
 
-            //用户的购买统计数据
-            Map<String,String> userStats=userTaskService.getUserStatis(userId);
-
             //用户购买历史
             List<UserBuyHistory> userBuyHistoryList=userTaskService.getUserBuyHistory(userId);
 
+            //用户在商城的首购时间
+            result.put("firstBuyDate",userTaskService.getFirstBuyDate(userId));
             //构造返回数据
             result.put("spuList",spuList);
             result.put("userStats",userStats);

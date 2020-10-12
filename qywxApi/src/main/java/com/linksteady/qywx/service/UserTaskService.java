@@ -24,5 +24,23 @@ public interface UserTaskService {
      */
     List<SpuInfo> getSpuList(String userId);
 
+    /**
+     * 获取用户在类目上的购买统计数据
+     */
     Map<String, String> getUserStatis(String userId);
+
+    /**
+     * 获取用户在类目上的购买统计数据
+     */
+    Map<String, String> getUserStatis(String userId,long spuId,String spuName);
+
+    /**
+     * 获取类目的名称
+     */
+    String getSpuName(long spuId);
+
+    /**
+     * 获取用户的首购日期
+     */
+    String getFirstBuyDate(String userId);
 }

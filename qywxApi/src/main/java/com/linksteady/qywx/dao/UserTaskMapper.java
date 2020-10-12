@@ -2,6 +2,7 @@ package com.linksteady.qywx.dao;
 
 import com.linksteady.qywx.domain.SpuInfo;
 import com.linksteady.qywx.domain.UserBuyHistory;
+import com.linksteady.qywx.vo.UserPurchSpuStatsVO;
 import com.linksteady.qywx.vo.UserPurchStatsVO;
 
 import java.util.List;
@@ -31,4 +32,10 @@ public interface UserTaskMapper {
     List<SpuInfo> getSpuList(String userId);
 
     UserPurchStatsVO getPurchStats(String userId);
+
+    UserPurchSpuStatsVO getPurchSpuStats(String userId, long spuId);
+
+    String getSpuName(long spuId);
+
+    String getFirstBuyDate(String userId);
 }

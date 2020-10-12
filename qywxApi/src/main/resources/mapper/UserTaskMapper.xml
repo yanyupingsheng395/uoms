@@ -31,6 +31,21 @@
         <result column="avg_discount_level" jdbcType="DECIMAL" property="avgDiscountLevel"/>
     </resultMap>
 
+    <resultMap id="purchSpuStatsMap" type="com.linksteady.qywx.vo.UserPurchSpuStatsVO">
+        <result column="purch_amout" jdbcType="DECIMAL" property="purchAmout"/>
+        <result column="purch_amount_level" jdbcType="DECIMAL" property="purchAmountLevel"/>
+        <result column="purch_amout_pct" jdbcType="DECIMAL" property="purchAmoutPct"/>
+        <result column="purch_amout_pct_level" jdbcType="DECIMAL" property="purchAmoutPctLevel"/>
+        <result column="prod_name" jdbcType="VARCHAR" property="prodName"/>
+        <result column="prod_name_pct" jdbcType="DECIMAL" property="prodNamePct"/>
+        <result column="expensive_prod_name" jdbcType="DECIMAL" property="expensiveProdName"/>
+        <result column="expensive_prod_name_pct" jdbcType="DECIMAL" property="expensiveProdNamePct"/>
+        <result column="discount_pct" jdbcType="DECIMAL" property="discountPct"/>
+        <result column="discount_pct_level" jdbcType="DECIMAL" property="discountPctLevel"/>
+        <result column="avg_discount" jdbcType="DECIMAL" property="avgDiscount"/>
+        <result column="avg_discount_level" jdbcType="DECIMAL" property="avgDiscountLevel"/>
+    </resultMap>
+
     <select id="getUserTodayStatus" resultType="map">
         with v1 as (
             select t1.rn, t1.spu_wid
@@ -103,5 +118,33 @@
             avg_discount,
             avg_discount_level
         from wp_user_purch_stats where user_id=#{userId}::int8
+    </select>
+
+    <select id="getPurchSpuStats" resultMap="purchSpuStatsMap">
+         select
+            purch_amout,
+            purch_amount_level,
+            purch_amout_pct,
+            purch_amout_pct_level,
+            prod_name,
+            prod_name_pct,
+            expensive_prod_name,
+            expensive_prod_name_pct,
+            discount_pct,
+            discount_pct_level,
+            avg_discount,
+            avg_discount_level
+        from wp_user_purch_spu_stats where user_id=#{userId}::int8 and spu_id=#{spuId}
+    </select>
+
+    <select id="getSpuName" resultType="string">
+        select spu_name from w_product_spu where spu_wid=#{spuId}
+    </select>
+
+    <select id="getFirstBuyDate" resultType="string">
+          select
+               to_char(min(order_dt),'YYYY年MM月DD日') firstBuyDate
+          from wp_insight_user_orderseries
+          where user_id=#{userId}::int8
     </select>
 </mapper>
