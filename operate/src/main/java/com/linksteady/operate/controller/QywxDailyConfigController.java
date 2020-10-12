@@ -25,7 +25,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class QywxDailyConfigController {
 
     @Autowired
-    private QywxDailyConfigService dailyConfigService;
+    private QywxDailyConfigService qywxDailyConfigService;
 
     /**
      * 获取用户群组的列表
@@ -33,9 +33,9 @@ public class QywxDailyConfigController {
     @GetMapping("/userGroupList")
     public ResponseBo userGroupList() {
         //对用户群组信息进行校验
-        dailyConfigService.validUserGroup();
+        qywxDailyConfigService.validUserGroup();
         //当前默认按用户价值、活跃度、生命周期分组
-        List<DailyGroupTemplate> dataList = dailyConfigService.getUserGroupList();
+        List<DailyGroupTemplate> dataList = qywxDailyConfigService.getUserGroupList();
         return ResponseBo.okWithData(null, dataList);
     }
 
@@ -44,7 +44,7 @@ public class QywxDailyConfigController {
      */
     @GetMapping("/validUserGroup")
     public ResponseBo validUserGroup() {
-        return ResponseBo.okWithData(null, dailyConfigService.validUserGroup());
+        return ResponseBo.okWithData(null, qywxDailyConfigService.validUserGroup());
     }
 
 
@@ -54,7 +54,7 @@ public class QywxDailyConfigController {
      */
     @GetMapping("/updateWxMsgId")
     public ResponseBo updateWxMsgId(@RequestParam("lifeCycle") String lifeCycle, @RequestParam("pathActive") String pathActive, @RequestParam("qywxId") Long qywxId) {
-        dailyConfigService.updateWxMsgId(lifeCycle, pathActive, qywxId);
+        qywxDailyConfigService.updateWxMsgId(lifeCycle, pathActive, qywxId);
         return ResponseBo.ok();
     }
 
@@ -69,7 +69,7 @@ public class QywxDailyConfigController {
     @GetMapping("/getConfigInfoByGroup")
     public ResponseBo getConfigInfoByGroup(@RequestParam("userValue") String userValue, @RequestParam("lifeCycle") String lifeCycle,
                                            @RequestParam("pathActive") String pathActive, @RequestParam("tarType") String tarType) {
-        return ResponseBo.okWithData(null, dailyConfigService.getConfigInfoByGroup(userValue, lifeCycle, pathActive, tarType));
+        return ResponseBo.okWithData(null, qywxDailyConfigService.getConfigInfoByGroup(userValue, lifeCycle, pathActive, tarType));
     }
 
     /**
@@ -82,7 +82,7 @@ public class QywxDailyConfigController {
         if(lock.tryLock())
         {
             try {
-                dailyConfigService.autoSetGroupCoupon();
+                qywxDailyConfigService.autoSetGroupCoupon();
                 return ResponseBo.ok();
             } catch (OptimisticLockException e)
             {
@@ -103,7 +103,7 @@ public class QywxDailyConfigController {
      */
     @GetMapping("/getGroupDescription")
     public List<Map<String, String>> getGroupDescription() {
-        return dailyConfigService.getGroupDescription();
+        return qywxDailyConfigService.getGroupDescription();
     }
 
     /**
@@ -115,7 +115,7 @@ public class QywxDailyConfigController {
      */
     @GetMapping("/setSmsCode")
     public ResponseBo setSmsCode(@RequestParam Long groupId, @RequestParam String smsCode) {
-        dailyConfigService.setSmsCode(groupId, smsCode);
+        qywxDailyConfigService.setSmsCode(groupId, smsCode);
         return ResponseBo.ok();
     }
 
@@ -124,7 +124,7 @@ public class QywxDailyConfigController {
      */
     @GetMapping("/resetOpFlag")
     public ResponseBo resetOpFlag() {
-        dailyConfigService.resetOpFlag();
+        qywxDailyConfigService.resetOpFlag();
         return ResponseBo.ok();
     }
 }

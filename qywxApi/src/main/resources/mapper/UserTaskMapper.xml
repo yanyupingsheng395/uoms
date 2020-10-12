@@ -16,6 +16,21 @@
         <result column="spu_name" jdbcType="VARCHAR" property="spuName"/>
     </resultMap>
 
+    <resultMap id="purchStatsMap" type="com.linksteady.qywx.vo.UserPurchStatsVO">
+        <result column="purch_amout" jdbcType="DECIMAL" property="purchAmout"/>
+        <result column="purch_amount_level" jdbcType="DECIMAL" property="purchAmountLevel"/>
+        <result column="purch_price" jdbcType="DECIMAL" property="purchPrice"/>
+        <result column="purch_price_level" jdbcType="DECIMAL" property="purchPriceLevel"/>
+        <result column="purch_times" jdbcType="DECIMAL" property="purchTimes"/>
+        <result column="purch_times_level" jdbcType="DECIMAL" property="purchTimesLevel"/>
+        <result column="purch_interval" jdbcType="DECIMAL" property="purchInterval"/>
+        <result column="purch_interval_level" jdbcType="DECIMAL" property="purchIntervalLevel"/>
+        <result column="discount_pct" jdbcType="DECIMAL" property="discountPct"/>
+        <result column="discount_pct_level" jdbcType="DECIMAL" property="discountPctLevel"/>
+        <result column="avg_discount" jdbcType="DECIMAL" property="avgDiscount"/>
+        <result column="avg_discount_level" jdbcType="DECIMAL" property="avgDiscountLevel"/>
+    </resultMap>
+
     <select id="getUserTodayStatus" resultType="map">
         with v1 as (
             select t1.rn, t1.spu_wid
@@ -71,5 +86,22 @@
         from wp_insight_user_orderseries
         where user_id = #{userId}::integer
         order by spu_id desc
+    </select>
+
+    <select id="getPurchStats" resultMap="purchStatsMap">
+        select
+            purch_amout,
+            purch_amount_level,
+            purch_price,
+            purch_price_level,
+            purch_times,
+            purch_times_level,
+            purch_interval,
+            purch_interval_level,
+            discount_pct,
+            discount_pct_level,
+            avg_discount,
+            avg_discount_level
+        from wp_user_purch_stats where user_id=#{userId}::int8
     </select>
 </mapper>

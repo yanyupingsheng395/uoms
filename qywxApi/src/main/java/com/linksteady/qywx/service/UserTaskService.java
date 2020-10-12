@@ -2,6 +2,7 @@ package com.linksteady.qywx.service;
 
 import com.linksteady.qywx.domain.SpuInfo;
 import com.linksteady.qywx.domain.UserBuyHistory;
+import com.linksteady.qywx.vo.UserPurchStatsVO;
 
 import java.util.List;
 import java.util.Map;
@@ -23,5 +24,5 @@ public interface UserTaskService {
      */
     List<SpuInfo> getSpuList(String userId);
 
-    Map<String,String> getUserStatis(String userId);
+    Map<String, String> getUserStatis(String userId);
 }

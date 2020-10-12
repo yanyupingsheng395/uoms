@@ -5,6 +5,7 @@ import com.linksteady.qywx.dao.UserTaskMapper;
 import com.linksteady.qywx.domain.SpuInfo;
 import com.linksteady.qywx.domain.UserBuyHistory;
 import com.linksteady.qywx.service.UserTaskService;
+import com.linksteady.qywx.vo.UserPurchStatsVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tomcat.jni.Local;
@@ -102,24 +103,34 @@ public class UserTaskServiceImpl implements UserTaskService {
 
     @Override
     public Map<String, String> getUserStatis(String userId) {
+
         Map<String,String> result=Maps.newHashMap();
-        result.put("kpi11","购买金额1000元");
-        result.put("kpi12","超过了5%的用户");
+        //获取统计数据
+        UserPurchStatsVO userPurchStatsVO=userTaskMapper.getPurchStats(userId);
 
-        result.put("kpi13","平均每次购买花费200元");
-        result.put("kpi14","超过了5%的用户");
+        if(null!=userPurchStatsVO)
+        {
+            result.put("kpi11", String.format("购买金额%.2f元", userPurchStatsVO.getPurchAmout()));
+            result.put("kpi12","超过了5%的用户");
 
-        result.put("kpi21","在商城购买了X次");
-        result.put("kpi22","超过了5%的用户");
+            result.put("kpi13","平均每次购买花费200元");
+            result.put("kpi14","超过了5%的用户");
 
-        result.put("kpi23","平均X天购买一次");
-        result.put("kpi24","超过了5%的用户");
+            result.put("kpi21","在商城购买了X次");
+            result.put("kpi22","超过了5%的用户");
 
-        result.put("kpi31","在商城的折扣订单比重X%");
-        result.put("kpi32","超过了5%的用户");
+            result.put("kpi23","平均X天购买一次");
+            result.put("kpi24","超过了5%的用户");
 
-        result.put("kpi33","在商城购买的平均折扣率X%");
-        result.put("kpi34","超过了5%的用户");
+            result.put("kpi31","在商城的折扣订单比重X%");
+            result.put("kpi32","超过了5%的用户");
+
+            result.put("kpi33","在商城购买的平均折扣率X%");
+            result.put("kpi34","超过了5%的用户");
+        }else
+        {
+
+        }
 
        return result;
     }
