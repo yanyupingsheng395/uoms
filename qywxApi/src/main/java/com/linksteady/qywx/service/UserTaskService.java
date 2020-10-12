@@ -43,4 +43,14 @@ public interface UserTaskService {
      * 获取用户的首购日期
      */
     String getFirstBuyDate(String userId);
+
+    /**
+     * 获取用户在类目上的价值
+     */
+    String getUserValue(String userId,long spuId);
+
+    /**
+     * 获取用户在类目上的生命周期阶段
+     */
+    String getLifeCycle(String userId,long spuId);
 }

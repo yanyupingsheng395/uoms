@@ -38,4 +38,8 @@ public interface UserTaskMapper {
     String getSpuName(long spuId);
 
     String getFirstBuyDate(String userId);
+
+    String getUserValue(String userId,long spuId);
+
+    String getLifeCycle(String userId,long spuId);
 }

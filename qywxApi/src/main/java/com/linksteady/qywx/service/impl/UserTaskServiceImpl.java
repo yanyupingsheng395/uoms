@@ -198,4 +198,14 @@ public class UserTaskServiceImpl implements UserTaskService {
     public String getFirstBuyDate(String userId) {
         return userTaskMapper.getFirstBuyDate(userId);
     }
+
+    @Override
+    public String getUserValue(String userId, long spuId) {
+        return userTaskMapper.getUserValue(userId,spuId);
+    }
+
+    @Override
+    public String getLifeCycle(String userId, long spuId) {
+        return userTaskMapper.getLifeCycle(userId,spuId);
+    }
 }

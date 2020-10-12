@@ -94,9 +94,9 @@ public class UserTaskController extends ApiBaseController{
             }else
             {
                 //用户在类目上的价值敏感度
-                result.put("userValue","高价值低敏感");
+                result.put("userValue",userTaskService.getUserValue(userId,spuId));
                 //用户在类目上的生命周期阶段
-                result.put("lifeCycle","成长期");
+                result.put("lifeCycle",userTaskService.getLifeCycle(userId,spuId));
                 //类目名称
                 String spuName=userTaskService.getSpuName(spuId);
                 result.put("spuName",spuName);
