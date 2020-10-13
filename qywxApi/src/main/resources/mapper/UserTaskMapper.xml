@@ -155,7 +155,7 @@
                    when user_level = 'ULC_02' then '高价值较敏感'
                    when user_level = 'ULC_03' then '中价值高敏感'
                    when user_level = 'ULC_04' then '低价值低敏感'
-                   when user_level = 'ULC_05' then '低价值高敏感' end user_level,
+                   when user_level = 'ULC_05' then '低价值高敏感' end user_level
          from pp_user_spu_value where user_id=#{userId}::int8 and spu_wid=#{spuId} limit 1
     </select>
 
