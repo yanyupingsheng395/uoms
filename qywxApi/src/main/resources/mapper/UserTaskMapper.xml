@@ -91,6 +91,9 @@
                interval_days
         from wp_insight_user_orderseries
         where user_id = #{userId}::integer
+        <if test="spuId !=null and spuId!='' and spuId != '-1'.toString() ">
+            and spu_id=#{spuId}
+        </if>
         order by order_dt desc
     </select>
 

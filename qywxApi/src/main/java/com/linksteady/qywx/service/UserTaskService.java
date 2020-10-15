@@ -17,7 +17,7 @@ public interface UserTaskService {
 
     List<Map<String, Object>> getProductData(String userId);
 
-    List<UserBuyHistory> getUserBuyHistory(String userId);
+    List<UserBuyHistory> getUserBuyHistory(String userId,long spuId);
 
     /**
      * 获取当前用户涉及的spu列表

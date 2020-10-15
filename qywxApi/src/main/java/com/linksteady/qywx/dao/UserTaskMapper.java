@@ -27,7 +27,7 @@ public interface UserTaskMapper {
 
     List<Map<String, Object>> getProductData(String userId);
 
-    List<UserBuyHistory> getUserBuyHistory(String userId);
+    List<UserBuyHistory> getUserBuyHistory(String userId,long spuId);
 
     List<SpuInfo> getSpuList(String userId);
 

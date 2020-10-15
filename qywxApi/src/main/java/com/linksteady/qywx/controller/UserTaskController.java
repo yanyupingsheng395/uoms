@@ -76,30 +76,28 @@ public class UserTaskController extends ApiBaseController{
                                         @RequestParam("userId")String userId,
                                         @RequestParam("spuId")Long spuId) {
         try {
+            log.info("请求的user_id={},spuId={}",userId,spuId);
             validateLegality(request,signature,timestamp,userId,String.valueOf(spuId));
             Map<String,Object> result= Maps.newHashMap();
 
             //用户的购买统计数据
             Map<String,String> userStats;
+            String spuName="";
+            String userValue="";
+            String lifeCycle="";
+
             //整体
             if(null==spuId||spuId==-1l)
             {
-                //用户在类目上的价值敏感度
-                result.put("userValue","");
-                //用户在类目上的生命周期阶段
-                result.put("lifeCycle","");
-                result.put("spuName","");
-
                 userStats=userTaskService.getUserStatis(userId);
             }else
             {
                 //用户在类目上的价值敏感度
-                result.put("userValue",userTaskService.getUserValue(userId,spuId));
+                userValue=userTaskService.getUserValue(userId,spuId);
                 //用户在类目上的生命周期阶段
-                result.put("lifeCycle",userTaskService.getLifeCycle(userId,spuId));
+                lifeCycle=userTaskService.getLifeCycle(userId,spuId);
                 //类目名称
-                String spuName=userTaskService.getSpuName(spuId);
-                result.put("spuName",spuName);
+                spuName=userTaskService.getSpuName(spuId);
 
                 userStats=userTaskService.getUserStatis(userId,spuId,spuName);
             }
@@ -108,15 +106,20 @@ public class UserTaskController extends ApiBaseController{
             List<SpuInfo> spuList=userTaskService.getSpuList(userId);
 
             //用户购买历史
-            List<UserBuyHistory> userBuyHistoryList=userTaskService.getUserBuyHistory(userId);
+            List<UserBuyHistory> userBuyHistoryList=userTaskService.getUserBuyHistory(userId,spuId);
 
-            //用户在商城的首购时间
-            result.put("firstBuyDate",userTaskService.getFirstBuyDate(userId));
             //构造返回数据
             result.put("spuList",spuList);
             result.put("userStats",userStats);
             result.put("userBuyHistoryList",userBuyHistoryList);
-            return ResponseBo.okWithData(null, result);
+
+            ResponseBo responseBo=ResponseBo.okWithData(null, result);
+            //用户在商城的首购时间
+            responseBo.put("firstBuyDate",userTaskService.getFirstBuyDate(userId));
+            responseBo.put("spuName",spuName);
+            responseBo.put("userValue",userValue);
+            responseBo.put("lifeCycle",lifeCycle);
+            return responseBo;
         } catch (Exception e) {
             return ResponseBo.error(e.getMessage());
         }

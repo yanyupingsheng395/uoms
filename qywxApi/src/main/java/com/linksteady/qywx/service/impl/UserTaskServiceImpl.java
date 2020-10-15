@@ -37,7 +37,7 @@ public class UserTaskServiceImpl implements UserTaskService {
         List<Map<String, Object>> userTodayStatusList = userTaskMapper.getUserTodayStatus(userId, productId);
         String dateFormat = "yyyyMMdd";
         String lastBuyDt = userTaskMapper.getUserLastBuyDt(productId, userId);
-        log.info("lastBuyDt:" + lastBuyDt);
+
         if(StringUtils.isNotEmpty(lastBuyDt)) {
             LocalDate lastDt = LocalDate.parse(lastBuyDt, DateTimeFormatter.ofPattern(dateFormat));
             boolean flag = false;
@@ -93,8 +93,8 @@ public class UserTaskServiceImpl implements UserTaskService {
     }
 
     @Override
-    public List<UserBuyHistory> getUserBuyHistory(String userId) {
-        return userTaskMapper.getUserBuyHistory(userId);
+    public List<UserBuyHistory> getUserBuyHistory(String userId,long spuId) {
+        return userTaskMapper.getUserBuyHistory(userId,spuId);
     }
 
     @Override
