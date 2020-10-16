@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.QywxMessage;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.common.domain.enums.ConfigEnum;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.domain.QywxDailyDetail;
@@ -67,6 +68,9 @@ public class QywxDailyController {
 
     @Autowired
     QywxSendCouponService qywxSendCouponService;
+
+    @Autowired
+    QywxMdiaService qywxMdiaService;
 
     /**
      * 获取每日成长任务分页列表
@@ -357,8 +361,13 @@ public class QywxDailyController {
 
         //界面
         qywxMessage.setMpTitle("测试小程序卡片");
-        qywxMessage.setMpPicMediaId("3oHsougJlOLRGcTbIpd-tEcnAkUzxOqP0QymcazYPZzMK77qH9_7do8XDgaelJgDI");
-        qywxMessage.setMpAppid("wxb9ca1e447f4285e7");
+
+        // 写入push_list
+        String mediaId = qywxMdiaService.getMminiprogramMediaId();
+        String appId = configService.getValueByName(ConfigEnum.qywxMiniProgramAppId.getKeyCode());
+
+        qywxMessage.setMpPicMediaId(mediaId);
+        qywxMessage.setMpAppid(appId);
         //界面
         qywxMessage.setMpPage("pages/about/about");
 
