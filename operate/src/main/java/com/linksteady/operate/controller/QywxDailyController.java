@@ -352,14 +352,19 @@ public class QywxDailyController {
     private String  testPush()
     {
         QywxMessage qywxMessage=new QywxMessage();
+        //界面
         qywxMessage.setText("您好，520活动季，您关注的提花浴巾低至35元，欢迎购买！");
 
+        //界面
         qywxMessage.setMpTitle("测试小程序卡片");
         qywxMessage.setMpPicMediaId("3oHsougJlOLRGcTbIpd-tEcnAkUzxOqP0QymcazYPZzMK77qH9_7do8XDgaelJgDI");
         qywxMessage.setMpAppid("wxb9ca1e447f4285e7");
+        //界面
         qywxMessage.setMpPage("pages/about/about");
 
+        //界面
         List<String> externalContactList=asList("wmXfFiDwAAIoOS6g8UB2tHo2pZKT0zfQ","wmXfFiDwAA2R-zN-afopB1W0aunsLowg");
+        //界面
         String result=qywxMessageService.pushQywxMessage(qywxMessage,"brandonz",externalContactList);
 
 //        List<String> externalContactList=asList("wmXfFiDwAAIoOS6g8UB2tHo2pZKT0zfQ");
