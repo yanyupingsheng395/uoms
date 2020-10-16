@@ -1,6 +1,7 @@
 package com.linksteady.operate.controller;
 
 import com.google.common.collect.Maps;
+import com.linksteady.common.annotation.Log;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.QywxMessage;
 import com.linksteady.common.domain.ResponseBo;
@@ -15,8 +16,10 @@ import com.linksteady.operate.exception.PushQywxMessageException;
 import com.linksteady.operate.exception.SendCouponException;
 import com.linksteady.operate.service.*;
 import com.linksteady.operate.vo.FollowUserVO;
+import com.linksteady.operate.vo.SourceConfigVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -345,22 +348,22 @@ public class QywxDailyController {
      * 企业微信测试推送
      */
     @GetMapping("/testQywxPush")
-    public ResponseBo testQywxPush() {
-        return ResponseBo.ok(testPush());
+    public ResponseBo testQywxPush(String title,String pathAddress,String senderId,String externalContact,String messageTest) {
+        return ResponseBo.ok(testPush(title,pathAddress,senderId,externalContact,messageTest));
     }
 
     /**
      * 推送的实际方法
      * @return
      */
-    private String  testPush()
+    private String  testPush(String title,String pathAddress,String senderId,String externalContact,String messageTest)
     {
         QywxMessage qywxMessage=new QywxMessage();
         //界面
-        qywxMessage.setText("您好，520活动季，您关注的提花浴巾低至35元，欢迎购买！");
+        qywxMessage.setText(messageTest);
 
         //界面
-        qywxMessage.setMpTitle("测试小程序卡片");
+        qywxMessage.setMpTitle(title);
 
         // 写入push_list
         String mediaId = qywxMdiaService.getMminiprogramMediaId();
@@ -369,12 +372,12 @@ public class QywxDailyController {
         qywxMessage.setMpPicMediaId(mediaId);
         qywxMessage.setMpAppid(appId);
         //界面
-        qywxMessage.setMpPage("pages/about/about");
+        qywxMessage.setMpPage(pathAddress);
 
         //界面
-        List<String> externalContactList=asList("wmXfFiDwAAIoOS6g8UB2tHo2pZKT0zfQ","wmXfFiDwAA2R-zN-afopB1W0aunsLowg");
+        List<String> externalContactList=asList(externalContact);
         //界面
-        String result=qywxMessageService.pushQywxMessage(qywxMessage,"brandonz",externalContactList);
+        String result=qywxMessageService.pushQywxMessage(qywxMessage,senderId,externalContactList);
 
 //        List<String> externalContactList=asList("wmXfFiDwAAIoOS6g8UB2tHo2pZKT0zfQ");
 //        String result=qywxMessageService.pushQywxMessage(qywxMessage,"HuangKun",externalContactList);

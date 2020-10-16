@@ -399,6 +399,15 @@ public class PageController extends BaseController {
     }
 
     /**
+     *编辑测试推送
+     */
+    @Log(value = "每日用户运营[企业微信]-编辑推送", location = "用户成长系统")
+    @RequestMapping("/qywxDaily/pushMessage")
+    public String pushMessage() {
+        return "operate/qywx/pushMessage";
+    }
+
+    /**
      * 每日运营[企业微信]-效果跟踪
      *
      * @return

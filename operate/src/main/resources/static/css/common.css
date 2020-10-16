@@ -304,7 +304,7 @@ label.error {
     /*right: 42px*/
 }
 
-.Validform_error,input.error,select.error {
+.Validform_error,input.error,select.error,textarea.error {
     background-color: #fbe2e2;
     border-color: #c66161;
     color: #c00
