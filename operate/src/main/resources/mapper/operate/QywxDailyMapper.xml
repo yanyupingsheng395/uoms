@@ -70,7 +70,7 @@
 
     <select id="getHeadInfo" resultType="com.linksteady.operate.domain.QywxDailyHeader">
         SELECT HEAD_ID,
-               TASK_DATE_STR,
+               to_char(TASK_DATE,'YYYYMMDD') TASK_DATE_STR,
                TASK_DATE,
                TOTAL_NUM,
                SUCCESS_NUM,
