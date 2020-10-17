@@ -56,6 +56,11 @@
         where qywx_id = #{id}::integer
     </delete>
 
+    <update id="updateDataById">
+        update uo_op_daily_template_config set qywx_id=null where  lifecycle in ('0', '1')
+                   and path_active in ('UAC_01', 'UAC_02', 'UAC_03') and qywx_id=#{id}::integer
+    </update>
+
     <select id="getDataById" resultMap="BaseResultMap">
         select *
         from uo_qywx_msg_template
