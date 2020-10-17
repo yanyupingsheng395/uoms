@@ -5,6 +5,7 @@ import com.linksteady.operate.domain.QywxMsg;
 import com.linksteady.operate.service.QywxMsgService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -39,8 +40,10 @@ public class QywxMsgServiceImpl implements QywxMsgService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void deleteDataById(String id) {
         qywxMsgMapper.deleteDataById(id);
+        qywxMsgMapper.updateDataById(id);
     }
 
     @Override

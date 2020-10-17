@@ -20,6 +20,8 @@ public interface QywxMsgMapper {
 
     void deleteDataById(String id);
 
+    void updateDataById(String id);
+
     QywxMsg getDataById(String id);
 
     void refreshDataById(String id);
