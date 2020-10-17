@@ -1,8 +1,13 @@
 package com.linksteady.qywx.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.common.util.OkHttpUtil;
+import com.linksteady.common.util.crypto.SHA1;
 import com.linksteady.qywx.dao.SyncTaskMapper;
 import com.linksteady.qywx.domain.ExternalContact;
 import com.linksteady.qywx.domain.SyncTask;
+import com.linksteady.qywx.service.ApiService;
 import com.linksteady.qywx.service.SyncTaskService;
 import com.linksteady.qywx.vo.FollowUserVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
 
@@ -19,23 +26,23 @@ import java.util.List;
 @Service
 public class SyncTaskServiceImpl implements SyncTaskService {
 
+    private static final String SUBMIT_TASK_URL="/api/submitSyncTask";
+
     @Autowired
     SyncTaskMapper syncTaskMapper;
+
+    @Autowired
+    ApiService apiService;
 
     @Override
     @Transactional
     public void saveFollowUser(String corpId,List<FollowUserVO> followUserList) {
         //更新所有记录的flag='N'
         syncTaskMapper.updateFollowUserFlag();
-        //同步数据，如果insert/update，则更新falg='Y'
+        //同步数据，如果insert/update，则更新flag='Y'
         syncTaskMapper.saveFollowUser(corpId,followUserList);
         //删除flag='N'的记录
         syncTaskMapper.deleteFollowUser();
-    }
-
-    @Override
-    public void saveSyncTask(List<SyncTask> taskList) {
-        syncTaskMapper.saveSyncTask(taskList);
     }
 
     @Override
@@ -101,6 +108,44 @@ public class SyncTaskServiceImpl implements SyncTaskService {
     public void saveExternalContact(ExternalContact externalContact) {
         externalContact.setAddDate(timeStampToDate(externalContact.getCreatetime()));
         syncTaskMapper.saveExternalContact(externalContact);
+    }
+
+    @Override
+    public void updateExternalContactDeleteFlag() {
+        syncTaskMapper.updateExternalContactDeleteFlag();
+    }
+
+    @Override
+    public void deleteExternalContactDeleteFlag() {
+        syncTaskMapper.deleteExternalContactDeleteFlag();
+    }
+
+    @Override
+    public synchronized void syncQywxData() throws Exception{
+        String corpId=apiService.getQywxCorpId();
+        SyncTask syncTask=new SyncTask();
+        syncTask.setCorpId(corpId);
+        syncTask.setStatus("P");
+        syncTask.setInsertDt(new Date());
+        syncTask.setInsertBy("system");
+
+        //1.保存到本地
+        syncTaskMapper.saveSyncTask(syncTask);
+
+        String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
+        String data=JSON.toJSONString(syncTask);
+        String signature= SHA1.gen(timestamp,data);
+        //2.提交到企业微信端
+        StringBuffer url=new StringBuffer(apiService.getQywxDomainUrl()+SUBMIT_TASK_URL);
+        url.append("?corpId="+corpId);
+        url.append("&timestamp="+timestamp);
+        url.append("&signature="+signature);
+        String result=OkHttpUtil.postRequestByJson(url.toString(),data);
+
+        if(StringUtils.isEmpty(result) ||200!= JSON.parseObject(result).getIntValue("code"))
+        {
+           throw new Exception("提交同步企业微信任务失败");
+        }
     }
 
 

@@ -188,7 +188,6 @@ function closeModal() {
     $form.find("input[name='couponDenom']").val("").removeAttr("readOnly");
     $form.find("input[name='couponThreshold']").val("").removeAttr("readOnly");
     $form.find("input[name='couponUrl']").val("").removeAttr("readOnly");
-    $form.find("input[name='couponNum']").val("").removeAttr("readOnly");
     $form.find("input[name='couponDisplayName']").val("").removeAttr("readOnly");
     $form.find("input[name='validEnd']").val("").removeAttr("readOnly");
     $form.find("input[name='couponIdentity']").val("").removeAttr("readOnly");
@@ -220,7 +219,7 @@ function validateRule() {
             },
             couponDisplayName: {
                 required: true,
-                maxlength: couponNameLen
+                maxlength: 100
             },
             validEnd: {
                 required: true
@@ -243,11 +242,10 @@ function validateRule() {
                 digits: icon + "只能是整数"
             },
             couponIdentity: icon+"请输入优惠券编号",
-            couponInfo2: icon + "请输入原链接",
-            couponUrl: icon + "请输入短链接",
+            couponUrl: icon + "请输入优惠券链接",
             couponDisplayName: {
-                required: icon + "请输入补贴名称",
-                maxlength: icon + "最大长度不能超过"+couponNameLen+"个字符"
+                required: icon + "请输入优惠券名称",
+                maxlength: icon + "最大长度不能超过100个字符"
             },
             validEnd: icon + "请输入有效截止日期",
         }
@@ -278,10 +276,6 @@ $("#btn_save_coupon").click(function () {
         }
         if (name === "update") {
             var url = "/qywxDailyCoupon/update";
-            if(!validCoupon()) {
-                $MB.n_warning("当前日期大于有效截止日期，'补贴是否有效'的更改无效！");
-                return;
-            }
             $.post(url, formData, function (r) {
                 if (r.code === 200) {
                     closeModal();
@@ -337,9 +331,7 @@ function updateCoupon() {
             $form.find("input[name='validStatus']").val(coupon.validStatus);
             $form.find("input[name='couponDenom']").val(coupon.couponDenom);
             $form.find("input[name='couponThreshold']").val(coupon.couponThreshold);
-            $form.find("input[name='couponInfo2']").val(coupon.couponInfo2);
             $form.find("input[name='couponUrl']").val(coupon.couponUrl);
-            $form.find("input[name='couponNum']").val(coupon.couponNum);
             $form.find("input[name='couponDisplayName']").val(coupon.couponDisplayName);
             $form.find("input[name='validEnd']").val(coupon.validEnd);
             VALID_END = coupon.validEnd;
@@ -349,18 +341,6 @@ function updateCoupon() {
             $MB.n_danger(r['msg']);
         }
     });
-}
-
-// 验证券是否有效
-function validCoupon() {
-    let validStatus = $("input[name='validStatus']:checked").val();
-    if(validStatus === 'Y') {
-        let validEnd = $("#validEnd").val();
-        let date = new Date();
-        let now = String(date.getFullYear()) + (date.getMonth()+1).toString().padStart(2,'0') + (date.getDate().toString().padStart(2,'0'));
-        return Number(now) <= Number(validEnd);
-    }
-    return true;
 }
 
 /**

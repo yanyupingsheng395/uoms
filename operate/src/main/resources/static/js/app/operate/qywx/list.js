@@ -10,6 +10,7 @@ $(function () {
 });
 
 let userValueOption;
+let currDate=getNowFormatDate();
 function initTable() {
     var settings = {
         url: '/qywxDaily/getHeadList',
@@ -86,9 +87,9 @@ function initTable() {
             align: 'center',
             formatter: function (value, row, indx) {
                 var res = "-";
-                if("通过"===row.validateLabel) {
+                if(row.touchDtStr ===currDate&&"通过"===row.validateLabel) {
                     res = "<span class=\"badge bg-success\"><a style='text-decoration: none;cursor: pointer;pointer-events: none;color:#fff;'>"+row.validateLabel+"</a></span>";
-                }else if("未通过"===row.validateLabel)
+                }else if(row.touchDtStr ===currDate&&"未通过"===row.validateLabel)
                 {
                     res = "<span class=\"badge bg-danger\"><a onclick='gotoConfig()' style='color: #fff;text-decoration: underline;cursor: pointer;'>"+row.validateLabel+"</a></span>";
                 }else

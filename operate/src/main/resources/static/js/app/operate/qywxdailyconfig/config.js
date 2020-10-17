@@ -354,9 +354,8 @@ function userGroupButton(key, value, dom, className) {
  * 刷新右侧的预览数据
  */
 function getConfigInfoByGroup() {
-    $.get("/dailyConfig/getConfigInfoByGroup",current_group, function (r) {
+    $.get("/qywxDailyConfig/getConfigInfoByGroup",current_group, function (r) {
         let data = r.data;
-        $("#duanxinContent").html('').append(((data['duanxin'] === undefined) || (data['duanxin'] === null)) ? '未配置短信文案':data['duanxin']);
         $("#weixinContent").html('').append(((data['weixin'] === undefined) || (data['weixin'] === null)) ? '未配置企业微信文案' : data['weixin']);
         //加载优惠券列表
         couponListTable("couponPreviewTable", data['couponInfos']);

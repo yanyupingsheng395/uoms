@@ -2,6 +2,7 @@ package com.linksteady.operate.domain;
 
 import lombok.Data;
 
+import javax.persistence.Transient;
 import java.util.Date;
 
 /**
@@ -17,6 +18,7 @@ public class QywxDailyHeader {
 
     private Date taskDate;
 
+    @Transient
     private String taskDateStr;
 
     private String status;

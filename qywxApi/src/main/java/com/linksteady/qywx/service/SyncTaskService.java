@@ -15,11 +15,6 @@ public interface SyncTaskService {
     void saveFollowUser(String corpId,List<FollowUserVO> followUserList);
 
     /**
-     * 新增同步任务
-     */
-     void saveSyncTask(List<SyncTask> taskList);
-
-    /**
      * 更新同步任务
      */
     void updateSyncTask(String taskId,String status);
@@ -58,4 +53,16 @@ public interface SyncTaskService {
      * 保存外部联系人
      */
     void saveExternalContact(ExternalContact externalContact);
+
+    /**
+     * 更新所有外部联系人的delete_flag
+     */
+    void updateExternalContactDeleteFlag();
+
+    /**
+     * 删除所有delete_flag为1的数据
+     */
+    void deleteExternalContactDeleteFlag();
+
+    void syncQywxData() throws Exception;
 }

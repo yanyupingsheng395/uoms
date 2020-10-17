@@ -11,8 +11,6 @@ public class SyncTask {
 
     private String corpId;
 
-    private String  taskType;
-
     private String status;
 
     private Date insertDt;
@@ -26,9 +24,8 @@ public class SyncTask {
     public SyncTask() {
     }
 
-    public SyncTask(String corpId, String taskType, String status, Date insertDt, String insertBy) {
+    public SyncTask(String corpId, String status, Date insertDt, String insertBy) {
         this.corpId = corpId;
-        this.taskType = taskType;
         this.status = status;
         this.insertDt = insertDt;
         this.insertBy = insertBy;

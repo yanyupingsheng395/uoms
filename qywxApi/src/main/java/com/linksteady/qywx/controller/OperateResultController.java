@@ -21,6 +21,16 @@ public class OperateResultController extends ApiBaseController {
     @Autowired
     private OperateResultService operateResultService;
 
+    /**
+     * 获取导购运行结果的数据
+     * @param request
+     * @param signature
+     * @param timestamp
+     * @param userId
+     * @param startDt
+     * @param endDt
+     * @return
+     */
     @RequestMapping("/getResultData")
     public ResponseBo getResultData(HttpServletRequest request,
                                     @RequestParam("signature") String signature,

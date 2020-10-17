@@ -48,7 +48,7 @@
     </resultMap>
 
     <select id="getHeadList" resultMap="baseResult">
-        SELECT HEAD_ID,TASK_DATE_STR,TASK_DATE, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT,
+        SELECT HEAD_ID,to_char(TASK_DATE,'YYYYMMDD') TASK_DATE_STR,TASK_DATE, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT,
         STATUS,EFFECT_DAYS,QYWX_MESSAGE_COUNT, staff_cnt, execute_staff_cnt, execute_rate
         FROM uo_qywx_daily_header t
         <where>

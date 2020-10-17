@@ -11,11 +11,8 @@
     </insert>
 
     <insert id="saveSyncTask" useGeneratedKeys="true" keyProperty="taskId" keyColumn="task_id">
-        insert into uo_qywx_synctask_list(corp_id,task_type,status,insert_dt,insert_by)
-        values
-        <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.corpId},#{item.taskType},'P',#{item.insertDt},#{item.insertBy})
-        </foreach>
+        insert into uo_qywx_synctask_list(corp_id,status,insert_dt,insert_by)
+        values  (#{corpId},'P',#{insertDt},#{insertBy})
     </insert>
 
     <update id="updateSyncTask">
@@ -62,12 +59,20 @@
                 user_phone,
                 add_date,
                 insert_dt,
-                name
+                name,
+                delete_flag
             ) values
-        <foreach collection="externalContactList" item="item" index="index" separator=",">
-            (#{item.followerUserId},#{item.externalUserid},#{item.state},#{item.remark},#{item.addDate},now(),#{item.name})
+        <foreach collection="list" item="item" separator=",">
+            (#{item.followerUserId},
+             #{item.externalUserid},
+             #{item.state},
+             #{item.remark},
+             #{item.addDate},
+             now(),
+             #{item.name},
+             0)
         </foreach>
-        ON CONFLICT(follow_user_id,external_contact_id) DO UPDATE set user_phone=#{item.remark},name=#{item.name}
+        ON CONFLICT(follow_user_id,external_contact_id) DO UPDATE set user_phone=excluded.user_phone,name=excluded.name,delete_flag=0
     </insert>
 
     <delete id="deleteExternalContact">
@@ -83,10 +88,19 @@
             user_phone,
             add_date,
             insert_dt,
-            name
+            name,
+            delete_flag
         ) values
-         (#{followerUserId},#{externalUserid},#{state},#{description},#{addDate},now(),#{name})
-        ON CONFLICT(follow_user_id,external_contact_id) DO UPDATE set user_phone=#{description},name=#{name}
+         (#{followerUserId},#{externalUserid},#{state},#{description},#{addDate},now(),#{name},0)
+        ON CONFLICT(follow_user_id,external_contact_id) DO UPDATE set user_phone=#{description},name=#{name},delete_flag=0
     </insert>
+
+    <update id="updateExternalContactDeleteFlag">
+       update uo_qywx_external_contact_list set delete_flag=1
+    </update>
+
+    <delete id="deleteExternalContactDeleteFlag">
+        delete from uo_qywx_external_contact_list where delete_flag=1
+    </delete>
 
 </mapper>

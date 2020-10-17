@@ -11,7 +11,7 @@ public interface SyncTaskMapper {
 
     void saveFollowUser(String corpId,List<FollowUserVO> followUserList);
 
-    void saveSyncTask(List<SyncTask> taskList);
+    void saveSyncTask(SyncTask syncTask);
 
     void updateSyncTask(String taskId,String status);
 
@@ -40,5 +40,9 @@ public interface SyncTaskMapper {
      * 新增或更新外部联系人
      */
     void saveExternalContact(ExternalContact externalContact);
+
+    void updateExternalContactDeleteFlag();
+
+    void deleteExternalContactDeleteFlag();
 
 }

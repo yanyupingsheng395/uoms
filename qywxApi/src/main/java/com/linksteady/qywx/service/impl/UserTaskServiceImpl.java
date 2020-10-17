@@ -127,20 +127,6 @@ public class UserTaskServiceImpl implements UserTaskService {
 
             result.put("kpi33",String.format("在商城购买的平均折扣率%.2f%" ,userPurchStatsVO.getAvgDiscount()));
             result.put("kpi34",String.format("超过了%.0f%的用户" ,userPurchStatsVO.getAvgDiscountLevel()));
-        }else
-        {
-            result.put("kpi11", "");
-            result.put("kpi12","");
-            result.put("kpi13","");
-            result.put("kpi14","");
-            result.put("kpi21","");
-            result.put("kpi22","");
-            result.put("kpi23","");
-            result.put("kpi24","");
-            result.put("kpi31","");
-            result.put("kpi32","");
-            result.put("kpi33","");
-            result.put("kpi34","");
         }
 
        return result;
@@ -171,21 +157,8 @@ public class UserTaskServiceImpl implements UserTaskService {
 
             result.put("kpi33",String.format("在类目%s的平均折扣率%.2f%" ,userPurchSpuStatsVO.getAvgDiscount()));
             result.put("kpi34",String.format("超过了%.0f%的用户" ,userPurchSpuStatsVO.getAvgDiscountLevel()));
-        }else
-        {
-            result.put("kpi11", "");
-            result.put("kpi12","");
-            result.put("kpi13","");
-            result.put("kpi14","");
-            result.put("kpi21","");
-            result.put("kpi22","");
-            result.put("kpi23","");
-            result.put("kpi24","");
-            result.put("kpi31","");
-            result.put("kpi32","");
-            result.put("kpi33","");
-            result.put("kpi34","");
         }
+
         return result;
     }
 

@@ -38,131 +38,28 @@ public class SyncTaskController extends ApiBaseController{
     @Autowired
     ApiService apiService;
 
-    private static final String SUBMIT_TASK_URL="/api/submitSyncTask";
-
     @Autowired
     UserMappingService userMappingService;
 
     @Autowired
     WelcomeMessageService welcomeMessageService;
 
-    /**
-     * 提交同步导购任务
-     */
-    @PostMapping("/submitSyncFollowUser")
-    public ResponseBo submitSyncFollowUser() {
-        //提交同步导购任务
-        String corpId=apiService.getQywxCorpId();
-        List<SyncTask> taskList= Lists.newArrayList();
-        taskList.add(new SyncTask(corpId,"FOLLOW_USER","P",new Date(),"admin"));
 
-        //1.保存到本地
-        syncTaskService.saveSyncTask(taskList);
-        //2.提交企业微信
-        String result=submitTask(corpId,taskList);
 
-        if(StringUtils.isNotEmpty(result)&&200==JSON.parseObject(result).getIntValue("code"))
-        {
-            return ResponseBo.ok();
-        }else
-        {
-            log.error("submitSyncFollowUser失败，错误原因为{}",result);
-            return ResponseBo.error();
-        }
-    }
-
-    /**
-     *提交同步外部客户任务
-     */
-    @PostMapping("/submitSyncExternalUser")
-    public ResponseBo submitSyncExternalUser() {
-        String corpId=apiService.getQywxCorpId();
-        List<SyncTask> taskList= Lists.newArrayList();
-        taskList.add(new SyncTask(corpId,"EXTERNAL_LIST","P",new Date(),"admin"));
-
-        //1.保存到本地
-        syncTaskService.saveSyncTask(taskList);
-        //2.提交企业微信
-        String result=submitTask(corpId,taskList);
-
-        if(StringUtils.isNotEmpty(result)&&200==JSON.parseObject(result).getIntValue("code"))
-        {
-            return ResponseBo.ok();
-        }else
-        {
-            log.error("submitSyncExternalUser失败，错误原因为{}",result);
-            return ResponseBo.error();
-        }
-    }
-
-    /**
-     * 提交同步管理员任务
-     */
-    @PostMapping("/submitSyncAdminList")
-    public ResponseBo submitSyncAdminList() {
-        String corpId=apiService.getQywxCorpId();
-        List<SyncTask> taskList= Lists.newArrayList();
-        taskList.add(new SyncTask(corpId,"ADMIN_LIST","P",new Date(),"admin"));
-
-        //1.保存到本地
-        syncTaskService.saveSyncTask(taskList);
-        //2.提交企业微信
-        String result=submitTask(corpId,taskList);
-
-        if(StringUtils.isNotEmpty(result)&&200==JSON.parseObject(result).getIntValue("code"))
-        {
-            return ResponseBo.ok();
-        }else
-        {
-            log.error("submitSyncAdminList失败，错误原因为{}",result);
-            return ResponseBo.error();
-        }
-    }
 
     /**
      * 同时提交 同步导购、同步外部客户 同步管理员 任务
      */
     @PostMapping("/submitAll")
     public ResponseBo submitAll() {
-        String corpId=apiService.getQywxCorpId();
-        List<SyncTask> taskList= Lists.newArrayList();
-        taskList.add(new SyncTask(corpId,"FOLLOW_USER","P",new Date(),"admin"));
-        taskList.add(new SyncTask(corpId,"EXTERNAL_LIST","P",new Date(),"admin"));
-        taskList.add(new SyncTask(corpId,"ADMIN_LIST","P",new Date(),"admin"));
-
-        //1.保存到本地
-        syncTaskService.saveSyncTask(taskList);
-        //2.提交企业微信
-        String result=submitTask(corpId,taskList);
-
-        if(StringUtils.isNotEmpty(result)&&200==JSON.parseObject(result).getIntValue("code"))
-        {
+        try {
+            syncTaskService.syncQywxData();
             return ResponseBo.ok();
-        }else
-        {
-            log.error("submitAll失败，错误原因为{}",result);
+        } catch (Exception e) {
+            log.error("提交同步企业微信任务失败，原因为{}",e);
             return ResponseBo.error();
         }
-    }
 
-
-    /**
-     * 提交异步任务
-     * @param corpId
-     * @param taskList
-     * @return
-     */
-    private String submitTask(String corpId,List<SyncTask> taskList)
-    {
-        String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
-        String data=JSON.toJSONString(taskList);
-        String signature= SHA1.gen(timestamp,data);
-        //2.提交到企业微信端
-        StringBuffer url=new StringBuffer(apiService.getQywxDomainUrl()+SUBMIT_TASK_URL);
-        url.append("?corpId="+corpId);
-        url.append("&timestamp="+timestamp);
-        url.append("&signature="+signature);
-        return OkHttpUtil.postRequestByJson(url.toString(),data);
     }
 
     /**
@@ -176,10 +73,13 @@ public class SyncTaskController extends ApiBaseController{
                                      @RequestParam(name = "data") String data) {
         try{
             validateLegality(request,signature,timestamp,corpId,data);
+            //todo 额外增加corpId的校验
+
             //写入本地信息
             List<FollowUserVO> followUserList=JSONObject.parseArray(data,FollowUserVO.class);
             synchronized (externalContactLock)
             {
+                log.info("接收到成员信息:{}",data);
                 syncTaskService.saveFollowUser(corpId,followUserList);
                 //更新标记
                 syncTaskService.saveChangeFlagToN("follow_user");
@@ -224,6 +124,8 @@ public class SyncTaskController extends ApiBaseController{
         try {
             validateLegality(request,signature,timestamp,data,corpId);
 
+            //todo 额外增加corpId的校验
+
             JSONArray deptArray=JSONObject.parseArray(data);
             synchronized (deptLock)
             {
@@ -242,7 +144,7 @@ public class SyncTaskController extends ApiBaseController{
                 return ResponseBo.ok();
             }
         } catch (Exception e) {
-            log.error("syncFollowUser失败，错误原因为{}",e);
+            log.error("syncDept失败，错误原因为{}",e);
             return ResponseBo.error(e.getMessage());
         }
     }
@@ -258,6 +160,9 @@ public class SyncTaskController extends ApiBaseController{
                                      @RequestParam(name = "corpId") String corpId) {
         try {
             validateLegality(request,signature,timestamp,corpId,data);
+
+            //todo 额外增加corpId的校验
+
             String changeCode=data;
             synchronized (obj)
             {
@@ -273,7 +178,6 @@ public class SyncTaskController extends ApiBaseController{
 
     /**
      * 接收企业微信端发过来的外部联系人信息
-     * 备注：此方法一般只用于期初
      */
     @PostMapping("/syncExternalContract")
     public ResponseBo syncExternalContract(HttpServletRequest request,
@@ -283,6 +187,9 @@ public class SyncTaskController extends ApiBaseController{
                                      @RequestParam(name = "data") String data) {
         try{
             validateLegality(request,signature,timestamp,corpId,data);
+
+            //todo 额外增加corpId的校验
+
             //写入本地信息
             List<ExternalContact> externalContactList=JSONObject.parseArray(data, ExternalContact.class);
             synchronized (externalContactLock)
@@ -309,6 +216,8 @@ public class SyncTaskController extends ApiBaseController{
         try{
             validateLegality(request,signature,timestamp,corpId);
 
+            //todo 额外增加corpId的校验
+
             //获取有效的欢迎语信息
             QywxMessage qywxMessage=welcomeMessageService.getValidWelcomeMessage();
             if(null==qywxMessage)
@@ -334,34 +243,26 @@ public class SyncTaskController extends ApiBaseController{
      * @return
      */
     @PostMapping("/delExternalContact")
-    public ResponseBo userMapping(HttpServletRequest request, String signature, String timestamp,
-                                  String externalUserId,
-                                  String followUserId,
-                                  String corpId) {
+    public ResponseBo userMapping(HttpServletRequest request,
+                                  @RequestParam(name = "signature") String signature,
+                                  @RequestParam(name = "timestamp") String timestamp,
+                                  @RequestParam(name = "externalUserId") String externalUserId,
+                                  @RequestParam(name = "followUserId") String followUserId,
+                                  @RequestParam(name = "corpId") String corpId) {
         try {
             validateLegality(request,signature,timestamp,followUserId,externalUserId,corpId);
-        } catch (Exception e) {
-            return ResponseBo.error(e.getMessage());
-        }
 
-        //对参数进行校验
-        if(StringUtils.isEmpty(externalUserId)||StringUtils.isEmpty(followUserId))
-        {
-            return ResponseBo.error("参数不能为空!");
-        }
-
-
-        try {
+            //todo 额外增加corpId的校验
             //对当前匹配到的用户进行清除
             userMappingService.deleteMappingInfo(externalUserId,followUserId);
             //清除本地的外部联系人
             syncTaskService.delExternalContact(externalUserId,followUserId,corpId);
             return ResponseBo.ok();
+
         } catch (Exception e) {
             log.error("删除用户匹配关系错误，错误原因为{}",e);
             return ResponseBo.error(e.getMessage());
         }
-
     }
 
     /**
@@ -377,11 +278,16 @@ public class SyncTaskController extends ApiBaseController{
      * @return
      */
     @PostMapping("/syncExternalContractSingle")
-    public ResponseBo userMapping(HttpServletRequest request, String signature, String timestamp,
-                                  String corpId,
-                                  String data) {
+    public ResponseBo userMapping(HttpServletRequest request,
+                                  @RequestParam(name = "signature") String signature,
+                                  @RequestParam(name = "timestamp") String timestamp,
+                                  @RequestParam(name = "corpId") String corpId,
+                                  @RequestParam(name = "data") String data) {
         try {
             validateLegality(request,signature,timestamp,corpId,data);
+
+            //todo 额外增加corpId的校验
+
         } catch (Exception e) {
             return ResponseBo.error(e.getMessage());
         }
@@ -411,5 +317,38 @@ public class SyncTaskController extends ApiBaseController{
     }
 
 
+    /**
+     * 数据同步完后进行后续的处理
+     * @param request
+     * @param signature
+     * @param timestamp
+     * @return
+     */
+    @PostMapping("/syncExternalContactAction")
+    public ResponseBo syncExternalContactAction(HttpServletRequest request,
+                                  @RequestParam(name = "signature") String signature,
+                                  @RequestParam(name = "timestamp") String timestamp,
+                                  @RequestParam(name = "corpId") String corpId,
+                                  @RequestParam(name = "actionType") String actionType) {
+        try {
+            validateLegality(request,signature,timestamp,corpId,actionType);
 
+            if("BEFORESYNC".equals(actionType))
+            {
+              //所有外部客户打上删除标记
+                syncTaskService.updateExternalContactDeleteFlag();
+            }else if("AFTERSYNC".equals(actionType))
+            {
+               //删除delete_flag=1的外部客户
+                syncTaskService.deleteExternalContactDeleteFlag();
+            }else
+            {
+
+            }
+            return ResponseBo.ok();
+        } catch (Exception e) {
+            log.error("同步完数据进行后续处理错误，错误原因为{}",e);
+            return ResponseBo.error(e.getMessage());
+        }
+    }
 }

@@ -10,10 +10,8 @@
         <result column="COUPON_THRESHOLD" jdbcType="DECIMAL" property="couponThreshold"/>
         <result column="COUPON_URL" jdbcType="VARCHAR" property="couponUrl"/>
         <result column="COUPON_NUM" jdbcType="VARCHAR" property="couponNum"/>
-<!--        <result column="COUPON_INFO2" jdbcType="VARCHAR" property="couponInfo2"/>-->
         <result column="VALID_STATUS" jdbcType="VARCHAR" property="validStatus"/>
         <result column="COUPON_DISPLAY_NAME" jdbcType="VARCHAR" property="couponDisplayName"/>
-<!--        <result column="COUPON_SOURCE" jdbcType="VARCHAR" property="couponSource"/>-->
         <result column="VALID_END" jdbcType="VARCHAR" property="validEnd"/>
         <result column="CHECK_FLAG" jdbcType="VARCHAR" property="checkFlag"/>
         <result column="CHECK_COMMENTS" jdbcType="VARCHAR" property="checkComments"/>
@@ -205,7 +203,7 @@
         from uo_op_daily_template_config uodtc
                  right join uo_qywx_group_coupon uodgc
                             on uodtc.group_id = uodgc.group_id
-                 left join uo_op_coupon uoc on uodgc.coupon_id = uoc.coupon_id
+                 left join uo_qywx_coupon uoc on uodgc.coupon_id = uoc.coupon_id
         where uodtc.user_value = #{userValue} and uodtc.lifecycle = #{lifeCycle} and uodtc.path_active = #{pathActive} and uodtc.tar_type = #{tarType}
         order by coupon_threshold asc, coupon_denom asc
     </select>
