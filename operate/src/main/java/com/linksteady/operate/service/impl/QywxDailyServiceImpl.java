@@ -90,7 +90,7 @@ public class QywxDailyServiceImpl implements QywxDailyService {
     /**
      * 对每日运营进行推送
      *
-     * @param qywxDailyHeader
+     * @param qywxDailyHeader 头信息
      */
     @Override
     @Transactional(rollbackFor = Exception.class)

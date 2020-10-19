@@ -66,7 +66,7 @@
             (#{item.followerUserId},
              #{item.externalUserid},
              #{item.state},
-             #{item.remark},
+             #{item.description},
              #{item.addDate},
              now(),
              #{item.name},
