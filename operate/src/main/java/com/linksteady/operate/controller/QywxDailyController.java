@@ -117,6 +117,11 @@ public class QywxDailyController {
         }
 
         String currentDay=DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now());
+        if(qywxDailyHeader.getTotalNum()==0)
+        {
+            return ResponseBo.error("当前计划没有待运营的用户！");
+        }
+
         //待执行状态且是当天的任务
         if("todo".equals(qywxDailyHeader.getStatus())&&currentDay.equals(qywxDailyHeader.getTaskDateStr()))
         {
@@ -197,18 +202,18 @@ public class QywxDailyController {
         QywxDailyHeader qywxDailyHeader = qywxDailyService.getHeadInfo(headId);
 
         //进行一次时间的判断 (调度修改状态有一定的延迟)
-//        if (!DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now()).equals(qywxDailyHeader.getTaskDateStr())) {
-//            return ResponseBo.error("已过期的任务无法再执行!");
-//        }
+        if (!DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now()).equals(qywxDailyHeader.getTaskDateStr())) {
+            return ResponseBo.error("已过期的任务无法再执行!");
+        }
 
-//        if (null == qywxDailyHeader || !qywxDailyHeader.getStatus().equalsIgnoreCase("todo")) {
-//            return ResponseBo.error("当前任务非待执行状态，请返回刷新后重试！");
-//        }
+        if (null == qywxDailyHeader || !qywxDailyHeader.getStatus().equalsIgnoreCase("todo")) {
+            return ResponseBo.error("当前任务非待执行状态，请返回刷新后重试！");
+        }
 
-//        String validateLabel = dailyConfigService.validUserGroupForQywx() ? "未通过" : "通过";
-//        if (validateLabel.equalsIgnoreCase("未通过")) {
-//            return ResponseBo.error("成长组配置验证未通过！");
-//        }
+        String validateLabel =(String)dailyConfigService.validUserGroupForQywx().get("flag");
+        if (validateLabel.equalsIgnoreCase("未通过")) {
+            return ResponseBo.error("成长组配置验证未通过！");
+        }
 
         try {
 
@@ -257,10 +262,6 @@ public class QywxDailyController {
     }
 
     /**
-     * 进行优惠券的发放
-     */
-
-    /**
      * 获取当前日期和任务日期、任务天数
      *
      * @param headId
@@ -268,7 +269,12 @@ public class QywxDailyController {
      */
     @GetMapping("/getTaskInfo")
     public ResponseBo getTaskInfo(@RequestParam Long headId) {
-        return ResponseBo.okWithData(null, qywxDailyService.getHeadInfo(headId));
+        QywxDailyHeader qywxDailyHeader=qywxDailyService.getHeadInfo(headId);
+        Map<String,String> result=Maps.newHashMap();
+        result.put("taskDateStr",qywxDailyHeader.getTaskDateStr());
+        result.put("successNum",qywxDailyHeader.getSuccessNum()==null?"0":String.valueOf(qywxDailyHeader.getSuccessNum()));
+        result.put("effectDays",qywxDailyHeader.getEffectDays()==null?"0":String.valueOf(qywxDailyHeader.getEffectDays()));
+        return ResponseBo.okWithData(null,result);
     }
 
     /**

@@ -36,10 +36,12 @@ function initTable() {
         }, {
             field: 'taskDateStr',
             title: '推送日期'
-        }, {
-            field: 'qywxMessageCount',
-            title: '个性化消息数（条）'
-        },{
+        }
+        // , {
+        //     field: 'qywxMessageCount',
+        //     title: '个性化消息数（条）'
+        // }
+        ,{
             field: 'totalNum',
             title: '消息所覆盖的用户数（人）'
         }, {
@@ -87,9 +89,9 @@ function initTable() {
             align: 'center',
             formatter: function (value, row, indx) {
                 var res = "-";
-                if(row.touchDtStr ===currDate&&"通过"===row.validateLabel) {
+                if(row.taskDateStr ===currDate&&"通过"===row.validateLabel) {
                     res = "<span class=\"badge bg-success\"><a style='text-decoration: none;cursor: pointer;pointer-events: none;color:#fff;'>"+row.validateLabel+"</a></span>";
-                }else if(row.touchDtStr ===currDate&&"未通过"===row.validateLabel)
+                }else if(row.taskDateStr ===currDate&&"未通过"===row.validateLabel)
                 {
                     res = "<span class=\"badge bg-danger\"><a onclick='gotoConfig()' style='color: #fff;text-decoration: underline;cursor: pointer;'>"+row.validateLabel+"</a></span>";
                 }else
@@ -125,11 +127,11 @@ $("#btn_catch").click(function () {
         $MB.n_warning('请勾选查看效果的任务！');
         return;
     }
-    // let status = selected[0].status;
-    // if (status === 'todo') {
-    //     $MB.n_warning("当前任务状态不支持查看任务效果！");
-    //     return;
-    // }
+    let status = selected[0].status;
+    if (status === 'todo') {
+        $MB.n_warning("当前任务状态不支持查看任务效果！");
+        return;
+    }
     let headId = selected[0].headId;
     window.location.href = "/page/qywxDaily/effect?headId=" + headId;
 });
@@ -159,7 +161,7 @@ $("#btn_insight").click(function () {
     }
 
     //打开遮罩层
-    $MB.loadingDesc('show', '策略生成中，请稍候...');
+    $MB.loadingDesc('show', '处理中，请稍候...');
     //获取预览数据
     $.get("/qywxDaily/getTaskOverViewData", {headId: headId}, function (r) {
         if(r.code == 200) {
@@ -187,7 +189,7 @@ function gotoConfig() {
         title: '<i class="mdi mdi-alert-circle-outline"></i>提示：',
         content: "去完成配置？"
     }, function () {
-        location.href = "/page/daily/config";
+        location.href = "/page/daily/qywxDailyConfig";
     });
 }
 
@@ -225,7 +227,11 @@ $("#viewPush_modal").on("shown.bs.modal", function () {
  * 隐藏预览推送面板
  */
 $("#viewPush_modal").on("hidden.bs.modal", function () {
-    stepObj.setActive(0);
+    if(stepObj!=null)
+    {
+        stepObj.setActive(0);
+    }
+
     $("#prevStepBtn").attr("style", "display:none;");
     $("#nextStepBtn").attr("style", "display:inline-block");
     $("#pushMsgBtn").attr("style", "display:none;");
@@ -286,17 +292,17 @@ function setStep(status,taskDate) {
             dataOrder: ["title", "line", "description"]
         });
     }else {
-        //todo 临时修改
-        stepObj=steps({
-            el: "#pushSteps",
-            data: [
-                { title: "今日成长用户详情",description:""},
-                { title: "向成员派发推送任务",description:""}
-            ],
-            center: true,
-            dataOrder: ["title", "line", "description"]
-        });
-      //  $("#nextStepBtn").attr("style", "display:none;");
+        //临时修改
+        // stepObj=steps({
+        //     el: "#pushSteps",
+        //     data: [
+        //         { title: "今日成长用户详情",description:""},
+        //         { title: "向成员派发推送任务",description:""}
+        //     ],
+        //     center: true,
+        //     dataOrder: ["title", "line", "description"]
+        // });
+       $("#nextStepBtn").attr("style", "display:none;");
     }
 }
 
@@ -318,11 +324,11 @@ function changeStep(count) {
         $("#step1").attr("style", "display:block;");
         $("#step2").attr("style", "display:none;");
 
-        //todo 此两行代码后续删除
         $("#nextStepBtn").attr("style", "display:inline-block;");
         getUserStrategyList($("#headId").val());
         stepObj.setActive(1);
     }
+    //推送面板
     if(current_step === 1) {
         $.get("/qywxDaily/validUserGroupForQywx", {}, function(r) {
             if(r.code == 200) {
@@ -422,7 +428,7 @@ function getUserStrategyList(pheadId) {
                 align: "center",
             },
             {
-                field: 'qywxContractId',
+                field: 'qywxContactName',
                 title: '成员推送消息的用户',
                 align: "center",
             },{
@@ -475,9 +481,9 @@ function growthInsight(user_id,head_id)
 
 function getAllFollowUserList(pheadId) {
     $.get("/qywxDaily/getFollowUserList", {headId: pheadId}, function (r) {
-        var code = "";
+        var code = "<option value='-1'>所有</option>";
         $.each(r.data,function (index,value) {
-            code += "<option id="+value.followUserId+">"+value.followUserName+"</option>";
+            code += "<option value="+value.followUserId+">"+value.followUserName+"</option>";
         });
         $("#followUserSelect").change(function() {
             //重新加载数据

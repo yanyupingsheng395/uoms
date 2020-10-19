@@ -32,8 +32,9 @@
         <result column="GROUP_ID" jdbcType="DECIMAL" property="groupId"></result>
         <result column="QYWX_CONTRACT_ID" jdbcType="VARCHAR" property="qywxContractId"></result>
         <result column="FOLLOW_USER_ID" jdbcType="VARCHAR" property="followUserId"></result>
-        <result column="FOLLOW_USER_NAME" jdbcType="VARCHAR" property="followUserName"></result>
         <result column="LIFECYCLE" jdbcType="VARCHAR" property="lifecycle"></result>
+        <result column="follow_user_name" jdbcType="VARCHAR" property="followUserName"></result>
+        <result column="qywx_contact_name" jdbcType="VARCHAR" property="qywxContactName"></result>
     </resultMap>
 
     <resultMap id="followUserResult" type="com.linksteady.operate.vo.FollowUserVO">
@@ -56,7 +57,6 @@
              T2.USER_ID,
              T2.USER_PHONE,
              T2.follow_user_id,
-             T2.follow_user_name,
              T2.qywx_contract_id,
              msg.text_content,
              T2.REC_PROD_ID,
@@ -78,7 +78,7 @@
     </select>
 
     <update id="insertPushContentTemp">
-        insert into uo_qywx_daily_content_tmp(detail_id,head_id,text_content,coupon_id,coupon_min,coupon_deno)
+        insert into uo_qywx_daily_content_tmp(detail_id,head_id,text_content,coupon_id,coupon_min,coupon_deno,qywx_msg_sign)
         values
         <foreach collection="list" item="item" index="index"
                  separator=",">
@@ -87,7 +87,8 @@
             #{item.textContent},
             #{item.couponId}::numeric,
             #{item.couponMin}::numeric,
-            #{item.couponDeno}::numeric)
+            #{item.couponDeno}::numeric,
+            #{item.qywxMsgSign})
         </foreach>
     </update>
 
@@ -96,8 +97,8 @@
     </delete>
 
     <update id="updatePushContentFromTemp">
-        update uo_qywx_daily_detail set (text_content,coupon_id,coupon_min,coupon_deno) =
-            (select text_content,coupon_id,coupon_min,coupon_deno from uo_qywx_daily_content_tmp where
+        update uo_qywx_daily_detail set (text_content,coupon_id,coupon_min,coupon_deno,qywx_msg_sign) =
+            (select text_content,coupon_id,coupon_min,coupon_deno,qywx_msg_sign from uo_qywx_daily_content_tmp where
             uo_qywx_daily_content_tmp.detail_id = uo_qywx_daily_detail.detail_id
             and uo_qywx_daily_content_tmp.head_id=uo_qywx_daily_detail.head_id)
         where head_id=#{headId}
@@ -120,9 +121,10 @@
              detail_id,
              user_id,
              user_phone,
-             follow_user_id,
-             follow_user_name,
-             qywx_contract_id,
+             uo_qywx_daily_detail.follow_user_id,
+             uo_qywx_daily_detail.qywx_contract_id,
+             t2.follow_user_name,
+             t2.qywx_contact_name,
              text_content,
              rec_prod_id,
              rec_prod_name,
@@ -131,10 +133,19 @@
              group_id,
              coupon_deno
          FROM
-              uo_qywx_daily_detail
+              uo_qywx_daily_detail left join
+              (
+                    select  uo_qywx_external_contact_list.follow_user_id,
+                            uo_qywx_external_contact_list.external_contact_id,
+                            uo_qywx_followuser_list.user_name follow_user_name,
+                            uo_qywx_external_contact_list.name qywx_contact_name
+                    from uo_qywx_external_contact_list join uo_qywx_followuser_list
+                    on uo_qywx_external_contact_list.follow_user_id=uo_qywx_followuser_list.user_id
+              ) t2 on uo_qywx_daily_detail.follow_user_id= t2.follow_user_id
+                and uo_qywx_daily_detail.qywx_contract_id=t2.external_contact_id
          WHERE  head_id = #{headId}
-        <if test="followUserId != '' and followUserId != null">
-            and follow_user_id = #{followUserId}
+        <if test="followUserId != '' and followUserId != null and followUserId !='-1'" >
+            and uo_qywx_daily_detail.follow_user_id = #{followUserId}
         </if>
          ORDER BY detail_id DESC
          limit #{limit} offset #{offset}
@@ -159,7 +170,6 @@
         T2.USER_ID,
         T2.USER_PHONE,
         T2.follow_user_id,
-        T2.follow_user_name,
         T2.qywx_contract_id,
         T2.text_content,
         T2.REC_PROD_ID,
@@ -179,19 +189,18 @@
     </select>
 
     <select id="getFollowUserList" resultMap="followUserResult">
-        select distinct follow_user_id,follow_user_name from uo_qywx_daily_detail where head_id=#{headId} order by follow_user_id asc
+        select follow_user_id,coalesce(user_name,'未知') follow_user_name from
+            (select distinct follow_user_id from uo_qywx_daily_detail where head_id=#{headId}) t1 left join
+            uo_qywx_followuser_list on t1.follow_user_id=uo_qywx_followuser_list.user_id
+            order by follow_user_id asc
     </select>
 
     <select id="getMessageSignList" resultType="String">
          select distinct qywx_msg_sign from uo_qywx_daily_detail where head_id=#{headId} and follow_user_id=#{followUserId}
     </select>
 
-    <select id="getTestPushData" resultType="map">
-      select qywx_contract_id,follow_user_id,text_content from uo_qywx_push_list WHERE PUSH_id=1
-    </select>
-
     <select id="getDailyStaffEffect" resultType="com.linksteady.operate.domain.QywxDailyStaffEffect">
-        select head_id, follow_user_id, follow_user_name, msg_num, execute_msg_num, cover_num, execute_cover_num, convert_num, convert_amount, convert_rate, convert_spu_num, convert_spu_amount, convert_spu_rate, stat_date from uo_qywx_daily_staff_effect where head_id = #{headId} and follow_user_id = #{followUserId}
+        select head_id, follow_user_id, msg_num, execute_msg_num, cover_num, execute_cover_num, convert_num, convert_amount, convert_rate, convert_spu_num, convert_spu_amount, convert_spu_rate, stat_date from uo_qywx_daily_staff_effect where head_id = #{headId} and follow_user_id = #{followUserId}
     </select>
 
     <select id="getWaitQywxUserListCount" resultType="int">

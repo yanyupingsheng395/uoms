@@ -71,6 +71,7 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
                 for (int i = 0; i < page; i++) {
                     sendCouponVOList=qywxSendCouponMapper.getCouponUserList(headId,couponId,pageSize,i * pageSize);
                     tempFlag=sendCoupon(headId,couponInfoVO,sendCouponVOList);
+                    log.info("发券，返回的状态标记为:{}",tempFlag);
 
                     if(!tempFlag)
                     {
@@ -92,40 +93,54 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
     {
         //发券是否成功 true表示成功 false表示失败
         boolean flag=true;
-        String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
-        String couponInfo= JSON.toJSONString(couponInfoVO);
-        String sendCouponList=JSON.toJSONString(sendCouponVOList);
-        String signature= SHA1.gen(timestamp,couponInfo,sendCouponList);
-
-        Map<String,String> param= Maps.newHashMap();
-        param.put("timestamp", timestamp);
-        param.put("couponInfo",couponInfo);
-        param.put("sendCouponList",sendCouponList);
-        param.put("signature", signature);
-
-        //推送到用户成长端
-        String result= OkHttpUtil.postRequestByFormBody(configService.getValueByName(ConfigEnum.sendCouponUrl.getKeyCode())+SEND_COUPON_BATCH_PATH,param);
-        JSONObject jsonObject = JSON.parseObject(result);
-
-        String sendResult="";
-        String sendResultDesc="";
+        String couponInfo= null;
+        String sendCouponList= null;
+        String sendResult= "";
+        String sendResultDesc= "";
         /**
          * 接口调用返回的SendCouponVOList 如果成功调用，则相比于传过去的数据，多了券号字段
          */
-        List<SendCouponVO> backSendCouponVOList=null;
-        if(null==jsonObject||200!=jsonObject.getIntValue("code"))
-        {
+        List<SendCouponVO> backSendCouponVOList= null;
+        try {
+            String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
+            couponInfo = JSON.toJSONString(couponInfoVO);
+            sendCouponList = JSON.toJSONString(sendCouponVOList);
+            String signature= SHA1.gen(timestamp,couponInfo,sendCouponList);
+
+            Map<String,String> param= Maps.newHashMap();
+            param.put("timestamp", timestamp);
+            param.put("couponInfo",couponInfo);
+            param.put("sendCouponList",sendCouponList);
+            param.put("signature", signature);
+
+            log.info("发送优惠券，传入的参数为:{}",param);
+            //推送到用户成长端
+            String result= OkHttpUtil.postRequestByFormBody(configService.getValueByName(ConfigEnum.sendCouponUrl.getKeyCode())+SEND_COUPON_BATCH_PATH,param);
+            JSONObject jsonObject = JSON.parseObject(result);
+
+            log.info("调用发券服务，接口返回的结果为:{}",jsonObject);
+
+            if(null==jsonObject||200!=jsonObject.getIntValue("code"))
+            {
+                sendResult="F";
+                sendResultDesc=jsonObject.getString("msg");
+                backSendCouponVOList=sendCouponVOList;
+                flag=false;
+            }else
+            {
+                sendResult="S";
+                sendResultDesc="发送成功";
+                backSendCouponVOList= JSONObject.parseArray(jsonObject.getString("data"), SendCouponVO.class);
+            }
+        } catch (Exception e) {
+           log.error("调用发券接口进行发券失败，原因为{}",e);
             sendResult="F";
-            sendResultDesc=jsonObject.getString("msg");
+            sendResultDesc="调用发券接口失败";
             backSendCouponVOList=sendCouponVOList;
             flag=false;
-        }else
-        {
-            sendResult="S";
-            sendResultDesc="发送成功";
-            backSendCouponVOList= JSONObject.parseArray(jsonObject.getString("data"), SendCouponVO.class);
         }
 
+        log.info("保存发券记录");
         SendCouponRecord sendCouponRecord=new SendCouponRecord();
         sendCouponRecord.setHeadId(headId);
         sendCouponRecord.setCouponInfo(couponInfo);

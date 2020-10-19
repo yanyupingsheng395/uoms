@@ -240,7 +240,7 @@ public class QywxDailyServiceImpl implements QywxDailyService {
         String taskDt = qywxDailyHeader.getTaskDateStr();
 
         //获取任务观察的天数
-        int effectDays = qywxDailyHeader.getEffectDays().intValue();
+        long effectDays = qywxDailyHeader.getEffectDays();
 
         //任务提交的日期
         LocalDate taskDtDate = LocalDate.parse(taskDt, DateTimeFormatter.ofPattern(dateFormat));

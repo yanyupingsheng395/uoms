@@ -3,6 +3,7 @@ package com.linksteady.operate.service.impl;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.linksteady.common.service.ConfigService;
+import com.linksteady.common.util.MD5Utils;
 import com.linksteady.operate.dao.QywxDailyCouponMapper;
 import com.linksteady.operate.dao.QywxDailyDetailMapper;
 import com.linksteady.operate.domain.QywxDailyDetail;
@@ -14,6 +15,7 @@ import com.linksteady.operate.vo.FollowUserVO;
 import com.linksteady.operate.vo.GroupCouponVO;
 import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.crypto.hash.Md5Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -150,12 +152,6 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
         return qywxDailyDetailMapper.getFollowUserList(headId);
     }
 
-    @Override
-    public List<Map<String, String>> getTestPushData() {
-        List<Map<String, String>> pushResult = qywxDailyDetailMapper.getTestPushData();
-        return pushResult;
-    }
-
     /**
      * 对配在组上的补贴按照GROUP_ID进行分组
      *
@@ -275,6 +271,9 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
             temp.setDetailId(qywxDailyDetail.getDetailId());
             temp.setTextContent(textContent);
             temp.setHeadId(qywxDailyDetail.getHeadId());
+
+            //构造qywxMsgSign  textcontent、mptitle、mpurl三者联合做签名
+            temp.setQywxMsgSign(new Md5Hash(textContent+"|"+qywxDailyDetail.getMpTitle()+"|"+qywxDailyDetail.getMpUrl()).toString());
             targetList.add(temp);
         }
         return targetList;

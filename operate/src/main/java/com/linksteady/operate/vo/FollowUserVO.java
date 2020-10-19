@@ -13,8 +13,6 @@ public class FollowUserVO {
      */
     private String followUserId;
 
-    /**
-     * 对应企业微信成员名称
-     */
     private String followUserName;
+
 }

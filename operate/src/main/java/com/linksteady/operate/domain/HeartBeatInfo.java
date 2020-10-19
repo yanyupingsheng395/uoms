@@ -42,6 +42,11 @@ public class HeartBeatInfo implements Serializable {
      */
     private LocalDateTime lastMoDate;
 
+    /**
+     * 发送优惠券服务的最后响应时间
+     */
+    private LocalDateTime lastScDate;
+
     private static HeartBeatInfo instance = new HeartBeatInfo();
 
     public static HeartBeatInfo getInstance() {
@@ -51,7 +56,5 @@ public class HeartBeatInfo implements Serializable {
     private HeartBeatInfo()
     {
     }
-
-
 
 }

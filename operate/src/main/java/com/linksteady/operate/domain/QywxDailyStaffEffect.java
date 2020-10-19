@@ -13,7 +13,6 @@ public class QywxDailyStaffEffect {
 
     private long headId;
     private String followUserId;
-    private String followUserName;
     private long msgNum;
     private long executeMsgNum;
     private long coverNum;

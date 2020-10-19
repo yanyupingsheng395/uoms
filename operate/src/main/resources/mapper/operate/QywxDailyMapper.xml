@@ -53,7 +53,7 @@
         FROM uo_qywx_daily_header t
         <where>
             <if test="taskDate != null and taskDate != ''">
-                TASK_DATE_STR = #{taskDate}
+                TASK_DATE::date = to_date(#{taskDate},'YYYY-MM-DD')
             </if>
         </where>
         ORDER BY HEAD_ID desc
@@ -64,13 +64,13 @@
         select count(1) from uo_qywx_daily_header
         where 1=1
         <if test="taskDate != '' and taskDate != null">
-            and TASK_DATE_STR = #{taskDate}
+            and TASK_DATE::date = to_date(#{taskDate},'YYYY-MM-DD')
         </if>
     </select>
 
     <select id="getHeadInfo" resultType="com.linksteady.operate.domain.QywxDailyHeader">
         SELECT HEAD_ID,
-               TASK_DATE_STR,
+               to_char(TASK_DATE,'YYYYMMDD') TASK_DATE_STR,
                TASK_DATE,
                TOTAL_NUM,
                SUCCESS_NUM,

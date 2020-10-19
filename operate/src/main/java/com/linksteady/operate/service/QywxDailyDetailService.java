@@ -57,9 +57,5 @@ public interface QywxDailyDetailService {
      */
     List<FollowUserVO> getFollowUserList(Long headId);
 
-    /**
-     * 获取推送的测试数据
-     */
-    List<Map<String,String>> getTestPushData();
 
 }

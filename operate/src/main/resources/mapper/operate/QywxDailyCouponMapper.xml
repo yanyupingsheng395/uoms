@@ -46,7 +46,7 @@
     </insert>
 
     <select id="selectCouponIdentity" resultType="int">
-        select count(1) from uo_qywx_coupon where coupon_identity=#{couponIdentity}
+        select count(1) from uo_qywx_coupon where coupon_identity=#{couponIdentity} and valid_status='Y'
     </select>
     <update id="update" parameterType="com.linksteady.operate.domain.CouponInfo">
         update uo_qywx_coupon

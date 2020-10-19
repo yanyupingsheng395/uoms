@@ -92,8 +92,6 @@ public interface QywxDailyDetailMapper {
     List<String> getMessageSignList(long headId,String followUserId);
 
 
-    List<Map<String,String>> getTestPushData();
-
     QywxDailyStaffEffect getDailyStaffEffect(Long headId, String followUserId);
 
     /**

@@ -3,7 +3,6 @@ $(function () {
     makePushChart();
     //加载所有的企业微信成员
     getAllFollowUserList();
-    getEffectPersonalPage();
 
     $("#followUserIdSelect").change(function() {
         getUserStatics($(this).find("option:selected").val());
@@ -138,62 +137,5 @@ function getChartOption(xdata, yData1, yData2, yName1, yName2, title) {
             }
         ]
     };
-}
-
-// 获取个体效果分页数据
-function getEffectPersonalPage() {
-    var settings = {
-        url: '/qywxDaily/getConversionList',
-        pagination: true,
-        singleSelect: true,
-        sidePagination: "server",
-        pageList: [10, 25, 50, 100],
-        sortable: true,
-        sortOrder: "asc",
-        queryParams: function (params) {
-            return {
-                pageSize: params.limit,  ////页面大小
-                pageNum: (params.offset / params.limit) + 1,
-                param: {
-                    headId: headId,
-                    followUserId: $("#followUserIdSelect").find("option:selected").val(),
-                }
-            };
-        },
-        columns: [
-            {
-                field: 'userId',
-                title: '用户ID'
-            },{
-                field: 'followUserName',
-                title: '推送成员'
-            }, {
-                field: 'pushPeriod',
-                title: '推送时段'
-            }, {
-                field: 'convertPeriod',
-                title: '转化时段'
-            }, {
-                field: 'convertInterval',
-                title: '转化间隔（天）'
-            }, {
-                field: 'pushSpu',
-                title: '推送SPU'
-            }, {
-                field: "spuIsConvert",
-                title: "推送SPU是否转化",
-                formatter: function (value, row, index) {
-                    let res = "-";
-                    if(value == 'Y') {
-                        res = '是';
-                    }
-                    if(value == 'N') {
-                        res = '否';
-                    }
-                    return res;
-                }
-            }]
-    };
-    $("#effectPersonalTable").bootstrapTable('destroy').bootstrapTable(settings);
 }
 

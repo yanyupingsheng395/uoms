@@ -2,6 +2,7 @@ package com.linksteady.operate.domain;
 
 import lombok.Data;
 
+import javax.persistence.Transient;
 import java.io.Serializable;
 
 /**
@@ -138,10 +139,6 @@ public class QywxDailyDetail implements Serializable {
      */
     private String followUserId;
 
-    /**
-     * 对应企业微信成员名称
-     */
-    private String followUserName;
 
     /**
      * 用户生命周期 值参考数据字典 默认为0
@@ -162,5 +159,15 @@ public class QywxDailyDetail implements Serializable {
      * 签名
      */
     private String qywxMsgSign;
+
+    /**
+     * 对应企业微信成员名称
+     */
+    private String followUserName;
+
+    /**
+     * 外部客户名称
+     */
+    private String qywxContactName;
 
 }
