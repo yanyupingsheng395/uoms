@@ -147,14 +147,16 @@ function intelCouponData() {
             field: 'couponDenom',
             align: 'center',
             title: '面额(元)'
-        }, {
-            field: 'knowhow',
-            align: 'center',
-            title: '逻辑',
-            formatter: function () {
-                return "<a>knowhow</a>";
-            }
-        }, {
+        },
+        //     {
+        //     field: 'knowhow',
+        //     align: 'center',
+        //     title: '逻辑',
+        //     formatter: function () {
+        //         return "<a>knowhow</a>";
+        //     }
+        // },
+            {
             title: '是否已经存在',
             align: 'center',
             formatter: function (value, row, index) {

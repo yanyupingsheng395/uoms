@@ -21,30 +21,30 @@ import java.util.stream.Collectors;
 public class QywxDailyCouponServiceImpl implements QywxDailyCouponService {
 
     @Autowired
-    private QywxDailyCouponMapper couponMapper;
+    private QywxDailyCouponMapper qywxDailyCouponMapper;
 
     @Autowired
     private PushConfig pushConfig;
 
     @Override
     public List<CouponInfo> selectAllCouponList() {
-        return couponMapper.selectAllCouponList();
+        return qywxDailyCouponMapper.selectAllCouponList();
     }
 
     @Override
     public List<CouponInfo> getList(int limit, int offset) {
-        return couponMapper.getList(limit, offset);
+        return qywxDailyCouponMapper.getList(limit, offset);
     }
 
     @Override
     public int getTotalCount() {
-        return couponMapper.getTotalCount();
+        return qywxDailyCouponMapper.getTotalCount();
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void save(CouponInfo couponInfo) {
-        couponMapper.save(couponInfo);
+        qywxDailyCouponMapper.save(couponInfo);
         validCoupon();
     }
 
@@ -55,13 +55,13 @@ public class QywxDailyCouponServiceImpl implements QywxDailyCouponService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void update(CouponInfo couponInfo) {
-        couponMapper.update(couponInfo);
+        qywxDailyCouponMapper.update(couponInfo);
         validCoupon();
     }
 
     @Override
     public CouponInfo getByCouponId(String couponId) {
-        return couponMapper.getByCouponId(couponId);
+        return qywxDailyCouponMapper.getByCouponId(couponId);
     }
 
     @Override
@@ -69,9 +69,9 @@ public class QywxDailyCouponServiceImpl implements QywxDailyCouponService {
     public void deleteCoupon(List<String> ids) throws Exception{
         for(String couponId:ids) {
             //删除优惠券引用关系
-            couponMapper.deleteCouponGroup(couponId);
+            qywxDailyCouponMapper.deleteCouponGroup(couponId);
             //删除优惠券(将状态标志置换为失效)
-            couponMapper.updateCouponInvalid(couponId);
+            qywxDailyCouponMapper.updateCouponInvalid(couponId);
         }
         validCoupon();
     }
@@ -83,13 +83,13 @@ public class QywxDailyCouponServiceImpl implements QywxDailyCouponService {
     @Transactional(rollbackFor = Exception.class)
     public void getCalculatedCoupon(List<CouponInfo> dataList) {
         // 清空快照表，插入新的快照数据
-        couponMapper.deleteLaseAisnpData();
-        couponMapper.insertNewData();
+        qywxDailyCouponMapper.deleteLaseAisnpData();
+        qywxDailyCouponMapper.insertNewData();
 
         //获取系统计算出的优惠券列表
-        List<CouponInfo> sysData = couponMapper.getSysCoupon();
+        List<CouponInfo> sysData = qywxDailyCouponMapper.getSysCoupon();
         //获取所有有效的优惠券列表
-        List<CouponInfo> couponInfoList = couponMapper.getIntelCoupon();
+        List<CouponInfo> couponInfoList = qywxDailyCouponMapper.getIntelCoupon();
         //待插入的数据 如果有同一面额、同一门槛的已经存在，则忽略
         List<CouponInfo> insertData = sysData.stream().filter(s -> {
             long count = couponInfoList.stream().filter(c -> c.getCouponDenom().equals(s.getCouponDenom()) && c.getCouponThreshold().equals(s.getCouponThreshold())).count();
@@ -106,14 +106,14 @@ public class QywxDailyCouponServiceImpl implements QywxDailyCouponService {
                 return res.get();
             }).collect(Collectors.toList());
             if(insertData.size() > 0) {
-                couponMapper.insertCalculatedCoupon(insertData);
+                qywxDailyCouponMapper.insertCalculatedCoupon(insertData);
             }
         }
     }
 
     @Override
     public int checkCouponName(String couponName) {
-        return couponMapper.checkCouponName(couponName);
+        return qywxDailyCouponMapper.checkCouponName(couponName);
     }
 
     @Override
@@ -124,26 +124,26 @@ public class QywxDailyCouponServiceImpl implements QywxDailyCouponService {
             throw new RuntimeException("补贴的方法方式未在系统中配置！");
         }
         //设置所有券为验证通过
-        couponMapper.validCouponPass();
+        qywxDailyCouponMapper.validCouponPass();
         // 补贴有效截止日期未配置为空
-        couponMapper.validEndDateNull();
+        qywxDailyCouponMapper.validEndDateNull();
         //补贴有效日期已失效
-        couponMapper.validEndDateNotNull();
+        qywxDailyCouponMapper.validEndDateNotNull();
         // 自行领取
         if(couponSendType.equalsIgnoreCase("A")) {
             //补贴链接为空
-            couponMapper.validCouponUrl();
+            qywxDailyCouponMapper.validCouponUrl();
         }
     }
 
     @Override
     public List<CouponInfo> getIntelCouponList() {
-        return couponMapper.getIntelCouponList();
+        return qywxDailyCouponMapper.getIntelCouponList();
     }
 
     @Override
     public boolean selectCouponIdentity(String couponIdentity) {
-        int count = couponMapper.selectCouponIdentity(couponIdentity);
+        int count = qywxDailyCouponMapper.selectCouponIdentity(couponIdentity);
         return count>0?true:false;
     }
 }

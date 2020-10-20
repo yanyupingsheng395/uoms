@@ -20,6 +20,10 @@ public class ApiCommonController {
 
     private static final String EXPIRE_OPERATE_INFO="/api/expireOperateInfo";
 
+    private static final String OPEN_WEICOME="/api/openWelcome";
+
+    private static final String CLOSE_WEICOME="/api/closeWelcome";
+
     /**
      * 刷新企业微信端当前企业缓存的用户成长系统地址信息
      */
@@ -30,6 +34,40 @@ public class ApiCommonController {
         String signature= SHA1.gen(timestamp);
         //2.提交到企业微信端
         StringBuffer url=new StringBuffer(apiService.getQywxDomainUrl()+EXPIRE_OPERATE_INFO);
+        url.append("?corpId="+corpId);
+        url.append("&timestamp="+timestamp);
+        url.append("&signature="+signature);
+        OkHttpUtil.getRequest(url.toString());
+        return ResponseBo.ok();
+    }
+
+    /**
+     * 打开欢迎语
+     */
+    @RequestMapping("/openWelcome")
+    public ResponseBo openWelcome() {
+        String corpId=apiService.getQywxCorpId();
+        String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
+        String signature= SHA1.gen(timestamp);
+        //2.提交到企业微信端
+        StringBuffer url=new StringBuffer(apiService.getQywxDomainUrl()+OPEN_WEICOME);
+        url.append("?corpId="+corpId);
+        url.append("&timestamp="+timestamp);
+        url.append("&signature="+signature);
+        OkHttpUtil.getRequest(url.toString());
+        return ResponseBo.ok();
+    }
+
+    /**
+     * 关闭欢迎语
+     */
+    @RequestMapping("/closeWelcome")
+    public ResponseBo closeWelcome() {
+        String corpId=apiService.getQywxCorpId();
+        String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
+        String signature= SHA1.gen(timestamp);
+        //2.提交到企业微信端
+        StringBuffer url=new StringBuffer(apiService.getQywxDomainUrl()+CLOSE_WEICOME);
         url.append("?corpId="+corpId);
         url.append("&timestamp="+timestamp);
         url.append("&signature="+signature);
