@@ -338,7 +338,9 @@ function updateCoupon() {
             $form.find("input[name='validEnd']").val(coupon.validEnd);
             VALID_END = coupon.validEnd;
             $("input[name='validStatus']:radio[value='"+coupon.validStatus+"']").prop("checked", true);
-            $("#couponIdentity").attr("readonly","readonly");
+            if(coupon.couponIdentity!=null){
+                $("#couponIdentity").attr("readonly","readonly");
+            }
         } else {
             $MB.n_danger(r['msg']);
         }
