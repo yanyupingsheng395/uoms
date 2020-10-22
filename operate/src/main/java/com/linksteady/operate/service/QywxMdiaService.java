@@ -17,4 +17,5 @@ public interface QywxMdiaService {
      * 获取临时素材的media_id (供获取小程序卡片专用的方法)
      */
     String getMminiprogramMediaId();
+
 }
