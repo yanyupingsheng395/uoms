@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.qywx.dao.MediaMapper">
+    <resultMap id="getMediaImgMap" type="com.linksteady.qywx.domain.QywxMediaImg">
+        <result column="img_id" jdbcType="DECIMAL" property="imgId"/>
+        <result column="insert_dt" jdbcType="TIMESTAMP" property="insertDt"/>
+        <result column="insert_by" jdbcType="VARCHAR" property="insertBy"/>
+        <result column="img_title" jdbcType="VARCHAR" property="imgTitle"/>
+        <result column="media_id" jdbcType="VARCHAR" property="mediaId"/>
+        <result column="media_expire_date" jdbcType="TIMESTAMP" property="mediaExpireDate"/>
+        <result column="identity_id" jdbcType="DECIMAL" property="identityId"/>
+        <result column="identity_type" jdbcType="VARCHAR" property="indetityType"/>
+        <result column="img_content" property="imgContent" typeHandler="org.apache.ibatis.type.ByteArrayTypeHandler"/>
+    </resultMap>
+    <resultMap id="getProductMedia" type="com.linksteady.qywx.domain.WxProductMedia">
+        <result column="product_id" jdbcType="DECIMAL" property="productId"/>
+        <result column="prod_pic_url" jdbcType="VARCHAR" property="prodPicUrl"/>
+        <result column="url_type" jdbcType="VARCHAR" property="urlType"/>
+    </resultMap>
+
+    <resultMap id="paramMap" type="com.linksteady.qywx.domain.QywxParam">
+        <result column="daily_add_num" jdbcType="DECIMAL" property="dailyAddNum"/>
+        <result column="daily_add_rate" jdbcType="DOUBLE" property="dailyAddRate"/>
+        <result column="daily_add_rate" jdbcType="VARCHAR" property="dailyAddRateStr"/>
+        <result column="last_update_by" jdbcType="VARCHAR" property="lastUpdateBy"/>
+        <result column="last_update_dt" jdbcType="TIMESTAMP" property="lastUpdateDt"/>
+        <result column="daily_apply_num" jdbcType="DECIMAL" property="dailyApplyNum"/>
+        <result column="trigger_num" jdbcType="DECIMAL" property="triggerNum"/>
+        <result column="version" jdbcType="DECIMAL" property="version"/>
+        <result column="last_sync_order_dt" jdbcType="TIMESTAMP" property="lastSyncOrderDt"/>
+        <result column="party_change_flag" jdbcType="VARCHAR" property="partyChangeFlag"/>
+        <result column="auth_scope_change_flag" jdbcType="VARCHAR" property="authScopeChangeFlag"/>
+        <result column="follow_user_change_flag" jdbcType="VARCHAR" property="followUserChangeFlag"/>
+        <result column="media_id" jdbcType="VARCHAR" property="mediaId"/>
+        <result column="media_expire_date" jdbcType="TIMESTAMP" property="mediaExpireDate"/>
+        <result column="media_content" property="mediaContent" typeHandler="org.apache.ibatis.type.ByteArrayTypeHandler"/>
+        <result column="wc_media_id" jdbcType="VARCHAR" property="wcMdiaId"/>
+        <result column="wc_media_expire_date" jdbcType="TIMESTAMP" property="wcMediaExpireDate"/>
+        <result column="wc_media_content" property="wxMediaContent" typeHandler="org.apache.ibatis.type.ByteArrayTypeHandler"/>
+        <result column="coupon_media_content" property="couponMediaContent" typeHandler="org.apache.ibatis.type.ByteArrayTypeHandler"/>
+    </resultMap>
+
+    <select id="getQywxMediaImg" resultMap="getMediaImgMap">
+        select img_id,
+               img_content,
+               insert_dt,
+               insert_by,
+               img_title,
+               media_id,
+               media_expire_date,
+               identity_id,
+               identity_type
+               from uo_qywx_media_img
+               where identity_id=#{identityId} and identity_type=#{identityType}
+    </select>
+    <select id="getProductMediaContent" resultType="string">
+        select prod_pic_url from w_product_media where product_id=#{identityId}
+    </select>
+
+    <select id="getMediaContent" resultMap="paramMap">
+        select daily_add_num,daily_add_rate,media_id,last_update_dt,
+        <if test="type!=null and type=='COUPON'">
+            coupon_media_content
+        </if>
+        <if test="type!=null and type=='PRODUCT'">
+            media_content
+        </if>
+         from uo_qywx_param
+    </select>
+    <update id="updateQywxMediaImgBymediaId">
+        update uo_qywx_media_img set media_id=#{mediaId} ,media_expire_date=#{expreDt},img_content=#{mediaContent} where identity_id=#{identityId} and identity_type=#{identityType}
+    </update>
+    <insert id="saveQywxMediaImg">
+        insert  into uo_qywx_media_img(img_content, insert_dt,media_id, media_expire_date, identity_id, identity_type)
+        values (#{mediaContent},#{nowtime},#{mediaId},#{expreDt},#{identityId},#{identityType})
+    </insert>
+</mapper>
