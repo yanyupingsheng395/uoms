@@ -22,11 +22,11 @@ public class MediaController extends ApiBaseController{
                                    @RequestParam("timestamp")String timestamp,
                                    @RequestParam("identityType")String identityType,
                                    @RequestParam("identityId") Long identityId){
-        /*try {
+        try {
             validateLegality(request,signature,timestamp,identityType,String.valueOf(identityId));
         } catch (Exception e) {
             return ResponseBo.error(e.getMessage());
-        }*/
+        }
         return ResponseBo.okWithData(null,mediaService.getMpMediaId(identityType, identityId));
     };
 }
