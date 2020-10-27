@@ -73,11 +73,13 @@
                                         <label class="col-xs-12" style="font-weight: bold;">欢迎语配置策略</label>
                                         <div class="col-xs-12">
                                             <label class="radio-inline">
-                                                <input type="radio" name="policyType" disabled="disabled" th:checked="${welcome.policyType eq 'M'} ? true:false" value="M" onclick="policyClick()" checked="checked">
+                                                <input type="radio"  disabled="disabled" th:checked="${welcome.policyType eq 'M'} ? true:false" value="M" onclick="policyClick()" checked="checked">
+                                                <input type="radio" style="display: none"  name="policyType" th:checked="${welcome.policyType eq 'M'} ? true:false" value="M" checked="checked">
                                                 自定义
                                             </label>
                                             <label class="radio-inline">
-                                                <input type="radio" name="policyType" disabled="disabled" th:checked="${welcome.policyType eq 'M'} ? false:true" value="A" onclick="policyClick()">
+                                                <input type="radio" disabled="disabled" th:checked="${welcome.policyType eq 'M'} ? false:true" value="A" onclick="policyClick()">
+                                                <input type="radio" name="policyType" style="display: none"  th:checked="${welcome.policyType eq 'M'} ? false:true" value="A">
                                                 智能策略
                                             </label>
                                         </div>
@@ -86,11 +88,13 @@
                                         <label class="col-xs-12" style="font-weight: bold;">智能策略配置方案</label>
                                         <div class="col-xs-12">
                                             <label class="radio-inline">
-                                                <input type="radio" name="policyTypeTmp" disabled="disabled" value="COUPON" th:checked="${welcome.policyType eq 'COUPON'} ? true:false">
+                                                <input type="radio"  disabled="disabled" value="COUPON" th:checked="${welcome.policyType eq 'COUPON'} ? true:false">
+                                                <input type="radio" name="policyTypeTmp" style="display:none"  value="COUPON" th:checked="${welcome.policyType eq 'COUPON'} ? true:false">
                                                 派发领券页
                                             </label>
                                             <label class="radio-inline">
-                                                <input type="radio" name="policyTypeTmp" disabled="disabled" value="PRODUCT" th:checked="${welcome.policyType eq 'PRODUCT'} ? true:false">
+                                                <input type="radio"  disabled="disabled" value="PRODUCT" th:checked="${welcome.policyType eq 'PRODUCT'} ? true:false">
+                                                <input type="radio" name="policyTypeTmp" style="display:none" value="PRODUCT" th:checked="${welcome.policyType eq 'PRODUCT'} ? true:false">
                                                 派发商品页
                                             </label>
                                         </div>
