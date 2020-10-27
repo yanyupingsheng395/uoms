@@ -11,6 +11,7 @@
     <th:block th:include="common/include::jquery-confirm-css"/>
     <th:block th:include="common/include::bootstrap-year-calendar-css"/>
     <th:block th:include="common/include::datepicker-css"/>
+    <link rel="stylesheet" th:href="@{/css/emoji.css}" type="text/css">
     <style>
         .send {
             position: absolute;
@@ -98,17 +99,13 @@
                                         <label class="col-xs-12" style="font-weight: bold;">欢迎语素材</label>
                                         <div class="col-md-12">
                                             <ul id="myTabs" class="nav nav-tabs" role="tablist">
-                                                <li class="active"><a href="#text" id="text-tab" role="tab"
-                                                                      data-toggle="tab"><i class="fa fa-file-text-o"></i>&nbsp;文本</a>
+                                                <li class="active"><a href="#text" id="text-tab" role="tab" data-toggle="tab"><i class="fa fa-file-text-o"></i>&nbsp;文本</a>
                                                 </li>
-                                                <li><a href="#image" id="image-tab" role="tab"
-                                                                      data-toggle="tab"><i class="fa fa-image"></i>&nbsp;图片</a>
+                                                <li><a href="#image" id="image-tab" role="tab" data-toggle="tab"><i class="fa fa-image"></i>&nbsp;图片</a>
                                                 </li>
-                                                <li><a href="#web" id="web-tab" role="tab"
-                                                       data-toggle="tab"><i class="fa fa-link"></i>&nbsp;网页</a>
+                                                <li><a href="#web" id="web-tab" role="tab" data-toggle="tab"><i class="fa fa-link"></i>&nbsp;网页</a>
                                                 </li>
-                                                <li><a href="#miniprogram" id="miniprogram-tab" role="tab"
-                                                       data-toggle="tab"><i class="fa fa-skyatlas"></i>&nbsp;小程序</a>
+                                                <li><a href="#miniprogram" id="miniprogram-tab" role="tab" data-toggle="tab"><i class="fa fa-skyatlas"></i>&nbsp;小程序</a>
                                                 </li>
                                             </ul>
                                             <div id="myTabContent" class="tab-content"
@@ -117,7 +114,7 @@
                                                 <div class="tab-pane fade active in" id="text">
                                                     <div class="row">
                                                         <div class="col-md-12">
-                                                            <textarea class="form-control" name="content" rows="6" placeholder="请输入欢迎语内容" id="textContent1"></textarea>
+                                                            <textarea class="form-control" name="content" rows="6" placeholder="请输入欢迎语内容" id="textContent1" data-emojiable="true" data-emoji-input="unicode"></textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -169,16 +166,20 @@
                                                         <div class="form-group">
                                                             <label class="col-md-3 control-label">小程序标题：</label>
                                                             <div class="col-md-7">
-                                                                <input class="form-control" name="miniprogramTitle">
+                                                                <input class="form-control" name="miniprogramTitle" id="minititle">
                                                             </div>
                                                         </div>
                                                         <div class="form-group" style="margin-bottom: 2px;">
                                                             <label class="col-md-3 control-label">小程序地址：</label>
                                                             <div class="col-md-7">
-                                                                <input class="form-control" name="miniprogramPage">
+                                                                <input class="form-control" name="miniprogramPage" id="miniaddress">
                                                             </div>
                                                         </div>
                                                     </div>
+                                                </div>
+                                                <div>
+                                                    <input type="hidden" value="" name="qywxCouponId" id="qywxCouponId">
+                                                    <input type="hidden" value="" name="qywxProductId" id="qywxProductId">
                                                 </div>
                                             </div>
                                         </div>
@@ -475,6 +476,22 @@
 <th:block th:include="common/include::common-js"/>
 <th:block th:include="common/include::bootstrap-table-js"/>
 <th:block th:include="common/include::jquery-confirm-js"/>
+<script data-th-src="@{/js/app/operate/welcome/emoji-picker.js}"></script>
 <script data-th-src="@{/js/app/operate/welcome/add.js}"></script>
+<script>
+    $(function() {
+        emojiPicker = new EmojiPicker.EmojiPicker({
+            emojiable_selector: '[data-emojiable=true]',
+            assetsPath: '/images/emoji/',
+        });
+        emojiPicker.discover();
+    });
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-49610253-3', 'auto');
+    ga('send', 'pageview');
+</script>
 </body>
 </html>

@@ -138,7 +138,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     return this.each(function () {
       var originalInput = $(this);
       if ('contentEditable' in document.body && options.wysiwyg !== false) {
-        var id = (0, _util.getGuid)();
+        //var id = (0, _util.getGuid)();
+        var id=originalInput.attr("id");
         new EmojiArea_WYSIWYG(originalInput, id, $.extend({}, options));
       } else {
         var id = (0, _util.getGuid)();
@@ -392,7 +393,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
   var EmojiArea_WYSIWYG = function EmojiArea_WYSIWYG($textarea, id, options) {
     var self = this;
-
     this.options = options || {};
     if ($($textarea).attr('data-emoji-input') === 'unicode') this.options.inputMethod = 'unicode';else this.options.inputMethod = 'image';
     this.id = id;
@@ -400,20 +400,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     this.emojiPopup = options.emojiPopup;
     this.$editor = $('<div>').addClass('emoji-wysiwyg-editor').addClass($($textarea)[0].className);
     this.$editor.data('self', this);
-
+    this.$editor.attr("style","height:100px")
     if ($textarea.attr('maxlength')) {
       this.$editor.attr('maxlength', $textarea.attr('maxlength'));
     }
     this.emojiPopup.appendUnicodeAsImageToElement(this.$editor, $textarea.val());
 
     this.$editor.attr({
+      'id':id+"_1",
       'data-id': id,
       'data-type': 'input',
       'placeholder': $textarea.attr('placeholder'),
       'contenteditable': 'true'
     });
 
-    var changeEvents = 'blur change';
+    var changeEvents = 'keyup change';
     if (!this.options.norealTime) {
       changeEvents += ' keyup';
     }
@@ -442,7 +443,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       var self = this;
       this.$editor.on("paste", function (e) {
         e.preventDefault();
-
         if ((e.originalEvent || e).clipboardData) {
           var content = (e.originalEvent || e).clipboardData.getData('text/plain');
           var finalText = self.options.onPaste(content);

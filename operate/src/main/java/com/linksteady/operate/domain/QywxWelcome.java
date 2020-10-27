@@ -44,9 +44,9 @@ public class QywxWelcome {
 
     private String miniprogramPage;
 
-    private String qywxCouponId;
+    private Integer qywxCouponId;
 
-    private String qywxProductId;
+    private Integer qywxProductId;
 
     private String validFlag;
 

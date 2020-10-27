@@ -4,6 +4,14 @@ getCouponData();
 function getViewData() {
     var policyType = $("input[name='policyType']:checked").val();
     var policyTypeTmp = $("input[name='policyTypeTmp']:checked").val();
+    if(policyType!='A'){
+        $MB.n_danger("请选择'智能策略'！");
+        return ;
+    }
+    if(policyTypeTmp==""||policyTypeTmp==null){
+        $MB.n_danger("请选择配置策略方案！");
+        return ;
+    }
     if(policyType === 'A') {
         if(policyTypeTmp === 'COUPON') {
             $( "#couponModal" ).modal( 'show' );
@@ -19,11 +27,15 @@ function policyClick() {
     var policyType = $("input[name='policyType']:checked").val();
     if(policyType === 'M') {
         $('#intelPolicy').attr('style', 'display:none;');
-        $('#configBtn').attr('style', 'display:none;')
+        $('#configBtn').attr('style', 'display:none;');
+        $("#minititle").removeAttr("readonly");
+        $("#miniaddress").removeAttr("readonly");
     }
     if(policyType === 'A') {
         $('#intelPolicy').attr('style', 'display:block;');
         $('#configBtn').attr('style', 'display:inline-block;')
+        $("#minititle").attr({"readonly":"readonly"});
+        $("#miniaddress").attr({"readonly":"readonly"});
     }
 }
 
@@ -384,9 +396,8 @@ function deleteCoupon() {
         });
     }
 }
-
 // wxPreview
-$("#textContent1").on('click keyup', function () {
+ $("#textContent1").bind('input', function () {
     var content = $(this).val();
     if(content.length >= 155) {
         content = content.substr(0, 154) + "&nbsp;...";
@@ -438,6 +449,7 @@ function setCoupon() {
             $("input[name='miniprogramTitle']").val("送您一张" + selected[0]['couponDeno'] + "元券");
             $("input[name='miniprogramPage']").val(selected[0]['couponUrl']);
             $("#couponModal").modal('hide');
+            $("#qywxCouponId").val(selected[0]['couponId']);
             $("#myTabs").find("li").eq(3).addClass("active");
             $("#myTabContent").find("div.tab-pane").eq(3).addClass("active in");
             $("#myTabContent").find("div.tab-pane").eq(3).siblings().removeClass("active in");
@@ -459,6 +471,7 @@ function setProduct() {
             $("input[name='miniprogramTitle']").val(selected[0]['productName']);
             $("input[name='miniprogramPage']").val(selected[0]['productUrl']);
             $("#productModal").modal('hide');
+            $("#qywxProductId").val(selected[0]['productId']);
             $("#myTabs").find("li").eq(3).addClass("active");
             $("#myTabContent").find("div.tab-pane").eq(3).addClass("active in");
             $("#myTabContent").find("div.tab-pane").eq(3).siblings().removeClass("active in");
@@ -485,7 +498,18 @@ function validWelcomeForm() {
             return false;
         }
     }
-
+    if(policyType=='A'){
+        var minititle=$("#minititle").val();
+        var miniaddress=$("#miniaddress").val();
+        if(minititle==null||minititle==''){
+            $MB.n_warning("请配置小程序标题！");
+            return false;
+        }
+        if(minititle==null||miniaddress==''){
+            $MB.n_warning("请配置小程序地址！");
+            return false;
+        }
+    }
     var content = $("textarea[name='content']").val();
     var picUrl = $("input[name='picUrl']").val();
     var linkDesc = $("input[name='linkDesc']").val();
