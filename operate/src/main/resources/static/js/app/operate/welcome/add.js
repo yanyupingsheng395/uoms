@@ -399,6 +399,7 @@ function deleteCoupon() {
 // wxPreview
  $("#textContent1").bind('input', function () {
     var content = $(this).val();
+    content=content.replace(/\r\n/g,'<br/>').replace(/\n/g,'<br/>').replace(/\s/g,' ');
     if(content.length >= 155) {
         content = content.substr(0, 154) + "&nbsp;...";
     }

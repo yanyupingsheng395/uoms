@@ -135,7 +135,7 @@
                                                 <div class="tab-pane fade active in" id="text">
                                                     <div class="row">
                                                         <div class="col-md-12">
-                                                            <textarea th:text="${welcome.content}" class="form-control" name="content" rows="6" placeholder="请输入欢迎语内容" id="textContent1" data-emojiable="true"></textarea>
+                                                            <textarea th:text="${welcome.content}" class="form-control" name="content" rows="6" placeholder="请输入欢迎语内容" id="textContent1" data-emojiable="true" ></textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -242,7 +242,7 @@
                                     <div id='wxChat' style="height: 300px;width: 100%;background-color: rgb(235,235,235);border-bottom-left-radius: 10px;border-bottom-right-radius: 10px">
                                         <div class="send" id="preview">
                                             <div class="arrow"></div>
-                                            <span id="wxPreview" th:text="${welcome.content}">请输入消息内容</span>
+                                            <span id="wxPreview" th:text="${welcome.content}" style="word-break:normal;width:auto;display:block;white-space:pre-wrap;word-wrap:break-word;overflow:hidden;">请输入消息内容</span>
                                         </div>
 
                                         <div id="chatDiv">
