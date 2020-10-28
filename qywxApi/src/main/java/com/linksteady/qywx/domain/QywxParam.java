@@ -5,7 +5,6 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Data
 public class QywxParam implements Serializable {
@@ -19,6 +18,7 @@ public class QywxParam implements Serializable {
      * 企业微信加人转化率
      */
     private double dailyAddRate;
+
     private String dailyAddRateStr;
 
     /**
@@ -58,30 +58,12 @@ public class QywxParam implements Serializable {
      * 通讯录是否有更新
      */
     private String followUserChangeFlag;
-    /**
-     * 小程序封面media_id
-     */
-    private String mediaId;
-    /**
-     * 小程序封面失效时间
-     */
-    private LocalDateTime mediaExpireDate;
+
     /**
      * 小程序封面内容
      */
     private byte[] mediaContent;
-    /**
-     * 欢迎语小程序封面mediaId
-     */
-    private String wcMdiaId;
-    /**
-     * 欢迎语小程序封面失效时间
-     */
-    private LocalDateTime wcMediaExpireDate;
-    /**
-     * 欢迎语小程序封面内容
-     */
-    private byte[] wxMediaContent;
+
     /**
      * 优惠券封面默认图片
      */

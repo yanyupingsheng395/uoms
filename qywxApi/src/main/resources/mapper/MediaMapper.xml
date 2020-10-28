@@ -31,12 +31,7 @@
         <result column="party_change_flag" jdbcType="VARCHAR" property="partyChangeFlag"/>
         <result column="auth_scope_change_flag" jdbcType="VARCHAR" property="authScopeChangeFlag"/>
         <result column="follow_user_change_flag" jdbcType="VARCHAR" property="followUserChangeFlag"/>
-        <result column="media_id" jdbcType="VARCHAR" property="mediaId"/>
-        <result column="media_expire_date" jdbcType="TIMESTAMP" property="mediaExpireDate"/>
         <result column="media_content" property="mediaContent" typeHandler="org.apache.ibatis.type.ByteArrayTypeHandler"/>
-        <result column="wc_media_id" jdbcType="VARCHAR" property="wcMdiaId"/>
-        <result column="wc_media_expire_date" jdbcType="TIMESTAMP" property="wcMediaExpireDate"/>
-        <result column="wc_media_content" property="wxMediaContent" typeHandler="org.apache.ibatis.type.ByteArrayTypeHandler"/>
         <result column="coupon_media_content" property="couponMediaContent" typeHandler="org.apache.ibatis.type.ByteArrayTypeHandler"/>
     </resultMap>
 
@@ -58,7 +53,7 @@
     </select>
 
     <select id="getMediaContent" resultMap="paramMap">
-        select daily_add_num,daily_add_rate,media_id,last_update_dt,
+        select daily_add_num,daily_add_rate,last_update_dt,
         <if test="type!=null and type=='COUPON'">
             coupon_media_content
         </if>

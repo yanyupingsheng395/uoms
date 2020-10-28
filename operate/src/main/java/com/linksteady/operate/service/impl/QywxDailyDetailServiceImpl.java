@@ -259,15 +259,6 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
                 temp.setCouponId("-1");
             }
 
-            //判断是否含有产品详情页链接
-            if (null != textContent && textContent.indexOf("${商品详情页短链}") != -1) {
-                //获取商品的短链
-                String prodLongUrl = shortUrlService.genProdShortUrlByProdId(qywxDailyDetail.getRecProdId(), "S");
-                //如果短链生成错误，则不再进行替换
-                if (!"error".equals(prodLongUrl)) {
-                    textContent = textContent.replace("${商品详情页短链}", prodLongUrl);
-                }
-            }
             temp.setDetailId(qywxDailyDetail.getDetailId());
             temp.setTextContent(textContent);
             temp.setHeadId(qywxDailyDetail.getHeadId());

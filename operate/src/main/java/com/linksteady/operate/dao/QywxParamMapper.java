@@ -45,9 +45,5 @@ public interface QywxParamMapper {
      */
     void insertAddUserListHistory(List<String> phonenumList);
 
-    /**
-     * 更新小程序封面图片的midia_id信息
-     */
-    void updateMediaExpireInfo(String mediaId,LocalDateTime expreDt);
 
 }

@@ -7,9 +7,6 @@
         <result property="insertDt" jdbcType="TIMESTAMP" column="insert_dt"/>
         <result property="insertBy" jdbcType="VARCHAR" column="insert_by"/>
         <result property="imgTitle" jdbcType="VARCHAR" column="img_title"/>
-<!--        <result column="media_id" jdbcType="VARCHAR" property="mediaId"/>-->
-<!--        <result column="media_expire_date" jdbcType="TIMESTAMP" property="mediaExpireDate"/>-->
-<!--        <result column="media_id" jdbcType="VARCHAR" property="mediaId"/>-->
     </resultMap>
 
     <select id="getMediaImageCount" resultType="int">

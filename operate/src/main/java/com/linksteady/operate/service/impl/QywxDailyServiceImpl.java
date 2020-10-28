@@ -56,7 +56,7 @@ public class QywxDailyServiceImpl implements QywxDailyService {
     private QywxMessageService qywxMessageService;
 
     @Autowired
-    private QywxMdiaService qywxMdiaService;
+    QywxMdiaService qywxMdiaService;
 
     @Override
     public List<QywxDailyHeader> getHeadList(int limit, int offset, String taskDate) {
@@ -102,8 +102,6 @@ public class QywxDailyServiceImpl implements QywxDailyService {
         }
         Long headId = qywxDailyHeader.getHeadId();
 
-        // 写入push_list
-        String mediaId = qywxMdiaService.getMminiprogramMediaId();
         String appId = configService.getValueByName(ConfigEnum.qywxMiniProgramAppId.getKeyCode());
 
         //按导购分组
@@ -114,6 +112,7 @@ public class QywxDailyServiceImpl implements QywxDailyService {
             // 推送消息(按消息分组)
             List<String> msgSignList =qywxDailyDetailMapper.getMessageSignList(headId,followUserId);
 
+            //备注：同一msgSignList下必然是同一个商品
             msgSignList.forEach(y -> {
 
                 //查询当前签名、当前导购下记录的条数
@@ -124,6 +123,13 @@ public class QywxDailyServiceImpl implements QywxDailyService {
                     if(waitCount > 0) {
                         //获取当前待推送的列表
                         List<QywxDailyDetail> qywxDailyDetailList=qywxDailyDetailMapper.getQywxUserList(headId,followUserId,y,waitCount,0);
+
+                        String mediaId= null;
+                        try {
+                            mediaId = qywxMdiaService.getMpMediaId(qywxDailyDetailList.get(0).getRecProdId());
+                        } catch (Exception e) {
+                            throw new RuntimeException(e.getMessage());
+                        }
 
                         QywxPushList qywxPushList=new QywxPushList();
                         qywxPushList.setTextContent(qywxDailyDetailList.get(0).getTextContent());
@@ -145,6 +151,14 @@ public class QywxDailyServiceImpl implements QywxDailyService {
                         log.info("当前文本推送条数{}，偏移量为{}", pageSize,i*pageSize);
                         List<QywxDailyDetail> tmpUserList = qywxDailyDetailMapper.getQywxUserList(headId,followUserId,y,pageSize,i * pageSize);
                         if(tmpUserList.size() > 0) {
+
+                            String mediaId="";
+                            try {
+                                mediaId=qywxMdiaService.getMpMediaId(tmpUserList.get(0).getRecProdId());
+                            } catch (Exception e) {
+                                throw new RuntimeException(e.getMessage());
+                            }
+
                             QywxPushList qywxPushList=new QywxPushList();
                             qywxPushList.setTextContent(tmpUserList.get(0).getTextContent());
                             qywxPushList.setMpTitle(tmpUserList.get(0).getMpTitle());

@@ -60,14 +60,4 @@ public class QywxMediaController extends BaseController {
             return ResponseBo.error();
         }
     }
-
-    /**
-     * 获取临时素材(小程序封面)
-     */
-    @RequestMapping("/getMminiprogramMediaId")
-    public ResponseBo getMminiprogramMediaId()  {
-        String mediaId=qywxMdiaService.getMminiprogramMediaId();
-        return ResponseBo.ok(mediaId);
-    }
-
 }

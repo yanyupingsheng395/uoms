@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.qywx.dao.WelcomeMessageMapper">
-
-    <resultMap id="paramMap" type="com.linksteady.qywx.domain.WelcomeMpParam">
-        <result column="wc_media_id" jdbcType="VARCHAR" property="wcMediaId"/>
-        <result column="wc_media_expire_date" jdbcType="TIMESTAMP" property="wcMediaExpireDate"/>
-        <result column="wc_media_content" property="wcMediaContent" typeHandler="org.apache.ibatis.type.ByteArrayTypeHandler"/>
-    </resultMap>
     
     <resultMap id="welcomeMap" type="com.linksteady.qywx.domain.QywxWelcome">
         <result column="id" jdbcType="DECIMAL" property="id"/>
@@ -28,14 +22,6 @@
         <result column="valid_flag" jdbcType="VARCHAR" property="validFlag"/>
         <result column="status" jdbcType="VARCHAR" property="status"/>
     </resultMap>
-
-    <select id="getWelcomeMpParam" resultMap="paramMap">
-         select wc_media_id,wc_media_expire_date,wc_media_content from uo_qywx_param limit 1
-    </select>
-
-    <update id="updateWcMediaExpireInfo">
-        update uo_qywx_param set wc_media_id=#{mediaId},wc_media_expire_date=#{expreDt}
-    </update>
 
     <select id="getValidWelcome" resultMap="welcomeMap">
         select id,

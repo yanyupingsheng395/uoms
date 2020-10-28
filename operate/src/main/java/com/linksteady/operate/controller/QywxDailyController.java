@@ -242,7 +242,6 @@ public class QywxDailyController {
             {
                 return ResponseBo.ok();
             }
-            //testPush();
         } catch (Exception e) {
             log.error("企业微信每日运营推送错误，错误堆栈为", e);
             if (e instanceof OptimisticLockException) {
@@ -355,40 +354,41 @@ public class QywxDailyController {
      */
     @GetMapping("/testQywxPush")
     public ResponseBo testQywxPush(String title,String pathAddress,String senderId,String externalContact,String messageTest) {
-        return ResponseBo.ok(testPush(title,pathAddress,senderId,externalContact,messageTest));
+        try {
+            testPush(title,pathAddress,senderId,externalContact,messageTest);
+            return ResponseBo.ok();
+        } catch (Exception e) {
+            return ResponseBo.error(e.getMessage());
+        }
+
     }
 
     /**
      * 推送的实际方法
      * @return
      */
-    private String  testPush(String title,String pathAddress,String senderId,String externalContact,String messageTest)
+    private String  testPush(String title,String pathAddress,String senderId,String externalContact,String messageTest) throws Exception
     {
         QywxMessage qywxMessage=new QywxMessage();
-        //界面
         qywxMessage.setText(messageTest);
-
-        //界面
         qywxMessage.setMpTitle(title);
 
-        // 写入push_list
-        String mediaId = qywxMdiaService.getMminiprogramMediaId();
+        //获取小程序的相关参数
+        String mediaId = null;
+        try {
+            mediaId = qywxMdiaService.getMpMediaId("-1");
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
         String appId = configService.getValueByName(ConfigEnum.qywxMiniProgramAppId.getKeyCode());
 
         qywxMessage.setMpPicMediaId(mediaId);
         qywxMessage.setMpAppid(appId);
-        //界面
         qywxMessage.setMpPage(pathAddress);
 
-        //界面
         List<String> externalContactList=asList(externalContact);
-        //界面
         String result=qywxMessageService.pushQywxMessage(qywxMessage,senderId,externalContactList);
 
-//        List<String> externalContactList=asList("wmXfFiDwAAIoOS6g8UB2tHo2pZKT0zfQ");
-//        String result=qywxMessageService.pushQywxMessage(qywxMessage,"HuangKun",externalContactList);
-
-        //todo 这个result含有失败列表，需要自行处理
         return result;
     }
 

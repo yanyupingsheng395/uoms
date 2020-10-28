@@ -61,4 +61,6 @@ public interface QywxDailyService {
      * 更新状态为已执行但推送消息错误
      */
     void updateStatusToDonePushError(long headId);
+
+
 }

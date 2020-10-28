@@ -1,9 +1,5 @@
 package com.linksteady.qywx.service;
 
-import com.linksteady.common.domain.QywxMessage;
-
-import javax.servlet.http.HttpServletRequest;
-
 public interface MediaService {
 
     /**

@@ -54,20 +54,5 @@ public class QywxParam {
      */
     private LocalDateTime lastSyncOrderDt;
 
-    /**
-     * 小程序封面media_id
-     */
-    private String mediaId;
-
-    /**
-     * 小程序封面失效时间
-     */
-    private LocalDateTime mediaExpireDate;
-
-    /**
-     * 小程序封面内容
-     */
-    private byte[] mediaContent;
-
 
 }

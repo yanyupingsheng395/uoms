@@ -10,6 +10,7 @@ import com.linksteady.common.util.crypto.SHA1;
 import com.linksteady.qywx.dao.MediaMapper;
 import com.linksteady.qywx.domain.QywxMediaImg;
 import com.linksteady.qywx.domain.QywxParam;
+import com.linksteady.qywx.service.ApiService;
 import com.linksteady.qywx.service.MediaService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -30,10 +31,10 @@ import java.util.Map;
 public class MediaServiceImpl implements MediaService {
 
     @Autowired
-    ConfigService configService;
-
-    @Autowired(required = false)
     MediaMapper mediaMapper;
+
+    @Autowired
+    ApiService apiService;
 
     /**
      * identityType 可选的值有 PRODUCT表示商品 COUPON表示优惠券
@@ -43,18 +44,13 @@ public class MediaServiceImpl implements MediaService {
      */
     @Override
     public String getMpMediaId(String identityType,Long identityId) {
-        String flag="1";//identityId的标识，如果identityId是正常值，就是flag=1，如果identityId是-1，那就是-1;
-        QywxMediaImg qywxMediaImg=mediaMapper.getQywxMediaImg(identityId,identityType);
-        long now= Timestamp.valueOf(LocalDateTime.now()).getTime();
         String mediaId="";
-        if(qywxMediaImg==null){
-           //找不到则根据identityType和identityId=-1的记录来找。
-            qywxMediaImg=mediaMapper.getQywxMediaImg(-1l,identityType);
-            flag="-1";
-        }
-        //找到了，就判断时间是否过期
-        if(qywxMediaImg!=null){
-            // 1.1如果能找到，判断media_expire_date是否失效，如果未失效，则直接返回找到的mediaId 如果失效，则调用生成的逻辑(内容来自于当前表)
+        QywxMediaImg qywxMediaImg=mediaMapper.getQywxMediaImg(identityId,identityType);
+
+        if(null!=qywxMediaImg)
+        {
+            long now= Timestamp.valueOf(LocalDateTime.now()).getTime();
+            // 判断media_expire_date是否失效，如果未失效，则直接返回找到的mediaId 如果失效，则调用生成的逻辑(内容来自于当前表)
             long expireTime= null==qywxMediaImg.getMediaExpireDate()?0l:Timestamp.valueOf(qywxMediaImg.getMediaExpireDate()).getTime();
             if(now>expireTime|| StringUtils.isEmpty(qywxMediaImg.getMediaId())){
                 //如果失效，那么就重新生成。
@@ -66,27 +62,21 @@ public class MediaServiceImpl implements MediaService {
                 JSONObject object = getMediaId(mediaContent);
                 mediaId=(String)object.get("mediaId");
                 LocalDateTime expreDt= (LocalDateTime) object.get("expreDt");
-                //更新
-                if("1".equals(flag)){
-                    mediaMapper.updateQywxMediaImgBymediaId(identityId,identityType,mediaId,expreDt,mediaContent);
-                }else{
-                    mediaMapper.updateQywxMediaImgBymediaId(-1l,identityType,mediaId,expreDt,mediaContent);
-                }
+                mediaMapper.updateQywxMediaImgBymediaId(identityId,identityType,mediaId,expreDt,mediaContent);
             }else{
                 mediaId=qywxMediaImg.getMediaId();
             }
-        }else{
+
+        }else
+        {
            //找不到，调用生成逻辑
             byte[] mediaContent = getMediaContent(identityType, identityId);
             JSONObject object = getMediaId(mediaContent);
             mediaId=(String)object.get("mediaId");
             LocalDateTime expreDt= (LocalDateTime) object.get("expreDt");
             LocalDateTime nowtime = LocalDateTime.now();//新增时间
-            if("1".equals(flag)){
-                mediaMapper.saveQywxMediaImg(mediaContent,nowtime,mediaId,expreDt,identityId,identityType);
-            }else{
-                mediaMapper.saveQywxMediaImg(mediaContent,nowtime,mediaId,expreDt,-1l,identityType);
-            }
+            mediaMapper.saveQywxMediaImg(mediaContent,nowtime,mediaId,expreDt,identityId,identityType);
+
         }
         return mediaId;
     }
@@ -106,6 +96,7 @@ public class MediaServiceImpl implements MediaService {
         byte[] mediaContent=null;
         QywxParam qywxParam=null;
         if("PRODUCT".equals(identityType)){
+            //获取商品对应的图片地址
             String url=mediaMapper.getProductMediaContent(identityId);
             if(StringUtils.isNoneEmpty(url)){
                 mediaContent=getImageByte(url);
@@ -129,10 +120,10 @@ public class MediaServiceImpl implements MediaService {
      */
     private  JSONObject  getMediaId(byte[] mediaContent){
             //调用企业微信接口，完成临时素材的上传
-            String corpId=configService.getValueByName(ConfigEnum.qywxCorpId.getKeyCode());
+            String corpId=apiService.getQywxCorpId();
             String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
             String signature= SHA1.gen(timestamp);
-            String qywxDomainUrl=configService.getValueByName(ConfigEnum.qywxDomainUrl.getKeyCode());
+            String qywxDomainUrl=apiService.getQywxDomainUrl();
 
             String url=qywxDomainUrl+"/api/uploadTempMedia";
             Map<String,String> param= Maps.newHashMap();
