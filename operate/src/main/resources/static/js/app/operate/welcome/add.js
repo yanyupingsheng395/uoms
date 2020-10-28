@@ -423,6 +423,14 @@ $("#myTabs").on('shown.bs.tab', function (e) {
             '<div style=" width: 230px;height: 170px;background-image: url(https://goss.veer.com/creative/vcg/veer/1600water/veer-158345394.jpg);-webkit-background-size:cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;"></div>\n' +
             '</div>\n' +
             '</div>');
+    }else if(e.target.id === 'web-tab'){
+        $("#wxChat").attr("style", "height: auto;width: 100%;background-color: rgb(235,235,235);border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;padding-bottom: 15px");
+        $("#chatDiv").html('<div style="overflow:hidden;">\n' +
+            '<div id="chatSend" class="send" style="position: relative;margin-top: ' + height + 'px;">\n' +
+            '<div class="arrow"></div>\n' +
+            '<div style=" width: 230px;height: 170px;background-image: url(https://goss.veer.com/creative/vcg/veer/1600water/veer-141727262.jpg);-webkit-background-size:cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;"></div>\n' +
+            '</div>\n' +
+            '</div>');
     }else if(e.target.id === 'miniprogram-tab') {
         $("#wxChat").attr("style", "height: auto;width: 100%;background-color: rgb(235,235,235);border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;padding-bottom: 15px");
         $("#chatDiv").html('<div style="overflow:hidden;">\n' +
