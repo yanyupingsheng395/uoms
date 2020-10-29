@@ -3,23 +3,20 @@ package com.linksteady.operate.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
+import com.linksteady.common.domain.enums.ConfigEnum;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.common.util.crypto.SHA1;
 import com.linksteady.operate.dao.QywxMdiaMapper;
 import com.linksteady.operate.dao.QywxParamMapper;
-import com.linksteady.operate.domain.QywxMediaImage;
-import com.linksteady.operate.domain.QywxParam;
-import com.linksteady.common.domain.enums.ConfigEnum;
+import com.linksteady.operate.domain.QywxImage;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.QywxMdiaService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
-import java.sql.Timestamp;
+import java.io.File;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -42,13 +39,13 @@ public class QywxMdiaServiceImpl implements QywxMdiaService {
     QywxParamMapper qywxParamMapper;
 
     @Override
-    public int getMediaImageCount() {
-        return qywxMdiaMapper.getMediaImageCount();
+    public int getImageCount() {
+        return qywxMdiaMapper.getImageCount();
     }
 
     @Override
-    public List<QywxMediaImage> getMediaImageList(int limit, int offset) {
-        return qywxMdiaMapper.getMediaImageList(limit,offset);
+    public List<QywxImage> getImageList(int limit, int offset) {
+        return qywxMdiaMapper.getImageList(limit,offset);
     }
 
     @Override

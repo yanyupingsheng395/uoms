@@ -6,7 +6,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class QywxMediaImage {
+public class QywxImage {
 
     private Long imgId;
 

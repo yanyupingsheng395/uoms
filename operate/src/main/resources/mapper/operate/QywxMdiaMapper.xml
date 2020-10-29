@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.operate.dao.QywxMdiaMapper">
-    <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.QywxMediaImage">
+    <resultMap id="BaseResultMap" type="com.linksteady.operate.domain.QywxImage">
         <result property="imgId" jdbcType="DECIMAL" column="img_id"/>
         <result property="imgUrl" jdbcType="VARCHAR" column="img_url"/>
         <result property="insertDt" jdbcType="TIMESTAMP" column="insert_dt"/>
@@ -9,16 +9,16 @@
         <result property="imgTitle" jdbcType="VARCHAR" column="img_title"/>
     </resultMap>
 
-    <select id="getMediaImageCount" resultType="int">
-        select count(*) from uo_qywx_media_img
+    <select id="getImageCount" resultType="int">
+        select count(*) from uo_qywx_images
     </select>
 
-    <select id="getMediaImageList" resultMap="BaseResultMap">
-        select * from uo_qywx_media_img order by insert_dt desc limit #{limit} offset #{offset}
+    <select id="getImageList" resultMap="BaseResultMap">
+        select * from uo_qywx_images order by insert_dt desc limit #{limit} offset #{offset}
     </select>
 
     <insert id="saveMediaImg">
-        insert into uo_qywx_media_img(img_title,img_url,insert_dt,insert_by) values(
+        insert into uo_qywx_images(img_title,img_url,insert_dt,insert_by) values(
            #{title},#{url},now(),#{insertBy}
         )
     </insert>

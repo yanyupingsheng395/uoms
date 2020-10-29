@@ -1,15 +1,15 @@
 package com.linksteady.operate.service;
 
-import com.linksteady.operate.domain.QywxMediaImage;
+import com.linksteady.operate.domain.QywxImage;
 
 import java.io.File;
 import java.util.List;
 
 public interface QywxMdiaService {
 
-    int getMediaImageCount();
+    int getImageCount();
 
-    List<QywxMediaImage>  getMediaImageList(int limit, int offset);
+    List<QywxImage>  getImageList(int limit, int offset);
 
     void uploadImage(String title, File file,String opUserName) throws Exception;
 

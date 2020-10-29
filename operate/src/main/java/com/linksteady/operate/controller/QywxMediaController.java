@@ -4,7 +4,7 @@ import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.Base64Img;
-import com.linksteady.operate.domain.QywxMediaImage;
+import com.linksteady.operate.domain.QywxImage;
 import com.linksteady.operate.service.QywxMdiaService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +36,9 @@ public class QywxMediaController extends BaseController {
     public ResponseBo getDataList(QueryRequest request) {
         int limit = request.getLimit();
         int offset = request.getOffset();
-        int count=qywxMdiaService.getMediaImageCount();
-        List<QywxMediaImage> qywxMediaImageList = qywxMdiaService.getMediaImageList(limit,offset);
-        return ResponseBo.okOverPaging(null, count, qywxMediaImageList);
+        int count=qywxMdiaService.getImageCount();
+        List<QywxImage> qywxImageList = qywxMdiaService.getImageList(limit,offset);
+        return ResponseBo.okOverPaging(null, count, qywxImageList);
     }
 
     /**
