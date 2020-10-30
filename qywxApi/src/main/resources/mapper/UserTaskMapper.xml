@@ -108,7 +108,7 @@
 
     <select id="getPurchStats" resultMap="purchStatsMap">
         select
-            purch_amout,
+            purch_amount,
             purch_amount_level,
             purch_price,
             purch_price_level,
