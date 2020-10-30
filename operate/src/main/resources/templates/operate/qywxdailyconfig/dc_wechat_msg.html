@@ -138,8 +138,7 @@
                                             <div>
                                                 <label class="control-label">文案内容</label>
                                             </div>
-                                            <div class="form-control" style="height: 200px;" contenteditable="true"
-                                                 id="textContent1"></div>
+                                            <textarea class="form-control" style="height: 200px;" contenteditable="true" id="textContent1" data-emojiable="true"></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -192,7 +191,7 @@
                             <div style="height: 300px;width: 100%;background-color: rgb(235,235,235);border-bottom-left-radius: 10px;border-bottom-right-radius: 10px;">
                                 <div class="send" id="preview">
                                     <div class="arrow"></div>
-                                    <span id="wxPreview">请输入消息内容</span>
+                                    <span id="wxPreview" style="word-break:normal;width:auto;display:block;white-space:pre-wrap;word-wrap:break-word;overflow:hidden;">请输入消息内容</span>
                                 </div>
                             </div>
                         </div>
@@ -201,7 +200,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary btn-sm" name="save" id="btn_save_qywx">确定</button>
-                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal" id="btn_close_qywx">关闭</button>
             </div>
         </div>
     </div>

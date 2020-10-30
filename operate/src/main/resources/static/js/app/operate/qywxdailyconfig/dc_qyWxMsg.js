@@ -73,8 +73,13 @@ $("#btn_save_qywx").click(function () {
     }
 });
 
+// 保存数据
+$("#btn_close_qywx").click(function () {
+    $("#textContent1_1").html("");
+});
+
 function qywxValid() {
-    var smsContent = $("#textContent1").html();
+    var smsContent = $("#textContent1").val();
     let couponName = $("input[name='couponName']:checked").val();
     let productName = $("input[name='productName']:checked").val();
     if(productName === undefined) {
@@ -121,7 +126,7 @@ function qywxValid() {
 }
 
 function saveData() {
-    var data = $("#wxMsgAddForm").serialize() + "&" + $("#mediaForm").serialize() + "&textContent=" + $("#textContent1").html();
+    var data = $("#wxMsgAddForm").serialize() + "&" + $("#mediaForm").serialize() + "&textContent=" + $("#textContent1").val();
     var operate = $("#btn_save_qywx").attr("name");
     if(operate === 'save') {
         $MB.confirm({
@@ -133,6 +138,7 @@ function saveData() {
                     $MB.n_success("保存成功！");
                     $("#wxMsgAddModal").modal('hide');
                     $("#wxMsgListModal").modal('show');
+                    $("#textContent1_1").html("");
                     getWxMsgTableData();
                 }
             });
@@ -218,13 +224,21 @@ function editDataById() {
         $("input[name='couponName']:radio[value='"+data['couponName']+"']").prop("checked", true);
         $("input[name='isPersonal']:radio[value='"+data['isPersonal']+"']").prop("checked", true);
         $("input[name='materialType']:radio[value='"+data['materialType']+"']").prop("checked", true);
-        $("#textContent1").html(data['textContent']);
+        $("#textContent1").val(data['textContent']);
         $("#wxPreview").html(data['textContent']);
         $("input[name='materialContent']").val(data['materialContent']);
         $("input[name='qywxId']").val(data['qywxId']);
         hiddenPersonalContent();
         $("#wxMsgAddModal").modal('show');
         $("#wxMsgListModal").modal('hide');
+        var textval=data['textContent'];
+        var textarr=textval.split('\n');
+        var val="";
+        for (var i = 0; i < textarr.length; i++) {
+            var obj= document.createElement("div");
+            val+="<div>"+textarr[i]+"</div>";
+        }
+        $("#textContent1_1").html(val);
     });
 }
 
@@ -237,12 +251,14 @@ $("#wxMsgAddModal").on('hidden.bs.modal', function () {
     $("textarea[name='textContent']").val('');
     $("input[name='materialContent']").val('');
     $("input[name='qywxId']").val('');
-    $("#textContent1").html('');
+    $("#textContent1").val('');
     $("#wxPreview").html('请输入消息内容');
     hiddenPersonalContent();
     $("#btn_save_qywx").attr('name', 'save');
 });
 
-$("#textContent1").on('click keyup', function () {
-    $('#wxPreview').html('').append($('#textContent1').html()==='' ? '请输入消息内容':$('#textContent1').html());
+$("#textContent1").bind('input', function () {
+    var content = $(this).val();
+    content=content.replace(/\r\n/g,'<br/>').replace(/\n/g,'<br/>').replace(/\s/g,' ');
+    $('#wxPreview').html('').append(content);
 });
