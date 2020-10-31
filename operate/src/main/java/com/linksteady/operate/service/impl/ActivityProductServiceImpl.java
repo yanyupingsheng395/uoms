@@ -584,7 +584,10 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                             errorList.add(new ActivityProductUploadError("单品券面额类型有误，应改为数值型", i + 1));
                         }
                     }
-
+                    //如果错误集合中存在数据。那么以后的数据就不必要存在productList集合中了。
+                    if(errorList.size()>0){
+                        continue;
+                    }
                     ActivityProduct activityProduct = new ActivityProduct();
                     activityProduct.setHeadId(Long.valueOf(headId));
                     activityProduct.setGroupId(groupId);
@@ -607,14 +610,15 @@ public class ActivityProductServiceImpl implements ActivityProductService {
                     activityProduct = calculateProductMinPrice(activityProduct);
                     productList.add(activityProduct);
                 }
-                if (productList.size() != 0) {
+
+                //错误集合数据为0，商品集合大于0，才调用save操作;
+                if(errorList.size()<=0&&productList.size() != 0){
                     saveUploadProductData(headId, productList, uploadMethod, repeatProduct, stage, activityType);
-                } else {
-                    errorList.add(new ActivityProductUploadError("校验通过的记录条数为0"));
                 }
             }
         } catch (IOException e) {
             log.error("上传excel失败", e);
+            errorList.add(new ActivityProductUploadError("上传excel失败！"));
         }
         List<ActivityProductUploadError> result = errorList.stream().filter(x -> !x.isIgnore()).collect(Collectors.toList());
         if (result.size() > 0) {

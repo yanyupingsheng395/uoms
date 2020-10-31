@@ -68,6 +68,9 @@ $("select[name='platDiscount']").change(function() {
             $("#platDiscountItems").show();
             $("#platCouponDiv").attr("style", "border: dashed 1px #e7eaec;margin-top: 10px;padding-bottom: 10px;");
         }
+        if($("#platDiscountItems").html().trim()==''||$("#platDiscountItems").html().trim()==null){
+            addPlatCoupon(1);
+        }
     }
 });
 
@@ -84,6 +87,9 @@ $("select[name='shopDiscount']").change(function() {
         if($("#shopDiscountItems").text().trim() !== '') {
             $("#shopDiscountItems").show();
             $("#shopCouponDiv").attr("style", "border: dashed 1px #e7eaec;margin-top: 10px;padding-bottom: 10px;");
+        }
+        if($("#shopDiscountItems").html().trim()==''||$("#shopDiscountItems").html().trim()==null){
+            addPlatCoupon(2);
         }
     }
 });
