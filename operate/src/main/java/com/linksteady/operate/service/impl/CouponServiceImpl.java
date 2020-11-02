@@ -1,5 +1,6 @@
 package com.linksteady.operate.service.impl;
 
+import com.google.common.collect.HashBasedTable;
 import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.dao.CouponMapper;
 import com.linksteady.operate.domain.CouponInfo;
@@ -94,19 +95,23 @@ public class CouponServiceImpl implements CouponService {
             long count = couponInfoList.stream().filter(c -> c.getCouponDenom().equals(s.getCouponDenom()) && c.getCouponThreshold().equals(s.getCouponThreshold())).count();
             return count == 0;
         }).collect(Collectors.toList());
+
+        List<CouponInfo> targetList=null;
+        //如果用户选择了某些券，则只处理用户选择的券
         if(dataList.size() > 0) {
-            insertData.stream().filter(x->{
-                AtomicBoolean res = new AtomicBoolean(false);
-                dataList.forEach(y->{
-                    if(y.getCouponDenom().equals(x.getCouponDenom()) && y.getCouponThreshold().equals(x.getCouponThreshold())) {
-                        res.set(true);
-                    }
-                });
-                return res.get();
-            }).collect(Collectors.toList());
-            if(insertData.size() > 0) {
-                couponMapper.insertCalculatedCoupon(insertData);
-            }
+            HashBasedTable<Integer, Integer, String> userSelectCouponTable = HashBasedTable.create();
+            dataList.forEach(i->{
+                userSelectCouponTable.put(i.getCouponDenom(),i.getCouponThreshold(),"");
+            });
+            //只处理用户选择的数据
+            targetList=insertData.stream().filter(x->userSelectCouponTable.contains(x.getCouponDenom(),x.getCouponThreshold())).collect(Collectors.toList());
+        }else
+        {
+            targetList=insertData;
+        }
+
+        if(targetList.size() > 0) {
+            couponMapper.insertCalculatedCoupon(targetList);
         }
     }
 

@@ -18,7 +18,7 @@ $("#coupon_add_modal").on('hidden.bs.modal', function () {
 
 
 /**
- * 优惠券列表
+ * 补贴列表
  */
 function couponTable() {
     var settings = {
@@ -38,7 +38,7 @@ function couponTable() {
         },{
             field: 'couponIdentity',
             align: 'center',
-            title: '优惠券编号'
+            title: '补贴编号'
         },{
             field: 'couponDisplayName',
             align: 'center',
@@ -68,15 +68,33 @@ function couponTable() {
         }, {
             field: 'couponUrl',
             align: 'center',
-            title: '链接',
-            // formatter: function (value, row, index) {
-            //     if (value !== undefined && value !== null && value !== '') {
-            //         var tmp = value.indexOf("http://") > -1 ? value:"http://"+value;
-            //         return "<a target='_blank' href='" + tmp + "' style='color: #48b0f7;border-bottom: solid 1px #48b0f7'>" + value + "</a>";
-            //     } else {
-            //         return "-";
-            //     }
-            // }
+            title: '补贴小程序链接',
+            formatter: function (value, row, index) {
+                if(null!=value&&value.length > 20) {
+                    return "<a style='color: #48b0f7;' data-toggle='tooltip' data-html='true' title='' data-placement='bottom' data-original-title='"+value+"' data-trigger='hover'>\n" +
+                        value.substring(0, 20) + "..." +
+                        "</a>&nbsp;<a style='text-decoration: underline;cursor: pointer;font-size: 12px;' data-clipboard-text='"+value+"' class='copy_btn'>复制</a>";
+                }else if(null!=value&&value!='')
+                {
+                    return value+"&nbsp;<a style='text-decoration: underline;cursor: pointer;font-size: 12px;' data-clipboard-text='"+value+"' class='copy_btn'>复制</a>";
+                }
+                return value;
+            }
+        }, {
+            field: 'couponLongUrl',
+            align: 'center',
+            title: '补贴H5链接',
+            formatter: function (value, row, index) {
+                if(null!=value&&value.length > 20) {
+                    return "<a style='color: #48b0f7;' data-toggle='tooltip' data-html='true' title='' data-placement='bottom' data-original-title='"+value+"' data-trigger='hover'>\n" +
+                        value.substring(0, 20) + "..." +
+                        "</a>&nbsp;<a style='text-decoration: underline;cursor: pointer;font-size: 12px;' data-clipboard-text='"+value+"' class='copy_btn'>复制</a>";
+                }else if(null!=value&&value!='')
+                {
+                    return value+"&nbsp;<a style='text-decoration: underline;cursor: pointer;font-size: 12px;' data-clipboard-text='"+value+"' class='copy_btn'>复制</a>";
+                }
+                return value;
+            }
         }, {
             field: 'validEnd',
             align: 'center',
@@ -97,7 +115,9 @@ function couponTable() {
         }, {
             field: 'checkComments',
             title: '失败原因'
-        }]
+        }],onLoadSuccess: function(data){
+            $("a[data-toggle='tooltip']").tooltip();
+        }
     };
     $( '#couponTable' ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
 }
@@ -148,14 +168,6 @@ function intelCouponData() {
             align: 'center',
             title: '面额(元)'
         },
-        //     {
-        //     field: 'knowhow',
-        //     align: 'center',
-        //     title: '逻辑',
-        //     formatter: function () {
-        //         return "<a>knowhow</a>";
-        //     }
-        // },
             {
             title: '是否已经存在',
             align: 'center',
@@ -190,6 +202,7 @@ function closeModal() {
     $form.find("input[name='couponDenom']").val("").removeAttr("readOnly");
     $form.find("input[name='couponThreshold']").val("").removeAttr("readOnly");
     $form.find("input[name='couponUrl']").val("").removeAttr("readOnly");
+    $form.find("input[name='couponLongUrl']").val("").removeAttr("readOnly");
     $form.find("input[name='couponDisplayName']").val("").removeAttr("readOnly");
     $form.find("input[name='validEnd']").val("").removeAttr("readOnly");
     $form.find("input[name='couponIdentity']").val("").removeAttr("readOnly");
@@ -217,7 +230,10 @@ function validateRule() {
                 digits: true
             },
             couponUrl: {
-                required: false
+                required: true
+            },
+            couponLongUrl: {
+                required: true
             },
             couponDisplayName: {
                 required: true,
@@ -243,10 +259,11 @@ function validateRule() {
                 required: icon + "请输入补贴门槛",
                 digits: icon + "只能是整数"
             },
-            couponIdentity: icon+"请输入优惠券编号",
-            couponUrl: icon + "请输入优惠券链接",
+            couponIdentity: icon+"请输入补贴编号",
+            couponUrl: icon + "请输入补贴链接",
+            couponLongUrl: icon + "请输入补贴H5链接",
             couponDisplayName: {
-                required: icon + "请输入优惠券名称",
+                required: icon + "请输入补贴名称",
                 maxlength: icon + "最大长度不能超过100个字符"
             },
             validEnd: icon + "请输入有效截止日期",
@@ -259,7 +276,7 @@ $("#btn_save_coupon").click(function () {
     var name = $(this).attr("name");
     var couponIdentity=$("#couponIdentity").val();
     if(couponIdentity==null){
-        $MB.n_warning("请填写优惠券编号！");
+        $MB.n_warning("请填写补贴编号！");
         return ;
     }
     var validator = $couponForm.validate();
@@ -334,6 +351,7 @@ function updateCoupon() {
             $form.find("input[name='couponDenom']").val(coupon.couponDenom);
             $form.find("input[name='couponThreshold']").val(coupon.couponThreshold);
             $form.find("input[name='couponUrl']").val(coupon.couponUrl);
+            $form.find("input[name='couponLongUrl']").val(coupon.couponLongUrl);
             $form.find("input[name='couponDisplayName']").val(coupon.couponDisplayName);
             $form.find("input[name='validEnd']").val(coupon.validEnd);
             VALID_END = coupon.validEnd;

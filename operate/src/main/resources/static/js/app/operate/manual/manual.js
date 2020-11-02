@@ -74,10 +74,13 @@ function initTable() {
             field: 'smsContent',
             title: '短信内容',
             formatter: function (value, row, index) {
-                if(value.length > 20) {
-                    return "<a style='color: #48b0f7;' data-toggle=\"tooltip\" data-html=\"true\" title=\"\" data-placement=\"bottom\" data-original-title=\""+value+"\" data-trigger=\"hover\">\n" +
+                if(null!=value&&value.length > 20) {
+                    return "<a style='color: #48b0f7;' data-toggle='tooltip' data-html='true' title='' data-placement='bottom' data-original-title='"+value+"' data-trigger='hover'>\n" +
                         value.substring(0, 20) + "..." +
-                        "</a>";
+                        "</a>&nbsp;<a style='text-decoration: underline;cursor: pointer;font-size: 12px;' data-clipboard-text='"+value+"' class='copy_btn'>复制</a>";
+                }else if(null!=value&&value!='')
+                {
+                    return value+"&nbsp;<a style='text-decoration: underline;cursor: pointer;font-size: 12px;' data-clipboard-text='"+value+"' class='copy_btn'>复制</a>";
                 }
                 return value;
             }

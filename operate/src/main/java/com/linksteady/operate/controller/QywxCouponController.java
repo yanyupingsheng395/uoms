@@ -26,7 +26,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/qywxDailyCoupon")
 @Slf4j
-public class QywxDailyCouponController extends BaseController {
+public class QywxCouponController extends BaseController {
 
     @Autowired
     QywxDailyCouponService couponService;
@@ -106,13 +106,6 @@ public class QywxDailyCouponController extends BaseController {
     public ResponseBo update(CouponInfo couponInfo) {
         //对券进行校验
         couponInfo = getCheckInfo(couponInfo);
-        synchronized(this) {
-            //判断优惠券编号是否重复
-            boolean flag = checkCouponIdentity(couponInfo.getCouponIdentity());
-            if (flag) {
-                return ResponseBo.error("优惠券编号重复！");
-            }
-        }
         //保存
         couponService.update(couponInfo);
         return ResponseBo.ok();

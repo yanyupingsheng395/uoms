@@ -176,7 +176,7 @@ function closeModal() {
     $form.find("input[name='couponName']").val("").removeAttr("readOnly");
     $form.find("input[name='couponDenom']").val("").removeAttr("readOnly");
     $form.find("input[name='couponThreshold']").val("").removeAttr("readOnly");
-    $form.find("input[name='couponInfo2']").val("").removeAttr("readOnly");
+    $form.find("input[name='couponLongUrl']").val("").removeAttr("readOnly");
     $form.find("input[name='couponUrl']").val("").removeAttr("readOnly");
     $form.find("input[name='couponNum']").val("").removeAttr("readOnly");
     $form.find("input[name='couponDisplayName']").val("").removeAttr("readOnly");
@@ -201,7 +201,7 @@ function validateRule() {
                 required: true,
                 digits: true
             },
-            couponInfo2: {
+            couponLongUrl: {
                 required: function () {
                     return $("input[name='couponSendType']").val() === 'A';
                 }
@@ -235,7 +235,7 @@ function validateRule() {
                 required: icon + "请输入补贴门槛",
                 digits: icon + "只能是整数"
             },
-            couponInfo2: icon + "请输入原链接",
+            couponLongUrl: icon + "请输入原链接",
             couponUrl: icon + "请输入短链接",
             couponDisplayName: {
                 required: icon + "请输入补贴名称",
@@ -284,7 +284,7 @@ $("#btn_save_coupon").click(function () {
  * 获取短链
  */
 function getShortUrl() {
-    var url = $("#couponInfo2").val();
+    var url = $("#couponLongUrl").val();
     if(url.trim() == "") {
         $MB.n_warning("长链不能为空!");
         return;
@@ -342,7 +342,7 @@ function updateCoupon() {
             $form.find("input[name='validStatus']").val(coupon.validStatus);
             $form.find("input[name='couponDenom']").val(coupon.couponDenom);
             $form.find("input[name='couponThreshold']").val(coupon.couponThreshold);
-            $form.find("input[name='couponInfo2']").val(coupon.couponInfo2);
+            $form.find("input[name='couponLongUrl']").val(coupon.couponLongUrl);
             $form.find("input[name='couponUrl']").val(coupon.couponUrl);
             $form.find("input[name='couponNum']").val(coupon.couponNum);
             $form.find("input[name='couponDisplayName']").val(coupon.couponDisplayName);

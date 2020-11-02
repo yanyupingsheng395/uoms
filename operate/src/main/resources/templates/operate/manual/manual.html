@@ -233,6 +233,7 @@
         </div>
     </div>
 </div>
+<th:block th:include="common/include::clipboard-js" />
 <th:block th:include="common/include::footer" />
 <th:block th:include="common/include::perfect-scrollbar" />
 <th:block th:include="common/include::jquery-validate-js" />
@@ -265,5 +266,11 @@
 </script>
 <script data-th-src="@{/js/app/operate/common/template.js}"></script>
 <script data-th-src="@{/js/app/operate/manual/manual.js}"></script>
+<script>
+    let clipboard1 = new ClipboardJS('.copy_btn');
+    clipboard1.on('success', function(e) {
+        $MB.n_success("成功复制到粘贴板！");
+    });
+</script>
 </body>
 </html>

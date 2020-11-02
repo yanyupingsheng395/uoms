@@ -19,17 +19,18 @@
         <result column="IS_REC" jdbcType="VARCHAR" property="isRec"/>
         <result column="coupon_identity" jdbcType="VARCHAR" property="couponIdentity"/>
         <result column="coupon_sn" jdbcType="VARCHAR" property="couponSn"/>
+        <result column="COUPON_LONG_URL" jdbcType="VARCHAR" property="couponLongUrl"/>
     </resultMap>
 
     <select id="selectAllCouponList" resultMap="BaseResultMap">
-         select coupon_id, coupon_denom, coupon_threshold, coupon_url, coupon_desc, coupon_num, to_char(valid_end, 'yyyy-mm-dd') valid_end, coupon_display_name, valid_status, discount_level, check_flag, check_comments,coupon_identity,coupon_sn
+         select coupon_id, coupon_denom, coupon_threshold, coupon_url,coupon_long_url,coupon_desc, coupon_num, to_char(valid_end, 'yyyy-mm-dd') valid_end, coupon_display_name, valid_status, discount_level, check_flag, check_comments,coupon_identity,coupon_sn
         from uo_qywx_coupon
             where VALID_STATUS = 'Y'
         order by coupon_threshold asc, coupon_denom asc
     </select>
 
     <select id="getList" resultMap="BaseResultMap">
-        select coupon_id, coupon_denom, coupon_threshold, coupon_url, coupon_desc, coupon_num, to_char(valid_end, 'yyyy-mm-dd') valid_end, coupon_display_name, valid_status, discount_level, check_flag, check_comments
+        select coupon_id, coupon_denom, coupon_threshold, coupon_url,coupon_long_url, coupon_desc, coupon_num, to_char(valid_end, 'yyyy-mm-dd') valid_end, coupon_display_name, valid_status, discount_level, check_flag, check_comments
         from uo_qywx_coupon
             where VALID_STATUS = 'Y'
         order by coupon_threshold asc, coupon_denom asc
@@ -41,8 +42,8 @@
     </select>
 
     <insert id="save" parameterType="com.linksteady.operate.domain.CouponInfo">
-        insert into uo_qywx_coupon(COUPON_DENOM, COUPON_THRESHOLD, COUPON_URL, COUPON_DESC, COUPON_NUM, COUPON_DISPLAY_NAME, VALID_STATUS, VALID_END, CHECK_FLAG, CHECK_COMMENTS,coupon_identity,coupon_sn) VALUES
-        (#{couponDenom}, #{couponThreshold}, #{couponUrl}, #{couponDesc}, #{couponNum},  #{couponDisplayName}, 'Y', to_date(#{validEnd}, 'yyyy-mm-dd'), #{checkFlag}, #{checkComments},#{couponIdentity},#{couponSn})
+        insert into uo_qywx_coupon(COUPON_DENOM, COUPON_THRESHOLD, COUPON_URL, COUPON_LONG_URL,COUPON_DESC, COUPON_NUM, COUPON_DISPLAY_NAME, VALID_STATUS, VALID_END, CHECK_FLAG, CHECK_COMMENTS,coupon_identity,coupon_sn) VALUES
+        (#{couponDenom}, #{couponThreshold}, #{couponUrl},#{couponLongUrl}, #{couponDesc}, #{couponNum},  #{couponDisplayName}, 'Y', to_date(#{validEnd}, 'yyyy-mm-dd'), #{checkFlag}, #{checkComments},#{couponIdentity},#{couponSn})
     </insert>
 
     <select id="selectCouponIdentity" resultType="int">
@@ -50,13 +51,22 @@
     </select>
     <update id="update" parameterType="com.linksteady.operate.domain.CouponInfo">
         update uo_qywx_coupon
-        set COUPON_DENOM = #{couponDenom},COUPON_THRESHOLD = #{couponThreshold},COUPON_URL = #{couponUrl},COUPON_DESC = #{couponDesc},COUPON_NUM = #{couponNum},COUPON_DISPLAY_NAME = #{couponDisplayName},coupon_identity=#{couponIdentity},coupon_sn=#{couponSn},
-        VALID_STATUS = #{validStatus}, VALID_END = to_date(#{validEnd}, 'yyyy-mm-dd'), check_flag = #{checkFlag}
+        set COUPON_DENOM = #{couponDenom},
+            COUPON_THRESHOLD = #{couponThreshold},
+            COUPON_URL = #{couponUrl},
+            COUPON_LONG_URL = #{couponLongUrl},
+            COUPON_DESC = #{couponDesc},
+            COUPON_NUM = #{couponNum},
+            COUPON_DISPLAY_NAME = #{couponDisplayName},
+            coupon_sn=#{couponSn},
+            VALID_STATUS = #{validStatus},
+            VALID_END = to_date(#{validEnd}, 'yyyy-mm-dd'),
+            check_flag = #{checkFlag}
         where COUPON_ID = #{couponId}
     </update>
 
     <select id="getByCouponId" resultMap="BaseResultMap">
-        select COUPON_ID, COUPON_DENOM, COUPON_THRESHOLD, COUPON_URL, COUPON_DESC, COUPON_NUM, to_char(VALID_END, 'yyyy-mm-dd') VALID_END,  COUPON_DISPLAY_NAME, VALID_STATUS, DISCOUNT_LEVEL, CHECK_FLAG, CHECK_COMMENTS,coupon_identity,coupon_sn from uo_qywx_coupon
+        select COUPON_ID, COUPON_DENOM, COUPON_THRESHOLD, COUPON_URL, COUPON_LONG_URL,COUPON_DESC, COUPON_NUM, to_char(VALID_END, 'yyyy-mm-dd') VALID_END,  COUPON_DISPLAY_NAME, VALID_STATUS, DISCOUNT_LEVEL, CHECK_FLAG, CHECK_COMMENTS,coupon_identity,coupon_sn from uo_qywx_coupon
         where COUPON_ID = #{couponId}::int4
     </select>
 
@@ -92,7 +102,7 @@
 
     <update id="validCouponUrl">
         update uo_qywx_coupon set CHECK_FLAG = '0', CHECK_COMMENTS = '补贴链接未配置'
-        where (COUPON_URL is null or coupon_url = '') AND VALID_STATUS='Y'
+        where (COUPON_URL is null or coupon_url = '' or COUPON_LONG_URL is null or coupon_long_url = '') AND VALID_STATUS='Y'
     </update>
 
     <update id="validCouponPass">
@@ -106,7 +116,8 @@
             t3.coupon_display_name,
             t3.coupon_denom,
             t3.coupon_threshold,
-            t3.coupon_url
+            t3.coupon_url,
+            t3.coupon_long_url
         from uo_op_daily_template_config t1,
              uo_qywx_group_coupon        t2,
              uo_qywx_coupon              t3

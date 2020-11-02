@@ -10,8 +10,7 @@ public class CouponInfo {
     private String couponUrl;
     private String couponDesc;
     private String couponNum;
-    private String couponInfo1;
-    private String couponInfo2;
+    private String couponLongUrl;
     private String couponDisplayName;
     private String validStatus;
     private String couponIdentity;//优惠券编号
