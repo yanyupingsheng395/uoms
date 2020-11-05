@@ -12,9 +12,9 @@ public interface QywxActivityUserGroupService {
 
     List<ActivityGroup> getUserGroupList(Long headId, String type);
 
-    int getCount(Long headId, String stage);
+    int getCount(Long headId);
 
-    void updateGroupTemplate(Long headId, Long groupId, Long code, String stage);
+    void updateGroupTemplate(Long headId, Long groupId, Long code);
 
     int validGroupTemplateWithGroup(Long headId, String type);
 

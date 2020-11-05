@@ -37,7 +37,7 @@ import java.util.stream.IntStream;
 public class QywxActivityPlanController {
 
     @Autowired
-    private QywxActivityPlanService activityPlanService;
+    private QywxActivityPlanService qywxActivityPlanService;
 
     @Autowired
     private QywxActivityDetailService activityDetailService;
@@ -56,7 +56,7 @@ public class QywxActivityPlanController {
      */
     @RequestMapping("/getPlanList")
     public ResponseBo getPlanList(@RequestParam Long headId) {
-        List<ActivityPlan> planList = activityPlanService.getPlanList(headId);
+        List<ActivityPlan> planList = qywxActivityPlanService.getPlanList(headId);
         return ResponseBo.okWithData(null, planList);
     }
 
@@ -68,11 +68,11 @@ public class QywxActivityPlanController {
      */
     @GetMapping("/getUserGroupList")
     public List<ActivityGroupVO> getUserGroupList(long planId) {
-        ActivityPlan activityPlan = activityPlanService.getPlanInfo(planId);
+        ActivityPlan activityPlan = qywxActivityPlanService.getPlanInfo(planId);
         if (null == activityPlan) {
             return Lists.newArrayList();
         }
-        List<ActivityGroupVO> planGroupInfo = activityPlanService.getPlanGroupList(planId);
+        List<ActivityGroupVO> planGroupInfo = qywxActivityPlanService.getPlanGroupList(planId);
 
         ActivityGroupVO activityGroupVO = new ActivityGroupVO();
         activityGroupVO.setGroupId(-1L);
@@ -93,12 +93,12 @@ public class QywxActivityPlanController {
         int limit = request.getLimit();
         int offset = request.getOffset();
         long planId = Long.parseLong(request.getParam().get("planId"));
-        ActivityPlan activityPlan = activityPlanService.getPlanInfo(planId);
+        ActivityPlan activityPlan = qywxActivityPlanService.getPlanInfo(planId);
         if (null == activityPlan) {
             return ResponseBo.error();
         }
-        int count = activityPlanService.getPlanSmsContentListCount(planId);
-        List smsStatis = activityPlanService.getPlanSmsContentList(planId, limit, offset);
+        int count = qywxActivityPlanService.getPlanSmsContentListCount(planId);
+        List smsStatis = qywxActivityPlanService.getPlanSmsContentList(planId, limit, offset);
         return ResponseBo.okOverPaging(null, count, smsStatis);
     }
 
@@ -131,7 +131,7 @@ public class QywxActivityPlanController {
             return ResponseBo.error("非法参数，请通过系统界面进行操作！");
         }
 
-        ActivityPlan activityPlan = activityPlanService.getPlanInfo(planId);
+        ActivityPlan activityPlan = qywxActivityPlanService.getPlanInfo(planId);
 
         if (null == activityPlan) {
             return ResponseBo.error("不存在的活动执行计划，请通过系统界面进行操作！");
@@ -172,7 +172,7 @@ public class QywxActivityPlanController {
             return ResponseBo.error("非法参数，请通过系统界面进行操作！");
         }
 
-        ActivityPlan activityPlan = activityPlanService.getPlanInfo(planId);
+        ActivityPlan activityPlan = qywxActivityPlanService.getPlanInfo(planId);
 
         if (null == activityPlan) {
             return ResponseBo.error("不存在的活动执行计划，请通过系统界面进行操作！");
@@ -207,7 +207,7 @@ public class QywxActivityPlanController {
             msg = "非法请求，请通过界面进行操作!";
             return ResponseBo.error(msg);
         } else {
-            ActivityPlan activityPlan = activityPlanService.getPlanInfo(planId);
+            ActivityPlan activityPlan = qywxActivityPlanService.getPlanInfo(planId);
 
             if (null == activityPlan) {
                 msg = "非法请求，请通过界面进行操作!";
@@ -275,9 +275,9 @@ public class QywxActivityPlanController {
      */
     @GetMapping("/getPlanEffectInfo")
     public ResponseBo getPlanEffectInfo(@RequestParam Long planId, @RequestParam String kpiType) {
-        ActivityPlan activityPlan = activityPlanService.getPlanInfo(planId);
+        ActivityPlan activityPlan = qywxActivityPlanService.getPlanInfo(planId);
         //获取计划的效果
-        ActivityPlanEffectVO activitPf = activityPlanService.getPlanEffectById(planId, kpiType);
+        ActivityPlanEffectVO activitPf = qywxActivityPlanService.getPlanEffectById(planId, kpiType);
         Map<String, Object> result = Maps.newHashMap();
         result.put("planDt", activityPlan.getPlanDate().format(DateTimeFormatter.ofPattern("yyyy年MM月dd日")));
         result.put("userCount", String.valueOf(activityPlan.getSuccessNum()));
@@ -294,7 +294,7 @@ public class QywxActivityPlanController {
      */
     @GetMapping("/getPlanEffectTrend")
     public ResponseBo getPlanEffectTrend(@RequestParam Long planId) {
-        return ResponseBo.okWithData(null, activityPlanService.getPlanEffectTrend(planId));
+        return ResponseBo.okWithData(null, qywxActivityPlanService.getPlanEffectTrend(planId));
     }
 
     /**
@@ -307,8 +307,8 @@ public class QywxActivityPlanController {
         int limit = request.getLimit();
         int offset = request.getOffset();
         Long planId = Long.parseLong(request.getParam().get("planId"));
-        List<ActivityPersonal> personals = activityPlanService.getPersonalPlanEffect(limit, offset, planId);
-        int count = activityPlanService.getDailyPersonalEffectCount(planId);
+        List<ActivityPersonal> personals = qywxActivityPlanService.getPersonalPlanEffect(limit, offset, planId);
+        int count = qywxActivityPlanService.getDailyPersonalEffectCount(planId);
         return ResponseBo.okOverPaging(null, count, personals);
     }
 
@@ -318,7 +318,7 @@ public class QywxActivityPlanController {
      * @return
      */
     @GetMapping("/getPlanStatus")
-    public ResponseBo getPlanStatus(@RequestParam String headId, @RequestParam String stage) {
-        return ResponseBo.okWithData(null, activityPlanService.getPlanStatus(headId, stage));
+    public ResponseBo getPlanStatus(@RequestParam String headId) {
+        return ResponseBo.okWithData(null, qywxActivityPlanService.getPlanStatus(headId));
     }
 }

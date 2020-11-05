@@ -53,22 +53,11 @@ function getPlanTable() {
                 valign: 'middle',
                 formatter: function (value, row, index) {
                     if (value === 'NOTIFY')
-                    {   if(row.stage==='preheat')
-                        {
-                            return '<span class="badge bg-success">预售</span>&nbsp;<span class="badge bg-info">活动通知</span>';
-                        }else
-                        {
-                            return '<span class="badge bg-primary">正式</span>&nbsp;<span class="badge bg-info">活动通知</span>';
-                        }
+                    {
+                        return '<span class="badge bg-primary">正式</span>&nbsp;<span class="badge bg-info">活动通知</span>';
                     }else
                     {
-                        if(row.stage==='formal')
-                        {
-                            return '<span class="badge bg-success">正式</span>&nbsp;<span class="badge bg-cyan">活动期间</span>';
-                        }else
-                        {
-                            return '<span class="badge bg-primary">预售</span>&nbsp;<span class="badge bg-cyan">活动期间</span>';
-                        }
+                        return '<span class="badge bg-success">正式</span>&nbsp;<span class="badge bg-cyan">活动期间</span>';
 
                     }
                 }

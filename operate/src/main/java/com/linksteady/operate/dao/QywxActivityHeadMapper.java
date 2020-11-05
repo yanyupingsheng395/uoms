@@ -15,7 +15,7 @@ public interface QywxActivityHeadMapper {
 
     List<ActivityHead> getDataListOfPage(int limit, int offset, String name, String date, String status);
 
-    int getDataCount(@Param("name") String name);
+    int getDataCount(String name, String date, String status);
 
     void saveActivityHead(ActivityHead activityHead);
 
@@ -27,17 +27,6 @@ public interface QywxActivityHeadMapper {
 
     int getActivityStatus(String id);
 
-    String getPreheatStatus(String headId);
-
-    Map<String, String> getDataChangedStatus(Long headId, String stage);
-
-    /**
-     * 更新头表预售状态
-     * @param headId
-     * @param planType 计划类型(通知 or 正式)
-     */
-    void updatePreheatStatusHead(Long headId, String status, String planType);
-
     /**
      * 更新头表正式状态
      * @param headId
@@ -48,16 +37,6 @@ public interface QywxActivityHeadMapper {
     void deleteActivity(Long headId);
 
     int getDeleteCount(Long headId);
-
-    /**
-     * 失效预售通知
-     */
-    void expirePreheatNotify();
-
-    /**
-     * 失效预售正式
-     */
-    void expirePreheatDuring();
 
     /**
      * 失效正式通知

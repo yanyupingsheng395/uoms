@@ -8,9 +8,6 @@ import com.linksteady.operate.domain.ActivityCoupon;
 import com.linksteady.operate.domain.ActivityGroup;
 import com.linksteady.operate.domain.ActivityHead;
 import com.linksteady.operate.domain.enums.ActivityPlanTypeEnum;
-import com.linksteady.operate.domain.enums.ActivityStageEnum;
-import com.linksteady.operate.domain.enums.ActivityStatusEnum;
-import com.linksteady.operate.service.ActivityHeadService;
 import com.linksteady.operate.service.QywxActivityHeadService;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,31 +26,28 @@ import java.util.Map;
 public class QywxActivityHeadServiceImpl implements QywxActivityHeadService {
 
     @Autowired
-    private QywxActivityHeadMapper activityHeadMapper;
+    private QywxActivityHeadMapper qywxActivityHeadMapper;
 
     @Autowired
-    private QywxActivityUserGroupMapper activityUserGroupMapper;
+    private QywxActivityUserGroupMapper qywxActivityUserGroupMapper;
 
     @Autowired
-    private QywxActivityProductMapper activityProductMapper;
+    private QywxActivityProductMapper qywxActivityProductMapper;
 
     @Autowired
-    private QywxActivityPlanMapper activityPlanMapper;
+    private QywxActivityPlanMapper qywxActivityPlanMapper;
 
     @Autowired
-    private QywxActivityDetailMapper activityDetailMapper;
-
-    @Autowired
-    private QywxActivityCovMapper activityCovMapper;
+    private QywxActivityDetailMapper qywxActivityDetailMapper;
 
     @Override
     public List<ActivityHead> getDataListOfPage(int limit, int offset, String name, String date, String status) {
-        return activityHeadMapper.getDataListOfPage(limit,offset, name, date, status);
+        return qywxActivityHeadMapper.getDataListOfPage(limit,offset, name, date, status);
     }
 
     @Override
-    public int getDataCount(String name) {
-        return activityHeadMapper.getDataCount(name);
+    public int getDataCount(String name, String date, String status) {
+        return qywxActivityHeadMapper.getDataCount(name,date,status);
     }
 
     @Override
@@ -62,48 +56,41 @@ public class QywxActivityHeadServiceImpl implements QywxActivityHeadService {
         activityHead.setFormalStatus("edit");
         activityHead.setInsertDt(new Date());
         activityHead.setInsertBy(((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername());
-        activityHeadMapper.saveActivityHead(activityHead);
+        qywxActivityHeadMapper.saveActivityHead(activityHead);
         saveGroupInfo(activityHead.getHeadId());
         List<ActivityCoupon> couponList = JSONArray.parseArray(coupons, ActivityCoupon.class);
         if(couponList.size() > 0) {
             couponList.forEach(x->x.setHeadId(activityHead.getHeadId()));
-            activityHeadMapper.saveActivityCouponList(couponList);
+            qywxActivityHeadMapper.saveActivityCouponList(couponList);
         }
         return activityHead.getHeadId().intValue();
     }
 
     @Override
     public ActivityHead findById(Long headId) {
-        return activityHeadMapper.findById(headId);
+        return qywxActivityHeadMapper.findById(headId);
     }
 
     @Override
     public String getActivityName(String headId) {
-        return activityHeadMapper.getActivityName(headId);
+        return qywxActivityHeadMapper.getActivityName(headId);
     }
 
     @Override
     public int getActivityStatus(String id) {
-        return activityHeadMapper.getActivityStatus(id);
+        return qywxActivityHeadMapper.getActivityStatus(id);
     }
 
-
-    @Override
-    public Map<String, String> getDataChangedStatus(Long headId, String stage) {
-        return activityHeadMapper.getDataChangedStatus(headId, stage);
-    }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteData(Long headId) {
-        activityHeadMapper.deleteActivity(headId);
-        activityProductMapper.deleteData(headId);
-        activityPlanMapper.deletePlan(headId);
-        activityUserGroupMapper.deleteData(headId);
+        qywxActivityHeadMapper.deleteActivity(headId);
+        qywxActivityProductMapper.deleteData(headId);
+        qywxActivityPlanMapper.deletePlan(headId);
+        qywxActivityUserGroupMapper.deleteData(headId);
         //删除活动明细数据
-        activityDetailMapper.deleteData(headId);
-        //删除转化率数据
-        activityCovMapper.deleteData(headId);
+        qywxActivityDetailMapper.deleteData(headId);
     }
 
     /**
@@ -114,48 +101,34 @@ public class QywxActivityHeadServiceImpl implements QywxActivityHeadService {
      */
     @Override
     public int getDeleteCount(Long headId) {
-        return activityHeadMapper.getDeleteCount(headId);
+        return qywxActivityHeadMapper.getDeleteCount(headId);
     }
 
     /**
      *
      * @param headId
-     * @param stage  活动阶段
      * @param status
      * @param type   计划类型 通知 or 正式
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateStatus(Long headId, String stage, String status, String type) {
-        if (ActivityStageEnum.preheat.getStageCode().equalsIgnoreCase(stage)) {
-            if(ActivityPlanTypeEnum.Notify.getPlanTypeCode().equalsIgnoreCase(type)) {
-                activityHeadMapper.updatePreheatStatusHead(headId,status,ActivityPlanTypeEnum.Notify.getPlanTypeCode());
-            } else if(ActivityPlanTypeEnum.During.getPlanTypeCode().equalsIgnoreCase(type)) {
-                activityHeadMapper.updatePreheatStatusHead(headId,status,ActivityPlanTypeEnum.During.getPlanTypeCode());
-            }
-        }else if(ActivityStageEnum.formal.getStageCode().equalsIgnoreCase(stage)) {
-            if(ActivityPlanTypeEnum.Notify.getPlanTypeCode().equalsIgnoreCase(type)) {
-                activityHeadMapper.updateFormalStatusHead(headId,status,ActivityPlanTypeEnum.Notify.getPlanTypeCode());
-            } else if(ActivityPlanTypeEnum.During.getPlanTypeCode().equalsIgnoreCase(type)) {
-                activityHeadMapper.updateFormalStatusHead(headId,status,ActivityPlanTypeEnum.During.getPlanTypeCode());
-            }
+    public void updateStatus(Long headId, String status, String type) {
+        if(ActivityPlanTypeEnum.Notify.getPlanTypeCode().equalsIgnoreCase(type)) {
+            qywxActivityHeadMapper.updateFormalStatusHead(headId,status,ActivityPlanTypeEnum.Notify.getPlanTypeCode());
+        } else if(ActivityPlanTypeEnum.During.getPlanTypeCode().equalsIgnoreCase(type)) {
+            qywxActivityHeadMapper.updateFormalStatusHead(headId,status,ActivityPlanTypeEnum.During.getPlanTypeCode());
         }
     }
 
     @Override
     public void expireActivityHead() {
-        //失效预售通知
-        activityHeadMapper.expirePreheatNotify();
-        //失效预售正式
-        activityHeadMapper.expirePreheatDuring();
-
-        activityHeadMapper.expireFormalNotify();
-        activityHeadMapper.expireFormalDuring();
+        qywxActivityHeadMapper.expireFormalNotify();
+        qywxActivityHeadMapper.expireFormalDuring();
     }
 
     @Override
     public List<ActivityCoupon> findCouponList(Long headId) {
-        return activityHeadMapper.getActivityCouponList(headId);
+        return qywxActivityHeadMapper.getActivityCouponList(headId);
     }
 
     /**
@@ -183,6 +156,6 @@ public class QywxActivityHeadServiceImpl implements QywxActivityHeadService {
         activityGroups.add(new ActivityGroup(
                 14L, headId,"DURING", "立减特价", ((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername(), new Date(), "用户对该策略下的商品兴趣较高，且在本次活动中发生购买的概率较大"
         ));
-        activityUserGroupMapper.saveGroupData(activityGroups);
+        qywxActivityUserGroupMapper.saveGroupData(activityGroups);
     }
 }

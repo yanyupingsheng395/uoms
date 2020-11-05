@@ -23,7 +23,6 @@
         <result property="notifyMinPrice" jdbcType="DECIMAL" column="NOTIFY_MIN_PRICE"/>
         <result property="duringMinPrice" jdbcType="DECIMAL" column="DURING_MIN_PRICE"/>
         <result property="activityType" jdbcType="VARCHAR" column="ACTIVITY_TYPE"/>
-        <result property="activityStage" jdbcType="VARCHAR" column="ACTIVITY_STAGE"/>
         <result property="spCouponFlag" jdbcType="VARCHAR" column="SP_COUPON_FLAG"/>
         <result property="spCouponThreshold" jdbcType="DECIMAL" column="SP_COUPON_THRESHOLD"/>
         <result property="spCouponDenom" jdbcType="DECIMAL" column="SP_COUPON_DENOM"/>
@@ -82,9 +81,9 @@
     <insert id="saveActivityProduct">
         insert into uo_qywx_activity_product(HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, ACTIVITY_PRICE, FORMAL_PRICE,
                                            PRODUCT_URL, GROUP_ID, discount_size, discount_amount, activity_profit, min_price, activity_type,
-                                           activity_stage, sp_coupon_flag,sp_coupon_threshold,sp_coupon_denom, discount_cnt)
+                                           sp_coupon_flag,sp_coupon_threshold,sp_coupon_denom, discount_cnt)
         values (#{headId}, #{productId}, #{productName}, #{activityPrice}, #{formalPrice}, #{productUrl},
-                #{groupId}::int4, #{discountSize}, #{discountAmount}, #{activityProfit}, #{minPrice}, #{activityType}, #{activityStage},
+                #{groupId}::int4, #{discountSize}, #{discountAmount}, #{activityProfit}, #{minPrice}, #{activityType},
                 #{spCouponFlag},#{spCouponThreshold},#{spCouponDenom}, #{discountCnt})
     </insert>
 
@@ -111,7 +110,7 @@
 
     <insert id="saveActivityProductList">
         insert into uo_qywx_activity_product(HEAD_ID, EPB_PRODUCT_ID, PRODUCT_NAME, MIN_PRICE, FORMAL_PRICE, PRODUCT_URL, GROUP_ID, discount_size,discount_amount,
-        activity_profit, activity_price, activity_type, activity_stage, sp_coupon_flag,sp_coupon_threshold,sp_coupon_denom, discount_cnt) values
+        activity_profit, activity_price, activity_type, sp_coupon_flag,sp_coupon_threshold,sp_coupon_denom, discount_cnt) values
         <foreach collection="list" item="item" index="index" separator=",">
             (#{item.headId}::int4,
             #{item.productId},
@@ -121,7 +120,7 @@
             #{item.productUrl},
             #{item.groupId}::int4,
             #{item.discountSize},#{item.discountAmount},
-            #{item.activityProfit}, #{item.activityPrice}, #{item.activityType}, #{item.activityStage}, #{item.spCouponFlag},#{item.spCouponThreshold},#{item.spCouponDenom}, #{item.discountCnt})
+            #{item.activityProfit}, #{item.activityPrice}, #{item.activityType}, #{item.spCouponFlag},#{item.spCouponThreshold},#{item.spCouponDenom}, #{item.discountCnt})
         </foreach>
     </insert>
 
@@ -140,7 +139,7 @@
 
     <select id="getSameProductCount" resultType="int">
         select count(1) from uo_qywx_activity_product
-        where head_id = #{headId} and activity_stage = #{stage} and EPB_PRODUCT_ID in
+        where head_id = #{headId} and  EPB_PRODUCT_ID in
         <foreach collection="productIdList" separator="," open="(" close=")" item="item">
             #{item}
         </foreach>
@@ -218,14 +217,6 @@
 
     <select id="checkProductId" resultType="int">
         select count(1) from uo_qywx_activity_product where head_id = #{headId}::integer and epb_product_id = #{productId}
-    </select>
-
-    <select id="ifCalculate" resultType="int">
-        with v1 as (select epb_product_id
-                    from uo_qywx_activity_product
-                    where head_id = #{headId}::integer),
-             v2 as (select epb_product_id from uo_qywx_activity_product_history where head_id = #{headId}::integer)
-        select count(1) from v1 full join v2 on v1.epb_product_id = v2.epb_product_id where v1.epb_product_id is null or v2.epb_product_id is null
     </select>
 
     <select id="getNotValidProduct" resultType="string">

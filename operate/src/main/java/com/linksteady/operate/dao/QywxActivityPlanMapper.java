@@ -60,5 +60,5 @@ public interface QywxActivityPlanMapper {
 
     void expireActivityPlan();
 
-    String getPlanStatus(String headId, String stage);
+    String getPlanStatus(String headId);
 }

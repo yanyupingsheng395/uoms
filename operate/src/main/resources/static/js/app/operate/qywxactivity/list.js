@@ -37,6 +37,30 @@ $( function () {
                 field: 'formalNotifyDt',
                 align: "center",
                 title: '通知时间'
+            },{
+                field: 'formalNotifyStatus',
+                align: "center",
+                title: '通知执行状态',
+                formatter: function (value, row, index) {
+                    let res = "-";
+                    switch (value) {
+                        case "edit":
+                            res = "<span class=\"badge bg-info\">待计划</span>";
+                            break;
+                        case "todo":
+                            res = "<span class=\"badge bg-primary\">待执行</span>";
+                            break;
+                        case "doing":
+                            res = "<span class=\"badge bg-warning\">执行中</span>";
+                            break;
+                        case "done":
+                            res = "<span class=\"badge bg-success\">执行完</span>";
+                        case "timeout":
+                            res = "<span class=\"badge bg-gray\">过期未执行</span>";
+                            break;
+                    }
+                    return res;
+                }
             }, {
                 field: 'formalStartDt',
                 align: "center",
@@ -48,7 +72,7 @@ $( function () {
             }, {
                 field: 'formalStatus',
                 align: "center",
-                title: '执行状态',
+                title: '期间执行状态',
                 formatter: function (value, row, index) {
                     let res = "-";
                     switch (value) {
@@ -124,21 +148,17 @@ $( "#btn_plan" ).click( function () {
         return;
     }
     let headId = selected[0].headId;
-    let preheatStatus = selected[0]['preheatStatus'];
-    let preheatNotifyStatus = selected[0]['preheatNotifyStatus'];
     let formalNotifyStatus = selected[0]['formalNotifyStatus'];
     let formalStatus = selected[0]['formalStatus'];
-    let hasPreheat = selected[0].hasPreheat;
+
     let flag = (
-        (hasPreheat === '1' && preheatNotifyStatus === 'edit' && formalNotifyStatus === 'edit' && preheatStatus === 'edit' && formalStatus === 'edit') ||
-        (hasPreheat === '0' && formalStatus === 'edit' && formalNotifyStatus === 'edit') ||
-        (hasPreheat === '1' && preheatNotifyStatus === 'timeout' && formalNotifyStatus === 'timeout' && preheatStatus === 'timeout' && formalStatus === 'timeout') ||
-        (hasPreheat === '0' && formalStatus === 'timeout' && formalNotifyStatus === 'timeout')
+        (formalStatus === 'edit' && formalNotifyStatus === 'edit') ||
+        (formalStatus === 'timeout' && formalNotifyStatus === 'timeout')
     );
     if (!flag) {
-        window.location.href = "/page/activity/plan?id=" + headId;
+        window.location.href = "/page/qywxActivity/plan?id=" + headId;
     } else {
-        $MB.n_warning( "全部为待计划或过期未执行的活动不允许查看执行计划！" );
+        $MB.n_warning( "待计划或过期未执行的活动不允许查看执行计划！" );
     }
 } );
 

@@ -9,11 +9,9 @@ let CURRENT_TYPE;
 
 $( function () {
     stepInit();
-    editInit();
     initDt();
     validBasic();
     validateProductRule();
-    statTmpContentNum();
 });
 
 // 步骤条初始化
@@ -29,45 +27,6 @@ function stepInit() {
         dataOrder: ["title", "line", "description"]
     });
 }
-
-// 编辑页面初始化
-function editInit() {
-    if(operate_type === 'update') {
-        var hasPreheatVal = $( "input[name='hasPreheat']:checked" ).val();
-        haspreheat(hasPreheatVal);
-    }
-}
-
-// 是否预售按钮点击事件
-function haspreheat(v) {
-    if(v === '1') {
-        CURRENT_ACTIVITY_STAGE = 'preheat';
-        $("#creatPreheat").removeAttr("style");
-    }
-    if(v === '0') {
-        CURRENT_ACTIVITY_STAGE = 'formal';
-        $("#productListTitle1").html('正式通知活动商品列表');
-        $("#productListTitle12").html('正式期间活动商品列表');
-        $("#creatPreheat").attr("style", "display:none;");
-    }
-}
-
-// 平台优惠点击是否
-$("select[name='platDiscount']").change(function() {
-    var idx = $(this).find("option:selected").val();
-    if(idx === 'N'){
-        $("#addPlatDiscountBtn").hide();
-        $("#platDiscountItems").hide();
-        $("#platCouponDiv").removeAttr("style");
-    }
-    if(idx === 'Y'){
-        $("#addPlatDiscountBtn").show();
-        if($("#platDiscountItems").text().trim() !== '') {
-            $("#platDiscountItems").show();
-            $("#platCouponDiv").attr("style", "border: dashed 1px #e7eaec;margin-top: 10px;padding-bottom: 10px;");
-        }
-    }
-});
 
 // 店铺优惠点击事件
 $("select[name='shopDiscount']").change(function() {
@@ -134,7 +93,6 @@ function stepBreak(index) {
         $("#step2").attr("style", "display:none;");
         $("#step3").attr("style", "display:none;");
 
-        $("#creatPreheat").attr('onclick', 'preheatClick()');
         $("#creatFormal").attr('onclick', 'formalClick()');
     }
     if(index == 1) {
@@ -152,7 +110,6 @@ function stepBreak(index) {
                 }else {
                     $.get("/qywxActivity/validUserGroup", {headId: $("#headId").val()}, function (r) {
                         if(r.code === 200) {
-                            ifCalculate();
                             create_step.setActive(2);
                             $("#step1").attr("style", "display:none;");
                             $("#step2").attr("style", "display:none;");
@@ -441,7 +398,6 @@ $('#btn_upload').click(function () {
         formData.append("headId", $("#headId").val());
         formData.append("repeatProduct", repeatProduct);
         formData.append("uploadMethod", uploadMethod);
-        formData.append("stage", CURRENT_ACTIVITY_STAGE);
         formData.append("activityType", CURRENT_ACTIVITY_TYPE);
         $.ajax({
             url: "/qywxActivity/uploadExcel",
@@ -648,8 +604,7 @@ function getProductInfo() {
 // 提交计划 type:NOTIFY 活动通知，DURING 活动期间
 function submitActivity(type) {
     let headId = $("#headId").val();
-    var stage = $("#activity_stage").val();
-    $.get("/qywxActivity/validSubmit", {headId: $("#headId").val(), stage: stage, type: type}, function (r) {
+    $.get("/qywxActivity/validSubmit", {headId: $("#headId").val(), type: type}, function (r) {
         if(r.code === 200) {
             var data = r.data;
             if(data['error'] !== null && data['error'] !== undefined) {
@@ -661,32 +616,16 @@ function submitActivity(type) {
                 content: "确认保存计划？"
             }, function () {
                 if(type === 'DURING') {
-                    if(stage === 'preheat') {
-                        if(preheatStatus !== 'edit' && preheatStatus !== '' && preheatStatus !== null && preheatStatus !== undefined) {
-                            $MB.n_success("保存计划成功！");
-                        }else {
-                            submitData(headId, type);
-                        }
+                    if(formalStatus !== 'edit' &&  formalStatus !== 'edit' && formalStatus !== '' && formalStatus !== null && formalStatus !== undefined) {
+                        $MB.n_success("保存计划成功！");
                     }else {
-                        if(formalStatus !== 'edit' &&  formalStatus !== 'edit' && formalStatus !== '' && formalStatus !== null && formalStatus !== undefined) {
-                            $MB.n_success("保存计划成功！");
-                        }else {
-                            submitData(headId, type);
-                        }
+                        submitData(headId, type);
                     }
                 }else {
-                    if(stage === 'preheat') {
-                        if(preheatNotifyStatus !== 'edit' && preheatNotifyStatus !== '' && preheatNotifyStatus !== null && preheatNotifyStatus !== undefined) {
-                            $MB.n_success("保存计划成功！");
-                        }else {
-                            submitData(headId, type);
-                        }
+                    if(formalNotifyStatus !== 'edit' && formalNotifyStatus !== '' && formalNotifyStatus !== null && formalNotifyStatus !== undefined) {
+                        $MB.n_success("保存计划成功！");
                     }else {
-                        if(formalNotifyStatus !== 'edit' && formalNotifyStatus !== '' && formalNotifyStatus !== null && formalNotifyStatus !== undefined) {
-                            $MB.n_success("保存计划成功！");
-                        }else {
-                            submitData(headId, type);
-                        }
+                        submitData(headId, type);
                     }
                 }
             });
@@ -697,7 +636,7 @@ function submitActivity(type) {
 }
 // 保存计划
 function submitData(headId, type) {
-    $.post("/qywxActivity/submitActivity", {headId: headId, operateType: operate_type, stage: CURRENT_ACTIVITY_STAGE, type: type}, function (r) {
+    $.post("/qywxActivity/submitActivity", {headId: headId, operateType: operate_type, type: type}, function (r) {
         if(r.code === 200) {
             $MB.n_success("保存计划成功！");
         }else {
@@ -709,14 +648,12 @@ function submitData(headId, type) {
 function createActivity() {
     getGroupList( 'NOTIFY', 'table1');
     getGroupList('DURING', 'table5');
-    covertDataTable();
-    // setTitle(stage);
+
     // 根据不同的状态禁用相关通知的按钮
     if(formalNotifyStatus === 'done' || formalNotifyStatus === 'timeout') {
         $("#changePlan").attr("disabled", "disabled");
         $("#notifySaveBtn").attr("disabled", "disabled");
     }else {
-        // var data = getPlanStatus($("#headId").val(), 'button');
         var data = false;
         if(data) {
             $("#notifySaveBtn").removeAttr("disabled");
@@ -891,8 +828,6 @@ $( "#btn_batch_upload" ).click( function () {
 
 // 获取群组列表信息
 function getGroupList(type, tableId) {
-    // var flag = getPlanStatus($("#headId").val(), 'smsContent');
-    var flag = false;
     var headId = $( "#headId" ).val();
     var settings = {
         url: '/qywxActivity/getGroupList',
@@ -915,7 +850,7 @@ function getGroupList(type, tableId) {
             }, {
                 title: '设置消息',
                 align: 'center',
-                visible: setContent(flag, tableId),
+                visible: setContent(tableId),
                 formatter: function (value, row, index) {
                     if(tableId === 'table1') {
                         return "<a onclick='selectGroup(\"" + type + "\"," + row['smsTemplateCode'] + ", \"" + row['groupId'] + "\")' style='color:#333;'><i class='fa fa-envelope-o'></i>" +
@@ -974,25 +909,14 @@ function getGroupList(type, tableId) {
 }
 
 // 判断编辑页的文案设置按钮是否需要展示
-function setContent(stage, flag, tableId) {
-    if(stage === 'preheat') {
-        if(tableId === 'table1' && (preheatNotifyStatus === 'doing' || preheatNotifyStatus === 'done' || preheatNotifyStatus === 'timeout' || !flag)) {
-            return false;
-        }
-        if(tableId === 'table5' && preheatStatus === 'done') {
-            return false;
-        }
-        return true;
+function setContent(flag, tableId) {
+    if(tableId === 'table1' && (formalNotifyStatus === 'doing' || formalNotifyStatus === 'done' || formalNotifyStatus === 'timeout')) {
+        return false;
     }
-    if(stage === 'formal') {
-        if(tableId === 'table1' && (formalNotifyStatus === 'doing' || formalNotifyStatus === 'done' || formalNotifyStatus === 'timeout' || !flag)) {
-            return false;
-        }
-        if(tableId === 'table5' && formalStatus === 'done') {
-            return false;
-        }
-        return true;
+    if(tableId === 'table5' && (formalStatus === 'doing' || formalStatus === 'done' || formalStatus === 'timeout')) {
+        return false;
     }
+    return true;
 }
 
 // 选择群组打开model
@@ -1248,16 +1172,6 @@ function editTemplate() {
         $( "input[name='isProfit']:radio[value='" + data.isProfit + "']" ).prop( "checked", true );
         $( "#btn_save_sms" ).attr( 'name', 'update' );
 
-        //根据变量设置一些初始化是否显示的参数
-        if('Y'!==prodUrlEnabled)
-        {
-            $("#produrlComments").addClass('hidden');
-            $("#produrlDiv").hide();
-        }
-
-        // 统计短信内容的字数
-        initGetInputNum();
-
         $( "#smstemplate_modal" ).modal( 'hide' );
         $( "#sms_add_modal" ).modal( 'show' );
     } );
@@ -1281,13 +1195,6 @@ $( "#sms_add_modal" ).on( 'hidden.bs.modal', function () {
     $( "#smstemplate_modal" ).modal( 'show' );
     $( "#btn_save_sms" ).attr( 'name', 'save' );
     $("#word").text('');
-    //根据变量设置一些初始化是否显示的参数
-    if('Y'!==prodUrlEnabled)
-    {
-        $("#produrlComments").addClass('hidden');
-        $("#produrlDiv").hide();
-    }
-
 } );
 
 // 删除文案
@@ -1320,73 +1227,6 @@ function deleteTemplate() {
     });
 }
 
-// 屏蔽测试
-function testSend() {
-    let selectRows = $( "#tmpTable" ).bootstrapTable( 'getSelections' );
-    if (null == selectRows || selectRows.length == 0) {
-        $MB.n_warning('请选择需要测试的文案！');
-        return;
-    }
-    let code = selectRows[0]["code"];
-    //根据获取到的数据查询
-    $.getJSON( "/qywxActivity/getActivityTemplateContent?code=" + code, function (resp) {
-        if (resp.code === 200) {
-            $( "#smstemplate_modal" ).modal( 'hide' );
-            //更新测试面板
-            $("#testSmsCode").val(code);
-            $( "#smsContent1" ).val( resp.data );
-            $( '#send_modal' ).modal( 'show' );
-        }
-    } )
-}
-
-// 短信model打开
-$( "#send_modal" ).on( 'hidden.bs.modal', function () {
-    $( "#smstemplate_modal" ).modal( 'show' );
-});
-
-// 屏蔽测试短信发送
-function sendMessage() {
-    //验证
-    let phoneNums=[];
-    $("input[name='phoneNum']").each(function(){
-        let temp=$(this).val();
-        if(temp!=='')
-        {
-            phoneNums.push(temp);
-        }
-    })
-
-    if(phoneNums.length==0)
-    {
-        $MB.n_warning("至少输入一个手机号！");
-        return;
-    }
-
-    let phoneNum = phoneNums.join(',');
-    let testSmsCode=$("#testSmsCode").val();
-
-    //提交后端进行发送
-    lightyear.loading( 'show' );
-
-    let param = new Object();
-    param.phoneNum = phoneNum;
-    param.smsCode = testSmsCode;
-
-    $.ajax( {
-        url: "/qywxActivity/activityContentTestSend",
-        data: param,
-        type: 'POST',
-        success: function (r) {
-            lightyear.loading( 'hide' );
-            if (r.code == 200) {
-                $MB.n_success( r.msg );
-            } else {
-                $MB.n_danger( r.msg );
-            }
-        }
-    } );
-}
 
 // 重置文案的搜索信息
 function resetTmpInfo() {
@@ -1400,294 +1240,7 @@ function resetTmpInfo() {
 // 点击添加文案按钮
 function addTemplate() {
     $('#smstemplate_modal').modal('hide');
-    //根据变量设置一些初始化是否显示的参数
-    if('Y'!==prodUrlEnabled)
-    {
-        $("#produrlComments").addClass('hidden');
-        $("#produrlDiv").hide();
-    }
-    initGetInputNum();
     $('#sms_add_modal').modal('show');
-}
-
-
-// 计算文案的字数和条数
-function statTmpContentNum() {
-    $("#content").on('input propertychange', function () {
-        let smsContent = $('#content').val();
-        let y = smsContent.length;
-        let m = smsContent.length;
-        if(smsContent.indexOf('${商品详情页短链}') > -1) {
-            y = y - '${商品详情页短链}'.length + parseInt(PROD_URL_LEN);
-            m = m - '${商品详情页短链}'.length;
-        }
-        if(smsContent.indexOf('${商品名称}') > -1) {
-            y = y - '${商品名称}'.length + parseInt(PROD_NAME_LEN);
-            m = m - '${商品名称}'.length;
-        }
-        if(smsContent.indexOf('${商品最低单价}') > -1) {
-            y = y - '${商品最低单价}'.length + parseInt(PRICE_LEN);
-            m = m - '${商品最低单价}'.length;
-        }
-        if(smsContent.indexOf('${商品利益点}') > -1) {
-            y = y - '${商品利益点}'.length + parseInt(PROFIT_LEN);
-            m = m - '${商品利益点}'.length;
-        }
-
-        let total_num = y+signatureLen+unsubscribeLen;
-        let snum3=0;
-        $("#snum1").text(m);
-        $("#snum2").text(total_num);
-
-        if(total_num<=70)
-        {
-            snum3=1;
-        }else
-        {
-            snum3=total_num%67===0?total_num/67:(parseInt(total_num/67)+1);
-        }
-        //计算文案的条数
-        $("#snum3").text(snum3);
-    });
-}
-
-// 初始化计算文案的字数和条数
-function initGetInputNum() {
-    let smsContent = $('#content').val();
-    let y = smsContent.length;
-    let m = smsContent.length;
-
-    if(smsContent.indexOf('${商品详情页短链}') > -1) {
-        y = y - '${商品详情页短链}'.length + PROD_URL_LEN;
-        m = m - '${商品详情页短链}'.length;
-    }
-    if(smsContent.indexOf('${商品名称}') > -1) {
-        y = y - '${商品名称}'.length + PROD_NAME_LEN;
-        m = m - '${商品名称}'.length;
-    }
-    if(smsContent.indexOf('${商品最低单价}') > -1) {
-        y = y - '${商品最低单价}'.length + PRICE_LEN;
-        m = m - '${商品最低单价}'.length;
-    }
-    if(smsContent.indexOf('${商品利益点}') > -1) {
-        y = y - '${商品利益点}'.length + PROFIT_LEN;
-        m = m - '${商品利益点}'.length;
-    }
-    let total_num = y+signatureLen+unsubscribeLen;
-    let snum3=0;
-    $("#snum1").text(m);
-    $("#snum2").text(total_num);
-
-    if(total_num<=70)
-    {
-        snum3=1;
-    }else
-    {
-        snum3=total_num%67===0?total_num/67:(parseInt(total_num/67)+1);
-    }
-    //计算文案的条数
-    $("#snum3").text(snum3);
-}
-
-/**
- * 调整转化率
- */
-$("#changePlan").click(function () {
-
-    // 判断活动通知商品是否上传
-    var data = $("#activityProductTable1").bootstrapTable('getData');
-    if(data.length === 0) {
-        $MB.n_warning("请先上传有效的活动通知商品！");
-    }else {
-        $("#plan_change_modal").modal('show');
-        table3();
-        var data = [{
-            name: '改变方案对转化率造成的预期改变'
-        },{
-            name: '改变方案对推送用户数造成的预期改变'
-        },{
-            name: '改变方案对转化用户数造成的预期改变'
-        }];
-        table4(data);
-    }
-});
-
-function covRowStyle(row, index) {
-    var covListId = $("#covertDataTable").bootstrapTable('getData')[0]['covListId'];
-    if(row.covListId === covListId) {
-        return {
-            classes: 'success'
-        };
-    }
-    return {};
-}
-
-// 转化率数据表
-function table3() {
-    var settings = {
-        url: '/qywxActivity/getCovList',
-        clickToSelect: true,
-        singleSelect: true,
-        rowStyle: covRowStyle,
-        onCheck:function(row){
-            var covListId = $("#covertDataTable").bootstrapTable('getData')[0]['covListId'];
-            if(covListId !== row['covListId']) {
-                var changedCovId = row['covListId'];
-                calculateCov(changedCovId);
-            }
-        },
-        queryParams: function() {
-            return {
-                headId: $("#headId").val(),
-                stage: CURRENT_ACTIVITY_STAGE,
-                covListId: $("#covertDataTable").bootstrapTable('getData')[0]['covListId']
-            }
-        },
-        columns: [
-            {
-                field: 'check',
-                checkbox: true,
-                formatter: function (value, row, index) {
-                    if(row.covListId === $("#covertDataTable").bootstrapTable('getData')[0]['covListId']) {
-                        return {checked: true};
-                    }
-                    return {};
-                }
-            }, {
-                field: 'covRate',
-                title: '推送的期望转化率（%）',
-                align: 'center',
-                formatter: function (value, row, index) {
-                    if(value !== '' && value !== null && value !== undefined) {
-                        return parseFloat((value * 100).toFixed(2));
-                    }else {
-                        return '-';
-                    }
-                }
-            }, {
-                field: 'expectPushNum',
-                align: 'center',
-                title: '达成期望转化率<br/>对应的推送用户数（人）'
-            }, {
-                field: 'expectCovNum',
-                align: 'center',
-                title: '达成期望转化率<br/>对应的转化用户数（人）'
-            }
-        ]
-    };
-    $("#table3").bootstrapTable('destroy').bootstrapTable(settings);
-}
-
-// 测算转化率的值
-function calculateCov(changedCovId) {
-    var defaultCovId = $("#covertDataTable").bootstrapTable('getData')[0]['covListId'];
-    var headId = $("#headId").val();
-    $.get("/qywxActivity/calculateCov", {headId: headId, defaultCovId: defaultCovId, changedCovId: changedCovId, stage: CURRENT_ACTIVITY_STAGE}, function (r) {
-        $("#table4").bootstrapTable('load', r.data);
-    });
-}
-
-// 转化率改变值的数据表
-function table4(data) {
-    var settings = {
-        clickToSelect: true,
-        singleSelect: true,
-        columns: [
-            {
-                field: 'name',
-                title: ''
-            }, {
-                field: 'val',
-                title: '改变绝对值',
-                align: 'center',
-                formatter: function (value, row, index) {
-                    if(value !== null && value !== '' && value !== undefined) {
-                        if(index === 0) {
-                            return parseFloat((value * 100).toFixed(2));
-                        }else {
-                            return value;
-                        }
-                    }
-                    return '-';
-                }
-            }, {
-                field: 'per',
-                title: '改变幅度（%）',
-                align: 'center',
-                formatter: function (value, row, index) {
-                    if(value !== null && value !== '' && value !== undefined) {
-                        return parseFloat((value * 100).toFixed(2));
-                    }
-                    return "-";
-                }
-            }
-        ]
-    };
-    $("#table4").bootstrapTable('destroy').bootstrapTable(settings);
-    $("#table4").bootstrapTable('load', data);
-}
-
-// 更新转化率表
-function updateCovInfo() {
-    let selectRows = $( "#table3" ).bootstrapTable( 'getSelections' );
-    if (null == selectRows || selectRows.length == 0) {
-        $MB.n_warning( '请选择需要调整的方案！' );
-        return;
-    }
-    var covId = selectRows[0]["covListId"];
-    $MB.confirm({
-        title: '提示：',
-        content: '确定设置为当前的方案？'
-    }, function () {
-        $.post("/qywxActivity/updateCovInfo", {headId: $("#headId").val(), stage: CURRENT_ACTIVITY_STAGE, covId: covId}, function (r) {
-            if(r.code === 200) {
-                $MB.n_success("设置成功！");
-            }
-            covertDataTable();
-            $("#plan_change_modal").modal('hide');
-        });
-    });
-}
-
-/**
- * 获取当前活动所处阶段配置的转化率数据
- */
-function covertDataTable() {
-    var settings = {
-        url: '/qywxActivity/getConvertInfo',
-        pagination: false,
-        singleSelect: true,
-        queryParams: function () {
-            return {headId: $("#headId").val()}
-        },
-        columns: [
-            {
-                field: 'covListId',
-                visible: false
-            },
-            {
-                field: 'covRate',
-                title: '期望转化率（%）',
-                align: 'center',
-                formatter: function (value, row, index) {
-                    if(value !== null && value !== '' && value !== undefined) {
-                        return value * 100;
-                    }else {
-                        return '-';
-                    }
-                }
-            }, {
-                field: 'expectPushNum',
-                title: '对应推送用户数（人）',
-                align: 'center'
-            }, {
-                field: 'expectCovNum',
-                title: '对应的转化用户数',
-                align: 'center'
-            }
-        ]
-    };
-    $( "#covertDataTable").bootstrapTable( 'destroy' ).bootstrapTable( settings );
 }
 
 // 活动商品数据下载
@@ -1755,83 +1308,6 @@ function groupIdChange(dom) {
         default:
             $("#shopOffer").attr("style", "display:none;").html('');
             break;
-    }
-}
-
-/**
- * 计算商品转化率
- */
-function genCovInfo() {
-    var len = $("#activityProductTable").bootstrapTable('getData').length;
-    if(len === 0) {
-        $MB.n_warning("没有获取到有效的活动通知商品，请先添加商品！");
-        return;
-    }
-    $MB.loadingDesc('show', '正在计算活动转化率....');
-    $.get("/qywxActivity/genCovInfo", {headId: $("#headId").val()}, function (r) {
-        if(r.data == 1) {
-            $MB.n_success("获取数据成功！");
-        }else if(r.data == 0){
-            $MB.n_warning("获取数据失败！");
-        }else {
-            $MB.n_warning("未知异常！");
-        }
-        $MB.refreshTable('covertDataTable');
-        $MB.refreshTable('table3');
-        $MB.loadingDesc('hide');
-    });
-}
-
-/**
- * 是否需要计算逻辑
- */
-function ifCalculate() {
-    $.get("/qywxActivity/ifCalculate", {headId: $("#headId").val()}, function(r) {
-        if(r) {
-            $("#calculateCovDataBtn").attr("style", "display:inline;");
-        }else {
-            $("#calculateCovDataBtn").attr("style", "display:none;");
-        }
-    });
-}
-
-// 添加平台优惠
-function addPlatCoupon(idx) {
-    var couponType = (idx == 1) ? 'P' : 'S';
-    var code = '<div class="row m-t-10">\n' +
-        '<input type="hidden" name="couponType" value="'+couponType+'"/>\n' +
-        '                        <div class="col-md-4">\n' +
-        '                            <div class="form-group">\n' +
-        '                                &#12288;券叠加：<select name="addFlag" class="form-control" style="width: 172px;">\n' +
-        '                                    <option value="1">是</option>\n' +
-        '                                    <option value="0">否</option>\n' +
-        '                                </select>\n' +
-        '                            </div>\n' +
-        '                        </div>\n' +
-        '                        <div class="col-md-4">\n' +
-        '                            <div class="form-group">\n' +
-        '                                &#12288;&#12288;门槛：<input type="text" name="couponThreshold" class="form-control"/>\n' +
-        '                            </div>\n' +
-        '                        </div>\n' +
-        '                        <div class="col-md-4">\n' +
-        '                            <div class="form-group">\n' +
-        '                                &#12288;&#12288;面额：<input type="text" name="couponDenom" class="form-control"/>\n' +
-        '                            </div>\n' +
-        '                            &nbsp;&nbsp;<a style="color: #f96868;cursor: pointer;" onclick="deleteCoupon(this)"><i class="fa fa-trash"></i>删除</a>\n' +
-        '                        </div>\n' +
-        '                    </div>';
-    if(idx == 1) {
-        if($('#platCouponDiv').find('.row').length == 1) {
-            $("#platDiscountItems").show();
-            $("#platCouponDiv").attr("style", "border: dashed 1px #e7eaec;margin-top: 10px;padding-bottom: 10px;");
-        }
-        $("#platDiscountItems").append(code);
-    }else {
-        if($('#shopCouponDiv').find('.row').length == 1) {
-            $("#shopDiscountItems").show();
-            $("#shopCouponDiv").attr("style", "border: dashed 1px #e7eaec;margin-top: 10px;padding-bottom: 10px;");
-        }
-        $("#shopDiscountItems").append(code);
     }
 }
 

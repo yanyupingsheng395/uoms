@@ -54,4 +54,20 @@ public class ActivityPlan {
         this.planType=planType;
         this.successNum=0;
     }
+
+    /**
+     * 为了应对企业微信，增加的一个构造方法
+     * @param headId
+     * @param planDate
+     * @param planType
+     */
+    public ActivityPlan(Long headId,LocalDate planDate,String planType) {
+        this.headId = headId;
+        this.planDate =planDate;
+        this.userCnt=0L;
+        this.planStatus = ActivityPlanStatusEnum.NOT_CALCUATE.getStatusCode();
+        this.planDateWid=Long.parseLong(DateTimeFormatter.ofPattern("yyyyMMdd").format(planDate));
+        this.planType=planType;
+        this.successNum=0;
+    }
 }

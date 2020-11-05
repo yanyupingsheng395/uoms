@@ -67,7 +67,5 @@ public interface QywxActivityProductService {
 
     boolean checkProductId(String headId, String productId);
 
-    boolean ifCalculate(String headId);
-
     List<String> getNotValidProductCount(Long headId);
 }

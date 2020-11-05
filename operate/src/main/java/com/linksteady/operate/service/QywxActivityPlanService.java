@@ -17,7 +17,7 @@ public interface QywxActivityPlanService {
     /**
      * 生成plan数据
      */
-    void savePlanList(Long headId, String stage, String type);
+    void savePlanList(Long headId,String type);
 
     /**
      * 获取执行计划数据
@@ -67,5 +67,5 @@ public interface QywxActivityPlanService {
      */
     void expireActivityPlan();
 
-    String getPlanStatus(String headId, String stage);
+    String getPlanStatus(String headId);
 }

@@ -10,11 +10,11 @@ import java.util.List;
  */
 public interface QywxActivityUserGroupMapper {
 
-    int getCount(Long headId, String stage);
+    int getCount(Long headId);
 
     List<ActivityGroup> getUserGroupList(Long headId);
 
-    void updateGroupTemplate(Long headId, Long groupId, Long code, String stage);
+    void updateGroupTemplate(Long headId, Long groupId, Long code);
 
     void saveGroupData(List<ActivityGroup> dataList);
 
@@ -23,7 +23,6 @@ public interface QywxActivityUserGroupMapper {
     /**
      * 验证当前活动（某个阶段，类型） 活动商品对应的活动类型是否都配置了文案
      * @param headId
-     * @param stage
      * @param type
      * @return
      */

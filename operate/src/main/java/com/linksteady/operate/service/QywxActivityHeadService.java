@@ -14,8 +14,8 @@ public interface QywxActivityHeadService {
 
     /**
      * 获取头表的分页数据
-     * @param start
-     * @param end
+     * @param limit
+     * @param offset
      * @param name
      * @return
      */
@@ -25,7 +25,7 @@ public interface QywxActivityHeadService {
      * @param name
      * @return
      */
-    int getDataCount(String name);
+    int getDataCount(String name, String date, String status);
 
     /**
      * 插入头表
@@ -55,8 +55,6 @@ public interface QywxActivityHeadService {
      */
     int getActivityStatus(String id);
 
-    Map<String, String> getDataChangedStatus(Long headId, String stage);
-
     void deleteData(Long headId);
 
     int getDeleteCount(Long headId);
@@ -64,11 +62,10 @@ public interface QywxActivityHeadService {
     /**
      * 更新头表的状态
      * @param headId
-     * @param stage
      * @param status
      * @param type
      */
-    void updateStatus(Long headId, String stage, String status, String type);
+    void updateStatus(Long headId, String status, String type);
 
     /**
      * 活动头表失效

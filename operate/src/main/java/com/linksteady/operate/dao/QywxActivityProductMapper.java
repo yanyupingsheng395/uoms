@@ -55,8 +55,6 @@ public interface QywxActivityProductMapper {
 
     int checkProductId(String headId, String productId);
 
-    int ifCalculate(String headId);
-
     List<String> getNotValidProduct(Long headId);
 
     void updateValidRepeatSkuInfo(String headId);

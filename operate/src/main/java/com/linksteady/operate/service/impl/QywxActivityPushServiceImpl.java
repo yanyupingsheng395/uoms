@@ -42,7 +42,7 @@ import java.util.concurrent.*;
 public class QywxActivityPushServiceImpl implements QywxActivityPushService {
 
     @Autowired
-    private QywxActivityHeadService activityHeadService;
+    private QywxActivityHeadService qywxActivityHeadService;
 
     @Autowired
     private QywxActivityDetailMapper activityDetailMapper;
@@ -362,8 +362,7 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
             activityPushMapper.insertToPushListLarge(activityPlan.getPlanId());
 
             //更新状态为 执行中(根据当前计划的状态更新不同的状态字段)
-            activityHeadService.updateStatus(activityPlan.getHeadId(),
-                    activityPlan.getStage(),
+            qywxActivityHeadService.updateStatus(activityPlan.getHeadId(),
                     ActivityStatusEnum.DOING.getStatusCode(),
                     activityPlan.getPlanType());
         }

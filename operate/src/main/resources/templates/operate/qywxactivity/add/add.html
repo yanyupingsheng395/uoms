@@ -310,8 +310,7 @@
                                         <textarea class="form-control" id="content" name="content" style="width:554px;height: 102px;" oninput="contextOnChange()"></textarea>
                                         <input type="hidden" id="smsContentInput" name="smsContentInput"/>
                                         <div class="wordstatis">
-                                            1.文案字数=运营者编写内容的字数+系统填充的变量占用的长度；<br/>
-                                            2.个性化变量说明：<br/>
+                                            1.个性化变量说明：<br/>
                                             &nbsp;&nbsp;${商品名称}：系统个性化填充商品短名称变量，不同用户看到不同商品短名称；<br/>
                                             &nbsp;&nbsp;${商品的活动利益点}：系统会个性化填充商品在活动体现的利益点，不同用户看到不同商品的活动利益点；<br/>
                                             &nbsp;&nbsp;${商品的入手预估单价}：系统会个性化填充商品在活动中购买的预估到手价，不同用户看到不同商品的入手预估单价；<br/>
@@ -385,105 +384,6 @@
     </div>
 </div>
 
-<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="plan_change_modal" data-backdrop="static">
-    <div class="modal-dialog" role="document" style="width: 920px">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">×</span></button>
-                <h5 class="modal-title">调整推送计划</h5>
-            </div>
-            <div class="modal-body" style="padding-left: 10px;padding-right: 10px;padding-top: 0px;padding-bottom: 0px;">
-                <div class="row">
-                    <div class="col-sm-12 table-striped">
-                        <div class="row m-t-10">
-                            <div class="col-sm-7">
-                                <h6>推送计划一览</h6>
-                                <table id="table3" class="table table-striped table-bordered"></table>
-                            </div>
-                            <div class="col-sm-5">
-                                <h6>调整计划测算</h6>
-                                <table id="table4" class="table table-striped table-bordered"></table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer" style="margin-top: 10px;">
-                <button type="button" class="btn btn-primary btn-sm" onclick="updateCovInfo()">确定</button>
-                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="send_modal" data-backdrop="static">
-    <div class="modal-dialog" role="document" style="width: 50%;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">×</span></button>
-                <h5 class="modal-title" id="myLargeModalLabel4">屏蔽测试</h5>
-            </div>
-            <div class="modal-body">
-                <form class="form-horizontal">
-                    <input type="hidden" name="testSmsCode" id="testSmsCode"/>
-                    <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label" for="smsContent1">文案内容：</label>
-                        <div class="col-md-6 input-group">
-                            <textarea class="form-control" id="smsContent1" name="example-textarea-input"
-                                      rows="6" readonly></textarea>
-                            <span class="wordwrap h6" style="color: #7c7c7c">*上述内容中系统填充变量并非真实，而是选择变量字符最大值示例进行填充</span>
-                        </div>
-                    </div>
-                    <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label">测试建议：</label>
-                        <div class="col-md-6 input-group">
-                            <h5 style="color: #7c7c7c;">建议不同的手机号体现不同的机型与操作系统，根据短信的收取情况判断是否有屏蔽，以便于调整文案内容；</h5>
-                            <!--                            <input class="form-control" type="text" readonly value=""/>-->
-                        </div>
-                    </div>
-                    <div class="form-group mg-stop">
-                        <label class="col-md-3 col-md-offset-1 control-label">手机号1：</label>
-                        <div class="col-md-6 input-group">
-                            <input class="form-control" type="text" name="phoneNum"/>
-                        </div>
-                    </div>
-
-                    <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label">手机号2：</label>
-                        <div class="col-md-6 input-group">
-                            <input class="form-control" type="text" name="phoneNum"/>
-                        </div>
-                    </div>
-                    <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label">手机号3：</label>
-                        <div class="col-md-6 input-group">
-                            <input class="form-control" type="text" name="phoneNum"/>
-                        </div>
-                    </div>
-                    <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label">手机号4：</label>
-                        <div class="col-md-6 input-group">
-                            <input class="form-control" type="text" name="phoneNum"/>
-                        </div>
-                    </div>
-                    <div class="form-group mg-stop">
-                        <label class="col-md-4 control-label">手机号5：</label>
-                        <div class="col-md-6 input-group">
-                            <input class="form-control" type="text" name="phoneNum"/>
-                        </div>
-                    </div>
-
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary btn-sm" onclick="sendMessage()">测试推送</button>
-                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="upload_error_modal" data-backdrop="static">
     <div class="modal-dialog" role="document" style="width: 50%;">
         <div class="modal-content">
@@ -506,20 +406,9 @@
     </div>
 </div>
 <script>
-    const preheatStatus = "";
-    const preheatNotifyStatus = "";
     const formalStatus = "";
     const formalNotifyStatus = "";
     const operate_type = "[[${operateType}]]";
-    const PROD_NAME_LEN = [[${sourceConfig.prodNameLen}]];
-    const PROFIT_LEN = [[${sourceConfig.profitLen}]];
-    const PROD_URL_LEN = [[${sourceConfig.shortUrlLen}]];
-    const PRICE_LEN = [[${sourceConfig.priceLen}]];
-    const prodUrlEnabled='[[${sourceConfig.prodUrlEnabled}]]';
-    let signatureLen = [[${sourceConfig.signatureLen}]];
-    let unsubscribeLen = [[${sourceConfig.unsubscribeLen}]];
-    let signature='[[${sourceConfig.signature}]]';
-    let unsubscribe='[[${sourceConfig.unsubscribe}]]';
 
     var clipboard1 = new ClipboardJS('.copy_btn', {
         container: document.getElementById('sms_add_modal')

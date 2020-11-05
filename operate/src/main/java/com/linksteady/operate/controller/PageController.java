@@ -682,4 +682,23 @@ public class PageController extends BaseController {
         return "operate/qywxactivity/view/view";
     }
 
+    /**
+     * 企业微信活动用户运行 -执行计划
+     *
+     * @param model
+     * @param id
+     * @return
+     */
+    @Log(value = "企业微信活动用户运营-执行计划", location = "用户成长系统")
+    @RequestMapping("/qywxActivity/plan")
+    public String qywxActivityPlan(Model model, @RequestParam String id) {
+        int count = qywxActivityHeadService.getActivityStatus(id);
+        if (count == 0) {
+            model.addAttribute("errormsg", "无已经生成的执行计划!");
+            return "operate/qywxactivity/list";
+        }
+        model.addAttribute("headId", id);
+        return "operate/qywxactivity/plan";
+    }
+
 }

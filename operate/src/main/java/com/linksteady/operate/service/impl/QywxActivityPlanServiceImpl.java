@@ -11,7 +11,6 @@ import com.linksteady.operate.domain.ActivityPersonal;
 import com.linksteady.operate.domain.ActivityPlan;
 import com.linksteady.operate.domain.ActivityPlanEffect;
 import com.linksteady.operate.domain.enums.ActivityPlanTypeEnum;
-import com.linksteady.operate.domain.enums.ActivityStageEnum;
 import com.linksteady.operate.service.*;
 import com.linksteady.operate.vo.ActivityGroupVO;
 import com.linksteady.operate.vo.ActivityPlanEffectVO;
@@ -40,19 +39,13 @@ import java.util.stream.Collectors;
 public class QywxActivityPlanServiceImpl implements QywxActivityPlanService {
 
     @Autowired
-    private QywxActivityHeadService activityHeadService;
+    private QywxActivityHeadService qywxActivityHeadService;
 
     @Autowired
-    private QywxActivityHeadMapper activityHeadMapper;
-
-    @Autowired
-    private QywxActivityPlanMapper activityPlanMapper;
+    private QywxActivityPlanMapper qywxActivityPlanMapper;
 
     @Autowired
    private ConfigService configService;
-
-    @Autowired
-    ShortUrlService shortUrlService;
 
     @Autowired
     RedisTemplate<String, String> redisTemplate;
@@ -63,7 +56,7 @@ public class QywxActivityPlanServiceImpl implements QywxActivityPlanService {
     private final int MAX_TASK_DAY = 7;
 
     @Autowired
-    QywxActivityProductMapper activityProductMapper;
+    QywxActivityProductMapper qywxActivityProductMapper;
 
     /**
      * 生成plan数据
@@ -71,106 +64,72 @@ public class QywxActivityPlanServiceImpl implements QywxActivityPlanService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void savePlanList(Long headId, String stage, String type) {
+    public void savePlanList(Long headId, String type) {
 
         //更新活动头的状态
-        activityHeadService.updateStatus(headId, stage, "todo", type);
+        qywxActivityHeadService.updateStatus(headId, "todo", type);
 
         List<ActivityPlan> planList = Lists.newArrayList();
-        ActivityHead activityHead =activityHeadMapper.findById(headId);
+        ActivityHead activityHead =qywxActivityHeadService.findById(headId);
 
         //正式开始时间
         String formalStartDt = activityHead.getFormalStartDt();
 
         //正式结束时间
         String formalEndDt = activityHead.getFormalEndDt();
-        //预热开始时间
-        String preheatStartDt = activityHead.getPreheatStartDt();
-        //预热结束时间
-        String preheatEndDt = activityHead.getPreheatEndDt();
 
-        //预热提醒时间
-        String preheatNotifyDt =activityHead.getPreheatNotifyDt();
         //正式提醒时间
         String formalNotifyDt = activityHead.getFormalNotifyDt();
 
-        if(stage.equals(ActivityStageEnum.formal.getStageCode())) {
-            //写入正式的提醒记录
-            if(ActivityPlanTypeEnum.Notify.getPlanTypeCode().equalsIgnoreCase(type)) {
+        //写入正式的提醒记录
+        if(ActivityPlanTypeEnum.Notify.getPlanTypeCode().equalsIgnoreCase(type)) {
+            planList.add(new ActivityPlan(Long.valueOf(headId),
+                    DateUtil.strToLocalDate(formalNotifyDt,"yyyy-MM-dd"),
+                    ActivityPlanTypeEnum.Notify.getPlanTypeCode()));
+        }else if(ActivityPlanTypeEnum.During.getPlanTypeCode().equalsIgnoreCase(type)) {
+            LocalDate formalStart = DateUtil.strToLocalDate(formalStartDt,"yyyy-MM-dd");
+            LocalDate formalEnd = DateUtil.strToLocalDate(formalEndDt,"yyyy-MM-dd");
+            //写入正式的记录
+            while(formalStart.isBefore(formalEnd)) {
                 planList.add(new ActivityPlan(Long.valueOf(headId),
-                        DateUtil.strToLocalDate(formalNotifyDt,"yyyy-MM-dd"),
-                        ActivityStageEnum.formal.getStageCode(),
-                        ActivityPlanTypeEnum.Notify.getPlanTypeCode()));
-            }else if(ActivityPlanTypeEnum.During.getPlanTypeCode().equalsIgnoreCase(type)) {
-                LocalDate formalStart = DateUtil.strToLocalDate(formalStartDt,"yyyy-MM-dd");
-                LocalDate formalEnd = DateUtil.strToLocalDate(formalEndDt,"yyyy-MM-dd");
-                //写入正式的记录
-                while(formalStart.isBefore(formalEnd)) {
-                    planList.add(new ActivityPlan(Long.valueOf(headId),
-                            formalStart,
-                            ActivityStageEnum.formal.getStageCode(),
-                            ActivityPlanTypeEnum.During.getPlanTypeCode()));
-
-                    formalStart = formalStart.plusDays(1);
-                }
-                planList.add(new ActivityPlan(Long.valueOf(headId),
-                        formalEnd,
-                        ActivityStageEnum.formal.getStageCode(),
+                        formalStart,
                         ActivityPlanTypeEnum.During.getPlanTypeCode()));
-            }
-        }
 
-        // 包含预售
-        if(stage.equalsIgnoreCase(ActivityStageEnum.preheat.getStageCode())) {
-            if(ActivityPlanTypeEnum.Notify.getPlanTypeCode().equalsIgnoreCase(type)) {
-                //写入预售的提醒记录
-                planList.add(new ActivityPlan(Long.valueOf(headId),
-                        DateUtil.strToLocalDate(preheatNotifyDt,"yyyy-MM-dd"),
-                        ActivityStageEnum.preheat.getStageCode(),
-                        ActivityPlanTypeEnum.Notify.getPlanTypeCode()));
-            }else if(ActivityPlanTypeEnum.During.getPlanTypeCode().equalsIgnoreCase(type)) {
-                LocalDate start = DateUtil.strToLocalDate(preheatStartDt,"yyyy-MM-dd");
-                LocalDate end = DateUtil.strToLocalDate(preheatEndDt,"yyyy-MM-dd");
-                //写入预售的记录
-                while(start.isBefore(end)) {
-                    planList.add(new ActivityPlan(Long.valueOf(headId),
-                            start,
-                            ActivityStageEnum.preheat.getStageCode(),
-                            ActivityPlanTypeEnum.During.getPlanTypeCode()));
-                    start = start.plusDays(1);
-                }
-                planList.add(new ActivityPlan(Long.valueOf(headId),
-                        end,
-                        ActivityStageEnum.preheat.getStageCode(),
-                        ActivityPlanTypeEnum.During.getPlanTypeCode()));
+                formalStart = formalStart.plusDays(1);
             }
+            planList.add(new ActivityPlan(Long.valueOf(headId),
+                    formalEnd,
+                    ActivityPlanTypeEnum.During.getPlanTypeCode()));
         }
-        activityPlanMapper.savePlanList(planList);
+        if(planList.size()>0)
+        {
+            qywxActivityPlanMapper.savePlanList(planList);
+        }
     }
 
     @Override
     public List<ActivityPlan> getPlanList(Long headId) {
-        return activityPlanMapper.getPlanList(headId);
+        return qywxActivityPlanMapper.getPlanList(headId);
     }
 
     @Override
     public List<ActivityGroupVO> getPlanGroupList(Long planId) {
-        return activityPlanMapper.getPlanGroupList(planId);
+        return qywxActivityPlanMapper.getPlanGroupList(planId);
     }
 
     @Override
     public int getPlanSmsContentListCount(Long planId) {
-        return activityPlanMapper.getPlanSmsContentListCount(planId);
+        return qywxActivityPlanMapper.getPlanSmsContentListCount(planId);
     }
 
     @Override
     public List<SmsStatisVO> getPlanSmsContentList(Long planId, int limit, int offset) {
-        return activityPlanMapper.getPlanSmsContentList(planId,limit,offset);
+        return qywxActivityPlanMapper.getPlanSmsContentList(planId,limit,offset);
     }
 
     @Override
     public ActivityPlan getPlanInfo(Long planId) {
-        return activityPlanMapper.getPlanInfo(planId);
+        return qywxActivityPlanMapper.getPlanInfo(planId);
     }
 
     @Override
@@ -190,7 +149,7 @@ public class QywxActivityPlanServiceImpl implements QywxActivityPlanService {
 
 
         //获取转化数据
-        ActivityPlanEffect activityPlanEffect=activityPlanMapper.selectPlanEffect(planId);
+        ActivityPlanEffect activityPlanEffect=qywxActivityPlanMapper.selectPlanEffect(planId);
         //总人数  成功推送人数 转化人数  转化金额  购买SPU转化人数  购买SPU转化金额
 
         ActivityPlanEffectVO activityPlanEffectVO=new ActivityPlanEffectVO();
@@ -262,7 +221,7 @@ public class QywxActivityPlanServiceImpl implements QywxActivityPlanService {
         List<String> xdatas = Lists.newLinkedList();
 
         // 提交任务日期
-        Long planDt = activityPlanMapper.getPlanInfo(planId).getPlanDateWid();
+        Long planDt = qywxActivityPlanMapper.getPlanInfo(planId).getPlanDateWid();
         LocalDate taskDtDate = LocalDate.parse(String.valueOf(planDt), DateTimeFormatter.ofPattern(dateFormat));
 
         // 横轴显示的最多天数(活动后+7天)
@@ -274,7 +233,7 @@ public class QywxActivityPlanServiceImpl implements QywxActivityPlanService {
         }
 
         //获取按天的转化数据
-        List<ActivityPlanEffect> dataList = activityPlanMapper.getPlanEffectStatisList(planId);
+        List<ActivityPlanEffect> dataList = qywxActivityPlanMapper.getPlanEffectStatisList(planId);
 
         Map<String,ActivityPlanEffect> dataMap=dataList.stream().collect(Collectors.toMap(ActivityPlanEffect::getConversionDate,a->a));
 
@@ -329,21 +288,21 @@ public class QywxActivityPlanServiceImpl implements QywxActivityPlanService {
 
     @Override
     public List<ActivityPersonal> getPersonalPlanEffect(int limit, int offset, Long planId) {
-        return activityPlanMapper.getPersonalPlanEffect(limit,offset,planId);
+        return qywxActivityPlanMapper.getPersonalPlanEffect(limit,offset,planId);
     }
 
     @Override
     public int getDailyPersonalEffectCount(Long planId) {
-        return activityPlanMapper.getDailyPersonalEffectCount(planId);
+        return qywxActivityPlanMapper.getDailyPersonalEffectCount(planId);
     }
 
     @Override
     public void expireActivityPlan() {
-        activityPlanMapper.expireActivityPlan();
+        qywxActivityPlanMapper.expireActivityPlan();
     }
 
     @Override
-    public String getPlanStatus(String headId, String stage) {
-        return activityPlanMapper.getPlanStatus(headId, stage);
+    public String getPlanStatus(String headId) {
+        return qywxActivityPlanMapper.getPlanStatus(headId);
     }
 }

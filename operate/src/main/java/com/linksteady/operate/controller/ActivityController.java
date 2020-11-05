@@ -279,16 +279,6 @@ public class ActivityController {
         return ResponseBo.okWithData(null, data);
     }
 
-    /**
-     * 获取数据更改状态
-     * @param headId
-     * @param stage
-     * @return
-     */
-    @GetMapping("/getDataChangedStatus")
-    public ResponseBo getDataChangedStatus(@RequestParam Long headId, @RequestParam String stage) {
-        return ResponseBo.okWithData(null, activityHeadService.getDataChangedStatus(headId, stage));
-    }
 
     /**
      * 删除活动运营

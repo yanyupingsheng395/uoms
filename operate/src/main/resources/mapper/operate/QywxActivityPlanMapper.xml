@@ -9,7 +9,6 @@
         <result property="planStatus" column="PLAN_STATUS" jdbcType="VARCHAR"/>
         <result property="planDateWid" column="PLAN_DATE_WID" jdbcType="DECIMAL"/>
         <result property="activityName" column="ACTIVITY_NAME" jdbcType="VARCHAR"/>
-        <result property="stage" column="ACTIVITY_STAGE" jdbcType="VARCHAR"/>
         <result property="planType" column="PLAN_TYPE" jdbcType="VARCHAR"/>
         <result property="successNum" column="SUCCESS_NUM" jdbcType="DECIMAL"/>
         <result property="version" column="VERSION" jdbcType="DECIMAL"/>
@@ -61,13 +60,19 @@
     </resultMap>
 
     <insert id="savePlanList">
-        insert into UO_OP_ACTIVITY_PLAN(HEAD_ID, USER_CNT, PLAN_DATE, PLAN_STATUS, ACTIVITY_STAGE,PLAN_DATE_WID,PLAN_TYPE,SUCCESS_NUM) values
+        insert into UO_QYWX_ACTIVITY_PLAN(
+        HEAD_ID,
+        USER_CNT,
+        PLAN_DATE,
+        PLAN_STATUS,
+        PLAN_DATE_WID,
+        PLAN_TYPE,
+        SUCCESS_NUM) values
         <foreach collection="list" item="item" index="index" separator=",">
              (#{item.headId},
             #{item.userCnt},
             #{item.planDate},
             #{item.planStatus},
-            #{item.stage},
             #{item.planDateWid},
             #{item.planType},
             #{item.successNum})
@@ -75,27 +80,25 @@
     </insert>
 
     <select id="getPlanList" resultMap="planMap">
-        select UO_OP_ACTIVITY_PLAN.PLAN_ID,
-               UO_OP_ACTIVITY_PLAN.HEAD_ID,
+        select UO_QYWX_ACTIVITY_PLAN.PLAN_ID,
+               UO_QYWX_ACTIVITY_PLAN.HEAD_ID,
                ACTIVITY_NAME,
-               UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE,
                USER_CNT,
                PLAN_DATE_WID,
                PLAN_STATUS,
                PLAN_TYPE,
                SUCCESS_NUM,
-               UO_OP_ACTIVITY_PLAN.COV_RATE,
-               UO_OP_ACTIVITY_PLAN.COV_AMOUNT,
-               UO_OP_ACTIVITY_PLAN.EFFECT_FLAG
-        from UO_OP_ACTIVITY_PLAN
-        left join UO_OP_ACTIVITY_HEADER on UO_OP_ACTIVITY_PLAN.HEAD_ID = UO_OP_ACTIVITY_HEADER.HEAD_ID
-        where UO_OP_ACTIVITY_PLAN.HEAD_ID = #{headId}::int4 order by PLAN_DATE asc
+               UO_QYWX_ACTIVITY_PLAN.COV_RATE,
+               UO_QYWX_ACTIVITY_PLAN.COV_AMOUNT,
+               UO_QYWX_ACTIVITY_PLAN.EFFECT_FLAG
+        from UO_QYWX_ACTIVITY_PLAN
+         join UO_QYWX_ACTIVITY_HEADER on UO_QYWX_ACTIVITY_PLAN.HEAD_ID = UO_QYWX_ACTIVITY_HEADER.HEAD_ID
+        where UO_QYWX_ACTIVITY_PLAN.HEAD_ID = #{headId}::int4 order by PLAN_DATE asc
     </select>
 
     <select id="getPlanInfo" resultMap="planMap">
         select  PLAN_ID,
                HEAD_ID,
-               ACTIVITY_STAGE,
                USER_CNT,
                PLAN_DATE_WID,
                PLAN_DATE,
@@ -104,50 +107,48 @@
                SUCCESS_NUM,
                VERSION,
                EFFECT_FLAG
-        from UO_OP_ACTIVITY_PLAN
+        from UO_QYWX_ACTIVITY_PLAN
          where plan_id = #{planId}::int4
     </select>
 
     <delete id="deletePlan">
-        delete from UO_OP_ACTIVITY_PLAN where head_id = #{headId}::int4
+        delete from UO_QYWX_ACTIVITY_PLAN where head_id = #{headId}::int4
     </delete>
 
     <select id="getPlanGroupList" resultMap="activityGroupVOResult">
          select
-               UO_OP_ACTIVITY_DETAIL.HEAD_ID,
-               UO_OP_ACTIVITY_DETAIL.PLAN_ID,
-               UO_OP_ACTIVITY_GROUP.GROUP_ID,
-               UO_OP_ACTIVITY_GROUP.GROUP_NAME,
-               COUNT(UO_OP_ACTIVITY_DETAIL.activity_detail_id) GROUP_USERNUM
-          from UO_OP_ACTIVITY_DETAIL,UO_OP_ACTIVITY_GROUP,UO_OP_ACTIVITY_PLAN
+               UO_QYWX_ACTIVITY_DETAIL.HEAD_ID,
+               UO_QYWX_ACTIVITY_DETAIL.PLAN_ID,
+               UO_QYWX_ACTIVITY_GROUP.GROUP_ID,
+               UO_QYWX_ACTIVITY_GROUP.GROUP_NAME,
+               COUNT(UO_QYWX_ACTIVITY_DETAIL.activity_detail_id) GROUP_USERNUM
+          from UO_QYWX_ACTIVITY_DETAIL,UO_QYWX_ACTIVITY_GROUP,UO_QYWX_ACTIVITY_PLAN
                where
-                     UO_OP_ACTIVITY_DETAIL.HEAD_ID=UO_OP_ACTIVITY_GROUP.HEAD_ID
-                AND  UO_OP_ACTIVITY_DETAIL.GROUP_ID= UO_OP_ACTIVITY_GROUP.GROUP_ID
-                AND  UO_OP_ACTIVITY_PLAN.PLAN_TYPE=UO_OP_ACTIVITY_GROUP.ACTIVITY_TYPE
-                AND  UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE=UO_OP_ACTIVITY_GROUP.ACTIVITY_STAGE
-                AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = UO_OP_ACTIVITY_PLAN.PLAN_ID
-                AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = #{planId}
-          GROUP BY UO_OP_ACTIVITY_DETAIL.HEAD_ID,
-                   UO_OP_ACTIVITY_DETAIL.PLAN_ID,
-                   UO_OP_ACTIVITY_GROUP.GROUP_ID,
-                   UO_OP_ACTIVITY_GROUP.GROUP_NAME
-          ORDER BY UO_OP_ACTIVITY_GROUP.GROUP_ID ASC
+                     UO_QYWX_ACTIVITY_DETAIL.HEAD_ID=UO_QYWX_ACTIVITY_GROUP.HEAD_ID
+                AND  UO_QYWX_ACTIVITY_DETAIL.GROUP_ID= UO_QYWX_ACTIVITY_GROUP.GROUP_ID
+                AND  UO_QYWX_ACTIVITY_PLAN.PLAN_TYPE=UO_QYWX_ACTIVITY_GROUP.ACTIVITY_TYPE
+                AND  UO_QYWX_ACTIVITY_DETAIL.PLAN_ID = UO_QYWX_ACTIVITY_PLAN.PLAN_ID
+                AND  UO_QYWX_ACTIVITY_DETAIL.PLAN_ID = #{planId}
+          GROUP BY UO_QYWX_ACTIVITY_DETAIL.HEAD_ID,
+                   UO_QYWX_ACTIVITY_DETAIL.PLAN_ID,
+                   UO_QYWX_ACTIVITY_GROUP.GROUP_ID,
+                   UO_QYWX_ACTIVITY_GROUP.GROUP_NAME
+          ORDER BY UO_QYWX_ACTIVITY_GROUP.GROUP_ID ASC
     </select>
 
     <select id="getPlanSmsContentListCount" resultType="int">
         SELECT count(*) FROM (
                  select
-                           UO_OP_ACTIVITY_DETAIL.SMS_CONTENT,
-                           COUNT(UO_OP_ACTIVITY_DETAIL.activity_detail_id) CNT
-                      from UO_OP_ACTIVITY_DETAIL,UO_OP_ACTIVITY_GROUP,UO_OP_ACTIVITY_PLAN
+                           UO_QYWX_ACTIVITY_DETAIL.SMS_CONTENT,
+                           COUNT(UO_QYWX_ACTIVITY_DETAIL.activity_detail_id) CNT
+                      from UO_QYWX_ACTIVITY_DETAIL,UO_QYWX_ACTIVITY_GROUP,UO_QYWX_ACTIVITY_PLAN
                            where
-                                 UO_OP_ACTIVITY_DETAIL.HEAD_ID=UO_OP_ACTIVITY_GROUP.HEAD_ID
-                            AND  UO_OP_ACTIVITY_DETAIL.GROUP_ID= UO_OP_ACTIVITY_GROUP.GROUP_ID
-                            AND  UO_OP_ACTIVITY_PLAN.PLAN_TYPE=UO_OP_ACTIVITY_GROUP.ACTIVITY_TYPE
-                            AND  UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE=UO_OP_ACTIVITY_GROUP.ACTIVITY_STAGE
-                            AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = UO_OP_ACTIVITY_PLAN.PLAN_ID
-                            AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = #{planId}
-                      GROUP BY UO_OP_ACTIVITY_DETAIL.SMS_CONTENT
+                                 UO_QYWX_ACTIVITY_DETAIL.HEAD_ID=UO_QYWX_ACTIVITY_GROUP.HEAD_ID
+                            AND  UO_QYWX_ACTIVITY_DETAIL.GROUP_ID= UO_QYWX_ACTIVITY_GROUP.GROUP_ID
+                            AND  UO_QYWX_ACTIVITY_PLAN.PLAN_TYPE=UO_QYWX_ACTIVITY_GROUP.ACTIVITY_TYPE
+                            AND  UO_QYWX_ACTIVITY_DETAIL.PLAN_ID = UO_QYWX_ACTIVITY_PLAN.PLAN_ID
+                            AND  UO_QYWX_ACTIVITY_DETAIL.PLAN_ID = #{planId}
+                      GROUP BY UO_QYWX_ACTIVITY_DETAIL.SMS_CONTENT
               ) v
     </select>
 
@@ -155,17 +156,16 @@
       SELECT SMS_CONTENT,sms_billing_count, CNT, LENGTH(SMS_CONTENT) SMSLENGTH
       FROM (
              select
-                   UO_OP_ACTIVITY_DETAIL.SMS_CONTENT,UO_OP_ACTIVITY_DETAIL.sms_billing_count,
-                   COUNT(UO_OP_ACTIVITY_DETAIL.activity_detail_id) CNT
-              from UO_OP_ACTIVITY_DETAIL,UO_OP_ACTIVITY_GROUP,UO_OP_ACTIVITY_PLAN
+                   UO_QYWX_ACTIVITY_DETAIL.SMS_CONTENT,UO_QYWX_ACTIVITY_DETAIL.sms_billing_count,
+                   COUNT(UO_QYWX_ACTIVITY_DETAIL.activity_detail_id) CNT
+              from UO_QYWX_ACTIVITY_DETAIL,UO_QYWX_ACTIVITY_GROUP,UO_QYWX_ACTIVITY_PLAN
                    where
-                         UO_OP_ACTIVITY_DETAIL.HEAD_ID=UO_OP_ACTIVITY_GROUP.HEAD_ID
-                    AND  UO_OP_ACTIVITY_DETAIL.GROUP_ID= UO_OP_ACTIVITY_GROUP.GROUP_ID
-                    AND  UO_OP_ACTIVITY_PLAN.PLAN_TYPE=UO_OP_ACTIVITY_GROUP.ACTIVITY_TYPE
-                    AND  UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE=UO_OP_ACTIVITY_GROUP.ACTIVITY_STAGE
-                    AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = UO_OP_ACTIVITY_PLAN.PLAN_ID
-                    AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = #{planId}
-              GROUP BY UO_OP_ACTIVITY_DETAIL.SMS_CONTENT,UO_OP_ACTIVITY_DETAIL.sms_billing_count
+                         UO_QYWX_ACTIVITY_DETAIL.HEAD_ID=UO_QYWX_ACTIVITY_GROUP.HEAD_ID
+                    AND  UO_QYWX_ACTIVITY_DETAIL.GROUP_ID= UO_QYWX_ACTIVITY_GROUP.GROUP_ID
+                    AND  UO_QYWX_ACTIVITY_PLAN.PLAN_TYPE=UO_QYWX_ACTIVITY_GROUP.ACTIVITY_TYPE
+                    AND  UO_QYWX_ACTIVITY_DETAIL.PLAN_ID = UO_QYWX_ACTIVITY_PLAN.PLAN_ID
+                    AND  UO_QYWX_ACTIVITY_DETAIL.PLAN_ID = #{planId}
+              GROUP BY UO_QYWX_ACTIVITY_DETAIL.SMS_CONTENT,UO_QYWX_ACTIVITY_DETAIL.sms_billing_count
       ) v
       ORDER BY CNT DESC,SMS_CONTENT ASC
       limit #{limit} offset #{offset}
@@ -187,7 +187,7 @@
                        T1.COV_AMOUNT,
                        T1.SPU_CONSISTENT,
                        T1.COV_SPU_AMOUNT
-                FROM UO_OP_ACTIVITY_CONVERT_DETAIL T1 right join UO_OP_ACTIVITY_DETAIL T2
+                FROM UO_QYWX_ACTIVITY_CONVERT_DETAIL T1 right join UO_QYWX_ACTIVITY_DETAIL T2
                 on T1.ACTIVITY_DETAIL_ID = T2.ACTIVITY_DETAIL_ID
                   AND T2.PLAN_ID = #{planId}::int4) C
     </select>
@@ -206,7 +206,7 @@
                        T1.COV_AMOUNT,
                        T1.SPU_CONSISTENT,
                        TO_CHAR(T1.CONVERSION_DATE,'YYYYMMDD') CONVERSION_DATE
-                FROM UO_OP_ACTIVITY_CONVERT_DETAIL T1, UO_OP_ACTIVITY_DETAIL T2
+                FROM UO_QYWX_ACTIVITY_CONVERT_DETAIL T1, UO_QYWX_ACTIVITY_DETAIL T2
                 WHERE T1.ACTIVITY_DETAIL_ID= T2.ACTIVITY_DETAIL_ID
                   AND T2.PUSH_STATUS='S'
                   AND T2.PLAN_ID =  #{planId}::int4) as C GROUP BY CONVERSION_DATE
@@ -229,7 +229,7 @@
             t.IS_CONVERSION IS_CONVERT,
             t.SPU_CONSISTENT SPU_IS_CONVERT
             --转化的SPU名称
-        from UO_OP_ACTIVITY_CONVERT_DETAIL t, w_users u,UO_OP_ACTIVITY_DETAIL t2
+        from UO_QYWX_ACTIVITY_CONVERT_DETAIL t, w_users u,UO_QYWX_ACTIVITY_DETAIL t2
         where t.user_id = u.id::varchar and t.IS_CONVERSION = 1
           and t.activity_detail_id=t2.activity_detail_id
           and t2.plan_id=#{planId}::int4
@@ -238,7 +238,7 @@
     </select>
 
     <select id="getDailyPersonalEffectCount" resultType="int">
-        select count(1) from  UO_OP_ACTIVITY_CONVERT_DETAIL t,UO_OP_ACTIVITY_DETAIL t2
+        select count(1) from  UO_QYWX_ACTIVITY_CONVERT_DETAIL t,UO_QYWX_ACTIVITY_DETAIL t2
         where
             t.activity_detail_id=t2.activity_detail_id
         and t.IS_CONVERSION = '1'
@@ -246,18 +246,13 @@
     </select>
 
     <update id="expireActivityPlan">
-        update uo_op_activity_plan t set plan_status='4' where plan_status='1' and t.plan_date::date&lt;current_date
+        update uo_qywx_activity_plan t set plan_status='4' where plan_status='1' and t.plan_date::date&lt;current_date
     </update>
 
     <select id="getPlanStatus" resultType="string">
-        select PLAN_STATUS from UO_OP_ACTIVITY_PLAN t1, UO_OP_ACTIVITY_HEADER t2
+        select PLAN_STATUS from uo_qywx_activity_plan t1, UO_QYWX_ACTIVITY_HEADER t2
         where t1.HEAD_ID = t2.HEAD_ID
-        <if test="stage == 'preheat'">
-            and t1.PLAN_DATE = t2.PREHEAT_NOTIFY_DT
-        </if>
-        <if test="stage == 'formal'">
-            and t1.PLAN_DATE = t2.FORMAL_NOTIFY_DT
-        </if>
+        and t1.PLAN_DATE = t2.FORMAL_NOTIFY_DT
         and t1.HEAD_ID = #{headId}::int4
     </select>
 </mapper>

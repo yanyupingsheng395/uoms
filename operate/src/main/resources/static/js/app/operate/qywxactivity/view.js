@@ -1,5 +1,4 @@
 let create_step;
-let CURRENT_ACTIVITY_STAGE;
 
 $( function () {
     create_step = steps({
@@ -140,46 +139,6 @@ $( "#btn_download" ).click( function () {
 function createActivity() {
     getGroupList( 'NOTIFY', 'table1');
     getGroupList('DURING', 'table5');
-    covertDataTable();
-}
-
-// step3:转化率信息表
-function covertDataTable() {
-    var settings = {
-        url: '/qywxActivity/getConvertInfo',
-        pagination: false,
-        singleSelect: true,
-        queryParams: function () {
-            return {headId: $("#headId").val()}
-        },
-        columns: [
-            {
-                field: 'covListId',
-                visible: false
-            },
-            {
-                field: 'covRate',
-                title: '期望转化率（%）',
-                align: 'center',
-                formatter: function (value, row, index) {
-                    if(value !== null && value !== '' && value !== undefined) {
-                        return value * 100;
-                    }else {
-                        return '-';
-                    }
-                }
-            }, {
-                field: 'expectPushNum',
-                title: '对应推送用户数（人）',
-                align: 'center'
-            }, {
-                field: 'expectCovNum',
-                title: '对应的转化用户数',
-                align: 'center'
-            }
-        ]
-    };
-    $( "#covertDataTable").bootstrapTable( 'destroy' ).bootstrapTable( settings );
 }
 
 // step3:获取群组表

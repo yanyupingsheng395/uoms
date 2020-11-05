@@ -40,25 +40,19 @@ import java.util.stream.Collectors;
 public class QywxActivityController {
 
     @Autowired
-    private QywxActivityHeadService activityHeadService;
+    private QywxActivityHeadService qywxActivityHeadService;
 
     @Autowired
-    private QywxActivityProductService activityProductService;
+    private QywxActivityProductService qywxActivityProductService;
 
     @Autowired
-    private QywxActivityUserGroupService activityUserGroupService;
+    private QywxActivityUserGroupService qywxActivityUserGroupService;
 
     @Autowired
-    private QywxActivityPlanService activityPlanService;
+    private QywxActivityPlanService qywxActivityPlanService;
 
     @Autowired
-    private QywxActivityEffectService activityEffectService;
-
-    @Autowired
-    private QywxActivityCovService activityCovService;
-
-    @Autowired
-    private ThriftClient thriftClient;
+    private QywxActivityEffectService qywxActivityEffectService;
 
     /**
      * 获取头表的分页数据
@@ -71,8 +65,8 @@ public class QywxActivityController {
         String date = request.getParam().get("date");
         String status = request.getParam().get("status");
 
-        List<ActivityHead> dataList = activityHeadService.getDataListOfPage(limit, offset, name, date, status);
-        int count = activityHeadService.getDataCount(name);
+        List<ActivityHead> dataList = qywxActivityHeadService.getDataListOfPage(limit, offset, name, date, status);
+        int count = qywxActivityHeadService.getDataCount(name, date, status);
         return ResponseBo.okOverPaging(null, count, dataList);
     }
 
@@ -91,7 +85,7 @@ public class QywxActivityController {
                                   @RequestParam("activityType") String activityType) {
         List<ActivityProductUploadError> errorList;
         try {
-            errorList = activityProductService.uploadExcel(file, headId, uploadMethod, repeatProduct, activityType);
+            errorList = qywxActivityProductService.uploadExcel(file, headId, uploadMethod, repeatProduct, activityType);
             validProductInfo(headId);
         } catch (Exception e) {
             log.error("上传商品列表出错", e);
@@ -108,7 +102,7 @@ public class QywxActivityController {
      */
     @PostMapping("/saveActivityHead")
     public ResponseBo saveActivityHead(ActivityHead activityHead, String coupons) {
-        int headId = activityHeadService.saveActivityHead(activityHead, coupons);
+        int headId = qywxActivityHeadService.saveActivityHead(activityHead, coupons);
         return ResponseBo.okWithData("活动信息保存成功,接下来请添加活动商品！", headId);
     }
 
@@ -120,8 +114,8 @@ public class QywxActivityController {
     @GetMapping("/getActivityProductPage")
     public ResponseBo getActivityProductPage(Integer limit, Integer offset, String headId, String productId, String productName,
                                              String groupId) {
-        int count = activityProductService.getCount(headId, productId, productName, groupId);
-        List<ActivityProduct> productList = activityProductService.getActivityProductListPage(limit,offset, headId, productId, productName, groupId);
+        int count = qywxActivityProductService.getCount(headId, productId, productName, groupId);
+        List<ActivityProduct> productList = qywxActivityProductService.getActivityProductListPage(limit,offset, headId, productId, productName, groupId);
         return ResponseBo.okOverPaging(null, count, productList);
     }
 
@@ -132,7 +126,7 @@ public class QywxActivityController {
      */
     @GetMapping("/validProductInfo")
     public ResponseBo validProductInfo(@RequestParam("headId") String headId) {
-        activityProductService.validProductInfo(headId);
+        qywxActivityProductService.validProductInfo(headId);
         return ResponseBo.ok();
     }
 
@@ -142,8 +136,8 @@ public class QywxActivityController {
      */
     @PostMapping("/saveActivityProduct")
     public ResponseBo saveActivityProduct(ActivityProduct activityProduct) {
-        activityProduct.setProductUrl(activityProductService.generateProductShortUrl(activityProduct.getProductId(),"S"));
-        activityProductService.saveActivityProduct(activityProduct);
+        activityProduct.setProductUrl(qywxActivityProductService.generateProductShortUrl(activityProduct.getProductId(),"S"));
+        qywxActivityProductService.saveActivityProduct(activityProduct);
         validProductInfo(activityProduct.getHeadId().toString());
         return ResponseBo.ok();
     }
@@ -180,7 +174,7 @@ public class QywxActivityController {
      */
     @GetMapping("/getProductById")
     public ResponseBo getProductById(@RequestParam("id") String id) {
-        return ResponseBo.okWithData(null, activityProductService.getProductById(id));
+        return ResponseBo.okWithData(null, qywxActivityProductService.getProductById(id));
     }
 
     /**
@@ -196,7 +190,7 @@ public class QywxActivityController {
             if(activityProduct.getProductName().length() >= 64) {
                 throw new LinkSteadyException("商品名称超过系统设置！");
             }
-            activityProductService.updateActivityProduct(activityProduct);
+            qywxActivityProductService.updateActivityProduct(activityProduct);
             validProductInfo(String.valueOf(activityProduct.getHeadId()));
             return ResponseBo.ok();
         } catch (LinkSteadyException e) {
@@ -205,37 +199,36 @@ public class QywxActivityController {
     }
 
     @GetMapping("/updateGroupTemplate")
-    public ResponseBo updateGroupTemplate(@RequestParam Long headId,@RequestParam Long groupId, @RequestParam Long code, @RequestParam String stage, @RequestParam String operateType) {
-        activityUserGroupService.updateGroupTemplate(headId, groupId, code, stage);
+    public ResponseBo updateGroupTemplate(@RequestParam Long headId,@RequestParam Long groupId, @RequestParam Long code) {
+        qywxActivityUserGroupService.updateGroupTemplate(headId, groupId, code);
         return ResponseBo.ok();
     }
 
     @GetMapping("/getActivityName")
     public ResponseBo getActivityName(@RequestParam String headId) {
-        return ResponseBo.okWithData(null, activityHeadService.getActivityName(headId));
+        return ResponseBo.okWithData(null, qywxActivityHeadService.getActivityName(headId));
     }
 
     /**
      * 保存计划
      * @param headId
-     * @param stage
-     * @param type
+     * @param type 通知 or 期间
      * @return
      */
     @PostMapping("/submitActivity")
-    public ResponseBo submitActivity(@RequestParam Long headId, @RequestParam String stage, @RequestParam String type) {
+    public ResponseBo submitActivity(@RequestParam Long headId, @RequestParam String type) {
         //生成计划明细数据
-        List<ActivityPlan> planList = activityPlanService.getPlanList(headId);
-        List<ActivityPlan> filterPlanList = planList.stream().filter(x -> x.getStage().equalsIgnoreCase(stage)).filter(y -> y.getPlanType().equalsIgnoreCase(type)).collect(Collectors.toList());
+        List<ActivityPlan> planList = qywxActivityPlanService.getPlanList(headId);
+        List<ActivityPlan> filterPlanList = planList.stream().filter(y -> y.getPlanType().equalsIgnoreCase(type)).collect(Collectors.toList());
         if(filterPlanList.size() == 0) {
-            activityPlanService.savePlanList(headId, stage, type);
+            qywxActivityPlanService.savePlanList(headId,type);
         }
         return ResponseBo.ok();
     }
 
     @PostMapping("/deleteProduct")
     public ResponseBo deleteProduct(@RequestParam String ids) {
-        activityProductService.deleteProduct(ids);
+        qywxActivityProductService.deleteProduct(ids);
         return ResponseBo.ok();
     }
 
@@ -250,38 +243,24 @@ public class QywxActivityController {
     @GetMapping("/validSubmit")
     public ResponseBo validSubmit(@RequestParam Long headId, @RequestParam String type) {
         Map<String, String> data = Maps.newHashMap();
+        List<String> products = qywxActivityProductService.getNotValidProductCount(headId);
+        if(products.size() == 0) {
+            data.put("error", "至少需要一个有效商品！");
+        }
+
         // 验证所有群组是否配置消息模板 0：合法，非0不合法
-        int templateIsNullCount = activityUserGroupService.validGroupTemplateWithGroup(headId, type);
+        int templateIsNullCount = qywxActivityUserGroupService.validGroupTemplateWithGroup(headId, type);
         if(templateIsNullCount > 0) {
             data.put("error", "部分群组文案没有配置");
         }
-        List<String> products = activityProductService.getNotValidProductCount(headId);
-        int totalCount = products.size();
-        if(totalCount == 0) {
-            data.put("error", "至少需要一个有效商品！");
-        }
+
         long notValidProductCount = products.stream().filter(x->x.equalsIgnoreCase("N")).count();
         if(notValidProductCount > 0) {
             data.put("error", "存在校验不通过的商品！");
         }
-        if(type.equalsIgnoreCase("NOTIFY")) {
-            if(activityProductService.ifCalculate(headId.toString())) {
-                data.put("error", "活动转化率数据不是最新数据，请先获取最新数据！");
-            }
-        }
         return ResponseBo.okWithData(null, data);
     }
 
-    /**
-     * 获取数据更改状态
-     * @param headId
-     * @param stage
-     * @return
-     */
-    @GetMapping("/getDataChangedStatus")
-    public ResponseBo getDataChangedStatus(@RequestParam Long headId, @RequestParam String stage) {
-        return ResponseBo.okWithData(null, activityHeadService.getDataChangedStatus(headId, stage));
-    }
 
     /**
      * 删除活动运营
@@ -290,9 +269,9 @@ public class QywxActivityController {
      */
     @PostMapping("/deleteActivity")
     public ResponseBo deleteActivity(@RequestParam Long headId) {
-        int count = activityHeadService.getDeleteCount(headId);
+        int count = qywxActivityHeadService.getDeleteCount(headId);
         if(count == 1) {
-            activityHeadService.deleteData(headId);
+            qywxActivityHeadService.deleteData(headId);
         }else {
             return ResponseBo.error("该活动当前状态不支持删除操作！");
         }
@@ -308,7 +287,7 @@ public class QywxActivityController {
      */
     @GetMapping("/getEffectMainKpi")
     public ResponseBo getEffectMainKpi(@RequestParam("headId") Long headId, @RequestParam("kpiType") String kpiType) {
-        return ResponseBo.okWithData(null, activityEffectService.getEffectMainKpi(headId, kpiType));
+        return ResponseBo.okWithData(null, qywxActivityEffectService.getEffectMainKpi(headId, kpiType));
     }
 
     /**
@@ -318,7 +297,7 @@ public class QywxActivityController {
      */
     @GetMapping("/getEffectInfo")
     public ResponseBo getEffectInfo(@RequestParam("headId") Long headId) {
-        ActivityEffect activityEffect=activityEffectService.getEffectInfo(headId);
+        ActivityEffect activityEffect=qywxActivityEffectService.getEffectInfo(headId);
 
         if(null==activityEffect)
         {
@@ -339,55 +318,14 @@ public class QywxActivityController {
      */
     @GetMapping("/getGroupList")
     public List<ActivityGroup> getGroupList(@RequestParam("headId") Long headId, @RequestParam("type") String type) {
-        return activityUserGroupService.getUserGroupList(headId, type);
-    }
-
-    /**
-     * 获取默认转化率的数据
-     * 如果COV_INFO表中没有数据，则获取COV_LIST中的数据
-     *
-     * @return
-     */
-    @GetMapping("/getConvertInfo")
-    public List<ActivityCovInfo> geConvertInfo(@RequestParam("headId") String headId) {
-        return Lists.newArrayList(activityCovService.getConvertInfo(headId));
-    }
-
-    @GetMapping("/getCovList")
-    public ResponseBo getCovList(
-            @RequestParam String headId, @RequestParam String stage
-    ) {
-        return ResponseBo.okWithData(null, activityCovService.getCovList(headId, stage));
-    }
-
-    /**
-     * 测算转化率
-     * @return
-     */
-    @GetMapping("/calculateCov")
-    public ResponseBo calculateCov(@RequestParam("headId") String headId, @RequestParam("stage") String stage, @RequestParam("changedCovId") String changedCovId,
-                                   @RequestParam("defaultCovId") String defaultCovId) {
-        return ResponseBo.okWithData(null, activityCovService.calculateCov(headId, stage, changedCovId, defaultCovId));
-    }
-
-    /**
-     * 新增或更新活动给定阶段的转化率数据
-     * @param headId
-     * @param stage
-     * @param covId
-     * @return
-     */
-    @PostMapping("/updateCovInfo")
-    public ResponseBo updateCovInfo(@RequestParam("headId") long headId, @RequestParam("stage") String stage, @RequestParam("covId") String covId) {
-        activityCovService.updateCovInfo(headId, stage, covId);
-        return ResponseBo.ok();
+        return qywxActivityUserGroupService.getUserGroupList(headId, type);
     }
 
     @PostMapping("/downloadExcel")
     public ResponseBo excel(@RequestParam("headId") String headId) throws InterruptedException {
         List<ActivityProduct> list = Lists.newLinkedList();
         List<Callable<List<ActivityProduct>>> tmp = Lists.newLinkedList();
-        int count = activityProductService.getCountByHeadId(headId);
+        int count = qywxActivityProductService.getCountByHeadId(headId);
         ExecutorService service = Executors.newFixedThreadPool(10);
         int pageSize = 1000;
         int pageNum = count % pageSize == 0 ? count / pageSize : (count / pageSize) + 1;
@@ -397,7 +335,7 @@ public class QywxActivityController {
             tmp.add(() -> {
                 int limit = pageSize;
                 int offset = finalI * pageSize;
-                List<ActivityProduct> activityProductListPage = activityProductService.getActivityProductListPage(limit, offset, headId, "", "", "");
+                List<ActivityProduct> activityProductListPage = qywxActivityProductService.getActivityProductListPage(limit, offset, headId, "", "", "");
                 activityProductListPage.stream().forEach(x->{
                     x.setNotifyMinPrice(df.format(x.getMinPrice()));
                     x.setNotifyProfit(df.format(x.getActivityProfit()));
@@ -426,46 +364,18 @@ public class QywxActivityController {
 
     @GetMapping("/validProduct")
     public ResponseBo validProduct(@RequestParam String headId) {
-        return ResponseBo.okWithData(null, activityProductService.validProduct(headId));
+        return ResponseBo.okWithData(null, qywxActivityProductService.validProduct(headId));
     }
 
 
     @GetMapping("/checkProductId")
     public boolean checkProductId(@RequestParam String headId, @RequestParam String productId) {
-        return activityProductService.checkProductId(headId, productId);
-    }
-
-    private final ReentrantLock reentrantLock = new ReentrantLock();
-
-    @GetMapping("/genCovInfo")
-    public ResponseBo genCovInfo(@RequestParam String headId, @RequestParam String activityStage) {
-        long result = -1;
-        reentrantLock.lock();
-        try {
-            thriftClient.open();
-            result = thriftClient.getInsightService().genPredictCovData(Long.parseLong(headId), activityStage);
-        }catch (TException e) {
-            log.info("生成转化率数据出错", e);
-        } finally {
-            reentrantLock.unlock();
-            thriftClient.close();
-        }
-        return ResponseBo.okWithData(null, result);
-    }
-
-    @RequestMapping("/checkCovInfo")
-    public boolean checkCovInfo(@RequestParam String headId) {
-        return activityCovService.checkCovInfo(headId);
-    }
-
-    @RequestMapping("/ifCalculate")
-    public boolean ifCalculate(@RequestParam String headId) {
-        return activityProductService.ifCalculate(headId);
+        return qywxActivityProductService.checkProductId(headId, productId);
     }
 
     @RequestMapping("/validUserGroup")
     public ResponseBo validUserGroup(@RequestParam String headId) {
-        activityUserGroupService.validUserGroup(headId);
+        qywxActivityUserGroupService.validUserGroup(headId);
         return ResponseBo.ok();
     }
 }

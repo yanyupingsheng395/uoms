@@ -25,9 +25,6 @@ public class QywxActivityUserGroupServiceImpl implements QywxActivityUserGroupSe
     @Autowired
     private QywxActivityTemplateMapper activityTemplateMapper;
 
-    @Autowired
-    private QywxActivityHeadMapper activityHeadMapper;
-
     @Override
     public List<ActivityGroup> getUserGroupList(Long headId, String type) {
         //对活动当前stage的组上配置的文案情况进行一次校验
@@ -39,19 +36,18 @@ public class QywxActivityUserGroupServiceImpl implements QywxActivityUserGroupSe
     }
 
     @Override
-    public int getCount(Long headId, String stage) {
-        return activityUserGroupMapper.getCount(headId, stage);
+    public int getCount(Long headId) {
+        return activityUserGroupMapper.getCount(headId);
     }
 
     @Override
-    public void updateGroupTemplate(Long headId, Long groupId, Long code, String stage) {
-        activityUserGroupMapper.updateGroupTemplate(headId, groupId, code, stage);
+    public void updateGroupTemplate(Long headId, Long groupId, Long code) {
+        activityUserGroupMapper.updateGroupTemplate(headId, groupId, code);
     }
 
     /**
      * 验证当前活动（某个阶段，类型） 活动商品对应的活动类型是否都配置了文案 返回未设置文件的组数
      * @param headId
-     * @param stage
      * @param type
      * @return
      */

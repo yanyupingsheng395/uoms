@@ -673,11 +673,6 @@ public class QywxActivityProductServiceImpl implements QywxActivityProductServic
     }
 
     @Override
-    public boolean ifCalculate(String headId) {
-        return activityProductMapper.ifCalculate(headId) > 0;
-    }
-
-    @Override
     public List<String> getNotValidProductCount(Long headId) {
         return activityProductMapper.getNotValidProduct(headId);
     }

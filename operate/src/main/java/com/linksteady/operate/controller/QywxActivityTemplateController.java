@@ -67,7 +67,6 @@ public class QywxActivityTemplateController extends BaseController {
      *
      * @param code  当前要删除的活动文案的编码
      * @param headId 活动头ID
-     * @return stage 活动所处阶段
      */
     @PostMapping("/deleteActivityTemplate")
     public ResponseBo deleteActivityTemplate(@RequestParam("code") Long code,Long headId,String type) {
@@ -116,7 +115,6 @@ public class QywxActivityTemplateController extends BaseController {
      * 移除群组的文案
      * @param type 活动类型
      * @param headId
-     * @param stage
      * @param groupId
      * @return
      */

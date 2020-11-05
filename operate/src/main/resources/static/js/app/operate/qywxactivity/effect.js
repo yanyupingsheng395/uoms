@@ -17,56 +17,14 @@ function init_table1() {
             {
                 title: "数值（截止前日累计）",
                 align:"center",
-                colspan: 7
+                colspan: 3
             }],
             [
                 {
-                    field: 'allStage',
-                    title: '整体活动',
-                    align: 'center',
-                    valign: 'middle',
-                    rowspan: 2
-                },
-                {
-                    field: '',
-                    title: '预售',
-                    align: 'center',
-                    valign: 'middle',
-                    rowsapn: 1,
-                    colspan: 3
-                }, {
-                    field: '',
-                    title: '正式',
-                    align: 'center',
-                    valign: 'middle',
-                    rowsapn: 1,
-                    colspan: 3
-                }
-            ],
-            [
-                {
-                    field: 'preheatAll',
-                    title: '整体',
-                    align: 'center',
-                    valign: 'middle',
-                },
-                {
-                    field: 'preheatNotify',
-                    title: '活动通知',
-                    align: 'center',
-                    valign: 'middle',
-                },
-                {
-                    field: 'preheatDuring',
-                    title: '活动期间',
-                    align: 'center',
-                    valign: 'middle',
-                },
-                {
-                    field: 'normalAll',
-                    title: '整体',
-                    align: 'center',
-                    valign: 'middle',
+                field: 'normalAll',
+                title: '整体',
+                align: 'center',
+                valign: 'middle',
                 },
                 {
                     field: 'normalNotify',
@@ -81,7 +39,6 @@ function init_table1() {
                     valign: 'middle',
                 }
             ]
-
         ]
     };
     $("#effectTable1").bootstrapTable('destroy').bootstrapTable(settings);

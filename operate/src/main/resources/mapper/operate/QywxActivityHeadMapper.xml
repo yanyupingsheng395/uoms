@@ -4,18 +4,12 @@
     <resultMap id="baseResult" type="com.linksteady.operate.domain.ActivityHead">
         <result property="headId" jdbcType="DECIMAL" column="HEAD_ID"></result>
         <result property="activityName" jdbcType="VARCHAR" column="ACTIVITY_NAME"></result>
-        <result property="hasPreheat" jdbcType="VARCHAR" column="HAS_PREHEAT"></result>
-        <result property="preheatStatus" jdbcType="VARCHAR" column="PREHEAT_STATUS"></result>
-        <result property="preheatStartDt" jdbcType="VARCHAR" column="PREHEAT_START_DT"></result>
-        <result property="preheatEndDt" jdbcType="VARCHAR" column="PREHEAT_END_DT"></result>
         <result property="formalStatus" jdbcType="VARCHAR" column="FORMAL_STATUS"></result>
         <result property="formalStartDt" jdbcType="VARCHAR" column="FORMAL_START_DT"></result>
         <result property="formalEndDt" jdbcType="VARCHAR" column="FORMAL_END_DT"></result>
         <result property="activityflag" jdbcType="VARCHAR" column="ACTIVITYFLAG"></result>
-        <result property="preheatNotifyDt" jdbcType="VARCHAR" column="PREHEAT_NOTIFY_DT"></result>
         <result property="formalNotifyDt" jdbcType="VARCHAR" column="FORMAL_NOTIFY_DT"></result>
         <result property="formalNotifyStatus" jdbcType="VARCHAR" column="FORMAL_NOTIFY_STATUS"></result>
-        <result property="preheatNotifyStatus" jdbcType="VARCHAR" column="PREHEAT_NOTIFY_STATUS"></result>
         <result property="effectFlag" jdbcType="VARCHAR" column="EFFECT_FLAG"></result>
         <result property="activitySource" jdbcType="VARCHAR" column="activity_source"></result>
         <result property="platDiscount" jdbcType="VARCHAR" column="plat_discount"></result>
@@ -34,10 +28,14 @@
     </resultMap>
 
     <select id="getDataListOfPage" resultMap="baseResult">
-        select HEAD_ID, ACTIVITY_NAME, FORMAL_STATUS,
-        to_char(FORMAL_START_DT, 'yyyymmdd') FORMAL_START_DT, to_char(FORMAL_END_DT, 'yyyymmdd') FORMAL_END_DT,
+        select HEAD_ID,
+        ACTIVITY_NAME,
+        FORMAL_STATUS,
+        to_char(FORMAL_START_DT, 'yyyymmdd') FORMAL_START_DT,
+        to_char(FORMAL_END_DT, 'yyyymmdd') FORMAL_END_DT,
         to_char(FORMAL_NOTIFY_DT, 'yyyymmdd') FORMAL_NOTIFY_DT,
-        FORMAL_NOTIFY_STATUS, PREHEAT_NOTIFY_STATUS,EFFECT_FLAG, activity_source
+        FORMAL_NOTIFY_STATUS,
+        EFFECT_FLAG, activity_source
         from UO_QYWX_ACTIVITY_HEADER where 1=1
         <if test="name != '' and name != null">
             and ACTIVITY_NAME = #{name}
@@ -46,7 +44,7 @@
             and (date_trunc('day', FORMAL_START_DT) &lt;= date_trunc('day', to_date(#{date}, 'yyyy-mm-dd')) and date_trunc('day', FORMAL_END_DT) &gt;= date_trunc('day', to_date(#{date}, 'yyyy-mm-dd')))
         </if>
         <if test="status != '' and status != null">
-            and (PREHEAT_STATUS = #{status} or FORMAL_STATUS = #{status})
+            and FORMAL_STATUS = #{status}
         </if>
         order by HEAD_ID desc
         limit #{limit} offset #{offset}
@@ -57,24 +55,24 @@
         <if test="name != '' and name != null">
             and ACTIVITY_NAME = #{name}
         </if>
+        <if test="date != '' and date != null">
+            and (date_trunc('day', FORMAL_START_DT) &lt;= date_trunc('day', to_date(#{date}, 'yyyy-mm-dd')) and date_trunc('day', FORMAL_END_DT) &gt;= date_trunc('day', to_date(#{date}, 'yyyy-mm-dd')))
+        </if>
+        <if test="status != '' and status != null">
+            and FORMAL_STATUS = #{status}
+        </if>
     </select>
 
     <select id="findById" resultMap="baseResult">
         select
            head_id,
            activity_name,
-           has_preheat,
-           preheat_status,
-           to_char(preheat_start_dt, 'yyyy-mm-dd') preheat_start_dt,
-           to_char(preheat_end_dt, 'yyyy-mm-dd') preheat_end_dt,
            formal_status,
            to_char(formal_start_dt, 'yyyy-mm-dd') formal_start_dt,
            to_char(formal_end_dt, 'yyyy-mm-dd') formal_end_dt,
            activityflag,
-           to_char(preheat_notify_dt, 'yyyy-mm-dd') preheat_notify_dt,
            to_char(formal_notify_dt, 'yyyy-mm-dd') formal_notify_dt,
            formal_notify_status,
-           preheat_notify_status,
            activity_source,
            plat_discount,
            plat_threshold,
@@ -107,10 +105,6 @@
     <update id="updateActiveHead">
         update UO_QYWX_ACTIVITY_HEADER set
         ACTIVITY_NAME = #{activityName},
-        HAS_PREHEAT = #{hasPreheat},
-        PREHEAT_STATUS = #{preheatStatus},
-        PREHEAT_START_DT = to_date(#{preheatStartDt}, 'yyyy-mm-dd'),
-        PREHEAT_END_DT = to_date(#{preheatEndDt}, 'yyyy-mm-dd'),
         FORMAL_STATUS = #{formalStatus},
         FORMAL_START_DT = to_date(#{formalStartDt}, 'yyyy-mm-dd'),
         FORMAL_END_DT = to_date(#{formalEndDt}, 'yyyy-mm-dd')
@@ -123,23 +117,8 @@
 
     <select id="getActivityStatus" resultType="int">
         select count(1) from UO_QYWX_ACTIVITY_HEADER
-        where head_id = #{id}::int4 and (PREHEAT_STATUS in ('todo', 'doing', 'done') or FORMAL_STATUS in ('todo', 'doing', 'done') or
-        PREHEAT_NOTIFY_STATUS in ('todo', 'doing', 'done') or FORMAL_NOTIFY_STATUS in ('todo', 'doing', 'done'))
-    </select>
-
-    <select id="getPreheatStatus" resultType="string">
-        select PREHEAT_STATUS from UO_QYWX_ACTIVITY_HEADER where head_id = #{headId}::int4
-    </select>
-
-    <select id="getDataChangedStatus" resultType="map">
-        select
-        <if test="stage == 'preheat'">
-            PREHEAT_CHANGED status, PREHEAT_CHANGED_TIME systime
-        </if>
-        <if test="stage == 'formal'">
-            FORMAL_CHANGED status, FORMAL_CHANGED_TIME systime
-        </if>
-        from UO_QYWX_ACTIVITY_HEADER where HEAD_ID = #{headId}
+        where head_id = #{id}::int4
+        and (FORMAL_STATUS in ('todo', 'doing', 'done') or FORMAL_NOTIFY_STATUS in ('todo', 'doing', 'done'))
     </select>
 
     <delete id="deleteActivity">
@@ -150,19 +129,6 @@
         select count(1) from UO_QYWX_ACTIVITY_HEADER where
         HEAD_ID = #{headId} and formal_status in ('edit', 'timeout')
     </select>
-
-    <update id="updatePreheatStatusHead">
-        UPDATE UO_QYWX_ACTIVITY_HEADER
-        <set>
-            <if test="planType!=null and planType=='NOTIFY'">
-                  PREHEAT_NOTIFY_STATUS=#{status},
-            </if>
-            <if test="planType!=null and planType=='DURING'">
-                  PREHEAT_STATUS=#{status},
-            </if>
-        </set>
-    where head_id=#{headId}
-    </update>
 
     <update id="updateFormalStatusHead">
         UPDATE UO_QYWX_ACTIVITY_HEADER
@@ -175,22 +141,6 @@
             </if>
         </set>
         where head_id=#{headId}
-    </update>
-
-    <update id="expirePreheatNotify">
-        update UO_QYWX_ACTIVITY_HEADER t
-        set preheat_notify_status = 'timeout'
-        where t.has_preheat = '1'
-            and t.preheat_notify_status in('todo','edit')
-            and t.preheat_notify_dt::date&lt;current_date
-    </update>
-
-    <update id="expirePreheatDuring">
-        update UO_QYWX_ACTIVITY_HEADER t
-        set preheat_status = 'timeout'
-        where t.has_preheat = '1'
-            and t.preheat_status in('todo','edit')
-            and t.preheat_end_dt::date&lt;current_date
     </update>
 
     <update id="expireFormalNotify">
