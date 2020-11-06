@@ -335,6 +335,8 @@ function editShop() {
             $("#add-product-form").find("select[name='activityType']").find("option[value='"+data['activityType']+"']").prop("selected", true);
            if(data['spCouponFlag']=="0"){
                 $("#spCouponDiv").hide();
+           }else if(data['spCouponFlag']=="1"){
+               $("#spCouponDiv").show();
            }
             var val = $("#activityRule").find("option:selected").val();
             switch (val) {
