@@ -333,6 +333,9 @@ function editShop() {
             $("#add-product-form").find("select[name='groupId']").find("option[value='"+data['groupId']+"']").prop("selected", true);
             $("#add-product-form").find("select[name='spCouponFlag']").find("option[value='"+data['spCouponFlag']+"']").prop("selected", true);
             $("#add-product-form").find("select[name='activityType']").find("option[value='"+data['activityType']+"']").prop("selected", true);
+           if(data['spCouponFlag']=="0"){
+                $("#spCouponDiv").hide();
+           }
             var val = $("#activityRule").find("option:selected").val();
             switch (val) {
                 case "9":
@@ -976,6 +979,14 @@ function getTmpTableData() {
 }
 
 /**
+ * 点击关闭按钮，清楚输入框内容
+ */
+function clearcontent(){
+    $("#content_1").html("");
+    $("#content").val("");
+}
+
+/**
  * 保存文案内容
  */
 $( "#btn_save_sms").click( function () {
@@ -996,6 +1007,8 @@ $( "#btn_save_sms").click( function () {
                     $( "#sms_add_modal" ).modal( 'hide' );
                     $( "#smstemplate_modal" ).modal( 'show' );
                     getTmpTableData();
+                    //点击保存按钮，清除输入框中内容
+                    clearcontent();
                 });
             });
         }else
@@ -1025,6 +1038,8 @@ $( "#btn_save_sms").click( function () {
                             $( "#sms_add_modal" ).modal( 'hide' );
                             $( "#smstemplate_modal" ).modal( 'show' );
                             getTmpTableData();
+                            //点击保存按钮，清除输入框中内容
+                            clearcontent();
                         } );
                     });
                 }
@@ -1074,24 +1089,24 @@ function validateTemplate() {
     }
 
     if(isProfit === '1') {
-        if(smsContent.indexOf("${商品利益点}") === -1) {
+        if(smsContent.indexOf("${商品的活动利益点}") === -1) {
             $MB.n_warning("个性化要素:商品的活动利益点为是，文案内容未发现${商品的活动利益点}!");
             return false;
         }
     }else {
-        if(smsContent.indexOf("${商品利益点}") !== -1) {
+        if(smsContent.indexOf("${商品的活动利益点}") !== -1) {
             $MB.n_warning("个性化要素:商品的活动利益点为否'，文案内容不能出现${商品的活动利益点}!");
             return false;
         }
     }
 
     if(isPrice === '1') {
-        if(smsContent.indexOf("${商品最低单价}") === -1) {
+        if(smsContent.indexOf("${商品的入手预估单价}") === -1) {
             $MB.n_warning("个性化要素:商品的入手预估单价为是，文案内容未发现${商品的入手预估单价}");
             return false;
         }
     }else {
-        if(smsContent.indexOf("${商品最低单价}") !== -1) {
+        if(smsContent.indexOf("${商品的入手预估单价}") !== -1) {
             $MB.n_warning("个性化要素:商品的入手预估单价为否，文案内容不能出现${商品的入手预估单价}");
             return false;
         }
@@ -1145,7 +1160,6 @@ function closeTemplateCode()
         getGroupList( "NOTIFY", 'table1');
     }
 }
-
 // 短信内容和展示的联动
 function contextOnChange() {
     let content = $('#content').val() === "" ? "请输入消息内容": $('#content').val();
@@ -1164,8 +1178,8 @@ function editTemplate() {
     $.get( "/qywxActivity/getTemplate", {code: code}, function (r) {
         var data = r.data;
         $( "#code" ).val( data.code );
-        $( "#content" ).val( data.content );
         $("#article").html('').append(data.content);
+        $( "#content" ).val( data.content );
         $( "input[name='isProdName']:radio[value='" + data.isProdName + "']" ).prop( "checked", true );
         $( "input[name='isProdUrl']:radio[value='" + data.isProdUrl + "']" ).prop( "checked", true );
         $( "input[name='isPrice']:radio[value='" + data.isPrice + "']" ).prop( "checked", true );
@@ -1174,6 +1188,15 @@ function editTemplate() {
 
         $( "#smstemplate_modal" ).modal( 'hide' );
         $( "#sms_add_modal" ).modal( 'show' );
+
+        var textval=data.content;
+        var textarr=textval.split('\n');
+        var val="";
+        for (var i = 0; i < textarr.length; i++) {
+            var obj= document.createElement("div");
+            val+="<div>"+textarr[i].trim()+"</div>";
+        }
+        $("#content_1").html(val);
     } );
 }
 
