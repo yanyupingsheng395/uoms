@@ -166,6 +166,6 @@
     </insert>
 
     <select id="getActivityCouponList" resultMap="couponMap">
-        select * from uo_qywx_activity_coupon where head_id = #{headId}
+        select * from uo_qywx_activity_coupon where head_id = #{headId} order by coupon_threshold asc
     </select>
 </mapper>

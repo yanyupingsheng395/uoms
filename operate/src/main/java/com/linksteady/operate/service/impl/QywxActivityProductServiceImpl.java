@@ -32,6 +32,7 @@ import java.math.RoundingMode;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author hxcao
@@ -67,13 +68,110 @@ public class QywxActivityProductServiceImpl implements QywxActivityProductServic
         activityProductMapper.saveActivityProduct(activityProduct);
     }
 
+
     /**
      * 计算商品的最低价和利益点
      *
      * @param activityProduct
      * @return
      */
-    private ActivityProduct calculateProductMinPrice(ActivityProduct activityProduct) {
+    private ActivityProduct calculateProductMinPrice(ActivityProduct activityProduct){
+        //商品的活动价
+        double activityPrice = activityProduct.getActivityPrice() == null ? 0 : activityProduct.getActivityPrice();
+        //获取活动的信息
+        Long headId = activityProduct.getHeadId();
+        List<ActivityCoupon> couponList = activityHeadMapper.getActivityCouponList(headId);
+        //判断是否设置单品券,设置单品券信息
+        String spCouponFlag = activityProduct.getSpCouponFlag();
+        Double spCouponThreshold = activityProduct.getSpCouponThreshold();
+        Double spCouponDenom = activityProduct.getSpCouponDenom();
+        String groupId="0";
+        double lowestPrice=0;//最低价
+        double spCouponPrice = 0;//单品券免减金额
+        double shopExemptionAmount=0;//店铺券下免减金额
+        double spExemptionAmount=0;//单品应享受的免减金额
+
+        //有单品券
+        if(StringUtils.isNotEmpty(spCouponFlag) && spCouponFlag.equalsIgnoreCase("1")){
+            // 活动价小于单品券门槛，免减金额=商品活动价*（券免减金额/券门槛）
+            if(activityPrice<spCouponThreshold){
+                spCouponPrice=activityPrice*(spCouponDenom/spCouponThreshold);
+            }else {
+                // 活动价大于单品券门槛   免减金额=单品券免减金额
+                spCouponPrice=spCouponDenom;
+            }
+        }else{
+            //a.各单品优惠应享受的免减金额（各机制对应各商品）
+            groupId = activityProduct.getGroupId();
+            double discountAmount = activityProduct.getDiscountAmount() == null ? 0 : activityProduct.getDiscountAmount();
+            double discountSize = activityProduct.getDiscountSize() == null ? 0 : activityProduct.getDiscountSize();
+            discountSize = discountSize < 1 ? discountSize : (discountSize > 10 ? (discountSize / 100) : (discountSize / 10));
+            switch (groupId) {
+                case "9"://满件打折：免减金额=商品活动价*（1-几几折）
+                    spExemptionAmount = activityPrice * (1 - discountSize);
+                    break;
+                case "14"://立减特价：免减金额为立减金额
+                    spExemptionAmount = discountAmount;
+                    break;
+                case "13"://仅店铺券：免减金额为0；
+                    spExemptionAmount = 0;
+                default:
+                    break;
+            }
+
+            //b.店铺券下的满减金额（针对所有商品）
+            List<ActivityCoupon> shopCouponList = couponList.stream().filter(x -> x.getCouponType().equalsIgnoreCase("S")).collect(Collectors.toList());//获取活动设置的优惠券信息
+            ActivityCoupon tmp = shopCouponList.get(0);
+            double couponDenom = Double.parseDouble(tmp.getCouponDenom());//最低优惠券券的免减金额
+            double couponThreshold =  Double.parseDouble(tmp.getCouponThreshold());//最低店铺优惠券门槛
+            if(activityPrice<couponThreshold){
+                //免减金额=商品活动价*（门槛最低的券的免减金额/门槛最低的券门槛）
+                shopExemptionAmount=activityPrice*(couponDenom/couponThreshold);
+            }else{
+                //商品活动价大于最低门槛时，找距离商品活动价最近的且小于商品活动价的店铺券门槛，
+                for (int i = shopCouponList.size()-1; i >-1; i--) {
+                    if(Double.parseDouble(shopCouponList.get(i).getCouponThreshold())<activityPrice){
+                        couponDenom=Double.parseDouble(shopCouponList.get(i).getCouponDenom());
+                        break;
+                    }
+                }
+                shopExemptionAmount=couponDenom;
+            }
+        }
+
+        //单品券为有时，最低价=活动价-单品券免减金额
+        if(StringUtils.isNotEmpty(spCouponFlag) && spCouponFlag.equalsIgnoreCase("1")){
+            lowestPrice=(activityPrice-spCouponPrice)>0?(activityPrice-spCouponPrice):0;
+        }else{
+            //单品券为无时，最低价=活动价-单品享受的免减金额-店铺券下的满减金额
+            lowestPrice=(activityPrice-spExemptionAmount-shopExemptionAmount)>0?(activityPrice-spExemptionAmount-shopExemptionAmount):0;
+        }
+        //设置活动通知体现最低单价
+        activityProduct.setMinPrice(Math.round(lowestPrice));
+
+        //设置利益体现点
+        if(StringUtils.isNotEmpty(spCouponFlag) && spCouponFlag.equalsIgnoreCase("1")){
+            activityProduct.setActivityProfit(spCouponPrice);
+        }else{
+            if("9".equals(groupId)){
+                //满减打折
+                activityProduct.setActivityProfit(activityProduct.getDiscountSize());
+            }else if("14".equals(groupId)){//立减特价
+                activityProduct.setActivityProfit(Math.ceil(spExemptionAmount));
+            }else{//仅店铺券
+                activityProduct.setActivityProfit(Math.ceil(shopExemptionAmount));
+            }
+        }
+        return  activityProduct;
+    }
+
+
+    /**
+     * 计算商品利益点（旧版，已废弃）
+     * @param activityProduct
+     * @return
+     */
+    private ActivityProduct calculateProductMinPrice1(ActivityProduct activityProduct) {
         Long headId = activityProduct.getHeadId();
         List<ActivityCoupon> couponList = activityHeadMapper.getActivityCouponList(headId);
 
@@ -104,8 +202,8 @@ public class QywxActivityProductServiceImpl implements QywxActivityProductServic
         Double spCouponThreshold = activityProduct.getSpCouponThreshold();
         Double spCouponDenom = activityProduct.getSpCouponDenom();
         // 店铺优惠:叠加
-        List<ActivityCoupon> shopCouponList = couponList.stream().filter(x -> x.getCouponType().equalsIgnoreCase("S")).collect(Collectors.toList());
-        long shopAddFlagY = shopCouponList.stream().filter(x -> x.getAddFlag().equalsIgnoreCase("1")).count();
+        List<ActivityCoupon> shopCouponList = couponList.stream().filter(x -> x.getCouponType().equalsIgnoreCase("S")).collect(Collectors.toList());//获取活动设置的优惠券信息
+        long shopAddFlagY = shopCouponList.stream().filter(x -> x.getAddFlag().equalsIgnoreCase("1")).count();//addflag  是否叠加
         long shopAddFlagN = shopCouponList.stream().filter(x -> x.getAddFlag().equalsIgnoreCase("0")).count();
         if (shopAddFlagY > 0 && shopAddFlagN > 0) {
             throw new IllegalArgumentException("店铺优惠不能同时存在叠加券和非叠加券！");
@@ -173,15 +271,17 @@ public class QywxActivityProductServiceImpl implements QywxActivityProductServic
                     }
 
                     ActivityCoupon tmp = shopCouponList.get(0);
-                    double n1 = Double.parseDouble(tmp.getCouponDenom()) / Double.parseDouble(tmp.getCouponThreshold());
-                    double n2 = finalActivityPrice / Double.parseDouble(tmp.getCouponThreshold());
-                    if (n2 < 1) {
+                    double n1 = Double.parseDouble(tmp.getCouponDenom()) / Double.parseDouble(tmp.getCouponThreshold());//优惠券面额/优惠券门槛
+                    double n2 = finalActivityPrice / Double.parseDouble(tmp.getCouponThreshold());//活动商品价格/优惠券门槛； 大于1是活动价高于代金券门槛   否则反之
+                    if (n2 < 1) {//如果否，则免减金额=商品活动价*（券免减金额/券门槛）
                         preferAmount2 = finalActivityPrice * n1;
                     } else {
-                        preferAmount2 = Math.floor(n2) * Double.parseDouble(tmp.getCouponDenom());
-                        if (groupId.equalsIgnoreCase("9")) {
-                            preferAmount2 = preferAmount2 / discountCnt;
-                        }
+                       // 如果是，则免减金额=该门槛下需减去的金额
+                        preferAmount2=Double.parseDouble(tmp.getCouponDenom());
+//                        preferAmount2 = Math.floor(n2) * Double.parseDouble(tmp.getCouponDenom());
+//                        if (groupId.equalsIgnoreCase("9")) {
+//                            preferAmount2 = preferAmount2 / discountCnt;
+//                        }
                     }
                 }
             }
