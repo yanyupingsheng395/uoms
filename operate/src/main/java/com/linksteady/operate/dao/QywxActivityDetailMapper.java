@@ -20,19 +20,4 @@ public interface QywxActivityDetailMapper {
      * 查询出所有文案为空的记录的条数
      */
     int selectContentNulls(@Param("planId") Long planId);
-
-    /**
-     * 查询出所有文案含非法变量的记录的条数
-     */
-    int selectContentVariable(@Param("planId") Long planId);
-
-    /**
-     * 查询出所有推送时间为空的记录的条数
-     */
-    int selectPushScheduleNulls(@Param("planId") Long planId);
-
-    /**
-     * 查询出所有推送时间格式不正确的记录的条数
-     */
-    int selectPushScheduleInvalid(@Param("planId") Long planId);
 }

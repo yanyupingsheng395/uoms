@@ -102,39 +102,10 @@
             </div>
             <div class="modal-body">
                 <div class="row" id="pushSteps"></div>
-                <div class="row" id="overview">
-                    <div class="col-sm-12 m-b-0">
-                        <h5 class="m-b-0">用户群组预览</h5>
-                    </div>
-                    <div class="col-sm-12">
-                        <hr class="hr m-t-0 m-b-5"/>
-                    </div>
-                    <div class="col-md-12 table-striped">
-                        <table class="table table-bordered table-striped" id="userGroupTable"></table>
-                    </div>
-
-                    <div class="col-md-12 m-b-0 m-t-10">
-                        <h5 class="m-b-0">短信统计预览</h5>
-                    </div>
-                    <div class="col-md-12">
-                        <hr class="hr m-t-0 m-b-5"/>
-                    </div>
-                    <div class="col-md-12 m-t-10 table-striped">
-                        <table class="table table-bordered table-striped" id="smsStatisTable"></table>
-                    </div>
-
-                    <div class="col-md-12  m-t-10 text-right">
-                        <div>
-                            <button type="button" class="btn btn-primary btn-sm" id="next1Btn">下一步</button>
-                            <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row" id="pushdetail" hidden>
+                <div class="row" id="pushdetail">
                     <div class="col-md-12 m-t-10">
                         <div class="col-sm-12 m-b-0">
-                            <h5 class="m-b-0">单一用户预览</h5>
+                            <h5 class="m-b-0">用户明细</h5>
                         </div>
                         <div class="col-sm-12">
                             <hr class="hr m-t-0 m-b-5"/>
@@ -148,8 +119,7 @@
 
                     <div class="col-md-12 m-t-10 text-right">
                         <div>
-                            <button type="button" class="btn btn-primary btn-sm" id="pre2Btn">上一步</button>
-                            <button type="button" class="btn btn-primary btn-sm" id="next2Btn">下一步</button>
+                            <button type="button" class="btn btn-primary btn-sm" id="next1Btn">下一步</button>
                             <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
                         </div>
                     </div>
@@ -166,21 +136,6 @@
 
                     <div class="col-md-12">
                         <form class="form-horizontal">
-                                <div class="form-group">
-                                    <label class="col-md-3 control-label">推送方式</label>
-                                    <div class="col-md-7 mt7">
-                                        <label class="lyear-radio radio-inline radio-primary">
-                                            <input type="radio" name="pushMethod" value="AI"><span>智能推送</span>
-                                        </label>
-                                        <label class="lyear-radio radio-inline radio-primary">
-                                            <input type="radio" name="pushMethod" value="IMME"><span>立刻推送</span>
-                                        </label>
-                                        <label class="lyear-radio radio-inline radio-primary">
-                                            <input type="radio" name="pushMethod" value="FIXED"><span>定时推送</span>
-                                        </label>
-                                    </div>
-                                </div>
-
                                 <div class="form-group" id="pushPeriodDiv" hidden>
                                     <label class="col-md-3 control-label">推送时间</label>
                                     <div class="col-md-3">
@@ -191,7 +146,7 @@
                                 <div class="form-group" style="margin-top: 30px;">
                                     <div class="col-md-8 col-md-offset-2" >
                                         <div class="alert" role="alert" style="background-color: #fcf8e3;padding: 13px 24px;">
-                                            确定推送，将会发送文案给活动用户。
+                                            确定推送，将会通过企业微信发送文案给每日成长用户。
                                             <label class="lyear-checkbox m-t-10 checkbox-warning">
                                                 <input type="checkbox" id="push_ok">
                                                 <span>我确定要推送</span>
@@ -205,7 +160,7 @@
 
                     <div class="col-md-12 text-right">
                         <div>
-                            <button type="button" class="btn btn-primary btn-sm"  id="pre3Btn">上一步</button>
+                            <button type="button" class="btn btn-primary btn-sm"  id="pre2Btn">上一步</button>
                             <button type="button" class="btn btn-primary btn-sm" disabled id="pushBtn">确定推送</button>
                             <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
                         </div>

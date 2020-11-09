@@ -13,7 +13,6 @@
         <result column="PUSH_STATUS" jdbcType="VARCHAR" property="pushStatus"/>
         <result column="HEAD_ID" jdbcType="VARCHAR" property="headId"/>
         <result column="ACTIVITY_DETAIL_ID" jdbcType="VARCHAR" property="activityDetailId"/>
-        <result column="ACTIVITY_STAGE" jdbcType="VARCHAR" property="activityStage"/>
         <result column="PLAN_TYPE" jdbcType="VARCHAR" property="planType"/>
         <result column="PLAN_ID" jdbcType="DECIMAL" property="planId"/>
         <result column="ORDER_PERIOD" jdbcType="VARCHAR" property="orderPeriod"/>
@@ -33,14 +32,12 @@
     <select id="getPageList" resultMap="base">
         select to_char(UO_QYWX_ACTIVITY_DETAIL.PUSH_DATE, 'yyyy-mm-dd hh24:mi') PUSH_DATE_STR,
                UO_QYWX_ACTIVITY_DETAIL.HEAD_ID,
-               UO_QYWX_ACTIVITY_PLAN.ACTIVITY_STAGE,
                UO_QYWX_ACTIVITY_PLAN.PLAN_TYPE,
                UO_QYWX_ACTIVITY_GROUP.GROUP_NAME
         from UO_QYWX_ACTIVITY_DETAIL,UO_QYWX_ACTIVITY_PLAN,UO_QYWX_ACTIVITY_GROUP
         where
             UO_QYWX_ACTIVITY_DETAIL.HEAD_ID=UO_QYWX_ACTIVITY_GROUP.HEAD_ID
         AND  UO_QYWX_ACTIVITY_PLAN.PLAN_TYPE=UO_QYWX_ACTIVITY_GROUP.ACTIVITY_TYPE
-        AND  UO_QYWX_ACTIVITY_PLAN.ACTIVITY_STAGE=UO_QYWX_ACTIVITY_GROUP.ACTIVITY_STAGE
         AND  UO_QYWX_ACTIVITY_PLAN.PLAN_ID = #{planId}::int8
         limit #{limit} offset #{offset}
     </select>
@@ -50,18 +47,6 @@
     </delete>
 
     <select id="selectContentNulls" resultType="int">
-       select count(1) from UO_QYWX_ACTIVITY_DETAIL
-    </select>
-
-    <select id="selectContentVariable" resultType="int">
-      select count(1) from UO_QYWX_ACTIVITY_DETAIL
-    </select>
-
-    <select id="selectPushScheduleNulls" resultType="int">
-      select count(1) from UO_QYWX_ACTIVITY_DETAIL
-    </select>
-
-    <select id="selectPushScheduleInvalid" resultType="int">
-        select count(1) from UO_QYWX_ACTIVITY_DETAIL
+       select count(1) from UO_QYWX_ACTIVITY_DETAIL  where sms_content is null
     </select>
 </mapper>

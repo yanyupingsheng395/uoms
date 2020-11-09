@@ -121,7 +121,7 @@
                UO_QYWX_ACTIVITY_DETAIL.PLAN_ID,
                UO_QYWX_ACTIVITY_GROUP.GROUP_ID,
                UO_QYWX_ACTIVITY_GROUP.GROUP_NAME,
-               COUNT(UO_QYWX_ACTIVITY_DETAIL.activity_detail_id) GROUP_USERNUM
+               COUNT(UO_QYWX_ACTIVITY_DETAIL.qywx_detail_id) GROUP_USERNUM
           from UO_QYWX_ACTIVITY_DETAIL,UO_QYWX_ACTIVITY_GROUP,UO_QYWX_ACTIVITY_PLAN
                where
                      UO_QYWX_ACTIVITY_DETAIL.HEAD_ID=UO_QYWX_ACTIVITY_GROUP.HEAD_ID
@@ -134,41 +134,6 @@
                    UO_QYWX_ACTIVITY_GROUP.GROUP_ID,
                    UO_QYWX_ACTIVITY_GROUP.GROUP_NAME
           ORDER BY UO_QYWX_ACTIVITY_GROUP.GROUP_ID ASC
-    </select>
-
-    <select id="getPlanSmsContentListCount" resultType="int">
-        SELECT count(*) FROM (
-                 select
-                           UO_QYWX_ACTIVITY_DETAIL.SMS_CONTENT,
-                           COUNT(UO_QYWX_ACTIVITY_DETAIL.activity_detail_id) CNT
-                      from UO_QYWX_ACTIVITY_DETAIL,UO_QYWX_ACTIVITY_GROUP,UO_QYWX_ACTIVITY_PLAN
-                           where
-                                 UO_QYWX_ACTIVITY_DETAIL.HEAD_ID=UO_QYWX_ACTIVITY_GROUP.HEAD_ID
-                            AND  UO_QYWX_ACTIVITY_DETAIL.GROUP_ID= UO_QYWX_ACTIVITY_GROUP.GROUP_ID
-                            AND  UO_QYWX_ACTIVITY_PLAN.PLAN_TYPE=UO_QYWX_ACTIVITY_GROUP.ACTIVITY_TYPE
-                            AND  UO_QYWX_ACTIVITY_DETAIL.PLAN_ID = UO_QYWX_ACTIVITY_PLAN.PLAN_ID
-                            AND  UO_QYWX_ACTIVITY_DETAIL.PLAN_ID = #{planId}
-                      GROUP BY UO_QYWX_ACTIVITY_DETAIL.SMS_CONTENT
-              ) v
-    </select>
-
-    <select id="getPlanSmsContentList" resultMap="smsStatisResult">
-      SELECT SMS_CONTENT,sms_billing_count, CNT, LENGTH(SMS_CONTENT) SMSLENGTH
-      FROM (
-             select
-                   UO_QYWX_ACTIVITY_DETAIL.SMS_CONTENT,UO_QYWX_ACTIVITY_DETAIL.sms_billing_count,
-                   COUNT(UO_QYWX_ACTIVITY_DETAIL.activity_detail_id) CNT
-              from UO_QYWX_ACTIVITY_DETAIL,UO_QYWX_ACTIVITY_GROUP,UO_QYWX_ACTIVITY_PLAN
-                   where
-                         UO_QYWX_ACTIVITY_DETAIL.HEAD_ID=UO_QYWX_ACTIVITY_GROUP.HEAD_ID
-                    AND  UO_QYWX_ACTIVITY_DETAIL.GROUP_ID= UO_QYWX_ACTIVITY_GROUP.GROUP_ID
-                    AND  UO_QYWX_ACTIVITY_PLAN.PLAN_TYPE=UO_QYWX_ACTIVITY_GROUP.ACTIVITY_TYPE
-                    AND  UO_QYWX_ACTIVITY_DETAIL.PLAN_ID = UO_QYWX_ACTIVITY_PLAN.PLAN_ID
-                    AND  UO_QYWX_ACTIVITY_DETAIL.PLAN_ID = #{planId}
-              GROUP BY UO_QYWX_ACTIVITY_DETAIL.SMS_CONTENT,UO_QYWX_ACTIVITY_DETAIL.sms_billing_count
-      ) v
-      ORDER BY CNT DESC,SMS_CONTENT ASC
-      limit #{limit} offset #{offset}
     </select>
 
     <select id="selectPlanEffect" resultMap="PlanEffectResult">

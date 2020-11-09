@@ -107,18 +107,6 @@
         where PLAN_ID = #{planId}::int4  AND VERSION=#{version}::int4
     </update>
 
-    <update id="updatePushScheduleDate">
-        UPDATE UO_OP_ACTIVITY_DETAIL C SET PUSH_SCHEDULING_DATE=(
-                                           SELECT
-            (CASE WHEN P.PUSH_METHOD='IMME' OR P.PUSH_METHOD='FIXED' THEN
-                                           P.PUSH_PERIOD
-                                           ELSE
-                                           P.PUSH_PERIOD||C.ORDER_PERIOD||'00' END)::int8
-                                           FROM UO_OP_ACTIVITY_PLAN P WHERE C.PLAN_ID=P.PLAN_ID
-            ) where
-            PLAN_ID=#{planId}::int4
-    </update>
-
     <insert id="insertToPushListLarge">
         INSERT INTO uo_op_push_list_large(
             PUSH_CONTENT,
@@ -145,12 +133,6 @@
         AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = UO_OP_ACTIVITY_PLAN.PLAN_ID
         AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = #{planId}
     </insert>
-
-    <update id="updatePushMethod">
-        update UO_OP_ACTIVITY_PLAN set
-                      PUSH_METHOD = #{pushMethod},PUSH_PERIOD=#{pushPeriod}
-        where plan_id = #{planId}
-    </update>
 
     <select id="validateSmsConfig" resultType="int">
         select count(*) from UO_OP_ACTIVITY_GROUP

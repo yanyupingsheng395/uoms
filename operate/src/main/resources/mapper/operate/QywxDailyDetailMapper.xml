@@ -110,8 +110,8 @@
         FROM
               uo_qywx_daily_detail
         WHERE head_id=#{headId}
-        <if test="followUserId != '' and followUserId != null">
-            and FOLLOW_USER_ID = #{followUserId}
+        <if test="followUserId != '' and followUserId != null and followUserId !='-1'" >
+            and follow_user_id = #{followUserId}
         </if>
     </select>
 

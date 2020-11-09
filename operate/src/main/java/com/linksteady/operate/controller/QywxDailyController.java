@@ -261,6 +261,21 @@ public class QywxDailyController {
     }
 
     /**
+     * 补充发送优惠券
+     */
+    @GetMapping("/manualSubmitCoupon")
+    public ResponseBo submitTask(Long headId) {
+        boolean flag=qywxSendCouponService.sendCouponToUser(headId);
+        if(!flag)
+        {
+            return ResponseBo.error();
+        }else
+        {
+            return ResponseBo.ok();
+        }
+    }
+
+    /**
      * 获取当前日期和任务日期、任务天数
      *
      * @param headId

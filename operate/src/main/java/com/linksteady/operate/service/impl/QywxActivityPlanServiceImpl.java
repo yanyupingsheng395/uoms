@@ -118,16 +118,6 @@ public class QywxActivityPlanServiceImpl implements QywxActivityPlanService {
     }
 
     @Override
-    public int getPlanSmsContentListCount(Long planId) {
-        return qywxActivityPlanMapper.getPlanSmsContentListCount(planId);
-    }
-
-    @Override
-    public List<SmsStatisVO> getPlanSmsContentList(Long planId, int limit, int offset) {
-        return qywxActivityPlanMapper.getPlanSmsContentList(planId,limit,offset);
-    }
-
-    @Override
     public ActivityPlan getPlanInfo(Long planId) {
         return qywxActivityPlanMapper.getPlanInfo(planId);
     }

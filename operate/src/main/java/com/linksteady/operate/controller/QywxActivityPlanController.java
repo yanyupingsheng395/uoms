@@ -40,13 +40,10 @@ public class QywxActivityPlanController {
     private QywxActivityPlanService qywxActivityPlanService;
 
     @Autowired
-    private QywxActivityDetailService activityDetailService;
+    private QywxActivityDetailService qywxActivityDetailService;
 
     @Autowired
-    private PushConfig pushConfig;
-
-    @Autowired
-    private QywxActivityPushService activityPushService;
+    private QywxActivityPushService qywxActivityPushService;
 
     /**
      * 获取任务计划
@@ -83,27 +80,6 @@ public class QywxActivityPlanController {
     }
 
     /**
-     * 获取计划的统计信息
-     *
-     * @param
-     * @return
-     */
-    @GetMapping("/getPlanSmsStatis")
-    public ResponseBo getPlanSmsStatis(QueryRequest request) {
-        int limit = request.getLimit();
-        int offset = request.getOffset();
-        long planId = Long.parseLong(request.getParam().get("planId"));
-        ActivityPlan activityPlan = qywxActivityPlanService.getPlanInfo(planId);
-        if (null == activityPlan) {
-            return ResponseBo.error();
-        }
-        int count = qywxActivityPlanService.getPlanSmsContentListCount(planId);
-        List smsStatis = qywxActivityPlanService.getPlanSmsContentList(planId, limit, offset);
-        return ResponseBo.okOverPaging(null, count, smsStatis);
-    }
-
-
-    /**
      * 获取推送的明细数据
      *
      * @param request
@@ -114,8 +90,8 @@ public class QywxActivityPlanController {
         int limit = request.getLimit();
         int offset = request.getOffset();
         long planId = Long.parseLong(request.getParam().get("planId"));
-        int count = activityDetailService.getDataCount(planId);
-        List<ActivityDetail> dataList = activityDetailService.getPageList(limit, offset, planId);
+        int count = qywxActivityDetailService.getDataCount(planId);
+        List<ActivityDetail> dataList = qywxActivityDetailService.getPageList(limit, offset, planId);
 
         return ResponseBo.okOverPaging(null, count, dataList);
     }
@@ -126,8 +102,8 @@ public class QywxActivityPlanController {
      * @return
      */
     @PostMapping("/startPush")
-    public ResponseBo startPush(@RequestParam Long planId, @RequestParam String pushMethod, @RequestParam String pushPeriod) {
-        if (StringUtils.isEmpty(planId) || StringUtils.isEmpty(pushMethod)) {
+    public ResponseBo startPush(@RequestParam Long planId) {
+        if (StringUtils.isEmpty(planId)) {
             return ResponseBo.error("非法参数，请通过系统界面进行操作！");
         }
 
@@ -149,7 +125,7 @@ public class QywxActivityPlanController {
 
         //进行推送的操作
         try {
-            activityPushService.pushActivity(pushMethod, pushPeriod, activityPlan);
+            qywxActivityPushService.pushActivity(activityPlan);
             return ResponseBo.ok();
         } catch (Exception e) {
             log.error("活动运营推送失败，异常堆栈为{}", e);
@@ -185,7 +161,7 @@ public class QywxActivityPlanController {
 
         //更改状态
         try {
-            activityPushService.updatePlanToStop(activityPlan);
+            qywxActivityPushService.updatePlanToStop(activityPlan);
             return ResponseBo.ok();
         } catch (Exception e) {
             return ResponseBo.error("终止计划失败，请在列表界面刷新后重新操作");
@@ -220,14 +196,14 @@ public class QywxActivityPlanController {
             }
 
             //对文案配置情况进行校验
-            if (activityPushService.validateSmsConfig(activityPlan)) {
+            if (qywxActivityPushService.validateSmsConfig(activityPlan)) {
                 msg = "活动尚未完成文案的配置，请先完成文案的配置!";
                 return ResponseBo.error(msg);
             }
 
-            if (activityPushService.getTransActivityContentLock(activityPlan.getHeadId())) {
+            if (qywxActivityPushService.getTransActivityContentLock(activityPlan.getHeadId())) {
                 try {
-                    activityPushService.transActivityDetail(activityPlan);
+                    //qywxActivityPushService.transActivityDetail(activityPlan);
                     return ResponseBo.ok("转化文案成功!");
                 } catch (Exception e) {
                     log.error("活动运营出现转换文案异常，失败堆栈为{}", e);
@@ -238,7 +214,7 @@ public class QywxActivityPlanController {
                     }
                 } finally {
                     //释放锁
-                    activityPushService.delTransLock();
+                    qywxActivityPushService.delTransLock();
                 }
 
             } else {
@@ -247,25 +223,6 @@ public class QywxActivityPlanController {
         }
     }
 
-    /**
-     * 获取默认推送方式和定时推送时间
-     *
-     * @return
-     */
-    @GetMapping("/getDefaultPushInfo")
-    public ResponseBo getPushInfo() {
-        Map<String, Object> result = Maps.newHashMap();
-        result.put("method", pushConfig.getPushMethod());
-        int hour = LocalTime.now().getHour();
-        final List<String> timeList = IntStream.rangeClosed(8, 22).filter(x -> x > hour).boxed().map(y -> {
-            if (y < 10) {
-                return "0" + y + ":00";
-            }
-            return y + ":00";
-        }).collect(Collectors.toList());
-        result.put("timeList", timeList);
-        return ResponseBo.okWithData(null, result);
-    }
 
     /**
      * 获取当前计划的汇总信息

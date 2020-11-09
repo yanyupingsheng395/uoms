@@ -34,16 +34,6 @@ public interface QywxActivityPlanService {
     List<ActivityGroupVO> getPlanGroupList(Long planId);
 
     /**
-     * 获取按消息内容的统计信息的总行数
-     */
-   int getPlanSmsContentListCount(Long planId);
-
-    /**
-     * 获取按消息内容的统计信息
-     */
-    List<SmsStatisVO> getPlanSmsContentList(Long planId, int limit, int offset);
-
-    /**
      * 获取执行计划
      * @param planId
      * @return

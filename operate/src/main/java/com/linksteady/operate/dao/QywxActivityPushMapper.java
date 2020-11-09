@@ -50,21 +50,10 @@ public interface QywxActivityPushMapper {
 
 
     /**
-     * 更新推送状态
-     */
-    void updatePushScheduleDate(@Param("planId") Long planId);
-
-
-    /**
      * 将活动的推送数据写入到推送通道表中
      * @param planId
      */
     void insertToPushListLarge(Long planId);
-
-    /**
-     * 更新推送方式和推送时段
-     */
-    void updatePushMethod(Long planId, String pushMethod, String pushPeriod);
 
     /**
      * 判断活动是否配置了文案

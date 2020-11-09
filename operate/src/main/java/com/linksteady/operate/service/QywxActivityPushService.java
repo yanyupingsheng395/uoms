@@ -25,12 +25,10 @@ public interface QywxActivityPushService {
 
     /**
      * 对活动计划进行推送
-     * @param pushMethod
-     * @param pushPeriod
      * @param activityPlan
      * @throws Exception
      */
-    void pushActivity(String pushMethod, String pushPeriod, ActivityPlan activityPlan) throws Exception;
+    void pushActivity(ActivityPlan activityPlan) throws Exception;
 
     void updatePlanToStop(ActivityPlan activityPlan) throws Exception;
 

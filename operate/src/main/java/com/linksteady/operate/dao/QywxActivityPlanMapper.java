@@ -30,21 +30,6 @@ public interface QywxActivityPlanMapper {
     List<ActivityGroupVO> getPlanGroupList(Long planId);
 
     /**
-     * 获取按短信内容的统计信息的总记录数
-     * @param planId
-     * @return
-     */
-    int getPlanSmsContentListCount(Long planId);
-
-    /**
-     * 获取按短信内容的统计信息
-     * @param planId
-     * @return
-     */
-    List<SmsStatisVO> getPlanSmsContentList(Long planId, int limit, int offset);
-
-
-    /**
      * 执行计划效果累计数据
      */
     ActivityPlanEffect selectPlanEffect(Long planId);

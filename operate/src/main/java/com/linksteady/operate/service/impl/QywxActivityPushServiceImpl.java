@@ -48,7 +48,7 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
     private QywxActivityDetailMapper activityDetailMapper;
 
     @Autowired
-    private QywxActivityPushMapper activityPushMapper;
+    private QywxActivityPushMapper qywxActivityPushMapper;
 
     @Autowired
     ShortUrlService shortUrlService;
@@ -73,7 +73,7 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
     @Transactional(rollbackFor = Exception.class)
     public void transActivityDetail( ActivityPlan activityPlan) throws Exception {
         //删除临时表中的文案
-        activityPushMapper.deleteContentTmp(activityPlan.getPlanId());
+        qywxActivityPushMapper.deleteContentTmp(activityPlan.getPlanId());
         transContent(activityPlan.getHeadId(),activityPlan.getPlanId(),activityPlan.getStage(),activityPlan.getPlanType());
     }
 
@@ -105,7 +105,7 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
         Long startTime = System.currentTimeMillis();
 
         //获取此活动上配置的所有模板
-        List<Map<String,String>> templateList=activityPushMapper.getAllTemplate(headId,activityStage,activityType);
+        List<Map<String,String>> templateList=qywxActivityPushMapper.getAllTemplate(headId,activityStage,activityType);
         log.info("获取到模板的内容为{}",templateList.size());
 
         Map<String,String> templateMap= Maps.newHashMap();
@@ -117,12 +117,12 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
         }
 
         //根据planId获取当前有多少人需要推送
-        int pushUserCount= activityPushMapper.getPushCount(planId);
+        int pushUserCount= qywxActivityPushMapper.getPushCount(planId);
         int pageSize=400;
         //判断如果条数大于400 则进行分页
         if(pushUserCount<=pageSize)
         {
-            List<ActivityDetail> list = activityPushMapper.getPushList(pushUserCount,0,planId);
+            List<ActivityDetail> list = qywxActivityPushMapper.getPushList(pushUserCount,0,planId);
             //填充模板 生成文案
             List<ActivityContentVO> targetList= null;
             try {
@@ -138,7 +138,7 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
             //保存要推送的文案
             if(null!=targetList&&targetList.size()>0)
             {
-                activityPushMapper.insertPushContentTemp(targetList);
+                qywxActivityPushMapper.insertPushContentTemp(targetList);
             }
         }else
         {
@@ -173,7 +173,7 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
                 {
                     if(null!=future.get()&&future.get().size()>0)
                     {
-                        activityPushMapper.insertPushContentTemp(future.get());
+                        qywxActivityPushMapper.insertPushContentTemp(future.get());
                     }else
                     {
                         throw new LinkSteadyException("转化文案失败");
@@ -191,7 +191,7 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
             }
         }
         //用临时表更新 活动运营明细表
-        activityPushMapper.updatePushContentFromTemp(planId);
+        qywxActivityPushMapper.updatePushContentFromTemp(planId);
         Long endTime = System.currentTimeMillis();
         log.info(">>>活动文案转化成功，共：{}人，耗时：{}", pushUserCount, endTime - startTime);
     }
@@ -292,74 +292,29 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
 
     /**
      * 启动推送
-     * @param pushMethod
-     * @param pushPeriod
      * @param activityPlan
      * @throws Exception
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void pushActivity(String pushMethod, String pushPeriod, ActivityPlan activityPlan) throws Exception{
+    public void pushActivity(ActivityPlan activityPlan) throws Exception{
         //根据锁去更新状态 更新为执行中
-        int count= activityPushMapper.updateStatus(activityPlan.getPlanId(),ActivityPlanStatusEnum.EXEC.getStatusCode(),activityPlan.getVersion());
+        int count= qywxActivityPushMapper.updateStatus(activityPlan.getPlanId(),ActivityPlanStatusEnum.EXEC.getStatusCode(),activityPlan.getVersion());
 
         if(count==0)
         {
             throw new LinkSteadyException("记录已被其他用户修改，请在列表界面刷新后重新操作！");
         }else
         {
-            //判断推送方式
-            String newPushPeriod = "";
-            // 立即推送：当前时间往后顺延10分钟
-            if ("IMME".equalsIgnoreCase(pushMethod)) {
-                newPushPeriod = DateTimeFormatter.ofPattern("yyyyMMddHHmm").format(LocalDateTime.now().plusMinutes(10));
-            }else if("FIXED".equalsIgnoreCase(pushMethod)) {
-
-                //当前日期的YYYYMMDD + 用户选择的HHss
-                newPushPeriod= DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now())+
-                        DateTimeFormatter.ofPattern("HHmm").format(LocalTime.parse(pushPeriod, DateTimeFormatter.ofPattern("HH:mm")));
-            }else
-            {
-                // 默认是AI：存储当前日期YYYYMMDD 在写入detail表的时候拼上用户的个性化推送时间
-                newPushPeriod = DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now());
-            }
-            //将推送方式 和推送时段更新到PLAN表
-            activityPushMapper.updatePushMethod(activityPlan.getPlanId(),pushMethod,newPushPeriod);
-            //更新detail表
-            activityPushMapper.updatePushScheduleDate(activityPlan.getPlanId());
-
-            //此处对活动明细表进行短信文案和推送时间的校验
-            //判断文案是否有空
+            //判断文案是否都进行了配置
             int validCount=activityDetailMapper.selectContentNulls(activityPlan.getPlanId());
             if(validCount>0)
             {
                 throw new LinkSteadyException(validCount+"条文案为空，请核对活动配置！");
             }
 
-            //判断文案是否存在非法变量
-            validCount=activityDetailMapper.selectContentVariable(activityPlan.getPlanId());
-            //判断文案是否有超字数
-            if(validCount>0)
-            {
-                throw new LinkSteadyException(validCount+"条文案存在不符合规范的字符，请核对活动配置！");
-            }
-
-            //判断推送时间是否有空
-            validCount=activityDetailMapper.selectPushScheduleNulls(activityPlan.getPlanId());
-
-            if(validCount>0)
-            {
-                throw new LinkSteadyException(validCount+"条推送时间为空，请联系系统运维人员！");
-            }
-
-            //判断推送时间格式不正确
-            validCount=activityDetailMapper.selectPushScheduleInvalid(activityPlan.getPlanId());
-            if(validCount>0)
-            {
-                throw new LinkSteadyException(validCount+"条推送时间不正确，请联系系统运维人员！");
-            }
-
-            activityPushMapper.insertToPushListLarge(activityPlan.getPlanId());
+            //todo 写到推送表
+            qywxActivityPushMapper.insertToPushListLarge(activityPlan.getPlanId());
 
             //更新状态为 执行中(根据当前计划的状态更新不同的状态字段)
             qywxActivityHeadService.updateStatus(activityPlan.getHeadId(),
@@ -373,7 +328,7 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
     @Transactional(rollbackFor = Exception.class)
     public void updatePlanToStop(ActivityPlan activityPlan) throws Exception{
         //更新推送计划的状态
-        int count= activityPushMapper.updateStatus(activityPlan.getPlanId(),ActivityPlanStatusEnum.STOP.getStatusCode(),activityPlan.getVersion());
+        int count= qywxActivityPushMapper.updateStatus(activityPlan.getPlanId(),ActivityPlanStatusEnum.STOP.getStatusCode(),activityPlan.getVersion());
 
         if(count==0)
         {
@@ -388,7 +343,7 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
      */
     @Override
     public boolean validateSmsConfig(ActivityPlan activityPlan) {
-        int count =activityPushMapper.validateSmsConfig(activityPlan.getHeadId(),activityPlan.getStage(),activityPlan.getPlanType());
+        int count =qywxActivityPushMapper.validateSmsConfig(activityPlan.getHeadId(),activityPlan.getStage(),activityPlan.getPlanType());
         //如果存在，则校验失败
         return count>0;
     }

@@ -20,14 +20,16 @@
         from uo_qywx_daily_detail join uo_qywx_coupon
           on uo_qywx_daily_detail.coupon_id=uo_qywx_coupon.coupon_id
          and uo_qywx_daily_detail.head_id=#{headId}
+         and uo_qywx_daily_detail.sendresult &lt;&gt; 'S'
     </select>
 
     <select id="getCouponUserCount" resultType="int">
-        select count(*) from uo_qywx_daily_detail where head_id=#{headId} and coupon_id=#{couponId}
+        select count(*) from uo_qywx_daily_detail where head_id=#{headId} and coupon_id=#{couponId} and sendresult &lt;&gt; 'S'
     </select>
 
     <select id="getCouponUserList" resultMap="sendCouponVOMap">
         select detail_id,user_phone from uo_qywx_daily_detail where head_id=#{headId} and coupon_id=#{couponId}
+        and sendresult &lt;&gt; 'S'
         order by detail_id asc limit #{limit} offset #{offset}
     </select>
 
