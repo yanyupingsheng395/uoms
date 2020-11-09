@@ -100,8 +100,8 @@
     <select id="checkTemplateUsed" resultType="int">
         select count(1) from UO_qywx_ACTIVITY_GROUP t1
          where sms_template_code=#{templateCode} and
-              (head_id,activity_stage,activity_type) not in (
-                 select distinct head_id,activity_stage,activity_type from UO_qywx_ACTIVITY_GROUP  t2 where
+              (head_id,activity_type) not in (
+                 select distinct head_id,activity_type from UO_qywx_ACTIVITY_GROUP  t2 where
                    t2.head_id=#{headId} and t2.activity_type=#{type}
              )
     </select>

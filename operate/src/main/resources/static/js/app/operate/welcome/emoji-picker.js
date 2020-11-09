@@ -409,12 +409,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       var textarr=textval.split('\n');
       var val="";
       for (var i = 0; i < textarr.length; i++) {
-       var obj= document.createElement("div");
          val+="<div>"+textarr[i]+"</div>";
-        //obj.innerText=textarr[i];
         this.$editor.html(val);
       }
-     // this.emojiPopup.appendUnicodeAsImageToElement(this.$editor,val);
     }else{
       this.emojiPopup.appendUnicodeAsImageToElement(this.$editor,textval);
     }
