@@ -4,7 +4,6 @@ $( function () {
     if (null != errmsg && errmsg != '') {
         $MB.n_warning( errmsg );
     }
-
     let settings = {
         url: "/qywxActivity/gePageOfHead",
         cache: false,
