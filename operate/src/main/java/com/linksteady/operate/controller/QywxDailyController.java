@@ -412,6 +412,4 @@ public class QywxDailyController {
         QywxDailyStaffEffect qywxDailyStaffEffect = qywxDailyService.getDailyStaffEffect(headId, followUserId);
         return ResponseBo.okWithData(null, qywxDailyStaffEffect);
     }
-
-
 }

@@ -6,6 +6,7 @@ var $basicAddForm = $( "#basic-add-form" );
 let CURRENT_TMP_CODE;
 let CURRENT_GROUP_ID;
 let CURRENT_TYPE;
+let CURRENT_ACTIVITY_TYPE;
 
 $( function () {
     stepInit();
@@ -246,17 +247,71 @@ function resetActivityProduct() {
     $MB.refreshTable( 'activityProductTable1' );
 }
 
+function addPlatCoupon(idx) {
+    var couponType = (idx == 1) ? 'P' : 'S';
+    var code = '<div class="row m-t-10">\n' +
+        '<input type="hidden" name="couponType" value="'+couponType+'"/>\n' +
+        '                        <div class="col-md-4">\n' +
+        '                            <div class="form-group">\n' +
+        '                                &#12288;券叠加：<select name="addFlag" class="form-control" style="width: 172px;">\n' +
+        '                                    <option value="1">是</option>\n' +
+        '                                    <option value="0">否</option>\n' +
+        '                                </select>\n' +
+        '                            </div>\n' +
+        '                        </div>\n' +
+        '                        <div class="col-md-4">\n' +
+        '                            <div class="form-group">\n' +
+        '                                &#12288;&#12288;门槛：<input type="text" name="couponThreshold" class="form-control"/>\n' +
+        '                            </div>\n' +
+        '                        </div>\n' +
+        '                        <div class="col-md-4">\n' +
+        '                            <div class="form-group">\n' +
+        '                                &#12288;&#12288;面额：<input type="text" name="couponDenom" class="form-control"/>\n' +
+        '                            </div>\n' +
+        '                            &nbsp;&nbsp;<a style="color: #f96868;cursor: pointer;" onclick="deleteCoupon(this)"><i class="fa fa-trash"></i>删除</a>\n' +
+        '                        </div>\n' +
+        '                    </div>';
+    if(idx == 1) {
+        if($('#platCouponDiv').find('.row').length == 1) {
+            $("#platDiscountItems").show();
+            $("#platCouponDiv").attr("style", "border: dashed 1px #e7eaec;margin-top: 10px;padding-bottom: 10px;");
+        }
+        $("#platDiscountItems").append(code);
+    }else {
+        if($('#shopCouponDiv').find('.row').length == 1) {
+            $("#shopDiscountItems").show();
+            $("#shopCouponDiv").attr("style", "border: dashed 1px #e7eaec;margin-top: 10px;padding-bottom: 10px;");
+        }
+        $("#shopDiscountItems").append(code);
+    }
+}
+
 
 // 商品数据下载
 $( "#btn_download" ).click( function () {
     window.location.href = "/qywxActivity/downloadFile";
 } );
 
+//清除页面数据
+function clearData(){
+    $("#spCouponDiv").attr("style", "display:none;");
+    $("input[name='spCouponThreshold']").val('');
+    $("input[name='spCouponDenom']").val('');
+    $("#activityRule").val("");
+    $("#shopAcvity").attr("style", "display:block;");
+    $("#chooseSp").attr("style", "display:block;");
+    $("#shopOffer").html("");
+}
+
+$("#closeEditProduct").click(function () {
+    clearData();
+})
+
 // 添加活动商品
 $( "#saveActivityProduct" ).click( function () {
     let validator = $activityProductAddForm.validate();
     let flag = validator.form();
-    if (flag) {
+    //if (flag) {
         let operate = $( "#saveActivityProduct" ).attr( "name" );
         if (operate === "save") {
             $.post( "/qywxActivity/saveActivityProduct", $( "#add-product-form" ).serialize() + "&headId=" + $( "#headId" ).val(),  function (r) {
@@ -264,6 +319,7 @@ $( "#saveActivityProduct" ).click( function () {
                     $MB.n_success( "添加商品成功！" );
                     getProductInfo();
                     $MB.closeAndRestModal( "addProductModal" );
+                    clearData();
                 } else {
                     $MB.n_danger( r.msg );
                 }
@@ -275,12 +331,13 @@ $( "#saveActivityProduct" ).click( function () {
                     $MB.n_success( "更新商品成功！");
                     getProductInfo();
                     $MB.closeAndRestModal( "addProductModal" );
+                    clearData();
                 } else {
                     $MB.n_danger(r.msg);
                 }
             } );
         }
-    }
+   // }
 } );
 
 // 添加商品信息model关闭时，重置控件数据
@@ -333,11 +390,6 @@ function editShop() {
             $("#add-product-form").find("select[name='groupId']").find("option[value='"+data['groupId']+"']").prop("selected", true);
             $("#add-product-form").find("select[name='spCouponFlag']").find("option[value='"+data['spCouponFlag']+"']").prop("selected", true);
             $("#add-product-form").find("select[name='activityType']").find("option[value='"+data['activityType']+"']").prop("selected", true);
-           if(data['spCouponFlag']=="0"){
-                $("#spCouponDiv").hide();
-           }else if(data['spCouponFlag']=="1"){
-               $("#spCouponDiv").show();
-           }
             var val = $("#activityRule").find("option:selected").val();
             switch (val) {
                 case "9":
@@ -350,6 +402,8 @@ function editShop() {
                         '<div class="col-md-7">\n' +
                         '<input class="form-control" type="text" name="discountSize" value="' + data['discountSize']+'"/>\n' +
                         '</div></div>');
+                    $("#chooseSp").attr("style","display:none");
+                    $("#spCouponDiv").hide();
                     break;
                 case "14":
                     $("#shopOffer").attr("style", "display:block;").html('').append('<div class="form-group">' +
@@ -357,12 +411,25 @@ function editShop() {
                         '<div class="col-md-7">\n' +
                         '<input class="form-control" type="text" name="discountAmount" value="'+data['discountAmount']+'"/>\n' +
                         '</div></div>');
+                    $("#chooseSp").attr("style","display:none");
+                    $("#spCouponDiv").hide();
                     break;
                 default:
                     $("#shopOffer").attr("style", "display:none;").html('');
+                    $("#chooseSp").attr("style","display:none");
+                    $("#spCouponDiv").hide();
                     break;
             }
             $( "#addProductModal" ).modal( 'show' );
+
+            if(data['spCouponFlag']=="0"){
+                $("#spCouponDiv").hide();
+            }else if(data['spCouponFlag']=="1"){
+                $("#spCouponDiv").show();
+                $("#shopOffer").html("");
+                $("#shopAcvity").attr("style","display:none");
+                $("#chooseSp").attr("style","display:block");
+            }
         } else {
             $MB.n_danger( "获取信息失败！" );
         }
@@ -812,10 +879,15 @@ function spCouponFlagChange(dom) {
     var val = $(dom).find("option:selected").val();
     if(val === '1') {
         $("#spCouponDiv").attr("style", "display:block;");
+        $("#shopAcvity").attr("style", "display:none;");
+        $("#activityRule").val("14");
+        $("#shopOffer").html("");
     }else {
         $("#spCouponDiv").attr("style", "display:none;");
         $("input[name='spCouponThreshold']").val('');
         $("input[name='spCouponDenom']").val('');
+        $("#activityRule").val("");
+        $("#shopAcvity").attr("style", "display:block;");
     }
 }
 
@@ -1322,6 +1394,7 @@ function groupIdChange(dom) {
                 '<div class="col-md-7">\n' +
                 '<input class="form-control" type="text" name="discountSize"/>\n' +
                 '</div></div>');
+            $("#chooseSp").attr("style", "display:none;");
             break;
         case "14":
             $("#shopOffer").attr("style", "display:block;").html('').append('<div class="form-group">' +
@@ -1329,9 +1402,15 @@ function groupIdChange(dom) {
                 '<div class="col-md-7">\n' +
                 '<input class="form-control" type="text" name="discountAmount"/>\n' +
                 '</div></div>');
+            $("#chooseSp").attr("style", "display:none;");
+            break;
+        case "13":
+            $("#shopOffer").attr("style", "display:none;").html('');
+            $("#chooseSp").attr("style", "display:none;");
             break;
         default:
             $("#shopOffer").attr("style", "display:none;").html('');
+            $("#chooseSp").attr("style", "display:block;");
             break;
     }
 }
