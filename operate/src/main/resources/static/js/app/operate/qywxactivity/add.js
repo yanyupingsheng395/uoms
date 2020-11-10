@@ -1137,11 +1137,11 @@ function validateTemplate() {
         return false;
     }
     if (isProfit === undefined) {
-        $MB.n_warning( "请选择个性化要素:商品的活动利益点！" );
+        $MB.n_warning( "请选择个性化要素:商品利益点！" );
         return false;
     }
     if (isPrice === undefined) {
-        $MB.n_warning( "请选择个性化要素:商品的入手预估单价！" );
+        $MB.n_warning( "请选择个性化要素:商品最低单价！" );
         return false;
     }
     if (smsContent === '') {
@@ -1163,25 +1163,25 @@ function validateTemplate() {
     }
 
     if(isProfit === '1') {
-        if(smsContent.indexOf("${商品的活动利益点}") === -1) {
-            $MB.n_warning("个性化要素:商品的活动利益点为是，文案内容未发现${商品的活动利益点}!");
+        if(smsContent.indexOf("${商品利益点}") === -1) {
+            $MB.n_warning("个性化要素:商品利益点为是，文案内容未发现${商品利益点}!");
             return false;
         }
     }else {
-        if(smsContent.indexOf("${商品的活动利益点}") !== -1) {
-            $MB.n_warning("个性化要素:商品的活动利益点为否'，文案内容不能出现${商品的活动利益点}!");
+        if(smsContent.indexOf("${商品利益点}") !== -1) {
+            $MB.n_warning("个性化要素:商品利益点为否'，文案内容不能出现${商品利益点}!");
             return false;
         }
     }
 
     if(isPrice === '1') {
-        if(smsContent.indexOf("${商品的入手预估单价}") === -1) {
-            $MB.n_warning("个性化要素:商品的入手预估单价为是，文案内容未发现${商品的入手预估单价}");
+        if(smsContent.indexOf("${商品最低单价}") === -1) {
+            $MB.n_warning("个性化要素:商品最低单价为是，文案内容未发现${商品最低单价}");
             return false;
         }
     }else {
-        if(smsContent.indexOf("${商品的入手预估单价}") !== -1) {
-            $MB.n_warning("个性化要素:商品的入手预估单价为否，文案内容不能出现${商品的入手预估单价}");
+        if(smsContent.indexOf("${商品最低单价}") !== -1) {
+            $MB.n_warning("个性化要素:商品最低单价为否，文案内容不能出现${商品最低单价}");
             return false;
         }
     }
