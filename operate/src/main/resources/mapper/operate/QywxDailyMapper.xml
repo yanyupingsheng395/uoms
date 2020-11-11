@@ -148,4 +148,33 @@
        update uo_qywx_daily_header set status='done_pe'  where head_id = #{headId}
     </update>
 
+    <select id="getPushMsgIdList" resultType="string">
+        select distinct msgid from uo_qywx_push_list where push_status='S' and push_date::date>=current_date-1
+    </select>
+
+    <delete id="deletePushResult">
+        delete from uo_qywx_msg_result where msg_id=#{msgId}
+    </delete>
+
+    <insert id="saveMsgResult">
+        insert into uo_qywx_msg_result(
+            	msg_id,
+                external_userid,
+                chat_id,
+                follow_user_id,
+                status,
+                send_time,
+                send_time_dt
+        )values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.msgId},
+             #{item.externalUserId},
+             #{item.chatId},
+             #{item.followUserId},
+             #{item.status},
+             #{item.sendTime},
+             #{item.sendTimeDt})
+        </foreach>
+    </insert>
+
 </mapper>
