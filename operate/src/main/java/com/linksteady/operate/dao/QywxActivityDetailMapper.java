@@ -1,5 +1,6 @@
 package com.linksteady.operate.dao;
 import com.linksteady.operate.domain.ActivityDetail;
+import com.linksteady.operate.domain.QywxActivityDetail;
 import io.lettuce.core.dynamic.annotation.Param;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public interface QywxActivityDetailMapper {
 
     int getDataCount(Long planId);
 
-    List<ActivityDetail> getPageList(int limit, int offset, Long planId);
+    List<QywxActivityDetail> getPageList(int limit, int offset, Long planId);
 
     void deleteData(Long headId);
 

@@ -1,7 +1,10 @@
 package com.linksteady.operate.dao;
 
 import com.linksteady.operate.domain.ActivityDetail;
+import com.linksteady.operate.domain.QywxActivityDetail;
+import com.linksteady.operate.domain.QywxPushList;
 import com.linksteady.operate.vo.ActivityContentVO;
+import com.linksteady.operate.vo.QywxActivityContentTmp;
 import io.lettuce.core.dynamic.annotation.Param;
 
 import java.util.List;
@@ -21,9 +24,9 @@ public interface QywxActivityPushMapper {
     /**
      * 获取此活动上配置的所有模板
      */
-    List<Map<String,String>> getAllTemplate(Long headId, String activityStage, String activityType);
+    List<Map<String,String>> getAllTemplate(Long headId, String activityType);
 
-    List<ActivityDetail> getPushList(int limit, int offset, Long planId);
+    List<QywxActivityDetail> getPushList(int limit, int offset, Long planId);
 
     int getPushCount(Long planId);
 
@@ -31,7 +34,7 @@ public interface QywxActivityPushMapper {
      * 将文案内容写入临时表
      * @param targetList
      */
-    void insertPushContentTemp(@Param("list") List<ActivityContentVO> targetList);
+    void insertPushContentTemp(@Param("list") List<QywxActivityContentTmp> targetList);
 
     /**
      * 将临时表的文案更新到正式表
@@ -58,6 +61,42 @@ public interface QywxActivityPushMapper {
     /**
      * 判断活动是否配置了文案
      */
-    int validateSmsConfig(long headId, String activityStage, String planType);
+    int validateSmsConfig(long headId, String planType);
 
+    /**
+     * 推送消息(按消息分组)
+     * @param headId
+     * @param followUserId
+     * @return
+     */
+    List<String> getMessageSignList(Long headId, String followUserId);
+
+    /**
+     * 查询当前签名、当前活动的总记录条数
+     * @param headId
+     * @param followUserId
+     * @param qywxMsgSign
+     * @return
+     */
+    int getWaitQywxUserListCount(Long headId, String followUserId, String qywxMsgSign);
+
+    /**
+     * 查询当前签名、当前活动的总记录条数
+     */
+    List<QywxActivityDetail> getQywxUserList(Long headId, String followUserId, String qywxMsgSign, int limit, int offset);
+
+    /**
+     *插入运营推送列表
+     */
+    void insertPushList(QywxPushList qywxPushList);
+
+    /**
+     * 没有数据，写入推送列表
+     */
+    void updatePushList(@Param("pushId") Long pushId, String status, String msgId, String faildList, String remark);
+
+    /**
+     * 回写uo_qywx_activity_detail的push_id
+     */
+    void updatePushId(long minQywxDetailId, long maxQywxDetailId, long pushId);
 }

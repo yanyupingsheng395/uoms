@@ -537,7 +537,7 @@ function copyInputToClipboard(id)
  * @returns {string}
  */
 function longTextFormat(value, row, index) {
-    if(value === null || value.length==0)
+    if(value == null || value.length==0)
     {
         return '';
     }else if(value.length <40) {

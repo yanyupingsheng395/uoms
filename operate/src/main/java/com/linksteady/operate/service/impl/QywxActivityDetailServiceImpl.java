@@ -3,6 +3,7 @@ package com.linksteady.operate.service.impl;
 import com.linksteady.operate.dao.ActivityDetailMapper;
 import com.linksteady.operate.dao.QywxActivityDetailMapper;
 import com.linksteady.operate.domain.ActivityDetail;
+import com.linksteady.operate.domain.QywxActivityDetail;
 import com.linksteady.operate.service.ActivityDetailService;
 import com.linksteady.operate.service.QywxActivityDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class QywxActivityDetailServiceImpl implements QywxActivityDetailService 
     }
 
     @Override
-    public List<ActivityDetail> getPageList(int limit, int offset, Long planId) {
+    public List<QywxActivityDetail> getPageList(int limit, int offset, Long planId) {
         return activityDetailMapper.getPageList(limit,offset, planId);
     }
 

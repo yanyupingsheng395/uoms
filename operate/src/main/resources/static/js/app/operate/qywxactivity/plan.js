@@ -195,6 +195,25 @@ $("#btn_process").click(function () {
 });
 
 /**
+ * 预览页  下一步按钮的点击事件
+ */
+$("#next1Btn").click(function () {
+    stepObj.setActive(1);
+    $("#pushSet").show();
+    $("#pushdetail").hide();
+    $("#pushBtn").show();
+});
+//点击"我确定推送"按钮，
+$("#push_ok").change(function () {
+    let flag = $(this).is(':checked');
+    if(flag) {
+        $("#pushBtn").removeAttr("disabled");
+    }else {
+        $("#pushBtn").attr("disabled", true);
+    }
+});
+
+/**
  * @param planId
  */
 function getUserDetail(){
@@ -217,45 +236,26 @@ function getUserDetail(){
         },
         columns: [
             {
-                field: 'textContent',
+                field: 'smsContent',
                 title: '个性化消息内容',
                 formatter: function (value, row, index) {
                     return longTextFormat(value, row, index);
                 }
             },
             {
-                field: 'followUserName',
+                field: 'followUserId',
                 title: '推送消息的成员',
                 align: "center",
             },
             {
-                field: 'qywxContactName',
+                field: 'qywxContactId',
                 title: '成员推送消息的用户',
                 align: "center",
             },{
                 field: 'recProdName',
                 title: '推荐购买的商品',
                 align: "center",
-            },{
-                field: 'couponDeno',
-                title: '基于商品的补贴',
-                align: "center",
-                formatter: function (value, row, index) {
-                    if(value !== '' && value !== null) {
-                        return value + '元券';
-                    }else {
-                        return '无';
-                    }
-                }
             }
-            // {
-            //     title: '为什么这样做',
-            //     width: 80,
-            //     formatter: function (value, row, idx)
-            //     {
-            //         return "<button class='btn btn-primary btn-xs' onclick='growthInsight(\""+row['userId']+"\",\""+ $("#headId").val() +"\")'>know how</button>";
-            //     }
-            // }
             ],
         onLoadSuccess: function () {
             $("a[data-toggle='tooltip']").tooltip();
@@ -268,7 +268,7 @@ function getUserDetail(){
  * 推送页 上一步按钮
  */
 $("#pre2Btn").on('click',function () {
-    stepObj.setActive(1);
+    stepObj.setActive(0);
     //加载导购数据
 
     //加载明细页数据
@@ -279,6 +279,7 @@ $("#pre2Btn").on('click',function () {
 
     $("#pushSet").hide();
 });
+
 
 /**
  * 启动推送

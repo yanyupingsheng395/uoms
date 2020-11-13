@@ -1,6 +1,6 @@
 package com.linksteady.operate.service;
 
-import com.linksteady.operate.domain.ActivityDetail;
+import com.linksteady.operate.domain.QywxActivityDetail;
 
 import java.util.List;
 
@@ -12,5 +12,5 @@ public interface QywxActivityDetailService {
 
     int getDataCount(Long planId);
 
-    List<ActivityDetail> getPageList(int limit, int offset, Long planId);
+    List<QywxActivityDetail> getPageList(int limit, int offset, Long planId);
 }

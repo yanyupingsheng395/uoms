@@ -2,6 +2,7 @@ package com.linksteady.operate.service;
 
 import com.linksteady.operate.domain.ActivityPersonal;
 import com.linksteady.operate.domain.ActivityPlan;
+import com.linksteady.operate.domain.QywxActivityPlan;
 import com.linksteady.operate.vo.ActivityGroupVO;
 import com.linksteady.operate.vo.ActivityPlanEffectVO;
 import com.linksteady.operate.vo.SmsStatisVO;
@@ -38,7 +39,7 @@ public interface QywxActivityPlanService {
      * @param planId
      * @return
      */
-    ActivityPlan getPlanInfo(Long planId);
+    QywxActivityPlan getPlanInfo(Long planId);
 
 
     ActivityPlanEffectVO getPlanEffectById(Long planId, String kpiType);

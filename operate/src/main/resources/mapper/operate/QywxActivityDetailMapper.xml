@@ -2,43 +2,105 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.operate.dao.QywxActivityDetailMapper">
 
-    <resultMap id="base" type="com.linksteady.operate.domain.ActivityDetail">
-        <result column="EPB_PRODUCT_NAME" jdbcType="VARCHAR" property="epbProductName"/>
-        <result column="EPB_PRODUCT_ID" jdbcType="DECIMAL" property="epbProductId"/>
-        <result column="GROUP_ID" jdbcType="DECIMAL" property="groupId"/>
-        <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent"/>
-        <result column="USER_ID" jdbcType="DECIMAL" property="userId"/>
-        <result column="IS_PUSH" jdbcType="VARCHAR" property="isPush"/>
-        <result column="PUSH_DATE_STR" jdbcType="VARCHAR" property="pushDateStr"/>
-        <result column="PUSH_STATUS" jdbcType="VARCHAR" property="pushStatus"/>
+    <resultMap id="base" type="com.linksteady.operate.domain.QywxActivityDetail">
+        <result column="QYWX_DETAIL_ID" jdbcType="BIGINT" property="qywxDetailId"/>
         <result column="HEAD_ID" jdbcType="VARCHAR" property="headId"/>
-        <result column="ACTIVITY_DETAIL_ID" jdbcType="VARCHAR" property="activityDetailId"/>
-        <result column="PLAN_TYPE" jdbcType="VARCHAR" property="planType"/>
-        <result column="PLAN_ID" jdbcType="DECIMAL" property="planId"/>
+        <result column="USER_ID" jdbcType="DECIMAL" property="userId"/>
+        <result column="PATH_ACTIVE" jdbcType="VARCHAR" property="pathActive"/>
+        <result column="USER_VALUE" jdbcType="VARCHAR" property="userValue"/>
+        <result column="SPU_NAME" jdbcType="VARCHAR" property="spuName"/>
+        <result column="REC_PIECE_PRICE" jdbcType="VARCHAR" property="recPiecePrice"/>
+        <result column="JOIN_RATE" jdbcType="VARCHAR" property="joinRate"/>
         <result column="ORDER_PERIOD" jdbcType="VARCHAR" property="orderPeriod"/>
-        <result column="GROUP_NAME" jdbcType="VARCHAR" property="groupName"/>
-        <result column="ACTIVITY_PROFIT" jdbcType="DECIMAL" property="activityProfit"/>
-        <result column="ACTIVITY_PRICE" jdbcType="DECIMAL" property="activityPrice"/>
+        <result column="REFER_DENO" jdbcType="VARCHAR" property="referDeno"/>
+        <result column="REC_PROD_ID" jdbcType="VARCHAR" property="recProdId"/>
+        <result column="REC_PROD_NAME" jdbcType="VARCHAR" property="recProdName"/>
+        <result column="COMPLETE_PURCH" jdbcType="VARCHAR" property="completePurch"/>
+        <result column="REC_RETENTION_ID" jdbcType="VARCHAR" property="recRetentionId"/>
+        <result column="REC_RETENTION_NAME" jdbcType="VARCHAR" property="recRetentionName"/>
+        <result column="REC_UP_ID" jdbcType="VARCHAR" property="recUpId"/>
+        <result column="REC_UP_NAME" jdbcType="VARCHAR" property="recUpName"/>
+        <result column="REC_CROSS_ID" jdbcType="VARCHAR" property="recCrossId"/>
+        <result column="REC_CROSS_NAME" jdbcType="VARCHAR" property="recCrossName"/>
+        <result column="REC_TYPE" jdbcType="VARCHAR" property="recType"/>
+        <result column="IS_PUSH" jdbcType="VARCHAR" property="isPush"/>
+        <result column="IS_CONVERSION" jdbcType="VARCHAR" property="isConversion"/>
+        <result column="PUSH_STATUS" jdbcType="VARCHAR" property="pushStatus"/>
+        <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent"/>
+        <result column="SMS_TEMPLATE_CONTENT" jdbcType="VARCHAR" property="smsTemplateContent"/>
+        <result column="USER_PHONE" jdbcType="VARCHAR" property="userPhone"/>
+        <result column="USER_OPENID" jdbcType="VARCHAR" property="userOpenid"/>
+        <result column="TAR_ORDER_PRICE" jdbcType="VARCHAR" property="tarOrderPrice"/>
+        <result column="TAR_PRODUCT_NUM" jdbcType="VARCHAR" property="tarProductNum"/>
+        <result column="PUSH_CALLBACK_CODE" jdbcType="VARCHAR" property="pushCallbackCode"/>
+        <result column="PUSH_DATE" jdbcType="TIMESTAMP" property="pushDate"/>
+        <result column="GROUP_ID" jdbcType="VARCHAR" property="groupId"/>
+        <result column="EPB_PRODUCT_ID" jdbcType="VARCHAR" property="epbProductId"/>
+        <result column="EPB_PRODUCT_NAME" jdbcType="VARCHAR" property="epbProductName"/>
+        <result column="PLAN_DT" jdbcType="DECIMAL" property="planDt"/>
+        <result column="IN_GROWTH_PATH" jdbcType="INTEGER" property="inGrowthPath"/>
+        <result column="SPU_CONTRIBUTE" jdbcType="DECIMAL" property="spuContribute"/>
+        <result column="SPU_CONTRIBUTE_NORMAL" jdbcType="DECIMAL" property="spuContributeNormal"/>
+        <result column="CONTRIBUTE_LEVEL" jdbcType="VARCHAR" property="contributeLevel"/>
+        <result column="PRICE_SENSE_NORMAL" jdbcType="NUMERIC" property="priceSenseNormal"/>
+        <result column="PRICE_SENSE_LEVEL" jdbcType="VARCHAR" property="priceSenseLevel"/>
+        <result column="ORGIN_ORDERFEE" jdbcType="NUMERIC" property="orginOrderfee"/>
+        <result column="ORGIN_GROWTHSPEED" jdbcType="NUMERIC" property="orginGrowthspeed"/>
+        <result column="VALUE_POTENTIAL_NORMAL" jdbcType="NUMERIC" property="valuePotentialNormal"/>
+        <result column="VALUE_POTENTIAL_LEVEL" jdbcType="VARCHAR" property="valuePotentialLevel"/>
+        <result column="HIGH_ACTIVE_DUAL" jdbcType="NUMERIC" property="highActiveDual"/>
+        <result column="MODERATE_ACTIVE1_DUAL" jdbcType="NUMERIC" property="moderateActive1Dual"/>
+        <result column="MODERATE_ACTIVE2_DUAL" jdbcType="NUMERIC" property="moderateActive2Dual"/>
+        <result column="LOSS_WARNING_DUAL" jdbcType="NUMERIC" property="lossWarningDual"/>
+        <result column="ACTUAL_JOINT" jdbcType="NUMERIC" property="actualJoint"/>
+        <result column="INSERT_DT" jdbcType="TIMESTAMP" property="insertDt"/>
+        <result column="EDUCATE_VALUE" jdbcType="VARCHAR" property="educateValue"/>
+        <result column="PRICE_SENSE" jdbcType="NUMERIC" property="priceSense"/>
+        <result column="VALUE_POTENTIAL" jdbcType="NUMERIC" property="valuePotential"/>
+        <result column="WEAK_LOSS_DUAL" jdbcType="NUMERIC" property="weakLossDual"/>
+        <result column="STRONG_LOSS_DUAL" jdbcType="NUMERIC" property="strongLossDual"/>
+        <result column="NEED_WEAK_REC" jdbcType="NUMERIC" property="needWeakRec"/>
+        <result column="PUSH_SCHEDULING_DATE" jdbcType="BIGINT" property="pushSchedulingDate"/>
+        <result column="PLAN_ID" jdbcType="BIGINT" property="planId"/>
+        <result column="ACTIVITY_PROFIT" jdbcType="NUMERIC" property="activityProfit"/>
+        <result column="ACTIVITY_PRICE" jdbcType="NUMERIC" property="activityPrice"/>
+        <result column="SMS_BILLING_COUNT" jdbcType="INTEGER" property="smsBillingCount"/>
+        <result column="MP_TITLE" jdbcType="VARCHAR" property="mpTitle"/>
+        <result column="MP_URL" jdbcType="VARCHAR" property="mpUrl"/>
+        <result column="QYWX_MSG_SIGN" jdbcType="VARCHAR" property="qywxMsgSign"/>
+        <result column="PUSH_ID" jdbcType="NUMERIC" property="pushId"/>
+        <result column="QYWX_CONTRACT_ID" jdbcType="VARCHAR" property="qywxContractId"/>
+        <result column="FOLLOW_USER_ID" jdbcType="VARCHAR" property="followUserId"/>
     </resultMap>
 
+<!--      select count(1) from UO_QYWX_ACTIVITY_DETAIL,UO_QYWX_ACTIVITY_GROUP,UO_QYWX_ACTIVITY_PLAN-->
+<!--         where-->
+<!--              UO_QYWX_ACTIVITY_DETAIL.HEAD_ID=UO_QYWX_ACTIVITY_GROUP.HEAD_ID-->
+<!--          AND  UO_QYWX_ACTIVITY_DETAIL.HEAD_ID=UO_QYWX_ACTIVITY_PLAN.HEAD_ID-->
+<!--         AND  UO_QYWX_ACTIVITY_PLAN.PLAN_ID = #{planId}-->
     <select id="getDataCount" resultType="int">
-        select count(1) from UO_QYWX_ACTIVITY_DETAIL,UO_QYWX_ACTIVITY_GROUP,UO_QYWX_ACTIVITY_PLAN
-       where
-           UO_QYWX_ACTIVITY_DETAIL.HEAD_ID=UO_QYWX_ACTIVITY_GROUP.HEAD_ID
-        AND  UO_QYWX_ACTIVITY_DETAIL.HEAD_ID=UO_QYWX_ACTIVITY_PLAN.HEAD_ID
-        AND  UO_QYWX_ACTIVITY_PLAN.PLAN_ID = #{planId}
+        select count(1) from UO_QYWX_ACTIVITY_DETAIL where PLAN_ID =#{planId}
     </select>
 
     <select id="getPageList" resultMap="base">
-        select to_char(UO_QYWX_ACTIVITY_DETAIL.PUSH_DATE, 'yyyy-mm-dd hh24:mi') PUSH_DATE_STR,
-               UO_QYWX_ACTIVITY_DETAIL.HEAD_ID,
-               UO_QYWX_ACTIVITY_PLAN.PLAN_TYPE,
-               UO_QYWX_ACTIVITY_GROUP.GROUP_NAME
-        from UO_QYWX_ACTIVITY_DETAIL,UO_QYWX_ACTIVITY_PLAN,UO_QYWX_ACTIVITY_GROUP
-        where
-            UO_QYWX_ACTIVITY_DETAIL.HEAD_ID=UO_QYWX_ACTIVITY_GROUP.HEAD_ID
-        AND  UO_QYWX_ACTIVITY_PLAN.PLAN_TYPE=UO_QYWX_ACTIVITY_GROUP.ACTIVITY_TYPE
-        AND  UO_QYWX_ACTIVITY_PLAN.PLAN_ID = #{planId}::int8
+         select
+          qywx_detail_id,
+          sms_content,
+          t2.follow_user_id,
+           uo_qywx_activity_detail.qywx_contract_id,
+           rec_prod_name
+        from uo_qywx_activity_detail
+        left join
+             (
+                   select  uo_qywx_external_contact_list.follow_user_id,
+                           uo_qywx_external_contact_list.external_contact_id,
+                           uo_qywx_followuser_list.user_name follow_user_name,
+                           uo_qywx_external_contact_list.name qywx_contact_name
+                   from uo_qywx_external_contact_list join uo_qywx_followuser_list
+                   on uo_qywx_external_contact_list.follow_user_id=uo_qywx_followuser_list.user_id
+             ) t2 on uo_qywx_activity_detail.follow_user_id= t2.follow_user_id
+               and uo_qywx_activity_detail.qywx_contract_id=t2.external_contact_id
+        where plan_id=#{planId}::int8
         limit #{limit} offset #{offset}
     </select>
 
@@ -47,6 +109,6 @@
     </delete>
 
     <select id="selectContentNulls" resultType="int">
-       select count(1) from UO_QYWX_ACTIVITY_DETAIL  where sms_content is null
+       select count(1) from UO_QYWX_ACTIVITY_DETAIL  where plan_id=#{planId} and sms_content is null
     </select>
 </mapper>

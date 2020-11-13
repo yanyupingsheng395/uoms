@@ -6,10 +6,7 @@ import com.linksteady.common.service.ConfigService;
 import com.linksteady.common.util.ArithUtil;
 import com.linksteady.common.util.DateUtil;
 import com.linksteady.operate.dao.*;
-import com.linksteady.operate.domain.ActivityHead;
-import com.linksteady.operate.domain.ActivityPersonal;
-import com.linksteady.operate.domain.ActivityPlan;
-import com.linksteady.operate.domain.ActivityPlanEffect;
+import com.linksteady.operate.domain.*;
 import com.linksteady.operate.domain.enums.ActivityPlanTypeEnum;
 import com.linksteady.operate.service.*;
 import com.linksteady.operate.vo.ActivityGroupVO;
@@ -118,7 +115,7 @@ public class QywxActivityPlanServiceImpl implements QywxActivityPlanService {
     }
 
     @Override
-    public ActivityPlan getPlanInfo(Long planId) {
+    public QywxActivityPlan getPlanInfo(Long planId) {
         return qywxActivityPlanMapper.getPlanInfo(planId);
     }
 

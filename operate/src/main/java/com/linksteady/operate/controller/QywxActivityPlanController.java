@@ -5,9 +5,7 @@ import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.operate.config.PushConfig;
-import com.linksteady.operate.domain.ActivityDetail;
-import com.linksteady.operate.domain.ActivityPersonal;
-import com.linksteady.operate.domain.ActivityPlan;
+import com.linksteady.operate.domain.*;
 import com.linksteady.operate.domain.enums.ActivityPlanStatusEnum;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.exception.OptimisticLockException;
@@ -45,6 +43,9 @@ public class QywxActivityPlanController {
     @Autowired
     private QywxActivityPushService qywxActivityPushService;
 
+    @Autowired
+    private PushConfig pushConfig;
+
     /**
      * 获取任务计划
      *
@@ -65,7 +66,7 @@ public class QywxActivityPlanController {
      */
     @GetMapping("/getUserGroupList")
     public List<ActivityGroupVO> getUserGroupList(long planId) {
-        ActivityPlan activityPlan = qywxActivityPlanService.getPlanInfo(planId);
+        QywxActivityPlan activityPlan = qywxActivityPlanService.getPlanInfo(planId);
         if (null == activityPlan) {
             return Lists.newArrayList();
         }
@@ -78,7 +79,6 @@ public class QywxActivityPlanController {
         planGroupInfo.add(activityGroupVO);
         return planGroupInfo;
     }
-
     /**
      * 获取推送的明细数据
      *
@@ -91,9 +91,29 @@ public class QywxActivityPlanController {
         int offset = request.getOffset();
         long planId = Long.parseLong(request.getParam().get("planId"));
         int count = qywxActivityDetailService.getDataCount(planId);
-        List<ActivityDetail> dataList = qywxActivityDetailService.getPageList(limit, offset, planId);
+        List<QywxActivityDetail> dataList = qywxActivityDetailService.getPageList(limit, offset, planId);
 
         return ResponseBo.okOverPaging(null, count, dataList);
+    }
+
+    /**
+     * 获取默认推送方式和定时推送时间
+     *
+     * @return
+     */
+    @GetMapping("/getDefaultPushInfo")
+    public ResponseBo getPushInfo() {
+        Map<String, Object> result = Maps.newHashMap();
+        result.put("method", pushConfig.getPushMethod());
+        int hour = LocalTime.now().getHour();
+        final List<String> timeList = IntStream.rangeClosed(8, 22).filter(x -> x > hour).boxed().map(y -> {
+            if (y < 10) {
+                return "0" + y + ":00";
+            }
+            return y + ":00";
+        }).collect(Collectors.toList());
+        result.put("timeList", timeList);
+        return ResponseBo.okWithData(null, result);
     }
 
     /**
@@ -107,7 +127,7 @@ public class QywxActivityPlanController {
             return ResponseBo.error("非法参数，请通过系统界面进行操作！");
         }
 
-        ActivityPlan activityPlan = qywxActivityPlanService.getPlanInfo(planId);
+        QywxActivityPlan activityPlan = qywxActivityPlanService.getPlanInfo(planId);
 
         if (null == activityPlan) {
             return ResponseBo.error("不存在的活动执行计划，请通过系统界面进行操作！");
@@ -119,9 +139,9 @@ public class QywxActivityPlanController {
         }
 
         //进行一次时间的判断 (调度修改状态有一定的延迟)
-        if (!DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now()).equals(String.valueOf(activityPlan.getPlanDateWid()))) {
+        /*if (!DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now()).equals(String.valueOf(activityPlan.getPlanDateWid()))) {
             return ResponseBo.error("已过期的计划无法再执行!");
-        }
+        }*/
 
         //进行推送的操作
         try {
@@ -148,7 +168,7 @@ public class QywxActivityPlanController {
             return ResponseBo.error("非法参数，请通过系统界面进行操作！");
         }
 
-        ActivityPlan activityPlan = qywxActivityPlanService.getPlanInfo(planId);
+        QywxActivityPlan activityPlan = qywxActivityPlanService.getPlanInfo(planId);
 
         if (null == activityPlan) {
             return ResponseBo.error("不存在的活动执行计划，请通过系统界面进行操作！");
@@ -183,7 +203,7 @@ public class QywxActivityPlanController {
             msg = "非法请求，请通过界面进行操作!";
             return ResponseBo.error(msg);
         } else {
-            ActivityPlan activityPlan = qywxActivityPlanService.getPlanInfo(planId);
+            QywxActivityPlan activityPlan = qywxActivityPlanService.getPlanInfo(planId);
 
             if (null == activityPlan) {
                 msg = "非法请求，请通过界面进行操作!";
@@ -203,7 +223,7 @@ public class QywxActivityPlanController {
 
             if (qywxActivityPushService.getTransActivityContentLock(activityPlan.getHeadId())) {
                 try {
-                    //qywxActivityPushService.transActivityDetail(activityPlan);
+                    qywxActivityPushService.transActivityDetail(activityPlan);
                     return ResponseBo.ok("转化文案成功!");
                 } catch (Exception e) {
                     log.error("活动运营出现转换文案异常，失败堆栈为{}", e);
@@ -232,7 +252,7 @@ public class QywxActivityPlanController {
      */
     @GetMapping("/getPlanEffectInfo")
     public ResponseBo getPlanEffectInfo(@RequestParam Long planId, @RequestParam String kpiType) {
-        ActivityPlan activityPlan = qywxActivityPlanService.getPlanInfo(planId);
+        QywxActivityPlan activityPlan = qywxActivityPlanService.getPlanInfo(planId);
         //获取计划的效果
         ActivityPlanEffectVO activitPf = qywxActivityPlanService.getPlanEffectById(planId, kpiType);
         Map<String, Object> result = Maps.newHashMap();

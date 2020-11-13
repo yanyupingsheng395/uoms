@@ -1,6 +1,7 @@
 package com.linksteady.operate.service;
 
 import com.linksteady.operate.domain.ActivityPlan;
+import com.linksteady.operate.domain.QywxActivityPlan;
 
 /**
  * @author hxcao
@@ -11,7 +12,7 @@ public interface QywxActivityPushService {
     /**
      * 对活动运营的文案进行转换
      */
-    void transActivityDetail(ActivityPlan activityPlan) throws Exception;
+    void transActivityDetail(QywxActivityPlan activityPlan) throws Exception;
 
     /**
      * 获取 生成文案的锁
@@ -28,12 +29,12 @@ public interface QywxActivityPushService {
      * @param activityPlan
      * @throws Exception
      */
-    void pushActivity(ActivityPlan activityPlan) throws Exception;
+    void pushActivity(QywxActivityPlan activityPlan) throws Exception;
 
-    void updatePlanToStop(ActivityPlan activityPlan) throws Exception;
+    void updatePlanToStop(QywxActivityPlan activityPlan) throws Exception;
 
     /**
      * 对活动文案的配置进行校验
      */
-    boolean validateSmsConfig(ActivityPlan activityPlan);
+    boolean validateSmsConfig(QywxActivityPlan activityPlan);
 }

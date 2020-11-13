@@ -2,108 +2,157 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.operate.dao.QywxActivityPushMapper">
 
-    <resultMap id="activityDetailResult" type="com.linksteady.operate.domain.ActivityDetail">
-        <result column="EPB_PRODUCT_NAME" jdbcType="VARCHAR" property="epbProductName"/>
-        <result column="EPB_PRODUCT_ID" jdbcType="DECIMAL" property="epbProductId"/>
-        <result column="GROUP_ID" jdbcType="DECIMAL" property="groupId"/>
-        <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent"/>
-        <result column="USER_ID" jdbcType="DECIMAL" property="userId"/>
-        <result column="IS_PUSH" jdbcType="VARCHAR" property="isPush"/>
-        <result column="PUSH_DATE_STR" jdbcType="VARCHAR" property="pushDateStr"/>
-        <result column="PUSH_STATUS" jdbcType="VARCHAR" property="pushStatus"/>
+    <resultMap id="activityDetailResult" type="com.linksteady.operate.domain.QywxActivityDetail">
+        <result column="QYWX_DETAIL_ID" jdbcType="BIGINT" property="qywxDetailId"/>
         <result column="HEAD_ID" jdbcType="VARCHAR" property="headId"/>
-        <result column="ACTIVITY_DETAIL_ID" jdbcType="VARCHAR" property="activityDetailId"/>
-        <result column="ACTIVITY_STAGE" jdbcType="VARCHAR" property="activityStage"/>
-        <result column="PLAN_TYPE" jdbcType="VARCHAR" property="planType"/>
-        <result column="PLAN_ID" jdbcType="DECIMAL" property="planId"/>
+        <result column="USER_ID" jdbcType="DECIMAL" property="userId"/>
+        <result column="PATH_ACTIVE" jdbcType="VARCHAR" property="pathActive"/>
+        <result column="USER_VALUE" jdbcType="VARCHAR" property="userValue"/>
+        <result column="SPU_NAME" jdbcType="VARCHAR" property="spuName"/>
+        <result column="REC_PIECE_PRICE" jdbcType="VARCHAR" property="recPiecePrice"/>
+        <result column="JOIN_RATE" jdbcType="VARCHAR" property="joinRate"/>
         <result column="ORDER_PERIOD" jdbcType="VARCHAR" property="orderPeriod"/>
-        <result column="GROUP_NAME" jdbcType="VARCHAR" property="groupName"/>
-        <result column="ACTIVITY_PROFIT" jdbcType="DECIMAL" property="activityProfit"/>
-        <result column="ACTIVITY_PRICE" jdbcType="DECIMAL" property="activityPrice"/>
+        <result column="REFER_DENO" jdbcType="VARCHAR" property="referDeno"/>
+        <result column="REC_PROD_ID" jdbcType="VARCHAR" property="recProdId"/>
+        <result column="REC_PROD_NAME" jdbcType="VARCHAR" property="recProdName"/>
+        <result column="COMPLETE_PURCH" jdbcType="VARCHAR" property="completePurch"/>
+        <result column="REC_RETENTION_ID" jdbcType="VARCHAR" property="recRetentionId"/>
+        <result column="REC_RETENTION_NAME" jdbcType="VARCHAR" property="recRetentionName"/>
+        <result column="REC_UP_ID" jdbcType="VARCHAR" property="recUpId"/>
+        <result column="REC_UP_NAME" jdbcType="VARCHAR" property="recUpName"/>
+        <result column="REC_CROSS_ID" jdbcType="VARCHAR" property="recCrossId"/>
+        <result column="REC_CROSS_NAME" jdbcType="VARCHAR" property="recCrossName"/>
+        <result column="REC_TYPE" jdbcType="VARCHAR" property="recType"/>
+        <result column="IS_PUSH" jdbcType="VARCHAR" property="isPush"/>
+        <result column="IS_CONVERSION" jdbcType="VARCHAR" property="isConversion"/>
+        <result column="PUSH_STATUS" jdbcType="VARCHAR" property="pushStatus"/>
+        <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent"/>
+        <result column="SMS_TEMPLATE_CONTENT" jdbcType="VARCHAR" property="smsTemplateContent"/>
+        <result column="USER_PHONE" jdbcType="VARCHAR" property="userPhone"/>
+        <result column="USER_OPENID" jdbcType="VARCHAR" property="userOpenid"/>
+        <result column="TAR_ORDER_PRICE" jdbcType="VARCHAR" property="tarOrderPrice"/>
+        <result column="TAR_PRODUCT_NUM" jdbcType="VARCHAR" property="tarProductNum"/>
+        <result column="PUSH_CALLBACK_CODE" jdbcType="VARCHAR" property="pushCallbackCode"/>
+        <result column="PUSH_DATE" jdbcType="TIMESTAMP" property="pushDate"/>
+        <result column="GROUP_ID" jdbcType="VARCHAR" property="groupId"/>
+        <result column="EPB_PRODUCT_ID" jdbcType="VARCHAR" property="epbProductId"/>
+        <result column="EPB_PRODUCT_NAME" jdbcType="VARCHAR" property="epbProductName"/>
+        <result column="PLAN_DT" jdbcType="DECIMAL" property="planDt"/>
+        <result column="IN_GROWTH_PATH" jdbcType="INTEGER" property="inGrowthPath"/>
+        <result column="SPU_CONTRIBUTE" jdbcType="DECIMAL" property="spuContribute"/>
+        <result column="SPU_CONTRIBUTE_NORMAL" jdbcType="DECIMAL" property="spuContributeNormal"/>
+        <result column="CONTRIBUTE_LEVEL" jdbcType="VARCHAR" property="contributeLevel"/>
+        <result column="PRICE_SENSE_NORMAL" jdbcType="NUMERIC" property="priceSenseNormal"/>
+        <result column="PRICE_SENSE_LEVEL" jdbcType="VARCHAR" property="priceSenseLevel"/>
+        <result column="ORGIN_ORDERFEE" jdbcType="NUMERIC" property="orginOrderfee"/>
+        <result column="ORGIN_GROWTHSPEED" jdbcType="NUMERIC" property="orginGrowthspeed"/>
+        <result column="VALUE_POTENTIAL_NORMAL" jdbcType="NUMERIC" property="valuePotentialNormal"/>
+        <result column="VALUE_POTENTIAL_LEVEL" jdbcType="VARCHAR" property="valuePotentialLevel"/>
+        <result column="HIGH_ACTIVE_DUAL" jdbcType="NUMERIC" property="highActiveDual"/>
+        <result column="MODERATE_ACTIVE1_DUAL" jdbcType="NUMERIC" property="moderateActive1Dual"/>
+        <result column="MODERATE_ACTIVE2_DUAL" jdbcType="NUMERIC" property="moderateActive2Dual"/>
+        <result column="LOSS_WARNING_DUAL" jdbcType="NUMERIC" property="lossWarningDual"/>
+        <result column="ACTUAL_JOINT" jdbcType="NUMERIC" property="actualJoint"/>
+        <result column="INSERT_DT" jdbcType="TIMESTAMP" property="insertDt"/>
+        <result column="EDUCATE_VALUE" jdbcType="VARCHAR" property="educateValue"/>
+        <result column="PRICE_SENSE" jdbcType="NUMERIC" property="priceSense"/>
+        <result column="VALUE_POTENTIAL" jdbcType="NUMERIC" property="valuePotential"/>
+        <result column="WEAK_LOSS_DUAL" jdbcType="NUMERIC" property="weakLossDual"/>
+        <result column="STRONG_LOSS_DUAL" jdbcType="NUMERIC" property="strongLossDual"/>
+        <result column="NEED_WEAK_REC" jdbcType="NUMERIC" property="needWeakRec"/>
+        <result column="PUSH_SCHEDULING_DATE" jdbcType="BIGINT" property="pushSchedulingDate"/>
+        <result column="PLAN_ID" jdbcType="BIGINT" property="planId"/>
+        <result column="ACTIVITY_PROFIT" jdbcType="NUMERIC" property="activityProfit"/>
+        <result column="ACTIVITY_PRICE" jdbcType="NUMERIC" property="activityPrice"/>
+        <result column="SMS_BILLING_COUNT" jdbcType="INTEGER" property="smsBillingCount"/>
+        <result column="MP_TITLE" jdbcType="VARCHAR" property="mpTitle"/>
+        <result column="MP_URL" jdbcType="VARCHAR" property="mpUrl"/>
+        <result column="QYWX_MSG_SIGN" jdbcType="VARCHAR" property="qywxMsgSign"/>
+        <result column="PUSH_ID" jdbcType="NUMERIC" property="pushId"/>
+        <result column="QYWX_CONTRACT_ID" jdbcType="VARCHAR" property="qywxContractId"/>
+        <result column="FOLLOW_USER_ID" jdbcType="VARCHAR" property="followUserId"/>
     </resultMap>
 
     <delete id="deleteContentTmp">
-        DELETE FROM UO_OP_ACTIVITY_CONTENT_TMP WHERE PLAN_ID=#{planId}::int4
+        DELETE FROM UO_QYWX_ACTIVITY_CONTENT_TMP WHERE PLAN_ID=#{planId}::int4
     </delete>
 
     <select id="getAllTemplate"  resultType="map">
-        select GROUP_ID,
-               TMP_CONTENT
+        select GROUP_ID,TMP_CONTENT
        from (
            (SELECT
-               UO_OP_ACTIVITY_GROUP.group_id,
-               UO_OP_ACTIVITY_GROUP.sms_template_code
-            FROM UO_OP_ACTIVITY_GROUP
+               UO_qywx_ACTIVITY_GROUP.group_id,
+               UO_qywx_ACTIVITY_GROUP.sms_template_code
+            FROM UO_qywx_ACTIVITY_GROUP
                 where
-                      UO_OP_ACTIVITY_GROUP.HEAD_ID=#{headId}::int4
-              AND UO_OP_ACTIVITY_GROUP.ACTIVITY_STAGE=#{activityStage}
-              AND  UO_OP_ACTIVITY_GROUP.ACTIVITY_TYPE=#{activityType}) t1
-                join UO_OP_ACTIVITY_TEMPLATE
-            on t1.SMS_TEMPLATE_CODE =UO_OP_ACTIVITY_TEMPLATE.TMP_CODE) t2
+                      UO_qywx_ACTIVITY_GROUP.HEAD_ID=#{headId}::int4
+              AND  UO_qywx_ACTIVITY_GROUP.ACTIVITY_TYPE=#{activityType}) t1
+                join UO_qywx_ACTIVITY_TEMPLATE
+            on t1.SMS_TEMPLATE_CODE =UO_qywx_ACTIVITY_TEMPLATE.TMP_CODE) t2
     </select>
 
     <select id="getPushCount" resultType="int">
-        select count(1) from UO_OP_ACTIVITY_DETAIL,UO_OP_ACTIVITY_GROUP,UO_OP_ACTIVITY_PLAN
+        select count(1) from UO_QYWX_ACTIVITY_DETAIL,UO_QYWX_ACTIVITY_GROUP,UO_QYWX_ACTIVITY_PLAN
        where
-             UO_OP_ACTIVITY_DETAIL.HEAD_ID=UO_OP_ACTIVITY_GROUP.HEAD_ID
-        AND  UO_OP_ACTIVITY_DETAIL.GROUP_ID= UO_OP_ACTIVITY_GROUP.GROUP_ID
-        AND  UO_OP_ACTIVITY_PLAN.PLAN_TYPE=UO_OP_ACTIVITY_GROUP.ACTIVITY_TYPE
-        AND  UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE=UO_OP_ACTIVITY_GROUP.ACTIVITY_STAGE
-        AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = UO_OP_ACTIVITY_PLAN.PLAN_ID
-        AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = #{planId}
+             UO_QYWX_ACTIVITY_DETAIL.HEAD_ID=UO_QYWX_ACTIVITY_GROUP.HEAD_ID
+        AND  UO_QYWX_ACTIVITY_DETAIL.GROUP_ID= UO_QYWX_ACTIVITY_GROUP.GROUP_ID
+        AND  UO_QYWX_ACTIVITY_PLAN.PLAN_TYPE=UO_QYWX_ACTIVITY_GROUP.ACTIVITY_TYPE
+        AND  UO_QYWX_ACTIVITY_DETAIL.PLAN_ID = UO_QYWX_ACTIVITY_PLAN.PLAN_ID
+        AND  UO_QYWX_ACTIVITY_DETAIL.PLAN_ID = #{planId}
     </select>
 
     <select id="getPushList" resultMap="activityDetailResult">
-        select UO_OP_ACTIVITY_DETAIL.IS_PUSH,
-           to_char(UO_OP_ACTIVITY_DETAIL.PUSH_DATE, 'yyyy-mm-dd hh24:mi') PUSH_DATE_STR,
-           UO_OP_ACTIVITY_DETAIL.PUSH_STATUS,
-           UO_OP_ACTIVITY_DETAIL.EPB_PRODUCT_NAME,
-           UO_OP_ACTIVITY_DETAIL.EPB_PRODUCT_ID,
-           UO_OP_ACTIVITY_DETAIL.USER_ID,
-           UO_OP_ACTIVITY_DETAIL.GROUP_ID,
-           UO_OP_ACTIVITY_DETAIL.SMS_CONTENT,
-           UO_OP_ACTIVITY_DETAIL.HEAD_ID,
-           UO_OP_ACTIVITY_DETAIL.ACTIVITY_DETAIL_ID,
-           UO_OP_ACTIVITY_DETAIL.ACTIVITY_STAGE,
-           UO_OP_ACTIVITY_PLAN.PLAN_TYPE,
-           UO_OP_ACTIVITY_DETAIL.ORDER_PERIOD,
-           UO_OP_ACTIVITY_GROUP.GROUP_NAME,
-           UO_OP_ACTIVITY_DETAIL.PLAN_ID,
-           UO_OP_ACTIVITY_DETAIL.ACTIVITY_PROFIT,
-           UO_OP_ACTIVITY_DETAIL.ACTIVITY_PRICE
-    from UO_OP_ACTIVITY_DETAIL,UO_OP_ACTIVITY_PLAN,UO_OP_ACTIVITY_GROUP
+        select UO_QYWX_ACTIVITY_DETAIL.IS_PUSH,
+           to_char(UO_QYWX_ACTIVITY_DETAIL.PUSH_DATE, 'yyyy-mm-dd hh24:mi') PUSH_DATE_STR,
+           UO_QYWX_ACTIVITY_DETAIL.PUSH_STATUS,
+           UO_QYWX_ACTIVITY_DETAIL.EPB_PRODUCT_NAME,
+           UO_QYWX_ACTIVITY_DETAIL.EPB_PRODUCT_ID,
+           UO_QYWX_ACTIVITY_DETAIL.USER_ID,
+           UO_QYWX_ACTIVITY_DETAIL.GROUP_ID,
+           UO_QYWX_ACTIVITY_DETAIL.SMS_CONTENT,
+           UO_QYWX_ACTIVITY_DETAIL.HEAD_ID,
+           UO_QYWX_ACTIVITY_PLAN.PLAN_TYPE,
+           UO_QYWX_ACTIVITY_DETAIL.ORDER_PERIOD,
+           UO_QYWX_ACTIVITY_GROUP.GROUP_NAME,
+           UO_QYWX_ACTIVITY_DETAIL.PLAN_ID,
+           UO_QYWX_ACTIVITY_DETAIL.ACTIVITY_PROFIT,
+           UO_QYWX_ACTIVITY_DETAIL.ACTIVITY_PRICE,
+           UO_QYWX_ACTIVITY_DETAIL.QYWX_DETAIL_ID,
+           UO_QYWX_ACTIVITY_DETAIL.MP_TITLE,
+           UO_QYWX_ACTIVITY_DETAIL.MP_URL
+    from UO_QYWX_ACTIVITY_DETAIL,UO_QYWX_ACTIVITY_PLAN,UO_QYWX_ACTIVITY_GROUP
         where
-             UO_OP_ACTIVITY_DETAIL.HEAD_ID=UO_OP_ACTIVITY_GROUP.HEAD_ID
-        AND  UO_OP_ACTIVITY_DETAIL.GROUP_ID= UO_OP_ACTIVITY_GROUP.GROUP_ID
-        AND  UO_OP_ACTIVITY_PLAN.PLAN_TYPE=UO_OP_ACTIVITY_GROUP.ACTIVITY_TYPE
-        AND  UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE=UO_OP_ACTIVITY_GROUP.ACTIVITY_STAGE
-        AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = UO_OP_ACTIVITY_PLAN.PLAN_ID
-        AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = #{planId}
-        ORDER BY UO_OP_ACTIVITY_DETAIL.GROUP_ID ASC,UO_OP_ACTIVITY_DETAIL.ACTIVITY_DETAIL_ID ASC
+             UO_QYWX_ACTIVITY_DETAIL.HEAD_ID=UO_QYWX_ACTIVITY_GROUP.HEAD_ID
+        AND  UO_QYWX_ACTIVITY_DETAIL.GROUP_ID= UO_QYWX_ACTIVITY_GROUP.GROUP_ID
+        AND  UO_QYWX_ACTIVITY_PLAN.PLAN_TYPE=UO_QYWX_ACTIVITY_GROUP.ACTIVITY_TYPE
+        AND  UO_QYWX_ACTIVITY_DETAIL.PLAN_ID = UO_QYWX_ACTIVITY_PLAN.PLAN_ID
+        AND  UO_QYWX_ACTIVITY_DETAIL.PLAN_ID =#{planId}
+        ORDER BY UO_QYWX_ACTIVITY_DETAIL.GROUP_ID ASC
         limit #{limit} offset #{offset}
     </select>
 
     <insert id="insertPushContentTemp">
-        insert into UO_OP_ACTIVITY_CONTENT_TMP(activity_detail_id,plan_id,sms_content,sms_billing_count) values
-        <foreach collection="list" item="item" index="index"
-                 separator=",">
-            (#{item.activityDetailId},
+        insert into UO_QYWX_ACTIVITY_CONTENT_TMP(QYWX_DETAIL_ID,PLAN_ID,TEXT_CONTENT,QYWX_MSG_SIGN,MP_TITLE,MP_URL) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.qywxDetailId},
             #{item.planId},
-            #{item.smsContent},
-            #{item.smsBillingCount})
+            #{item.textContent},
+            #{item.qywxMsgSign},
+            #{item.mpTitle},
+            #{item.mpUrl})
         </foreach>
     </insert>
 
     <update id="updatePushContentFromTemp">
-        UPDATE UO_OP_ACTIVITY_DETAIL SET SMS_CONTENT=TMP.SMS_CONTENT,sms_billing_count=TMP.sms_billing_count
-        FROM UO_OP_ACTIVITY_CONTENT_TMP AS TMP
-        WHERE UO_OP_ACTIVITY_DETAIL.ACTIVITY_DETAIL_ID=TMP.ACTIVITY_DETAIL_ID
-        AND UO_OP_ACTIVITY_DETAIL.PLAN_ID=#{planId}::int4
+        UPDATE UO_QYWX_ACTIVITY_DETAIL SET SMS_CONTENT=TMP.TEXT_CONTENT,QYWX_MSG_SIGN=TMP.QYWX_MSG_SIGN
+        FROM UO_QYWX_ACTIVITY_CONTENT_TMP AS TMP
+        WHERE UO_QYWX_ACTIVITY_DETAIL.QYWX_DETAIL_ID=TMP.QYWX_DETAIL_ID
+        AND UO_QYWX_ACTIVITY_DETAIL.PLAN_ID=#{planId}::int4
     </update>
 
 
     <update id="updateStatus">
-        update UO_OP_ACTIVITY_PLAN set PLAN_STATUS = #{status},VERSION=VERSION+1
+        update UO_QYWX_ACTIVITY_PLAN set PLAN_STATUS = #{status},VERSION=VERSION+1
         where PLAN_ID = #{planId}::int4  AND VERSION=#{version}::int4
     </update>
 
@@ -135,18 +184,69 @@
     </insert>
 
     <select id="validateSmsConfig" resultType="int">
-        select count(*) from UO_OP_ACTIVITY_GROUP
+        select count(*) from UO_qywx_ACTIVITY_GROUP
           where head_id=#{headId}
-            and activity_stage=#{activityStage}
             and activity_type=#{planType}
             and sms_template_code is null
              and group_id in (
-                 select group_id from uo_op_activity_product p
+                 select group_id from uo_qywx_activity_product p
                  where p.head_id=#{headId}
                  and p.activity_type=#{planType}
-                 and p.activity_stage=#{activityStage}
-
               )
     </select>
+
+    <select id="getMessageSignList" resultType="String">
+         select distinct qywx_msg_sign from UO_QYWX_ACTIVITY_DETAIL where head_id=#{headId} and follow_user_id=#{followUserId}
+    </select>
+
+    <select id="getWaitQywxUserListCount" resultType="int">
+         select count(*) from UO_QYWX_ACTIVITY_DETAIL where head_id = #{headId} and follow_user_id=#{followUserId} and qywx_msg_sign=#{msgSign}
+    </select>
+
+    <select id="getQywxUserList" resultMap="activityDetailResult">
+        select * from UO_QYWX_ACTIVITY_DETAIL where
+          head_id = #{headId} and follow_user_id=#{followUserId} and qywx_msg_sign=#{msgSign} order by qywx_detail_id asc limit #{limit} offset #{offset}
+    </select>
+
+    <insert id="insertPushList" useGeneratedKeys="true" keyProperty="pushId" keyColumn="push_id">
+        insert into uo_qywx_push_list(
+           text_content,
+           push_status,
+           source_code,
+           source_id,
+           follow_user_id,
+           insert_dt,
+           mp_media_id,
+           mp_appid,
+           mp_title,
+           mp_url,
+           external_contact_ids)
+        values(#{textContent},
+                 'P',
+                 'ACTIVITY',
+                 #{sourceId},
+                 #{followUserId},
+                 now(),
+                 #{mpMediaId},
+                 #{mpAppid},
+                 #{mpTitle},
+                 #{mpUrl},
+                 #{externalContactIds})
+    </insert>
+
+    <update id="updatePushList">
+        update uo_qywx_push_list set
+           push_status = #{status},
+           msgid = #{msgId},
+           push_date = now(),
+           fail_list = #{faildList},
+           remark=#{remark}
+        where
+           push_id=#{pushId}
+    </update>
+
+    <update id="updatePushId">
+        update UO_QYWX_ACTIVITY_DETAIL set push_id=#{pushId} where qywx_detail_id &gt;=#{minDetailId} and qywx_detail_id &lt;=#{maxDetailId}
+    </update>
 
 </mapper>

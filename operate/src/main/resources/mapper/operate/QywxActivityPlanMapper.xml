@@ -1,20 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.operate.dao.QywxActivityPlanMapper">
-    <resultMap id="planMap" type="com.linksteady.operate.domain.ActivityPlan">
-        <result property="planId" column="PLAN_ID" jdbcType="DECIMAL"/>
+    <resultMap id="planMap" type="com.linksteady.operate.domain.QywxActivityPlan">
         <result property="headId" column="HEAD_ID" jdbcType="DECIMAL"/>
         <result property="userCnt" column="USER_CNT" jdbcType="DECIMAL"/>
         <result property="planDate" column="PLAN_DATE" jdbcType="DATE"/>
         <result property="planStatus" column="PLAN_STATUS" jdbcType="VARCHAR"/>
+        <result property="insertDt" column="INSERT_DT" jdbcType="DATE"/>
+        <result property="calculateDt" column="CALCULATE_DT" jdbcType="DATE"/>
         <result property="planDateWid" column="PLAN_DATE_WID" jdbcType="DECIMAL"/>
-        <result property="activityName" column="ACTIVITY_NAME" jdbcType="VARCHAR"/>
+        <result property="startBy" column="START_BY" jdbcType="VARCHAR"/>
+        <result property="startDt" column="START_DT" jdbcType="DATE"/>
+        <result property="stopBy" column="STOP_BY" jdbcType="VARCHAR"/>
+        <result property="stopDt" column="STOP_DT" jdbcType="DATE"/>
         <result property="planType" column="PLAN_TYPE" jdbcType="VARCHAR"/>
         <result property="successNum" column="SUCCESS_NUM" jdbcType="DECIMAL"/>
+        <result property="faildNum" column="FAILD_NUM" jdbcType="DECIMAL"/>
         <result property="version" column="VERSION" jdbcType="DECIMAL"/>
+        <result property="pushMethod" column="PUSH_METHOD" jdbcType="VARCHAR"/>
+        <result property="pushPeriod" column="PUSH_PERIOD" jdbcType="VARCHAR"/>
+        <result property="planId" column="PLAN_ID" jdbcType="DECIMAL"/>
         <result property="effectFlag" column="EFFECT_FLAG" jdbcType="VARCHAR"/>
+        <result property="interceptNum" column="INTERCEPT_NUM" jdbcType="DECIMAL"/>
         <result property="covRate" column="COV_RATE" jdbcType="DECIMAL"/>
         <result property="covAmount" column="COV_AMOUNT" jdbcType="DECIMAL"/>
+        <result property="remark" column="REMARK" jdbcType="VARCHAR"/>
     </resultMap>
 
     <resultMap id="PlanEffectResult" type="com.linksteady.operate.domain.ActivityPlanEffect">

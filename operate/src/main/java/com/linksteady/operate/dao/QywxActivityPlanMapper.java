@@ -3,6 +3,7 @@ package com.linksteady.operate.dao;
 import com.linksteady.operate.domain.ActivityPersonal;
 import com.linksteady.operate.domain.ActivityPlan;
 import com.linksteady.operate.domain.ActivityPlanEffect;
+import com.linksteady.operate.domain.QywxActivityPlan;
 import com.linksteady.operate.vo.ActivityGroupVO;
 import com.linksteady.operate.vo.SmsStatisVO;
 
@@ -18,7 +19,7 @@ public interface QywxActivityPlanMapper {
 
     List<ActivityPlan> getPlanList(Long headId);
 
-    ActivityPlan getPlanInfo(Long planId);
+    QywxActivityPlan getPlanInfo(Long planId);
 
     void deletePlan(Long headId);
 
