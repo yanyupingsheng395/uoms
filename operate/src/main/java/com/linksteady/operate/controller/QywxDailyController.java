@@ -1,5 +1,8 @@
 package com.linksteady.operate.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
 import com.linksteady.common.annotation.Log;
 import com.linksteady.common.domain.QueryRequest;
@@ -7,10 +10,13 @@ import com.linksteady.common.domain.QywxMessage;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.enums.ConfigEnum;
 import com.linksteady.common.service.ConfigService;
+import com.linksteady.common.util.OkHttpUtil;
+import com.linksteady.common.util.crypto.SHA1;
 import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.domain.QywxDailyDetail;
 import com.linksteady.operate.domain.QywxDailyHeader;
 import com.linksteady.operate.domain.QywxDailyStaffEffect;
+import com.linksteady.operate.domain.QywxMsgResult;
 import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.exception.PushQywxMessageException;
 import com.linksteady.operate.exception.SendCouponException;
@@ -18,6 +24,9 @@ import com.linksteady.operate.service.*;
 import com.linksteady.operate.vo.FollowUserVO;
 import com.linksteady.operate.vo.SourceConfigVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.assertj.core.util.Lists;
+import org.postgresql.jdbc.TimestampUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +36,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
@@ -261,21 +272,6 @@ public class QywxDailyController {
     }
 
     /**
-     * 补充发送优惠券
-     */
-    @GetMapping("/manualSubmitCoupon")
-    public ResponseBo submitTask(Long headId) {
-        boolean flag=qywxSendCouponService.sendCouponToUser(headId);
-        if(!flag)
-        {
-            return ResponseBo.error();
-        }else
-        {
-            return ResponseBo.ok();
-        }
-    }
-
-    /**
      * 获取当前日期和任务日期、任务天数
      *
      * @param headId
@@ -361,7 +357,6 @@ public class QywxDailyController {
         result.put("flag", "通过");
         result.put("desc", "");
         return ResponseBo.okWithData("",result);
-       // return ResponseBo.okWithData(null, dailyConfigService.validUserGroupForQywx());
     }
 
     /**
@@ -411,5 +406,89 @@ public class QywxDailyController {
     public ResponseBo getUserStatics(Long headId, String followUserId) {
         QywxDailyStaffEffect qywxDailyStaffEffect = qywxDailyService.getDailyStaffEffect(headId, followUserId);
         return ResponseBo.okWithData(null, qywxDailyStaffEffect);
+    }
+
+    /**
+     * 补充发送优惠券
+     */
+    @GetMapping("/manualSubmitCoupon")
+    public ResponseBo submitTask(Long headId) {
+        boolean flag=qywxSendCouponService.sendCouponToUser(headId);
+        if(!flag)
+        {
+            return ResponseBo.error();
+        }else
+        {
+            return ResponseBo.ok();
+        }
+    }
+
+    /**
+     * 更新推送结果
+     */
+    @GetMapping("/manualSyncPushResult")
+    public ResponseBo manualSyncPushResult() {
+        //获取所有待同步的msgId
+        List<String> msgIdList=qywxDailyService.getPushMsgIdList();
+
+        for(String msgId:msgIdList)
+        {
+            //删除响应的结果
+            qywxDailyService.deletePushResult(msgId);
+
+            //重新同步结果
+            //构造推送参数
+            JSONObject param=new JSONObject();
+            param.put("msgid",msgId);
+
+            String corpId=configService.getValueByName(ConfigEnum.qywxCorpId.getKeyCode());
+            String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
+            String signature= SHA1.gen(timestamp,param.toJSONString());
+            String qywcDomainUrl=configService.getValueByName(ConfigEnum.qywxDomainUrl.getKeyCode());
+            String url=qywcDomainUrl+"/push/getGroupMsgResult?corpId="+corpId+"&timestamp="+timestamp+"&signature="+signature;
+
+
+
+            String result= OkHttpUtil.postRequestByJson(url,param.toJSONString());
+            log.info("{}获取推送的结果为{}",msgId,result);
+
+            JSONObject jsonObject = JSON.parseObject(result);
+            String code = jsonObject.getString("code");
+
+            if(StringUtils.isNotEmpty(code)&&code.equalsIgnoreCase("200"))
+            {
+               //构造结果
+                JSONArray detailList = jsonObject.getJSONArray("data");
+
+                List<QywxMsgResult> qywxMsgResultList= Lists.newArrayList();
+                QywxMsgResult qywxMsgResult=null;
+                JSONObject obj = null;
+                for(int i=0;i<detailList.size();i++)
+                {
+                    obj=detailList.getJSONObject(i);
+                    qywxMsgResult=new QywxMsgResult();
+
+                    qywxMsgResult.setExternalUserId(obj.getString("external_userid"));
+                    qywxMsgResult.setChatId(obj.getString("chat_id"));
+                    qywxMsgResult.setFollowUserId(obj.getString("userid"));
+                    qywxMsgResult.setStatus(obj.getIntValue("status"));
+                    qywxMsgResult.setSendTime(obj.getString("send_time"));
+                    if(obj.getIntValue("status")==1)
+                    {
+                       qywxMsgResult.setSendTimeDt(new Date(Long.parseLong(obj.getString("send_time"))*1000));
+                    }
+                    qywxMsgResult.setMsgId(msgId);
+
+                    qywxMsgResultList.add(qywxMsgResult);
+                }
+                qywxDailyService.saveMsgResult(qywxMsgResultList);
+
+            }else
+            {
+                log.error("通过微信推送结果失败，返回结果为{}",result);
+            }
+
+        }
+        return ResponseBo.ok();
     }
 }

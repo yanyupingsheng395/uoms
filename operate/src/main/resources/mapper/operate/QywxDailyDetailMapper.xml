@@ -213,6 +213,7 @@
     </select>
 
     <update id="updatePushId">
-        update uo_qywx_daily_detail set push_id=#{pushId} where detail_id &gt;=#{minDetailId} and detail_id &lt;=#{maxDetailId}
+        update uo_qywx_daily_detail set push_id=#{pushId},msg_id=#{msgId}
+        where detail_id &gt;=#{minDetailId} and detail_id &lt;=#{maxDetailId}
     </update>
 </mapper>

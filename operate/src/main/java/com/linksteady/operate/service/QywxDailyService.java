@@ -62,5 +62,11 @@ public interface QywxDailyService {
      */
     void updateStatusToDonePushError(long headId);
 
+    List<String> getPushMsgIdList();
+
+    void deletePushResult(String msgId);
+
+    void saveMsgResult(List<QywxMsgResult> qywxMsgResultList);
+
 
 }

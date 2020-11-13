@@ -108,5 +108,5 @@ public interface QywxDailyDetailMapper {
      */
     List<QywxDailyDetail> getQywxUserList(Long headId, String followUserId,String msgSign,int limit,int offset);
 
-    void updatePushId(long minDetailId,long maxDetailId,long pushId);
+    void updatePushId(long minDetailId,long maxDetailId,long pushId,String msgId);
 }

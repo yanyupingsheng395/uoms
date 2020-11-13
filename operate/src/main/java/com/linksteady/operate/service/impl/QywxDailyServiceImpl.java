@@ -239,7 +239,8 @@ public class QywxDailyServiceImpl implements QywxDailyService {
             //更新uo_qywx_daily_detail表上的push_id (这种更新要确保取数的时候是按detail_id进行了排序)
             long minDetailId=qywxDailyDetailList.stream().mapToLong(QywxDailyDetail::getDetailId).min().getAsLong();
             long maxDetailId=qywxDailyDetailList.stream().mapToLong(QywxDailyDetail::getDetailId).max().getAsLong();
-            qywxDailyDetailMapper.updatePushId(minDetailId,maxDetailId,qywxPushList.getPushId());
+            log.info("更新pushid: min:{}-max:{}-pushid:{}",minDetailId,maxDetailId,qywxPushList.getPushId());
+            qywxDailyDetailMapper.updatePushId(minDetailId,maxDetailId,qywxPushList.getPushId(),msgId);
         }
     }
 
@@ -330,6 +331,21 @@ public class QywxDailyServiceImpl implements QywxDailyService {
     @Override
     public void updateStatusToDonePushError(long headId) {
         qywxDailyMapper.updateStatusToDonePushError(headId);
+    }
+
+    @Override
+    public List<String> getPushMsgIdList() {
+        return qywxDailyMapper.getPushMsgIdList();
+    }
+
+    @Override
+    public void deletePushResult(String msgId) {
+        qywxDailyMapper.deletePushResult(msgId);
+    }
+
+    @Override
+    public void saveMsgResult(List<QywxMsgResult> qywxMsgResultList) {
+        qywxDailyMapper.saveMsgResult(qywxMsgResultList);
     }
 
 
