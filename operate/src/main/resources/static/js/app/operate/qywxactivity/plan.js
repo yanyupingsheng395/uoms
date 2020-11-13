@@ -178,12 +178,13 @@ $("#btn_process").click(function () {
             }
             $MB.loadingDesc('hide');
         });
+    }else if(planStatus==0){
+        $MB.n_warning('该活动尚未计算！');
+        return;
     }else
     {
         $MB.loadingDesc('show', '加载中，请稍候...');
-
         //加载成员列表
-
         //记载推送明细
         getUserDetail();
         //隐藏下一步按钮
@@ -191,6 +192,7 @@ $("#btn_process").click(function () {
         //打开弹出面板
         $("#view_push_modal").modal('show');
         $MB.loadingDesc('hide');
+
     }
 });
 

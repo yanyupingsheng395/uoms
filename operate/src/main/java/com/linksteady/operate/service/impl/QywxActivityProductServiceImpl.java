@@ -151,7 +151,7 @@ public class QywxActivityProductServiceImpl implements QywxActivityProductServic
 
         //设置利益体现点
         if(StringUtils.isNotEmpty(spCouponFlag) && spCouponFlag.equalsIgnoreCase("1")){
-            activityProduct.setActivityProfit(spCouponPrice);
+            activityProduct.setActivityProfit(Math.ceil(spCouponPrice));
         }else{
             if("9".equals(groupId)){
                 //满减打折

@@ -139,9 +139,9 @@ public class QywxActivityPlanController {
         }
 
         //进行一次时间的判断 (调度修改状态有一定的延迟)
-        /*if (!DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now()).equals(String.valueOf(activityPlan.getPlanDateWid()))) {
+        if (!DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now()).equals(String.valueOf(activityPlan.getPlanDateWid()))) {
             return ResponseBo.error("已过期的计划无法再执行!");
-        }*/
+        }
 
         //进行推送的操作
         try {
@@ -220,6 +220,8 @@ public class QywxActivityPlanController {
                 msg = "活动尚未完成文案的配置，请先完成文案的配置!";
                 return ResponseBo.error(msg);
             }
+
+
 
             if (qywxActivityPushService.getTransActivityContentLock(activityPlan.getHeadId())) {
                 try {
