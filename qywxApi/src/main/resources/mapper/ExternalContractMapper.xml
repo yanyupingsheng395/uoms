@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.qywx.dao.ExternalContactMapper">
+
+    <resultMap id="externalUserMap" type="com.linksteady.qywx.domain.ExternalContact">
+        <result column="external_userid" jdbcType="VARCHAR" property="externalUserid"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="follow_user_id" jdbcType="VARCHAR" property="followerUserId"/>
+        <result column="type" jdbcType="VARCHAR" property="type"/>
+        <result column="gender" jdbcType="VARCHAR" property="gender"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="state" jdbcType="VARCHAR" property="state"/>
+        <result column="createtime" jdbcType="VARCHAR" property="createtime"/>
+    </resultMap>
+
+
+   <insert id="saveExternalUserList">
+        insert into uo_qywx_external_user_list(
+            follow_user_id,
+            external_userid,
+            delete_flag
+        ) values
+       <foreach collection="externalUserList" item="item" index="index" separator=",">
+         (#{followerUserId},#{item},0)
+       </foreach>
+       ON CONFLICT(external_userid,follow_user_id) DO UPDATE SET delete_flag=0
+   </insert>
+
+    <update id="updateExternalContract">
+         update uo_qywx_external_user_list set
+            name=#{name},
+            position=#{position},
+            avatar=#{avatar},
+            corp_name=#{corpName},
+            corp_full_name=#{corpFullName},
+            type=#{type},
+            gender=#{gender},
+            unionid=#{unionid},
+            external_profile=#{externalProfile},
+            follow_user=#{followUser},
+            remark=#{remark},
+            description=#{description},
+            createtime=#{createtime},
+            tags=#{tags},
+            remark_corp_name=#{remarkCorpName},
+            remark_mobiles=#{remarkMobiles},
+            state=#{state},
+            follow_count=#{followCount}
+         where external_userid=#{externalUserid}
+           and  follow_user_id=#{followerUserId}
+    </update>
+
+    <delete id="deleteExternalContract">
+      delete from uo_qywx_external_user_list
+      where
+             external_userid=#{externalUserId}
+        and  follow_user_id=#{followerUserId}
+    </delete>
+
+    <insert id="saveExternalContractSingle">
+       insert into uo_qywx_external_user_list(
+            external_userid,
+            name,
+            position,
+            avatar,
+            corp_name,
+            corp_full_name,
+            type,
+            gender,
+            unionid,
+            external_profile,
+            follow_user,
+            follow_user_id,
+            remark,
+            description,
+            createtime,
+            tags,
+            remark_corp_name,
+            remark_mobiles,
+            state
+        ) values(
+            #{externalUserid},
+            #{name},
+            #{position},
+            #{avatar},
+            #{corpName},
+            #{corpFullName},
+            #{type},
+            #{gender},
+            #{unionid},
+            #{externalProfile},
+            #{followUser},
+            #{followerUserId},
+            #{remark},
+            #{description},
+            #{createtime},
+            #{tags},
+            #{remarkCorpName},
+            #{remarkMobiles},
+            #{state}
+        ) ON CONFLICT(external_userid,follow_user_id) DO NOTHING
+    </insert>
+
+    <select id="selectLocalContactCount" resultType="int">
+        select count(*) from uo_qywx_external_user_list
+    </select>
+
+    <select id="selectLocalContractList" resultMap="externalUserMap">
+         select external_userid,name,follow_user_id,remark,state,createtime from uo_qywx_external_user_list
+         where 1=1 order by createtime asc limit #{limit} offset #{offset}
+    </select>
+
+    <select id="getGuidanceCount" resultType="int">
+        select count(*) from uo_qywx_external_user_list
+    </select>
+
+    <select id="getGuidanceList" resultMap="externalUserMap">
+         select external_userid,name,follow_user_id,remark,state,createtime from uo_qywx_external_user_list
+         where 1=1 order by createtime asc limit #{limit} offset #{offset}
+    </select>
+
+    <update id="updateDeleteFlag">
+        update uo_qywx_external_user_list set delete_flag=1
+    </update>
+
+    <delete id="deleteExternalUser">
+        delete from uo_qywx_external_user_list where delete_flag=1
+    </delete>
+</mapper>

@@ -2,14 +2,10 @@ package com.linksteady.qywx.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
-import com.google.common.collect.Lists;
 import com.linksteady.common.domain.QywxMessage;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.common.util.OkHttpUtil;
-import com.linksteady.common.util.crypto.SHA1;
 import com.linksteady.qywx.domain.ExternalContact;
-import com.linksteady.qywx.domain.SyncTask;
-import com.linksteady.qywx.service.ApiService;
+import com.linksteady.qywx.service.ParamService;
 import com.linksteady.qywx.service.SyncTaskService;
 import com.linksteady.qywx.service.UserMappingService;
 import com.linksteady.qywx.service.WelcomeMessageService;
@@ -20,9 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.alibaba.fastjson.JSONObject;
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -36,7 +29,7 @@ public class SyncTaskController extends ApiBaseController{
     @Autowired
     SyncTaskService syncTaskService;
     @Autowired
-    ApiService apiService;
+    ParamService paramService;
 
     @Autowired
     UserMappingService userMappingService;

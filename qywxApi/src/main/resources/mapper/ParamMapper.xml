@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.linksteady.qywx.dao.ApiMapper">
+<mapper namespace="com.linksteady.qywx.dao.ParamMapper">
 
     <select id="getQywxDomainAddress" resultType="string">
         select
@@ -24,6 +24,10 @@
         select
            value
         from t_config where name='qywx.miniProgramAppId'
+    </select>
+
+    <select id="getCorpId" resultType="string">
+        select corp_id from uo_qywx_param
     </select>
 
 </mapper>

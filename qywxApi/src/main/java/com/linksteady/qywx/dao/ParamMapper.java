@@ -1,13 +1,14 @@
-package com.linksteady.qywx.service;
+package com.linksteady.qywx.dao;
+
+import com.linksteady.qywx.domain.OrderSeries;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author huang
- * @date 2020/7/2
+ * @date 2020/7/3
  */
-public interface ApiService {
+public interface ParamMapper {
 
     /**
      * 获取企业微信部署的IP地址
@@ -25,10 +26,17 @@ public interface ApiService {
      */
     String getQywxCorpId();
 
+
     /**
      * 获取关联小程序的appid
      * @return
      */
     String getMpAppId();
+
+    /**
+     * 获取当前公司的corpId
+     * @return
+     */
+    String getCorpId();
 
 }

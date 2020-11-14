@@ -1,0 +1,83 @@
+package com.linksteady.qywx.storage.impl;
+
+import com.linksteady.qywx.storage.RedisConfigStorage;
+import lombok.extern.slf4j.Slf4j;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+
+/**
+ * redis存储各种配置参数的配置类
+ */
+@Slf4j
+public class RedisConfigStorageImpl implements RedisConfigStorage {
+
+    private volatile String baseApiUrl;
+
+    protected final static String  QYWX_APP_SECRET="qywx:app:secret";
+    protected final static String  QYWX_APP_ACCESS_TOKEN="qywx:app:accesstoken";
+
+    private JedisPool jedisPool;
+
+    public RedisConfigStorageImpl(JedisPool jedisPool) {
+        this.jedisPool = jedisPool;
+    }
+
+    @Override
+    public String getApiUrl(String path) {
+        if (baseApiUrl == null) {
+            baseApiUrl = "https://qyapi.weixin.qq.com";
+        }
+        return baseApiUrl + path;
+    }
+
+
+
+    @Override
+    public String getSecret() {
+        try(Jedis jedis=jedisPool.getResource())
+        {
+            return jedis.get(QYWX_APP_SECRET);
+        }
+    }
+
+    @Override
+    public void setSecret(String secret) {
+        try(Jedis jedis=jedisPool.getResource())
+        {
+            jedis.set(QYWX_APP_SECRET,secret);
+        }
+    }
+
+    @Override
+    public String getAccessToken() {
+        try(Jedis jedis=jedisPool.getResource())
+        {
+            return jedis.get(QYWX_APP_ACCESS_TOKEN);
+        }
+    }
+
+    @Override
+    public void setAccessToken(String suitAccessToken, long expireIn) {
+        try(Jedis jedis=jedisPool.getResource())
+        {
+            boolean keyExists=jedis.exists(QYWX_APP_ACCESS_TOKEN);
+            if(keyExists)
+            {
+                jedis.del(QYWX_APP_ACCESS_TOKEN);
+            }
+            // NX是不存在时才set， XX是存在时才set， EX是秒，PX是毫秒
+            jedis.set(QYWX_APP_ACCESS_TOKEN,suitAccessToken,"NX","EX",expireIn-200);
+        }
+    }
+
+    @Override
+    public String getCorpId() {
+        return null;
+    }
+
+    @Override
+    public void setCorpId(String corpId) {
+
+    }
+
+}

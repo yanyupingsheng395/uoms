@@ -1,13 +1,12 @@
 package com.linksteady.qywx.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.common.util.crypto.SHA1;
 import com.linksteady.qywx.dao.SyncTaskMapper;
 import com.linksteady.qywx.domain.ExternalContact;
 import com.linksteady.qywx.domain.SyncTask;
-import com.linksteady.qywx.service.ApiService;
+import com.linksteady.qywx.service.ParamService;
 import com.linksteady.qywx.service.SyncTaskService;
 import com.linksteady.qywx.vo.FollowUserVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +31,7 @@ public class SyncTaskServiceImpl implements SyncTaskService {
     SyncTaskMapper syncTaskMapper;
 
     @Autowired
-    ApiService apiService;
+    ParamService paramService;
 
     @Override
     @Transactional
@@ -91,10 +90,10 @@ public class SyncTaskServiceImpl implements SyncTaskService {
 
     @Override
     public void saveExternalContactList(List<ExternalContact> externalContactList) {
-        externalContactList.stream().forEach(i->
-        {
-            i.setAddDate(timeStampToDate(i.getCreatetime()));
-        });
+//        externalContactList.stream().forEach(i->
+//        {
+//            i.setAddDate(timeStampToDate(i.getCreatetime()));
+//        });
         syncTaskMapper.saveExternalContactList(externalContactList);
     }
 
@@ -106,7 +105,7 @@ public class SyncTaskServiceImpl implements SyncTaskService {
 
     @Override
     public void saveExternalContact(ExternalContact externalContact) {
-        externalContact.setAddDate(timeStampToDate(externalContact.getCreatetime()));
+      //  externalContact.setAddDate(timeStampToDate(externalContact.getCreatetime()));
         syncTaskMapper.saveExternalContact(externalContact);
     }
 
@@ -122,7 +121,7 @@ public class SyncTaskServiceImpl implements SyncTaskService {
 
     @Override
     public synchronized void syncQywxData() throws Exception{
-        String corpId=apiService.getQywxCorpId();
+        String corpId= paramService.getQywxCorpId();
         SyncTask syncTask=new SyncTask();
         syncTask.setCorpId(corpId);
         syncTask.setStatus("P");
@@ -136,7 +135,7 @@ public class SyncTaskServiceImpl implements SyncTaskService {
         String data=JSON.toJSONString(syncTask);
         String signature= SHA1.gen(timestamp,data);
         //2.提交到企业微信端
-        StringBuffer url=new StringBuffer(apiService.getQywxDomainUrl()+SUBMIT_TASK_URL);
+        StringBuffer url=new StringBuffer(paramService.getQywxDomainUrl()+SUBMIT_TASK_URL);
         url.append("?corpId="+corpId);
         url.append("&timestamp="+timestamp);
         url.append("&signature="+signature);
@@ -149,20 +148,5 @@ public class SyncTaskServiceImpl implements SyncTaskService {
     }
 
 
-    /**
-     * 10位字符串 时间戳转日期
-     * @param timeStamp
-     * @return
-     */
-    private Date timeStampToDate(String timeStamp)
-    {
-        if(StringUtils.isEmpty(timeStamp))
-        {
-            return null;
-        }else
-        {
-            return new Date(Long.parseLong(timeStamp)*1000);
-        }
 
-    }
 }

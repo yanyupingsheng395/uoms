@@ -2,7 +2,7 @@ package com.linksteady.qywx.controller;
 
 import com.linksteady.common.util.IPUtils;
 import com.linksteady.common.util.crypto.SHA1;
-import com.linksteady.qywx.service.ApiService;
+import com.linksteady.qywx.service.ParamService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,7 +24,7 @@ public class ApiBaseController {
     private static final long TIMESTAMP_DFF=60;
 
     @Autowired
-    ApiService apiService;
+    ParamService paramService;
 
     protected void validateLegality(HttpServletRequest request,String signature,String...args) throws Exception
     {
@@ -45,7 +45,7 @@ public class ApiBaseController {
             throw new Exception("签名错误，请校验数据!");
         }
         //判断IP地址 如果IP地址配置了且不是* 则判断当前IP是否在白名单内，如果不在，抛出异常
-       String allowAddress=apiService.getQywxDomainAddress();
+       String allowAddress= paramService.getQywxDomainAddress();
        if(StringUtils.isNotEmpty(allowAddress)&&!"*".equals(allowAddress))
        {
            String currentIp=IPUtils.getIpAddr(request);

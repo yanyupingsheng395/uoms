@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.qywx.dao.FollowUserMapper">
+
+    <update id="updateFollowUser">
+        UPDATE uo_qywx_follower_user_list SET
+            name=#{name},
+            department=#{department},
+            user_order=#{userOrder},
+            position=#{position},
+            mobile= #{mobile},
+            gender=#{gender},
+            email=#{email},
+            is_leader_in_dept=#{leaderInDept},
+            avatar=#{avatar},
+            thumb_avatar=#{thumbAvatar},
+            telephone=#{telephone},
+            alias=#{alias},
+            address=#{address},
+            open_userid=#{openUserid},
+            main_department=#{mainDepartment},
+            extattr=#{extattr},
+            status=#{status},
+            qr_code=#{qrCode},
+            external_position=#{externalPosition},
+            external_profile=#{externalProfile}
+        where user_id=#{userId}
+    </update>
+
+    <insert id="saveFollowerUser">
+        insert into uo_qywx_follower_user_list(user_id,delete_flag) values
+        <foreach collection="followerUserList" item="item" index="index" separator=",">
+            (#{item},0)
+        </foreach>
+         ON CONFLICT(user_id) DO UPDATE set delete_flag=0
+    </insert>
+
+    <update id="updateDeleteFlag">
+        update uo_qywx_follower_user_list set delete_flag=1
+    </update>
+
+    <delete id="deleteFollowUser">
+        delete from uo_qywx_follower_user_list where delete_flag=1
+    </delete>
+</mapper>
