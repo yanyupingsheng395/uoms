@@ -227,20 +227,24 @@ public class QywxDailyServiceImpl implements QywxDailyService {
             String msgId = jsonObject.getString("msg");
             String code = jsonObject.getString("code");
             String failList = jsonObject.getString("data");
+            String status="S";
 
             if(StringUtils.isNotEmpty(code)&&code.equalsIgnoreCase("200"))
             {
-                qywxDailyMapper.updatePushList(qywxPushList.getPushId(),"S",msgId,failList,"推送成功");
+                qywxDailyMapper.updatePushList(qywxPushList.getPushId(),status,msgId,failList,"推送成功");
             }else
             {
-                qywxDailyMapper.updatePushList(qywxPushList.getPushId(),"F","","","调用企业微信接口失败");
+                status="F";
+                qywxDailyMapper.updatePushList(qywxPushList.getPushId(),status,"","","调用企业微信接口失败");
             }
 
             //更新uo_qywx_daily_detail表上的push_id (这种更新要确保取数的时候是按detail_id进行了排序)
-            long minDetailId=qywxDailyDetailList.stream().mapToLong(QywxDailyDetail::getDetailId).min().getAsLong();
-            long maxDetailId=qywxDailyDetailList.stream().mapToLong(QywxDailyDetail::getDetailId).max().getAsLong();
-            log.info("更新pushid: min:{}-max:{}-pushid:{}",minDetailId,maxDetailId,qywxPushList.getPushId());
-            qywxDailyDetailMapper.updatePushId(minDetailId,maxDetailId,qywxPushList.getPushId(),msgId);
+            List<Long> detailIdList=qywxDailyDetailList.stream().map(QywxDailyDetail::getDetailId).collect(Collectors.toList());
+            log.info("更新pushidpushid:{}",qywxPushList.getPushId());
+            if(detailIdList.size()>0)
+            {
+                qywxDailyDetailMapper.updatePushId(detailIdList,qywxPushList.getPushId(),msgId,status);
+            }
         }
     }
 
@@ -346,6 +350,11 @@ public class QywxDailyServiceImpl implements QywxDailyService {
     @Override
     public void saveMsgResult(List<QywxMsgResult> qywxMsgResultList) {
         qywxDailyMapper.saveMsgResult(qywxMsgResultList);
+    }
+
+    @Override
+    public void updateExecStatus() {
+        qywxDailyMapper.updateExecStatus();
     }
 
 

@@ -98,5 +98,5 @@ public interface QywxActivityPushMapper {
     /**
      * 回写uo_qywx_activity_detail的push_id
      */
-    void updatePushId(long minQywxDetailId, long maxQywxDetailId, long pushId);
+    void updatePushId(long minQywxDetailId, long maxQywxDetailId, long pushId,String msgId,String status);
 }

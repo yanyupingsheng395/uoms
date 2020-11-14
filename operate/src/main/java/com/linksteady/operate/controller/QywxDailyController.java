@@ -447,8 +447,6 @@ public class QywxDailyController {
             String qywcDomainUrl=configService.getValueByName(ConfigEnum.qywxDomainUrl.getKeyCode());
             String url=qywcDomainUrl+"/push/getGroupMsgResult?corpId="+corpId+"&timestamp="+timestamp+"&signature="+signature;
 
-
-
             String result= OkHttpUtil.postRequestByJson(url,param.toJSONString());
             log.info("{}获取推送的结果为{}",msgId,result);
 

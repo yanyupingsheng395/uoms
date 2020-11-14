@@ -12,7 +12,6 @@
         <result column="REC_PIECE_PRICE" jdbcType="VARCHAR" property="piecePrice"></result>
         <result column="JOIN_RATE" jdbcType="VARCHAR" property="joinRate"></result>
         <result column="ORDER_PERIOD" jdbcType="VARCHAR" property="orderPeriod"></result>
-        <result column="IS_PUSH" jdbcType="VARCHAR" property="isPush"></result>
         <result column="IS_CONVERSION" jdbcType="VARCHAR" property="isConversion"></result>
         <result column="PUSH_STATUS" jdbcType="VARCHAR" property="pushStatus"></result>
         <result column="TEXT_CONTENT" jdbcType="VARCHAR" property="textContent"></result>
@@ -213,7 +212,10 @@
     </select>
 
     <update id="updatePushId">
-        update uo_qywx_daily_detail set push_id=#{pushId},msg_id=#{msgId}
-        where detail_id &gt;=#{minDetailId} and detail_id &lt;=#{maxDetailId}
+        update uo_qywx_daily_detail set push_id=#{pushId},msg_id=#{msgId},push_status=#{status}
+        where detail_id in
+        <foreach collection="detailIdList" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
     </update>
 </mapper>

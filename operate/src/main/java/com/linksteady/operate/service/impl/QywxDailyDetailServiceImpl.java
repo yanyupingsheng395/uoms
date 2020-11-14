@@ -152,6 +152,7 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
         return qywxDailyDetailMapper.getFollowUserList(headId);
     }
 
+
     /**
      * 对配在组上的补贴按照GROUP_ID进行分组
      *

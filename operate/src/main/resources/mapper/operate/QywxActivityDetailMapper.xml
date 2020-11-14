@@ -23,7 +23,6 @@
         <result column="REC_CROSS_ID" jdbcType="VARCHAR" property="recCrossId"/>
         <result column="REC_CROSS_NAME" jdbcType="VARCHAR" property="recCrossName"/>
         <result column="REC_TYPE" jdbcType="VARCHAR" property="recType"/>
-        <result column="IS_PUSH" jdbcType="VARCHAR" property="isPush"/>
         <result column="IS_CONVERSION" jdbcType="VARCHAR" property="isConversion"/>
         <result column="PUSH_STATUS" jdbcType="VARCHAR" property="pushStatus"/>
         <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent"/>

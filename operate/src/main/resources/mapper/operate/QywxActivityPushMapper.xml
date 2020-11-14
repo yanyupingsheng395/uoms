@@ -246,7 +246,9 @@
     </update>
 
     <update id="updatePushId">
-        update UO_QYWX_ACTIVITY_DETAIL set push_id=#{pushId} where qywx_detail_id &gt;=#{minDetailId} and qywx_detail_id &lt;=#{maxDetailId}
+        update UO_QYWX_ACTIVITY_DETAIL
+        set push_id=#{pushId},msg_id=#{msgId},push_status=#{status}
+        where qywx_detail_id &gt;=#{minDetailId} and qywx_detail_id &lt;=#{maxDetailId}
     </update>
 
 </mapper>

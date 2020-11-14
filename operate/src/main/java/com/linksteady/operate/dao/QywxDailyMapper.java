@@ -54,5 +54,5 @@ public interface QywxDailyMapper {
 
     void saveMsgResult(List<QywxMsgResult> qywxMsgResultList);
 
-
+    void updateExecStatus();
 }

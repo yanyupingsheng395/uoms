@@ -68,5 +68,7 @@ public interface QywxDailyService {
 
     void saveMsgResult(List<QywxMsgResult> qywxMsgResultList);
 
+    void updateExecStatus();
+
 
 }

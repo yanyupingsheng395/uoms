@@ -57,5 +57,4 @@ public interface QywxDailyDetailService {
      */
     List<FollowUserVO> getFollowUserList(Long headId);
 
-
 }

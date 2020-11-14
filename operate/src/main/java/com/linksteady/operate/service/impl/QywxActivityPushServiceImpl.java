@@ -458,17 +458,20 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
             String msgId = jsonObject.getString("msg");
             String code = jsonObject.getString("code");
             String failList = jsonObject.getString("data");
+
+            String status="S";
             if(org.apache.commons.lang3.StringUtils.isNotEmpty(code)&&code.equalsIgnoreCase("200"))
             {
-                qywxActivityPushMapper.updatePushList(qywxPushList.getPushId(),"S",msgId,failList,"推送成功");
+                qywxActivityPushMapper.updatePushList(qywxPushList.getPushId(),status,msgId,failList,"推送成功");
             }else
             {
-                qywxActivityPushMapper.updatePushList(qywxPushList.getPushId(),"F","","","调用企业微信接口失败");
+                status="F";
+                qywxActivityPushMapper.updatePushList(qywxPushList.getPushId(),status,"","","调用企业微信接口失败");
             }
             //将push_id更新到uo_qywx_activity_detail.push_id(这种更新要确保取数的时候是按detail_id进行了排序)
             long minQywxDetailId=qywxActivityDetailList.stream().mapToLong(QywxActivityDetail::getQywxDetailId).min().getAsLong();
             long maxQywxDetailId=qywxActivityDetailList.stream().mapToLong(QywxActivityDetail::getQywxDetailId).max().getAsLong();
-            qywxActivityPushMapper.updatePushId(minQywxDetailId,maxQywxDetailId,qywxPushList.getPushId());
+            qywxActivityPushMapper.updatePushId(minQywxDetailId,maxQywxDetailId,qywxPushList.getPushId(),msgId,status);
         }
     }
 
