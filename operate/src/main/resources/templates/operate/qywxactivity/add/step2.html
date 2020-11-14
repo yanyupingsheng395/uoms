@@ -1,6 +1,78 @@
 <div class="col-md-12 select-table">
+    <input type="hidden" id="activity_stage"/>
     <div class="row">
-        <span class="navbar-page-title" id="productListTitle2">活动商品列表</span>
+        <span class="navbar-page-title" id="productListTitle1">活动通知商品列表</span>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <hr class="hr m-t-0 m-b-5"/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <form id="activity-form1">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            商品名称：<input type="text" id="productName1"/>
+                        </li>
+                        <li>
+                            商品ID：
+                            <input type="text" id="productId1"/>
+                        </li>
+                        <li>
+                            活动机制：
+                            <select name="groupId" id="groupId1">
+                                <option value="">所有</option>
+                                <option value="9">满件打折</option>
+                                <option value="14">立减特价</option>
+                                <option value="13">仅店铺券</option>
+                            </select>
+                        </li>
+                        <li class="pull-right">
+                            <a class="btn btn-primary btn-rounded btn-sm"
+                               onclick="searchActivityProduct1()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="resetActivityProduct1()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <hr class="hr m-t-0 m-b-5"/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="btn-group-sm" role="group">
+                <a class="btn btn-success" id="btn_add_shop1">
+                    <i class="fa fa-pencil"></i> 新增商品
+                </a>
+                <a class="btn btn-primary" id="btn_edit_shop1">
+                    <i class="fa fa-edit"></i> 编辑商品
+                </a>
+                <a class="btn btn-danger" id="btn_delete_shop1">
+                    <i class="fa fa-close"></i> 删除商品
+                </a>
+                <a class="btn btn-secondary" id="btn_batch_upload1">
+                    <i class="fa fa-file-archive-o"></i> 批量上传
+                </a>
+                <button class="btn btn-secondary" id="btn_download_data1">
+                    <i class="fa fa-download"></i> 下载数据
+                </button>
+            </div>
+        </div>
+        <div class="col-md-12 table-striped m-t-10">
+            <table id="activityProductTable1" class="table table-bordered table-striped text-nowrap"></table>
+        </div>
+    </div>
+</div>
+<div class="col-md-12 select-table">
+    <div class="row">
+        <span class="navbar-page-title" id="productListTitle2">正式活动商品列表</span>
     </div>
     <div class="row">
         <div class="col-md-12">

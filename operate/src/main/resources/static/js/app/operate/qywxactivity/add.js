@@ -98,7 +98,8 @@ function stepBreak(index) {
     }
     if(index == 1) {
         create_step.setActive(1);
-        getProductInfo();
+        getProductInfo('NOTIFY', 'activityProductTable1');
+        getProductInfo('DURING', 'activityProductTable');
         $("#step1").attr("style", "display:none;");
         $("#step2").attr("style", "display:block;");
         $("#step3").attr("style", "display:none;");
@@ -235,16 +236,25 @@ function validateProductRule() {
 }
 
 // 查询活动通知商品信息
+function searchActivityProduct1() {
+    $MB.refreshTable( 'activityProductTable1' );
+}
 function searchActivityProduct() {
     $MB.refreshTable( 'activityProductTable' );
 }
 
 // 重置查询商品条件
-function resetActivityProduct() {
+function resetActivityProduct1() {
     $( "#productId1" ).val( "" );
     $( "#productName1" ).val( "" );
     $( "#groupId1" ).find( "option:selected" ).removeAttr( "selected" );
     $MB.refreshTable( 'activityProductTable1' );
+}
+function resetActivityProduct() {
+    $( "#productId" ).val( "" );
+    $( "#productName" ).val( "" );
+    $( "#groupId" ).find( "option:selected" ).removeAttr( "selected" );
+    $MB.refreshTable( 'activityProductTable' );
 }
 
 function addPlatCoupon(idx) {
@@ -314,10 +324,16 @@ $( "#saveActivityProduct" ).click( function () {
     //if (flag) {
         let operate = $( "#saveActivityProduct" ).attr( "name" );
         if (operate === "save") {
-            $.post( "/qywxActivity/saveActivityProduct", $( "#add-product-form" ).serialize() + "&headId=" + $( "#headId" ).val(),  function (r) {
+            $.post( "/qywxActivity/saveActivityProduct", $( "#add-product-form" ).serialize() + "&headId=" + $( "#headId" ).val()+ "&activityType=" + CURRENT_ACTIVITY_TYPE,  function (r) {
                 if (r.code === 200) {
                     $MB.n_success( "添加商品成功！" );
-                    getProductInfo();
+                    if(CURRENT_ACTIVITY_TYPE === 'NOTIFY') {
+                        getProductInfo('NOTIFY', 'activityProductTable1');
+                    }
+                    if(CURRENT_ACTIVITY_TYPE === 'DURING') {
+                        getProductInfo('DURING', 'activityProductTable');
+                    }
+                   // getProductInfo();
                     $MB.closeAndRestModal( "addProductModal" );
                     clearData();
                 } else {
@@ -329,7 +345,13 @@ $( "#saveActivityProduct" ).click( function () {
             $.post( "/qywxActivity/updateActivityProduct", $( "#add-product-form" ).serialize() + "&headId=" + $( "#headId" ).val(), function (r) {
                 if (r.code === 200) {
                     $MB.n_success( "更新商品成功！");
-                    getProductInfo();
+                    if(CURRENT_ACTIVITY_TYPE === 'NOTIFY') {
+                        getProductInfo('NOTIFY', 'activityProductTable1');
+                    }
+                    if(CURRENT_ACTIVITY_TYPE === 'DURING') {
+                        getProductInfo('DURING', 'activityProductTable');
+                    }
+                   // getProductInfo();
                     $MB.closeAndRestModal( "addProductModal" );
                     clearData();
                 } else {
@@ -357,16 +379,30 @@ $( "#addProductModal" ).on( "hidden.bs.modal", function () {
     $activityProductAddForm.validate().resetForm();
 } );
 
+// 修改活动通知商品信息
+$( "#btn_edit_shop1" ).click( function () {
+    editShop('NOTIFY');
+    CURRENT_ACTIVITY_TYPE = 'NOTIFY';
+});
+
 // 修改活动期间商品信息
 $( "#btn_edit_shop" ).click( function () {
-    editShop();
+    editShop('DURING');
+    CURRENT_ACTIVITY_TYPE = 'DURING';
 });
 
 // 编辑商品信息
-function editShop() {
+function editShop(type) {
+    var tableId = '';
+    if(type === 'NOTIFY') {
+        tableId = 'activityProductTable1';
+    }
+    if(type === 'DURING') {
+        tableId = 'activityProductTable';
+    }
     $("#modalLabel").html('').append('修改商品');
     $( "#saveActivityProduct" ).attr( "name", "update" );
-    let selected = $( "#activityProductTable").bootstrapTable( 'getSelections' );
+    let selected = $( "#"+tableId).bootstrapTable( 'getSelections' );
     let selected_length = selected.length;
     if (!selected_length) {
         $MB.n_warning( '请选择需要编辑的商品！' );
@@ -489,7 +525,7 @@ $('#btn_upload').click(function () {
                         $MB.refreshTable('activityProductTable1');
                     }
                     if(CURRENT_ACTIVITY_TYPE == 'DURING') {
-                        $MB.refreshTable('activityProductTable2');
+                        $MB.refreshTable('activityProductTable');
                     }
                     $("#uploadProduct").modal('hide');
                 }else {
@@ -548,13 +584,25 @@ $("#uploadProduct").on('hidden.bs.modal', function () {
 
 
 // 删除商品信息
+$("#btn_delete_shop1").click(function () {
+    CURRENT_ACTIVITY_TYPE = 'NOTIFY';
+    deleteShop(CURRENT_ACTIVITY_TYPE);
+});
 $("#btn_delete_shop").click(function () {
-    deleteShop();
+    CURRENT_ACTIVITY_TYPE = 'DURING';
+    deleteShop(CURRENT_ACTIVITY_TYPE);
 });
 
 // 删除商品，同时更改头表数据状态
-function deleteShop(){
-    var selected = $("#activityProductTable").bootstrapTable('getSelections');
+function deleteShop(type){
+    var tableId;
+    if(type === 'NOTIFY') {
+        tableId = 'activityProductTable1';
+    }
+    if(type === 'DURING') {
+        tableId = 'activityProductTable';
+    }
+    var selected = $("#"+tableId).bootstrapTable('getSelections');
     var selected_length = selected.length;
     if (!selected_length) {
         $MB.n_warning('请选择需要删除的商品记录！');
@@ -571,7 +619,7 @@ function deleteShop(){
         $.post("/qywxActivity/deleteProduct", {ids: ids.join(",")}, function (r) {
             if(r.code === 200) {
                 $MB.n_success("删除成功！");
-                $MB.refreshTable('activityProductTable');
+                $MB.refreshTable(tableId);
             }else {
                 $MB.n_danger("删除失败！");
             }
@@ -580,7 +628,14 @@ function deleteShop(){
 }
 
 // 获取商品信息
-function getProductInfo() {
+function getProductInfo(type, tableId) {
+    var title = '活动通知';
+    if(type === 'NOTIFY') {
+        title = '活动通知';
+    }
+    if(type === 'DURING') {
+        title = '活动期间';
+    }
     var settings = {
         url: '/qywxActivity/getActivityProductPage',
         pagination: true,
@@ -595,14 +650,27 @@ function getProductInfo() {
                 offset: params.offset,
                 headId: $( "#headId" ).val(),
                 productId: function() {
-                    return $("#productId").val();
+                    if(tableId === 'activityProductTable1') {
+                        return $( "#productId1" ).val();
+                    }else if(tableId === 'activityProductTable') {
+                        return $( "#productId" ).val();
+                    }
                 },
                 productName:function() {
-                    return $("#productName").val();
+                    if(tableId === 'activityProductTable1') {
+                        return $( "#productName1" ).val();
+                    }else if(tableId === 'activityProductTable') {
+                        return $( "#productName" ).val();
+                    }
                 },
                 groupId: function() {
-                    return $("#groupId").find("option:selected").val();
-                }
+                    if(tableId === 'activityProductTable1') {
+                        return $("#groupId1").find("option:selected").val();
+                    }else if(tableId === 'activityProductTable') {
+                        return $("#groupId").find("option:selected").val();
+                    }
+                },
+                activityType: type
             };
         },
         columns: [
@@ -639,7 +707,7 @@ function getProductInfo() {
                 }
             },{
                 field: 'activityProfit',
-                title: '活动商品体现利益点',
+                title: title+'商品体现利益点',
                 valign: 'middle',
                 align: 'center',
                 formatter: function (value, row, index) {
@@ -670,7 +738,7 @@ function getProductInfo() {
                 align: 'center'
             }]
     };
-    $( "#activityProductTable" ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
+    $( "#" + tableId  ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
 }
 
 // 提交计划 type:NOTIFY 活动通知，DURING 活动期间
@@ -890,8 +958,18 @@ function spCouponFlagChange(dom) {
         $("#shopAcvity").attr("style", "display:block;");
     }
 }
+//添加商品
+$( "#btn_add_shop1" ).click( function () {
+    CURRENT_ACTIVITY_TYPE = 'NOTIFY';
+    var headId = $( "#headId" ).val();
+    $( "#saveActivityProduct" ).attr( "name", "save" );
+    $( '#addProductModal' ).modal( 'show' );
+    $( "#modalLabel" ).html( '' ).append( '添加商品' );
+    $("#shopOffer").html('');
+} );
 
 $( "#btn_add_shop" ).click( function () {
+    CURRENT_ACTIVITY_TYPE = 'DURING';
     $( "#saveActivityProduct" ).attr( "name", "save" );
     $( '#addProductModal' ).modal( 'show' );
     $( "#modalLabel" ).html( '' ).append( '添加商品' );
@@ -899,7 +977,13 @@ $( "#btn_add_shop" ).click( function () {
 } );
 
 // 批量添加商品
+$( "#btn_batch_upload1" ).click( function () {
+    CURRENT_ACTIVITY_TYPE = 'NOTIFY';
+    $("#uploadProduct").modal('show');
+});
+// 批量添加商品
 $( "#btn_batch_upload" ).click( function () {
+    CURRENT_ACTIVITY_TYPE = 'DURING';
     $("#uploadProduct").modal('show');
 });
 
@@ -1341,13 +1425,30 @@ function addTemplate() {
 }
 
 // 活动商品数据下载
+$("#btn_download_data1").click(function () {
+    $MB.confirm({
+        title: "<i class='mdi mdi-alert-outline'></i>提示：",
+        content: "确定下载商品数据?"
+    }, function () {
+        $("#btn_download_data1").text("下载中...").attr("disabled", true);
+        $.post("/qywxActivity/downloadExcel", {headId: $("#headId").val(), activityType: 'NOTIFY'}, function (r) {
+            if (r.code === 200) {
+                window.location.href = "/common/download?fileName=" + r.msg + "&delete=" + true;
+            } else {
+                $MB.n_warning(r.msg);
+            }
+            $("#btn_download_data1").html("").append("<i class=\"fa fa-download\"></i> 下载数据").removeAttr("disabled");
+        });
+    });
+});
+
 $("#btn_download_data").click(function () {
     $MB.confirm({
         title: "<i class='mdi mdi-alert-outline'></i>提示：",
         content: "确定下载商品数据?"
     }, function () {
         $("#btn_download_data").text("下载中...").attr("disabled", true);
-        $.post("/qywxActivity/downloadExcel", {headId: $("#headId").val()}, function (r) {
+        $.post("/qywxActivity/downloadExcel", {headId: $("#headId").val(), activityType: 'DURING'}, function (r) {
             if (r.code === 200) {
                 window.location.href = "/common/download?fileName=" + r.msg + "&delete=" + true;
             } else {

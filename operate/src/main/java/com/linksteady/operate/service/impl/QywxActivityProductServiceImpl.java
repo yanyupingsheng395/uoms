@@ -52,13 +52,13 @@ public class QywxActivityProductServiceImpl implements QywxActivityProductServic
     private QywxActivityHeadMapper activityHeadMapper;
 
     @Override
-    public int getCount(String headId, String productId, String productName, String groupId) {
-        return activityProductMapper.getCount(headId, productId, productName, groupId);
+    public int getCount(String headId, String productId, String productName, String groupId,String activityType) {
+        return activityProductMapper.getCount(headId, productId, productName, groupId,activityType);
     }
 
     @Override
-    public List<ActivityProduct> getActivityProductListPage(int limit, int offset, String headId, String productId, String productName, String groupId) {
-        return activityProductMapper.getActivityProductListPage(limit, offset, headId, productId, productName, groupId);
+    public List<ActivityProduct> getActivityProductListPage(int limit, int offset, String headId, String productId, String productName, String groupId,String activityType) {
+        return activityProductMapper.getActivityProductListPage(limit, offset, headId, productId, productName, groupId,activityType);
     }
 
     @Override
@@ -698,6 +698,7 @@ public class QywxActivityProductServiceImpl implements QywxActivityProductServic
                     activityProduct.setDiscountCnt(new BigDecimal(discountCnt).setScale(2, RoundingMode.HALF_UP).intValue());
                     activityProduct.setDiscountAmount(new BigDecimal(discountAmount).setScale(2, RoundingMode.HALF_UP).doubleValue());
                     activityProduct.setProductId(productId);
+                    activityProduct.setActivityType(activityType);
                     if (StringUtils.isNotEmpty(singleProduct)) {
                         activityProduct.setSpCouponFlag(singleProduct);
                         activityProduct.setSpCouponThreshold((new BigDecimal(singleProductThreadHold).setScale(2, RoundingMode.HALF_UP).doubleValue()));
@@ -709,7 +710,7 @@ public class QywxActivityProductServiceImpl implements QywxActivityProductServic
                     productList.add(activityProduct);
                 }
                 if (productList.size() != 0) {
-                    saveUploadProductData(headId, productList, uploadMethod, repeatProduct);
+                    saveUploadProductData(headId, productList, uploadMethod, repeatProduct,activityType);
                 } else {
                     errorList.add(new ActivityProductUploadError("校验通过的记录条数为0"));
                 }
@@ -781,14 +782,14 @@ public class QywxActivityProductServiceImpl implements QywxActivityProductServic
     /**
      * 保存上传的数据
      */
-    private boolean saveUploadProductData(String headId, List<ActivityProduct> productList, String uploadMethod, String repeatProduct) {
+    private boolean saveUploadProductData(String headId, List<ActivityProduct> productList, String uploadMethod, String repeatProduct,String activityType) {
         String uploadMethod0 = "0";
         String repeatProduct0 = "0";
         String repeatProduct1 = "1";
         String uploadMethod1 = "1";
         List<ActivityProduct> insertList = Lists.newArrayList();
         List<ActivityProduct> deleteList = Lists.newArrayList();
-        List<String> oldProductList = activityProductMapper.getProductIdByHeadId(headId);
+        List<String> oldProductList = activityProductMapper.getProductIdByHeadId(headId,activityType);
         // 追加
         if (uploadMethod.equalsIgnoreCase(uploadMethod0)) {
             // 忽略

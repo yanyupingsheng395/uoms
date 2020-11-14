@@ -12,9 +12,9 @@ import java.util.List;
  */
 public interface QywxActivityProductService {
 
-    int getCount(String headId, String productId, String productName, String groupId);
+    int getCount(String headId, String productId, String productName, String groupId,String activityType);
 
-    List<ActivityProduct> getActivityProductListPage(int limit, int offset, String headId, String productId, String productName, String groupId);
+    List<ActivityProduct> getActivityProductListPage(int limit, int offset, String headId, String productId, String productName, String groupId,String activityType);
 
     /**
      * 保存活动商品

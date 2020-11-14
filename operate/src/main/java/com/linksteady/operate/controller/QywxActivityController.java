@@ -113,9 +113,9 @@ public class QywxActivityController {
      */
     @GetMapping("/getActivityProductPage")
     public ResponseBo getActivityProductPage(Integer limit, Integer offset, String headId, String productId, String productName,
-                                             String groupId) {
-        int count = qywxActivityProductService.getCount(headId, productId, productName, groupId);
-        List<ActivityProduct> productList = qywxActivityProductService.getActivityProductListPage(limit,offset, headId, productId, productName, groupId);
+                                             String groupId, String activityType) {
+        int count = qywxActivityProductService.getCount(headId, productId, productName, groupId,activityType);
+        List<ActivityProduct> productList = qywxActivityProductService.getActivityProductListPage(limit,offset, headId, productId, productName, groupId,activityType);
         return ResponseBo.okOverPaging(null, count, productList);
     }
 
@@ -322,7 +322,7 @@ public class QywxActivityController {
     }
 
     @PostMapping("/downloadExcel")
-    public ResponseBo excel(@RequestParam("headId") String headId) throws InterruptedException {
+    public ResponseBo excel(@RequestParam("headId") String headId,@RequestParam("activityType") String activityType) throws InterruptedException {
         List<ActivityProduct> list = Lists.newLinkedList();
         List<Callable<List<ActivityProduct>>> tmp = Lists.newLinkedList();
         int count = qywxActivityProductService.getCountByHeadId(headId);
@@ -335,10 +335,16 @@ public class QywxActivityController {
             tmp.add(() -> {
                 int limit = pageSize;
                 int offset = finalI * pageSize;
-                List<ActivityProduct> activityProductListPage = qywxActivityProductService.getActivityProductListPage(limit, offset, headId, "", "", "");
+                List<ActivityProduct> activityProductListPage = qywxActivityProductService.getActivityProductListPage(limit, offset, headId, "", "", "",activityType);
                 activityProductListPage.stream().forEach(x->{
-                    x.setNotifyMinPrice(df.format(x.getMinPrice()));
-                    x.setNotifyProfit(df.format(x.getActivityProfit()));
+                    if(activityType.equalsIgnoreCase("NOTIFY")) {
+                        x.setNotifyMinPrice(df.format(x.getMinPrice()));
+                        x.setNotifyProfit(df.format(x.getActivityProfit()));
+                    }
+                    if(activityType.equalsIgnoreCase("DURING")) {
+                        x.setDuringMinPrice(df.format(x.getMinPrice()));
+                        x.setDuringProfit(df.format(x.getActivityProfit()));
+                    }
                 });
                 return activityProductListPage;
             });

@@ -11,9 +11,9 @@ import java.util.List;
  */
 public interface QywxActivityProductMapper {
 
-    int getCount(String headId, String productId, String productName, String groupId);
+    int getCount(String headId, String productId, String productName, String groupId,String activityType);
 
-    List<ActivityProduct> getActivityProductListPage(int limit, int offset, String headId, String productId, String productName, String groupId);
+    List<ActivityProduct> getActivityProductListPage(int limit, int offset, String headId, String productId, String productName, String groupId,String activityType);
 
 //    void saveDataList(List<ActivityProduct> productList);
 
@@ -39,7 +39,7 @@ public interface QywxActivityProductMapper {
 
     void deleteData(String headId);
 
-    List<String> getProductIdByHeadId(String headId);
+    List<String> getProductIdByHeadId(String headId,String activityType);
 
     void deleteDataList(@Param("headId") String headId, @Param("productIdList") List<String> productIdList);
 
