@@ -18,19 +18,6 @@ spring:
     # Redis 密码
     password:
 
-mybatis:
-  # type-aliases扫描路径
-  type-aliases-package: com.linksteady.**.domain
-  # mapper xml实现扫描路径
-  mapper-locations: classpath*:mapper/**/*.xml
-  property:
-    order: before
-  configuration:
-    # 注意这里需要加单引号
-    jdbc-type-for-null: 'null'
-    call-setters-on-nulls: true
-    map-underscore-to-camel-case: true
-
 sys:
   #当前应用名称
   projectName: dapu-qywxApi-dev
@@ -38,3 +25,27 @@ sys:
   smpDomain: http://localhost:9063
   #是否开启错误日志上报
   openExceptionNotice: false
+
+shiro:
+  # 登录 url
+  loginUrl: http://localhost:9091/login
+  # 登录成功后跳转的 url
+  successUrl: http://localhost:9091/main
+  # 登出 url
+  logoutUrl: http://localhost:9091/logout
+  #强制修改密码的url
+  resetPasswordUrl: http://localhost:9091/resetPass
+  #设置cookie所在的域名，所有业务子系统必须和权限管理系统配置一致方可共享session
+  cookieDomain: localhost
+
+
+thrift:
+  server:
+    host: 192.168.0.116
+    port: 7778
+logging:
+  level:
+    com:
+      linksteady:
+        operate:
+          dao: debug

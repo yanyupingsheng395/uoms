@@ -1,0 +1,59 @@
+<!--头部信息-->
+<header class="lyear-layout-header">
+    <nav class="navbar navbar-default">
+        <div class="topbar">
+            <div class="topbar-left">
+                <div class="lyear-aside-toggler">
+                    <span class="lyear-toggler-bar"></span>
+                    <span class="lyear-toggler-bar"></span>
+                    <span class="lyear-toggler-bar"></span>
+                </div>
+            </div>
+
+            <ul class="topbar-right">
+                <li class="dropdown dropdown-profile">
+                    <a href="javascript:void(0)" data-toggle="dropdown">
+                        <img   class="img-avatar-27 m-r-10" th:src="@{/images/avatar/default.jpg}">
+                        <span id="loginUser"><span class="caret"></span></span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-right">
+                        <li> <a data-toggle="modal" data-target="#update-password"  style="cursor:pointer"><i class="mdi mdi-lock-outline"></i> 修改密码</a> </li>
+                        <li> <a id="logoutbtn"><i class="mdi mdi-logout-variant"></i> 退出登录</a> </li>
+                    </ul>
+                </li>
+                <li id="selectSys">
+                    <a id="navigatorUrl" type="button"><i class="mdi mdi-login"></i>系统导航</a>
+                </li>
+                <li class="dropdown">
+                    <a type="button" data-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"><i class="mdi mdi-bell"></i>
+                        消&nbsp;&nbsp;&nbsp;&nbsp;息&nbsp;<span class="badge bg-danger" id="noReadCnt">0</span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" style="width: 400px;" id="dropdownMenu">
+                        <table class="table table-striped" style="margin: 10px;width: 380px;" id="msgTable"></table>
+                        <a href="/page/msg" style="color: #333;margin-left: 10px;"><small>查看所有通知</small></a>
+                        <a href="#" onclick="readAll()" style="color: #333;margin-left: 10px;"><small>全部标为已读</small></a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+<div></div>
+<div data-th-include="@{user/updatePassword}"></div>
+<div class="modal" tabindex="-1" role="dialog" id="msg_detail_modal" data-backdrop="static">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title">消息详情</h5>
+            </div>
+            <div class="modal-body">
+                <div id="msgDetailDiv"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End 头部信息-->
+<input id="copy_content" type="text" value=""  style="position: absolute;top: 0;left: 0;opacity: 0;z-index: -10;"/>
+<section id="copyContent" style="position: absolute;top: 0;left: 0;opacity: 0;z-index: -10;"></section>
