@@ -4,9 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.qywx.constant.WxPathConsts;
+import com.linksteady.qywx.dao.ParamMapper;
 import com.linksteady.qywx.domain.WxError;
 import com.linksteady.qywx.exception.WxErrorException;
-import com.linksteady.qywx.service.ParamService;
 import com.linksteady.qywx.service.QywxService;
 import com.linksteady.qywx.storage.impl.RedisConfigStorageImpl;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ public class QywxServiceImpl implements QywxService {
     JedisPool jedisPool;
 
     @Autowired
-    ParamService paramService;
+    ParamMapper paramMapper;
 
     private RedisConfigStorageImpl redisConfigStorage;
 
@@ -34,18 +34,16 @@ public class QywxServiceImpl implements QywxService {
     public void init() throws Exception
     {
         RedisConfigStorageImpl redisConfigStorage=new RedisConfigStorageImpl(jedisPool);
-        String corpId=paramService.getCorpId();
-        String secret=paramService.getSecret();
-        if(StringUtils.isEmpty(corpId))
+        String corpId=paramMapper.getCorpId();
+        String secret=paramMapper.getSecret();
+        if(!StringUtils.isEmpty(corpId))
         {
-            throw new Exception("当前尚未配置corpId");
+            redisConfigStorage.setCorpId(corpId);
         }
-        if(StringUtils.isEmpty(secret))
+        if(!StringUtils.isEmpty(secret))
         {
-            throw new Exception("当前尚未配置secret");
+            redisConfigStorage.setSecret(secret);
         }
-        redisConfigStorage.setCorpId(corpId);
-        redisConfigStorage.setSecret(secret);
         this.redisConfigStorage=redisConfigStorage;
     }
 
@@ -77,6 +75,10 @@ public class QywxServiceImpl implements QywxService {
         if(StringUtils.isEmpty(accessToken))
         {
             log.debug("开始获取accessToken");
+            if(StringUtils.isEmpty(this.redisConfigStorage.getCorpId())||StringUtils.isEmpty(this.redisConfigStorage.getSecret()))
+            {
+                throw new WxErrorException(WxError.builder().errorCode(-999).errorMsg("尚未配置企业微信公司ID或应用秘钥").build());
+            }
             String requestUrl= String.format(WxPathConsts.GET_TOKEN,this.redisConfigStorage.getCorpId(),this.redisConfigStorage.getSecret());
             String resultContent=OkHttpUtil.getRequest(redisConfigStorage.getApiUrl(requestUrl));
 
@@ -92,5 +94,18 @@ public class QywxServiceImpl implements QywxService {
             this.redisConfigStorage.setAccessToken(accessToken, expiresIn);
         }
         return this.redisConfigStorage.getAccessToken();
+    }
+
+    @Override
+    public void updateCorpInfo(String corpId, String secret) {
+        //更新到数据库
+        paramMapper.updateCorpInfo(corpId,secret);
+        //更新到redis
+        redisConfigStorage.setCorpId(corpId);
+        redisConfigStorage.setSecret(secret);
+
+        //失效accessToken
+        redisConfigStorage.expireAccessToken();
+
     }
 }

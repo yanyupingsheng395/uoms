@@ -3,7 +3,6 @@ package com.linksteady.qywx.service.impl;
 import com.linksteady.common.domain.QywxMessage;
 import com.linksteady.qywx.dao.WelcomeMessageMapper;
 import com.linksteady.qywx.domain.QywxWelcome;
-import com.linksteady.qywx.service.ParamService;
 import com.linksteady.qywx.service.MediaService;
 import com.linksteady.qywx.service.WelcomeMessageService;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +15,6 @@ public class WelcomeMessageServiceImpl implements WelcomeMessageService {
 
     @Autowired
     WelcomeMessageMapper welcomeMessageMapper;
-
-    @Autowired
-    ParamService paramService;
 
     @Autowired
     MediaService mediaService;
@@ -58,7 +54,7 @@ public class WelcomeMessageServiceImpl implements WelcomeMessageService {
             //小程序
             if(!org.springframework.util.StringUtils.isEmpty(qywxWelcome.getMiniprogramTitle()))
             {
-                qywxMessage.setMpAppid(paramService.getMpAppId());
+           //     qywxMessage.setMpAppid(paramService.getMpAppId());
                 qywxMessage.setMpPicMediaId(getWelcomeMpMediaId(qywxWelcome));
                 qywxMessage.setMpTitle(qywxWelcome.getMiniprogramTitle());
                 qywxMessage.setMpPage(qywxWelcome.getMiniprogramPage());

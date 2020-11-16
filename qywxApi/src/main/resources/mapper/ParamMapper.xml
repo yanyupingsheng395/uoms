@@ -2,28 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.qywx.dao.ParamMapper">
 
-    <select id="getQywxDomainAddress" resultType="string">
-        select
-           value
-        from t_config where name='qywx.domainIpAddress'
-    </select>
-
-    <select id="getQywxDomainUrl" resultType="string">
-        select
-           value
-        from t_config where name='qywx.domainUrl'
-    </select>
-
-    <select id="getQywxCorpId" resultType="string">
-        select
-           value
-        from t_config where name='qywx.corpid'
-    </select>
-
     <select id="getMpAppId" resultType="string">
-        select
-           value
-        from t_config where name='qywx.miniProgramAppId'
+        select mp_appid from uo_qywx_param
     </select>
 
     <select id="getCorpId" resultType="string">
@@ -33,5 +13,9 @@
     <select id="getSecret" resultType="string">
         select application_secret from uo_qywx_param
     </select>
+
+    <update id="updateCorpInfo">
+        update uo_qywx_param set corp_id=#{corpId},application_secret=#{applicationSecret}
+    </update>
 
 </mapper>

@@ -26,5 +26,11 @@ public interface QywxService {
      */
     String getAccessToken() throws WxErrorException;
 
+    /**
+     * 更新corpId和应用secret
+     */
+    void updateCorpInfo(String corpId,String secret);
+
+
 
 }

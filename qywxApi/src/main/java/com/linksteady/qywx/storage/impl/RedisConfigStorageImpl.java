@@ -72,6 +72,18 @@ public class RedisConfigStorageImpl implements RedisConfigStorage {
     }
 
     @Override
+    public void expireAccessToken() {
+        try(Jedis jedis=jedisPool.getResource())
+        {
+            boolean keyExists=jedis.exists(QYWX_APP_ACCESS_TOKEN);
+            if(keyExists)
+            {
+                jedis.del(QYWX_APP_ACCESS_TOKEN);
+            }
+        }
+    }
+
+    @Override
     public String getCorpId() {
         try(Jedis jedis=jedisPool.getResource())
         {

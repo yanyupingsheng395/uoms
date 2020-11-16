@@ -33,6 +33,11 @@ public interface RedisConfigStorage {
      */
     void setAccessToken(String suitAccessToken,long expireIn);
 
+    /**
+     * 失效accessToken
+     * @return
+     */
+    void expireAccessToken();
 
     String getCorpId();
 

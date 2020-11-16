@@ -8,7 +8,6 @@ import com.linksteady.common.util.crypto.SHA1;
 import com.linksteady.qywx.dao.MediaMapper;
 import com.linksteady.qywx.domain.QywxMediaImg;
 import com.linksteady.qywx.domain.QywxParam;
-import com.linksteady.qywx.service.ParamService;
 import com.linksteady.qywx.service.MediaService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -30,9 +29,6 @@ public class MediaServiceImpl implements MediaService {
 
     @Autowired
     MediaMapper mediaMapper;
-
-    @Autowired
-    ParamService paramService;
 
     /**
      * identityType 可选的值有 PRODUCT表示商品 COUPON表示优惠券
@@ -118,10 +114,12 @@ public class MediaServiceImpl implements MediaService {
      */
     private  JSONObject  getMediaId(byte[] mediaContent){
             //调用企业微信接口，完成临时素材的上传
-            String corpId= paramService.getQywxCorpId();
+            //todo
+            String corpId= "";
             String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
             String signature= SHA1.gen(timestamp);
-            String qywxDomainUrl= paramService.getQywxDomainUrl();
+            //todo
+            String qywxDomainUrl= "";
 
             String url=qywxDomainUrl+"/api/uploadTempMedia";
             Map<String,String> param= Maps.newHashMap();
