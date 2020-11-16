@@ -31,6 +31,16 @@ public interface QywxService {
      */
     void updateCorpInfo(String corpId,String secret);
 
+    /**
+     * 获取外部联系人事件的token
+     */
+    String getEcEventToken();
+
+    /**
+     * 获取外部联系人事件的aesKey
+     */
+    String getEcEventAesKey();
+
 
 
 }

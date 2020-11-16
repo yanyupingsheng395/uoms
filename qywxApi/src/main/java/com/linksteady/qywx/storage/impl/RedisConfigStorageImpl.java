@@ -17,6 +17,9 @@ public class RedisConfigStorageImpl implements RedisConfigStorage {
     protected final static String  QYWX_APP_ACCESS_TOKEN="qywx:app:accesstoken";
     protected final static String  QYWX_CORP_ID="qywx:corpid";
 
+    protected final static String  QYWX_EC_EVNET_TOKEN="qywx:ec:token";
+    protected final static String  QYWX_EC_EVNET_AESKEY="qywx:ec:aeskey";
+
     private JedisPool jedisPool;
 
     public RedisConfigStorageImpl(JedisPool jedisPool) {
@@ -96,6 +99,38 @@ public class RedisConfigStorageImpl implements RedisConfigStorage {
         try(Jedis jedis=jedisPool.getResource())
         {
             jedis.set(QYWX_CORP_ID,corpId);
+        }
+    }
+
+    @Override
+    public String getEcEventToken() {
+        try(Jedis jedis=jedisPool.getResource())
+        {
+            return jedis.get(QYWX_EC_EVNET_TOKEN);
+        }
+    }
+
+    @Override
+    public void setEcEventToken(String ecEventToken) {
+        try(Jedis jedis=jedisPool.getResource())
+        {
+            jedis.set(QYWX_EC_EVNET_TOKEN,ecEventToken);
+        }
+    }
+
+    @Override
+    public String getEcEventAesKey() {
+        try(Jedis jedis=jedisPool.getResource())
+        {
+            return jedis.get(QYWX_EC_EVNET_AESKEY);
+        }
+    }
+
+    @Override
+    public void setEcEventAesKey(String ecEventAesKey) {
+        try(Jedis jedis=jedisPool.getResource())
+        {
+            jedis.set(QYWX_EC_EVNET_AESKEY,ecEventAesKey);
         }
     }
 

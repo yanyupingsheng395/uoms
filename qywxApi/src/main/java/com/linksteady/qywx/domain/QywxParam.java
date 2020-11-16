@@ -46,18 +46,6 @@ public class QywxParam implements Serializable {
      * 最后一次同步订单的时间戳
      */
     private LocalDateTime lastSyncOrderDt;
-    /**
-     * 组织结构是有更新
-     */
-    private String partyChangeFlag;
-    /**
-     * 授权范围是否有更新
-     */
-    private String authScopeChangeFlag;
-    /**
-     * 通讯录是否有更新
-     */
-    private String followUserChangeFlag;
 
     /**
      * 小程序封面内容
@@ -68,4 +56,15 @@ public class QywxParam implements Serializable {
      * 优惠券封面默认图片
      */
     private byte[] couponMediaContent;
+
+    private String corpId;
+
+    private String secret;
+
+    private String ecEventToken;
+
+    private String ecEventAesKey;
+
+    private String mpAppId;
+
 }

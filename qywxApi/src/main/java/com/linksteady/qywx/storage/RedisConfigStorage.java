@@ -43,4 +43,12 @@ public interface RedisConfigStorage {
 
     void setCorpId(String corpId);
 
+    String getEcEventToken();
+
+    void setEcEventToken(String ecEventToken);
+
+    String getEcEventAesKey();
+
+    void setEcEventAesKey(String ecEventAesKey);
+
 }

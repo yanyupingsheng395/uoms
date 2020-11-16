@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.qywx.constant.WxPathConsts;
 import com.linksteady.qywx.dao.ParamMapper;
+import com.linksteady.qywx.domain.QywxParam;
 import com.linksteady.qywx.domain.WxError;
 import com.linksteady.qywx.exception.WxErrorException;
 import com.linksteady.qywx.service.QywxService;
@@ -34,15 +35,19 @@ public class QywxServiceImpl implements QywxService {
     public void init() throws Exception
     {
         RedisConfigStorageImpl redisConfigStorage=new RedisConfigStorageImpl(jedisPool);
-        String corpId=paramMapper.getCorpId();
-        String secret=paramMapper.getSecret();
-        if(!StringUtils.isEmpty(corpId))
+        QywxParam qywxParam=paramMapper.getQywxParam();
+
+        if(null==qywxParam)
         {
-            redisConfigStorage.setCorpId(corpId);
+            throw new Exception("参数表配置错误");
         }
-        if(!StringUtils.isEmpty(secret))
+        if(null!=qywxParam&&!StringUtils.isEmpty(qywxParam.getCorpId()))
         {
-            redisConfigStorage.setSecret(secret);
+            redisConfigStorage.setCorpId(qywxParam.getCorpId());
+        }
+        if(null!=qywxParam&&!StringUtils.isEmpty(qywxParam.getSecret()))
+        {
+            redisConfigStorage.setSecret(qywxParam.getSecret());
         }
         this.redisConfigStorage=redisConfigStorage;
     }
@@ -107,5 +112,31 @@ public class QywxServiceImpl implements QywxService {
         //失效accessToken
         redisConfigStorage.expireAccessToken();
 
+    }
+
+    @Override
+    public String getEcEventToken() {
+        String ecEventToken=this.redisConfigStorage.getEcEventToken();
+
+        if(StringUtils.isEmpty(ecEventToken))
+        {
+            QywxParam qywxParam=paramMapper.getQywxParam();
+            ecEventToken=qywxParam==null?"":qywxParam.getEcEventToken();
+            this.redisConfigStorage.setEcEventToken(ecEventToken);
+        }
+        return this.redisConfigStorage.getEcEventToken();
+    }
+
+    @Override
+    public String getEcEventAesKey() {
+        String ecEventAesKey=this.redisConfigStorage.getEcEventAesKey();
+
+        if(StringUtils.isEmpty(ecEventAesKey))
+        {
+            QywxParam qywxParam=paramMapper.getQywxParam();
+            ecEventAesKey=qywxParam==null?"":qywxParam.getEcEventAesKey();
+            this.redisConfigStorage.setEcEventToken(ecEventAesKey);
+        }
+        return this.redisConfigStorage.getEcEventToken();
     }
 }

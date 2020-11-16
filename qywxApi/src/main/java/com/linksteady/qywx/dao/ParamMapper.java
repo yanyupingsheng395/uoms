@@ -1,21 +1,14 @@
 package com.linksteady.qywx.dao;
 
+import com.linksteady.qywx.domain.QywxParam;
+
 /**
  * @author huang
  * @date 2020/7/3
  */
 public interface ParamMapper {
 
-    String getMpAppId();
-
-    /**
-     * 获取当前公司的corpId
-     * @return
-     */
-    String getCorpId();
-
-
-    String getSecret();
+    QywxParam getQywxParam();
 
     void updateCorpInfo(String corpId,String applicationSecret);
 
