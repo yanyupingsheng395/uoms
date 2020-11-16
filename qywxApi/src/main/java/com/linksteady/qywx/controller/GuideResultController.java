@@ -1,9 +1,8 @@
 package com.linksteady.qywx.controller;
 
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.qywx.service.OperateResultService;
+import com.linksteady.qywx.service.GuideResultService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,15 +10,16 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ * 导购运营结果相关的controller
  * @author hxcao
  * @date 2020/9/17
  */
 @RestController
-@RequestMapping("/operateResult")
-public class OperateResultController extends ApiBaseController {
+@RequestMapping("/guideResult")
+public class GuideResultController extends VerifyController {
 
     @Autowired
-    private OperateResultService operateResultService;
+    private GuideResultService guideResultService;
 
     /**
      * 获取导购运行结果的数据
@@ -42,6 +42,6 @@ public class OperateResultController extends ApiBaseController {
         } catch (Exception e) {
             return ResponseBo.error(e.getMessage());
         }
-        return ResponseBo.okWithData(null, operateResultService.getResultData(userId, startDt, endDt));
+        return ResponseBo.okWithData(null, guideResultService.getResultData(userId, startDt, endDt));
     }
 }

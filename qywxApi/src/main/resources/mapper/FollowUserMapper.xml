@@ -23,16 +23,17 @@
             status=#{status},
             qr_code=#{qrCode},
             external_position=#{externalPosition},
-            external_profile=#{externalProfile}
+            external_profile=#{externalProfile},
+            update_dt=now()
         where user_id=#{userId}
     </update>
 
     <insert id="saveFollowerUser">
-        insert into uo_qywx_follower_user_list(user_id,delete_flag) values
-        <foreach collection="followerUserList" item="item" index="index" separator=",">
-            (#{item},0)
+        insert into uo_qywx_follower_user_list(user_id,delete_flag,insert_dt,update_dt) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item},0,now(),now())
         </foreach>
-         ON CONFLICT(user_id) DO UPDATE set delete_flag=0
+         ON CONFLICT(user_id) DO UPDATE set delete_flag=0,update_dt=now()
     </insert>
 
     <update id="updateDeleteFlag">
@@ -41,5 +42,20 @@
 
     <delete id="deleteFollowUser">
         delete from uo_qywx_follower_user_list where delete_flag=1
+    </delete>
+
+    <update id="updateDeptDeleteFlag">
+        update uo_qywx_dept set delete_flag=1
+    </update>
+
+    <insert id="saveDept">
+      insert into uo_qywx_dept(id,name,parent_id,order_no,insert_dt,update_dt,delete_flag) values(
+         #{id},#{deptName},#{parentId},#{orderNo},now(),now(),0
+      )  ON CONFLICT (id) DO UPDATE
+      set parent_id=#{parentId}, order_no=#{orderNo},update_dt=now(),delete_flag=0
+    </insert>
+
+    <delete id="deleteDept">
+        delete from  uo_qywx_dept where delete_flag=1
     </delete>
 </mapper>

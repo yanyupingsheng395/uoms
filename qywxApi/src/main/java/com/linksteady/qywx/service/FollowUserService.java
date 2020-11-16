@@ -15,4 +15,6 @@ public interface FollowUserService {
     FollowUser selectUserDetail(String followerUserId) throws WxErrorException;
 
     void syncQywxFollowUser() throws Exception;
+
+    void syncDept() throws Exception;
 }

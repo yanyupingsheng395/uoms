@@ -4,6 +4,8 @@ import com.linksteady.qywx.domain.ExternalContact;
 import com.linksteady.qywx.exception.WxErrorException;
 
 import java.util.List;
+import java.util.Map;
+
 public interface ExternalContactService {
 
     /**
@@ -21,8 +23,10 @@ public interface ExternalContactService {
     /**
      * 获取每个客户的详细信息
      */
-    ExternalContact selectExternalContractDetail(String followerUserId,String externalUserid) throws WxErrorException;
+    ExternalContact getExternalContractDetail(String followerUserId,String externalUserid) throws WxErrorException;
 
+
+    Map<String,Object> getExternalContractDetailBatch(String cursor, String followerUserId, List<String> externalUserList) throws WxErrorException;
 
 //    /**
 //     * 保存外部联系人列表
@@ -85,17 +89,6 @@ public interface ExternalContactService {
                          String loss,
                          String stagevalue,
                          String interval);
-
-
-    /**
-     * 更新删除标记
-     */
-    void updateDeleteFlag();
-
-    /**
-     * 删除标记位为1的数据
-     */
-    void deleteExternalUser();
 
 
 

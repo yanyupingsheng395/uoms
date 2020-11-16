@@ -9,7 +9,7 @@ import java.io.Serializable;
  * @date 2020/9/17
  */
 @Data
-public class OperateResult implements Serializable {
+public class GuideResult implements Serializable {
 
     /**
      * 用户总数

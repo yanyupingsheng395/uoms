@@ -30,4 +30,8 @@
         select corp_id from uo_qywx_param
     </select>
 
+    <select id="getSecret" resultType="string">
+        select application_secret from uo_qywx_param
+    </select>
+
 </mapper>

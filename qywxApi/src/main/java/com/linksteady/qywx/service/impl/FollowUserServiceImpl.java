@@ -13,12 +13,13 @@ import com.linksteady.qywx.exception.WxErrorException;
 import com.linksteady.qywx.service.FollowUserService;
 import com.linksteady.qywx.service.QywxService;
 import com.linksteady.qywx.vo.FollowUserVO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-
+@Slf4j
 @Service
 public class FollowUserServiceImpl implements FollowUserService {
 
@@ -78,7 +79,10 @@ public class FollowUserServiceImpl implements FollowUserService {
         //更新删除标记位为1
         followUserMapper.updateDeleteFlag();
         //对成员列表进行保存(设置删除标志为0)
-        followUserMapper.saveFollowerUser(followerUserList);
+        if(followerUserList.size()>0)
+        {
+            followUserMapper.saveFollowerUser(followerUserList);
+        }
 
         //删除标志为1的记录
         followUserMapper.deleteFollowUser();
@@ -92,5 +96,35 @@ public class FollowUserServiceImpl implements FollowUserService {
             followUser = selectUserDetail(followerUserId);
             followUserMapper.updateFollowUser(followUser);
         }
+    }
+
+    @Override
+    public synchronized void syncDept() throws Exception {
+        StringBuffer requestUrl=new StringBuffer(qywxService.getRedisConfigStorage().getApiUrl(WxPathConsts.Department.DEPARTMENT_LIST));
+        requestUrl.append("?access_token="+qywxService.getAccessToken());
+
+        String deptResult= OkHttpUtil.getRequest(requestUrl.toString());
+        JSONObject jsonObject = JSON.parseObject(deptResult);
+        log.info("获取部门列表接口返回的结果为{}",jsonObject);
+        WxError error = WxError.fromJsonObject(jsonObject);
+        if (error.getErrorCode() != 0) {
+            throw new WxErrorException(error);
+        }
+        JSONArray deptArray=jsonObject.getJSONArray("department");
+
+        //设置所有的部门是否可用为 N不可用
+        followUserMapper.updateDeptDeleteFlag();
+        if(null!=deptArray&&deptArray.size()>=0)
+        {
+            JSONObject temp=null;
+            for(int i=0;i<deptArray.size();i++)
+            {
+                temp=deptArray.getJSONObject(i);
+                //insert or update
+                followUserMapper.saveDept(temp.getLong("id"),temp.getString("name"),temp.getLong("parentid"),temp.getIntValue("order"));
+            }
+        }
+
+        followUserMapper.deleteDept();
     }
 }

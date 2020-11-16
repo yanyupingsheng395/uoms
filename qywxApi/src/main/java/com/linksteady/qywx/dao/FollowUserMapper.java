@@ -21,5 +21,11 @@ public interface FollowUserMapper {
 
     void deleteFollowUser();
 
+    void updateDeptDeleteFlag();
+
+    void saveDept(Long id,String deptName,Long parentId,int orderNo);
+
+    void deleteDept();
+
 
 }

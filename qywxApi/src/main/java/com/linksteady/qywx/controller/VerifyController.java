@@ -16,7 +16,7 @@ import java.time.ZoneOffset;
  * api规范，第一个参数为签名  第二个参数为时间戳(秒) 剩下的为业务参数；
  * 签名的规范为 所有业务参数按先后顺拼成字符串，然后sha1
  */
-public class ApiBaseController {
+public class VerifyController {
 
     /**
      * api调用的时间差 60秒

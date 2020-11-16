@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/wxMedia")
-public class MediaController extends ApiBaseController{
+public class MediaController extends VerifyController{
 
     @Autowired
     MediaService mediaService;

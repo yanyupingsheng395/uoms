@@ -26,7 +26,7 @@ public interface ExternalContactMapper {
     /**
      * 保存外部联系人
      */
-    void saveExternalContractSingle(ExternalContact externalContact);
+    void saveExternalContract(ExternalContact externalContact);
 
     /**
      * 分页 获取外部联系人的总条数
@@ -53,5 +53,7 @@ public interface ExternalContactMapper {
     void updateDeleteFlag();
 
     void deleteExternalUser();
+
+    void saveExternalContractBatch(List<ExternalContact> externalContacts);
 
 }

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 @RestController
-public class ApiCommonController {
+public class ApiController {
 
     @Autowired
     ParamService paramService;

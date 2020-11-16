@@ -39,4 +39,7 @@ public interface ParamMapper {
      */
     String getCorpId();
 
+
+    String getSecret();
+
 }

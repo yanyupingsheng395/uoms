@@ -37,4 +37,9 @@ public interface ParamService {
      */
     String getCorpId();
 
+    /**
+     * 获取当前应用的secret
+     */
+    String getSecret();
+
 }

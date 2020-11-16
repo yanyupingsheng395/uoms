@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.qywx.constant.WxPathConsts;
 import com.linksteady.qywx.dao.ExternalContactMapper;
@@ -21,6 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -51,16 +54,23 @@ public class ExternalContactServiceImpl implements ExternalContactService {
             //获取此成员下所有的外部客户信息
             List<String> externalUserList = findExternalContractList(followerUserId);
 
+            List<ExternalContact> externalContacts = null;
             //保存所有的外部客户信息
-            externalContactMapper.saveExternalUserList(followerUserId,externalUserList);
+            if (externalUserList.size() > 0) {
+                externalContactMapper.saveExternalUserList(followerUserId, externalUserList);
 
-            //使用批量接口
-
-//            for (String externalContractUserId : externalUserList) {
-//                //查询客户详细信息
-//                ExternalContact externalContact = externalContactService.selectExternalContractDetail( corpId, followerUserId,externalContractUserId);
-//                externalContactService.updateExternalContract(externalContact);
-//            }
+                int count = 1;
+                String cursor = "";
+                Map<String, Object> result = null;
+                //调用获取明细的接口
+                while (count == 1 || (count > 1 && StringUtils.isNotEmpty(cursor))) {
+                    result = getExternalContractDetailBatch(cursor, followerUserId, externalUserList);
+                    cursor = (String) result.get("corsor");
+                    externalContacts = (List<ExternalContact>) result.get("externalContactList");
+                    externalContactMapper.saveExternalContractBatch(externalContacts);
+                    count++;
+                }
+            }
         }
 
         //删除
@@ -88,8 +98,15 @@ public class ExternalContactServiceImpl implements ExternalContactService {
         return jsonArray.toJavaList(String.class);
     }
 
+    /**
+     * 获取单个外部联系人详情
+     * @param followerUserId
+     * @param externalUserid
+     * @return
+     * @throws WxErrorException
+     */
     @Override
-    public ExternalContact selectExternalContractDetail(String followerUserId, String externalUserid) throws WxErrorException {
+    public ExternalContact getExternalContractDetail(String followerUserId, String externalUserid) throws WxErrorException {
         StringBuffer requestUrl = new StringBuffer(qywxService.getRedisConfigStorage().getApiUrl(WxPathConsts.ExternalContacts.GET_CONTACT_DETAIL));
         requestUrl.append(externalUserid);
         requestUrl.append("&access_token=" + qywxService.getAccessToken());
@@ -105,6 +122,51 @@ public class ExternalContactServiceImpl implements ExternalContactService {
         ExternalContact externalContact = new ExternalContact().buildFromJsonObject(jsonObject, followerUserId);
         return externalContact;
     }
+
+    /**
+     * 批量获取外部联系人详情
+     * @param followerUserId
+     * @param externalUserList
+     * @return
+     * @throws WxErrorException
+     */
+    @Override
+    public Map<String,Object> getExternalContractDetailBatch(String cursor,String followerUserId, List<String> externalUserList) throws WxErrorException {
+        StringBuffer requestUrl = new StringBuffer(qywxService.getRedisConfigStorage().getApiUrl(WxPathConsts.ExternalContacts.GET_CONTACT_DETAIL_BATCH));
+        requestUrl.append("?access_token=" + qywxService.getAccessToken());
+
+        Map<String,Object> param= Maps.newHashMap();
+        param.put("userid",followerUserId);
+        param.put("cursor",cursor);
+        param.put("limit",100);
+
+        String detailData = OkHttpUtil.postRequestByJson(requestUrl.toString(),JSON.toJSONString(param));
+        JSONObject jsonObject = JSON.parseObject(detailData);
+        WxError error = WxError.fromJsonObject(jsonObject);
+        if (error.getErrorCode() != 0) {
+            throw new WxErrorException(error);
+        }
+
+        log.debug("获取到的客户详情为:{}", detailData);
+        JSONArray jsonArray=jsonObject.getJSONArray("external_contact_list");
+        String nextCursor=jsonObject.getString("next_cursor");
+
+        ExternalContact externalContact=null;
+        List<ExternalContact> externalContactList=Lists.newArrayList();
+
+        for(int i=0;i<jsonArray.size();i++)
+        {
+            externalContact = new ExternalContact().buildFromJsonObject(jsonArray.getJSONObject(i), followerUserId);
+            externalContactList.add(externalContact);
+        }
+
+        Map<String,Object> result=Maps.newHashMap();
+        result.put("corsor",nextCursor);
+        result.put("externalContactList",externalContactList);
+
+        return result;
+    }
+
 
 //    /**
 //     * 查询本地某个导购下的外部客户列表
@@ -205,13 +267,4 @@ public class ExternalContactServiceImpl implements ExternalContactService {
         return externalContactMapper.getGuidanceCount(whereInfo.toString());
     }
 
-    @Override
-    public void updateDeleteFlag() {
-        externalContactMapper.updateDeleteFlag();
-    }
-
-    @Override
-    public void deleteExternalUser() {
-        externalContactMapper.deleteExternalUser();
-    }
 }

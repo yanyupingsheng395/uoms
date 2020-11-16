@@ -35,11 +35,17 @@ public class QywxServiceImpl implements QywxService {
     {
         RedisConfigStorageImpl redisConfigStorage=new RedisConfigStorageImpl(jedisPool);
         String corpId=paramService.getCorpId();
+        String secret=paramService.getSecret();
         if(StringUtils.isEmpty(corpId))
         {
             throw new Exception("当前尚未配置corpId");
         }
-        redisConfigStorage.setCorpId(paramService.getCorpId());
+        if(StringUtils.isEmpty(secret))
+        {
+            throw new Exception("当前尚未配置secret");
+        }
+        redisConfigStorage.setCorpId(corpId);
+        redisConfigStorage.setSecret(secret);
         this.redisConfigStorage=redisConfigStorage;
     }
 

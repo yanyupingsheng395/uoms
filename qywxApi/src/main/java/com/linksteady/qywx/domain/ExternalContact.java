@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Table;
@@ -89,9 +90,6 @@ public class ExternalContact implements Serializable {
     @Column(name = "mapping_date")
     private Date mappingDate;
 
-    @Column(name = "follow_count")
-    private Integer followCount;
-
     @Column(name = "relation")
     private String relation;
 
@@ -103,6 +101,16 @@ public class ExternalContact implements Serializable {
 
     @Column(name = "touch_interval")
     private String interval;
+
+    @Column(name = "add_way")
+    private int addWay;
+
+    @Column(name = "oper_userid")
+    private String operUserId;
+
+    @Column(name="mobile")
+    private String mobile;
+
 
     /**
      * 手机号是否维护的标记
@@ -124,26 +132,31 @@ public class ExternalContact implements Serializable {
             this.setGender(externalContract.getString("gender"));
             this.setUnionid(externalContract.getString("unionid"));
             this.setExternalProfile(externalContract.getString("external_profile"));
+            this.setFollowUser(jsonObject.getString("follow_info"));
+            JSONObject followInfo = jsonObject.getJSONObject("follow_info");
 
-            this.setFollowUser(jsonObject.getString("follow_user"));
+            this.setRemark(followInfo.getString("remark"));
+            this.setDescription(followInfo.getString("description"));
+            this.setCreatetime(followInfo.getString("createtime"));
+            this.setTags(followInfo.getString("tags"));
+            this.setRemarkCorpName(followInfo.getString("remark_corp_name"));
+            this.setRemarkMobiles(followInfo.getString("remark_mobiles"));
+            this.setState(followInfo.getString("state"));
 
-            JSONArray jsonArray = jsonObject.getJSONArray("follow_user");
-            this.setFollowCount((int) jsonArray.stream().count());
-            jsonArray.stream().forEach(i -> {
-                JSONObject temp = (JSONObject) i;
-                //获取当前企业员工打上的标签和备注
-                if (followerUserId.equals(temp.getString("userid"))) {
-                    this.setRemark(temp.getString("remark"));
-                    this.setDescription(temp.getString("description"));
-                    this.setCreatetime(temp.getString("createtime"));
-                    this.setTags(temp.getString("tags"));
-                    this.setRemarkCorpName(temp.getString("remark_corp_name"));
-                    this.setRemarkMobiles(temp.getString("remark_mobiles"));
-                    this.setState(temp.getString("state"));
+            this.setAddWay(followInfo.getIntValue("add_way"));
+            this.setOperUserId(followInfo.getString("oper_userid"));
+
+            JSONArray remarkMobiles=followInfo.getJSONArray("remark_mobiles");
+            if(null!=remarkMobiles&&remarkMobiles.size()>0)
+            {
+                for(int m=0;m<remarkMobiles.size();m++)
+                {
+                    if(StringUtils.isNotEmpty(remarkMobiles.getString(m)))
+                    {
+                        this.setMobile(remarkMobiles.getString(m));
+                    }
                 }
-            });
-
-            //todo 四个属性标签的默认值
+            }
         }
         this.setFollowerUserId(followerUserId);
         return this;

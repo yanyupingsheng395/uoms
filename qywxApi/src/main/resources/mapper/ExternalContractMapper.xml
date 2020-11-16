@@ -18,13 +18,94 @@
         insert into uo_qywx_external_user_list(
             follow_user_id,
             external_userid,
-            delete_flag
+            delete_flag,
+            insert_dt,
+            update_dt
         ) values
        <foreach collection="externalUserList" item="item" index="index" separator=",">
-         (#{followerUserId},#{item},0)
+         (#{followerUserId},#{item},0,now(),now())
        </foreach>
        ON CONFLICT(external_userid,follow_user_id) DO UPDATE SET delete_flag=0
    </insert>
+
+    <insert id="saveExternalContractBatch">
+        insert into uo_qywx_external_user_list(
+                external_userid,
+                name,
+                position,
+                avatar,
+                corp_name,
+                corp_full_name,
+                type,
+                gender,
+                unionid,
+                external_profile,
+                follow_user,
+                follow_user_id,
+                remark,
+                description,
+                createtime,
+                tags,
+                remark_corp_name,
+                remark_mobiles,
+                state,
+                insert_dt,
+                update_dt,
+                mobile,
+                add_way,
+                oper_userid
+        ) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.externalUserid},
+            #{item.name},
+            #{item.position},
+            #{item.avatar},
+            #{item.corpName},
+            #{item.corpFullName},
+            #{item.type},
+            #{item.gender},
+            #{item.unionid},
+            #{item.externalProfile},
+            #{item.followUser},
+            #{item.followerUserId},
+            #{item.remark},
+            #{item.description},
+            #{item.createtime},
+            #{item.tags},
+            #{item.remarkCorpName},
+            #{item.remarkMobiles},
+            #{item.state},
+            now(),
+            now(),
+            #{item.mobile},
+            #{item.addWay},
+            #{item.operUserId}
+            )
+        </foreach>
+        ON CONFLICT(external_userid,follow_user_id) do update set
+            name=excluded.name,
+            position=excluded.position,
+            avatar=excluded.avatar,
+            corp_name=excluded.corp_name,
+            corp_full_name=excluded.corp_full_name,
+            type=excluded.type,
+            gender=excluded.gender,
+            unionid=excluded.unionid,
+            external_profile=excluded.external_profile,
+            follow_user=excluded.follow_user,
+            follow_user_id=excluded.follow_user_id,
+            remark=excluded.remark,
+            description=excluded.description,
+            createtime=excluded.createtime,
+            tags=excluded.tags,
+            remark_corp_name=excluded.remark_corp_name,
+            remark_mobiles=excluded.remark_mobiles,
+            state=excluded.state,
+            update_dt=now(),
+            mobile=excluded.mobile,
+            add_way=excluded.add_way,
+            oper_userid=excluded.oper_userid
+    </insert>
 
     <update id="updateExternalContract">
          update uo_qywx_external_user_list set
@@ -45,7 +126,9 @@
             remark_corp_name=#{remarkCorpName},
             remark_mobiles=#{remarkMobiles},
             state=#{state},
-            follow_count=#{followCount}
+            update_dt=now(),
+            add_way=#{addWay},
+            oper_userid=#{operUserId}
          where external_userid=#{externalUserid}
            and  follow_user_id=#{followerUserId}
     </update>
@@ -57,7 +140,7 @@
         and  follow_user_id=#{followerUserId}
     </delete>
 
-    <insert id="saveExternalContractSingle">
+    <insert id="saveExternalContract">
        insert into uo_qywx_external_user_list(
             external_userid,
             name,
@@ -77,7 +160,12 @@
             tags,
             remark_corp_name,
             remark_mobiles,
-            state
+            state,
+            insert_dt,
+            update_dt,
+            mobile,
+            add_way,
+            oper_userid
         ) values(
             #{externalUserid},
             #{name},
@@ -97,8 +185,35 @@
             #{tags},
             #{remarkCorpName},
             #{remarkMobiles},
-            #{state}
-        ) ON CONFLICT(external_userid,follow_user_id) DO NOTHING
+            #{state},
+            now(),
+            now(),
+            #{mobile},
+            #{addWay},
+            #{operUserId}
+        ) ON CONFLICT(external_userid,follow_user_id) do update set
+            name=excluded.name,
+            position=excluded.position,
+            avatar=excluded.avatar,
+            corp_name=excluded.corp_name,
+            corp_full_name=excluded.corp_full_name,
+            type=excluded.type,
+            gender=excluded.gender,
+            unionid=excluded.unionid,
+            external_profile=excluded.external_profile,
+            follow_user=excluded.follow_user,
+            follow_user_id=excluded.follow_user_id,
+            remark=excluded.remark,
+            description=excluded.description,
+            createtime=excluded.createtime,
+            tags=excluded.tags,
+            remark_corp_name=excluded.remark_corp_name,
+            remark_mobiles=excluded.remark_mobiles,
+            state=excluded.state,
+            update_dt=now(),
+            mobile=excluded.mobile,
+            add_way=excluded.add_way,
+            oper_userid=excluded.oper_userid
     </insert>
 
     <select id="selectLocalContactCount" resultType="int">
@@ -126,4 +241,6 @@
     <delete id="deleteExternalUser">
         delete from uo_qywx_external_user_list where delete_flag=1
     </delete>
+
+
 </mapper>

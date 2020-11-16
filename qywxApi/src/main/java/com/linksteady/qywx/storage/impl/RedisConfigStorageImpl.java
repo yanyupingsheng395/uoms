@@ -15,6 +15,7 @@ public class RedisConfigStorageImpl implements RedisConfigStorage {
 
     protected final static String  QYWX_APP_SECRET="qywx:app:secret";
     protected final static String  QYWX_APP_ACCESS_TOKEN="qywx:app:accesstoken";
+    protected final static String  QYWX_CORP_ID="qywx:corpid";
 
     private JedisPool jedisPool;
 
@@ -72,12 +73,18 @@ public class RedisConfigStorageImpl implements RedisConfigStorage {
 
     @Override
     public String getCorpId() {
-        return null;
+        try(Jedis jedis=jedisPool.getResource())
+        {
+            return jedis.get(QYWX_CORP_ID);
+        }
     }
 
     @Override
     public void setCorpId(String corpId) {
-
+        try(Jedis jedis=jedisPool.getResource())
+        {
+            jedis.set(QYWX_CORP_ID,corpId);
+        }
     }
 
 }

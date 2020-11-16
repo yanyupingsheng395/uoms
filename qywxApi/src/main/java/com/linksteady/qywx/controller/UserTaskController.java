@@ -7,7 +7,6 @@ import com.linksteady.qywx.domain.UserBuyHistory;
 import com.linksteady.qywx.service.UserTaskService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +22,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/userTask")
-public class UserTaskController extends ApiBaseController{
+public class UserTaskController extends VerifyController{
 
     @Autowired
     private UserTaskService userTaskService;
