@@ -97,7 +97,7 @@ public class QywxServiceImpl implements QywxService {
     }
 
     @Override
-    public void updateCorpInfo(String corpId, String secret) {
+    public synchronized void  updateCorpInfo(String corpId, String secret) {
         //更新到数据库
         paramMapper.updateCorpInfo(corpId,secret);
         //更新到redis
