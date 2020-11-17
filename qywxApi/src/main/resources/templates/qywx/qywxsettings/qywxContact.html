@@ -1,0 +1,28 @@
+<div class="row">
+    <div class="col-sm-12">
+        <form  method="post"  class="form-inline" id="qywx-contact-form">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        接收事件连接：<input type="text" readonly="readonly" style="width: 320px;" class="form-control" name="eventUrl" id="eventUrl"/>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        接收事件的token：<input type="text" class="form-control" style="width: 320px;" name="eventToken" id="eventToken"/>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        接收事件的aesKey：<input type="text" class="form-control" style="width: 320px;" name="eventAesKey" id="eventAesKey"/>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row m-t-15">
+    <div class="col-md-12 text-right">
+        <a class="btn btn-sm btn-secondary" onclick="updateContact()" type="button"><i class="fa fa-arrow-right"></i>保存</a>
+    </div>
+</div>

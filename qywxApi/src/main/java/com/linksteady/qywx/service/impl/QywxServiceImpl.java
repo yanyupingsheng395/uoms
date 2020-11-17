@@ -140,7 +140,7 @@ public class QywxServiceImpl implements QywxService {
                 this.redisConfigStorage.setEcEventAesKey(ecEventAesKey);
             }
         }
-        return this.redisConfigStorage.getEcEventToken();
+        return this.redisConfigStorage.getEcEventAesKey();
     }
 
     @Override
