@@ -22,41 +22,89 @@
             <main class="lyear-layout-content">
                 <div class="container-div ui-layout-center">
                     <div class="row">
-                        <div class="col-sm-12 search-collapse">
-                            <div class="row">
-                                <h5 class="navbar-page-title"> 企业微信应用设置</h5>
+                        <div id="qywxsetting">
+                            <div class="col-sm-12 search-collapse">
+                                <div class="row">
+                                    <h5 class="navbar-page-title"> 企业微信应用设置</h5>
+                                </div>
+                            </div>
+                            <div class="col-md-12 select-table" id="step1">
+                                <div class="row">
+                                    <span class="navbar-page-title">应用基本信息</span>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <hr class="hr m-t-0 m-t-5"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <form  method="post" id="qywx-setting-form">
+                                            <div class="row">
+                                                <div class="col-md-10">
+                                                    <div class="form-group">
+                                                        企业微信ID：<input type="text" class="form-control" name="corpId" id="corpId"/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-10">
+                                                    <div class="form-group">
+                                                        应用秘钥：<input type="text" class="form-control" name="applicationSecret" id="applicationSecret"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="row m-t-15">
+                                    <div class="col-md-12 text-right">
+                                        <a id='updateSetting' class="btn btn-sm btn-secondary" onclick="updateWxSetting()" type="button"><i class="fa fa-arrow-right"></i>更新</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-12 select-table" id="step1">
-                            <div class="row">
-                                <span class="navbar-page-title">应用基本信息</span>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <hr class="hr m-t-0 m-t-5"/>
+                        <div id="externalcontact" style="display: none">
+                            <div class="col-sm-12 search-collapse">
+                                <div class="row">
+                                    <h5 class="navbar-page-title"> 外部联系人配置</h5>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <form  method="post" id="qywx-setting-form">
-                                        <div class="row">
-                                            <div class="col-md-10">
-                                                <div class="form-group">
-                                                    公司ID：<input type="text" class="form-control" name="corpId" id="corpId"/>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-10">
-                                                <div class="form-group">
-                                                   应用秘钥：<input type="text" class="form-control" name="applicationSecret" id="applicationSecret"/>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
+                            <div class="col-md-12 select-table" >
+                                <div class="row">
+                                    <span class="navbar-page-title">外部联系人基本信息</span>
                                 </div>
-                            </div>
-                            <div class="row m-t-15">
-                                <div class="col-md-12 text-right">
-                                    <a id='updateSetting' class="btn btn-sm btn-secondary" onclick="updateWxSetting()" type="button"><i class="fa fa-arrow-right"></i>更新</a>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <hr class="hr m-t-0 m-t-5"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <form  method="post" id="qywx-contact-form">
+                                            <div class="row">
+                                                <div class="col-md-10">
+                                                    <div class="form-group">
+                                                       接收事件连接：<input type="text" readonly="readonly" class="form-control" name="eventUrl" id="eventUrl"/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-10">
+                                                    <div class="form-group">
+                                                        接收事件的token：<input type="text" class="form-control" name="eventToken" id="eventToken"/>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-10">
+                                                    <div class="form-group">
+                                                        接收事件的aesKey：<input type="text" class="form-control" name="eventAesKey" id="eventAesKey"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="row m-t-15">
+                                    <div class="col-md-12 text-right">
+                                        <a class="btn btn-sm btn-secondary" href="/page/application"><i class="fa fa-arrow-left"></i>返回</a>
+                                        <a class="btn btn-sm btn-secondary" onclick="updateContact()" type="button"><i class="fa fa-arrow-right"></i>更新</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -12,4 +12,5 @@ public interface ParamMapper {
 
     void updateCorpInfo(String corpId,String applicationSecret);
 
+    void updateContact(String eventToken, String eventAesKey);
 }

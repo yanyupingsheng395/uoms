@@ -29,4 +29,8 @@
         update uo_qywx_param set corp_id=#{corpId},application_secret=#{applicationSecret}
     </update>
 
+    <update id="updateContact">
+        update uo_qywx_param set ec_event_token=#{eventToken},ec_event_aeskey=#{eventAesKey}
+    </update>
+
 </mapper>
