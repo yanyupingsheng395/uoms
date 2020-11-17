@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>企业微信应用设置</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge"/>
+    <meta name="referrer" content="never"/>
+    <th:block th:include="common/include :: common-css" />
+    <th:block th:include="common/include::jquery-confirm-css" />
+    <th:block th:include="common/include::bootstrap-table-css" />
+</head>
+<body class="gray-bg">
+    <div class="lyear-layout-web">
+        <div class="lyear-layout-container">
+            <!-- 左侧导航 -->
+            <div data-th-include="common/aside"></div>
+            <!-- 头部信息 -->
+            <div data-th-include="common/header"></div>
+            <!-- 页面主要内容 -->
+            <main class="lyear-layout-content">
+                <div class="container-div ui-layout-center">
+                    <div class="row">
+                        <div class="col-sm-12 search-collapse">
+                            <div class="row">
+                                <h5 class="navbar-page-title"> 企业微信应用设置</h5>
+                            </div>
+                        </div>
+                        <div class="col-md-12 select-table" id="step1">
+                            <div class="row">
+                                <span class="navbar-page-title">应用基本信息</span>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <hr class="hr m-t-0 m-t-5"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <form  method="post" id="qywx-setting-form">
+                                        <div class="row">
+                                            <div class="col-md-10">
+                                                <div class="form-group">
+                                                    公司ID：<input type="text" class="form-control" name="corpId" id="corpId"/>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-10">
+                                                <div class="form-group">
+                                                   应用秘钥：<input type="text" class="form-control" name="applicationSecret" id="applicationSecret"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="row m-t-15">
+                                <div class="col-md-12 text-right">
+                                    <a id='updateSetting' class="btn btn-sm btn-secondary" onclick="updateWxSetting()" type="button"><i class="fa fa-arrow-right"></i>更新</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+<th:block th:include="common/include::footer" />
+<th:block th:include="common/include::perfect-scrollbar" />
+<th:block th:include="common/include::jquery-validate-js" />
+<th:block th:include="common/include::bootstrap-table-js" />
+<th:block th:include="common/include::jquery-confirm-js" />
+<th:block th:include="common/include::common-js" />
+<script data-th-src="@{/js/app/qywx/qywxsettings/setting.js}"></script>
+</body>
+</html>
