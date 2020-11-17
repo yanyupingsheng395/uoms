@@ -20,7 +20,7 @@ spring:
 
 sys:
   #当前应用名称
-  projectName: dapu-qywxApi-dev
+  projectName: qywxApi-dev
   #服务平台地址
   smpDomain: http://localhost:9063
   #是否开启错误日志上报
@@ -38,11 +38,6 @@ shiro:
   #设置cookie所在的域名，所有业务子系统必须和权限管理系统配置一致方可共享session
   cookieDomain: localhost
 
-
-thrift:
-  server:
-    host: 192.168.0.116
-    port: 7778
 logging:
   level:
     com:
