@@ -41,6 +41,8 @@ public interface QywxService {
      */
     String getEcEventAesKey();
 
-
-
+    /**
+     * 更新外部联系人信息
+     */
+    void updateContact(String eventToken, String eventAesKey);
 }

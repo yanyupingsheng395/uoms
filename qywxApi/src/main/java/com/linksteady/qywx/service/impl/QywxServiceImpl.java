@@ -117,12 +117,13 @@ public class QywxServiceImpl implements QywxService {
     @Override
     public String getEcEventToken() {
         String ecEventToken=this.redisConfigStorage.getEcEventToken();
-
         if(StringUtils.isEmpty(ecEventToken))
         {
             QywxParam qywxParam=paramMapper.getQywxParam();
             ecEventToken=qywxParam==null?"":qywxParam.getEcEventToken();
-            this.redisConfigStorage.setEcEventToken(ecEventToken);
+            if(!StringUtils.isEmpty(ecEventToken)){
+                this.redisConfigStorage.setEcEventToken(ecEventToken);
+            }
         }
         return this.redisConfigStorage.getEcEventToken();
     }
@@ -135,8 +136,18 @@ public class QywxServiceImpl implements QywxService {
         {
             QywxParam qywxParam=paramMapper.getQywxParam();
             ecEventAesKey=qywxParam==null?"":qywxParam.getEcEventAesKey();
-            this.redisConfigStorage.setEcEventToken(ecEventAesKey);
+            if(!StringUtils.isEmpty(ecEventAesKey)) {
+                this.redisConfigStorage.setEcEventAesKey(ecEventAesKey);
+            }
         }
         return this.redisConfigStorage.getEcEventToken();
+    }
+
+    @Override
+    public synchronized void updateContact(String eventToken, String eventAesKey) {
+        //更新到数据库
+        paramMapper.updateContact(eventToken,eventAesKey);
+        this.redisConfigStorage.setEcEventToken(eventToken);
+        this.redisConfigStorage.setEcEventAesKey(eventAesKey);
     }
 }

@@ -17,4 +17,9 @@ public class PageController  extends BaseController {
     public String activity() {
         return "qywx/activity/list";
     }
+
+    @RequestMapping("/application")
+    public String application(){
+        return "qywx/qywxsettings/applicationSetting";
+    }
 }
