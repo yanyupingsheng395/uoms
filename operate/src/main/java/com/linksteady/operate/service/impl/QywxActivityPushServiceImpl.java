@@ -369,7 +369,11 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
                             qywxPushList.setSourceId(qywxActivityDetailList.get(0).getQywxDetailId());
                             qywxActivityPushMapper.insertPushList(qywxPushList);
                             //推送并更新状态
-                            pushQywxMsg(qywxPushList,qywxActivityDetailList);
+                            try {
+                                pushQywxMsg(qywxPushList,qywxActivityDetailList);
+                            } catch (Exception e) {
+                                new LinkSteadyException("推送任务出现异常！"+e);
+                            }
                         }
                     }else {
                         int pageNum = waitCount % pageSize == 0 ? (waitCount / pageSize) : ((waitCount / pageSize) + 1);
@@ -396,7 +400,11 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
                                 qywxPushList.setSourceId(tmpUserList.get(0).getQywxDetailId());
                                 qywxActivityPushMapper.insertPushList(qywxPushList);
                                 //推送并更新状态
-                                pushQywxMsg(qywxPushList,tmpUserList);
+                                try {
+                                    pushQywxMsg(qywxPushList,tmpUserList);
+                                } catch (Exception e) {
+                                    new LinkSteadyException("推送任务出现异常！"+e);
+                                }
                             }
                         }
                     }
@@ -415,7 +423,7 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
      *
      * @param qywxPushList (待推送的对象)
      */
-    private void pushQywxMsg(QywxPushList qywxPushList,List<QywxActivityDetail> qywxActivityDetailList) {
+    private void pushQywxMsg(QywxPushList qywxPushList,List<QywxActivityDetail> qywxActivityDetailList)throws Exception {
 
         if(null==qywxActivityDetailList||qywxActivityDetailList.size()==0){
             qywxActivityPushMapper.updatePushList(qywxPushList.getPushId(),"F","","","推送列表为空");

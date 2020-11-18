@@ -20,5 +20,5 @@ public interface QywxGropMsgService {
     /**
      *添加企业群发消息任务
      */
-     String addMsgTemplate(JSONObject param);
+     String addMsgTemplate(JSONObject param) throws Exception;
 }

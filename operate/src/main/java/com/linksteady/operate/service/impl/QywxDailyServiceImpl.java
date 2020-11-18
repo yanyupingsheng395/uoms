@@ -10,6 +10,7 @@ import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.dao.QywxDailyDetailMapper;
 import com.linksteady.operate.dao.QywxDailyMapper;
 import com.linksteady.operate.domain.*;
+import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.QywxDailyService;
 import com.linksteady.operate.service.QywxMdiaService;
@@ -142,7 +143,11 @@ public class QywxDailyServiceImpl implements QywxDailyService {
                         qywxPushList.setSourceId(qywxDailyDetailList.get(0).getHeadId());
                         qywxDailyMapper.insertPushList(qywxPushList);
                         //推送并更新状态
-                        pushQywxMsg(qywxPushList,qywxDailyDetailList);
+                        try {
+                            pushQywxMsg(qywxPushList,qywxDailyDetailList);
+                        } catch (Exception e) {
+                            new LinkSteadyException("推送任务出现异常！"+e);
+                        }
                     }
                 } else {
 
@@ -170,7 +175,11 @@ public class QywxDailyServiceImpl implements QywxDailyService {
                             qywxPushList.setSourceId(tmpUserList.get(0).getHeadId());
                             qywxDailyMapper.insertPushList(qywxPushList);
                             //推送并更新状态
-                            pushQywxMsg(qywxPushList,tmpUserList);
+                            try {
+                                pushQywxMsg(qywxPushList,tmpUserList);
+                            } catch (Exception e) {
+                                new LinkSteadyException("推送任务出现异常！"+e);
+                            }
                         }
                     }
                 }
@@ -183,7 +192,7 @@ public class QywxDailyServiceImpl implements QywxDailyService {
      *
      * @param qywxPushList (待推送的对象)
      */
-    private void pushQywxMsg(QywxPushList qywxPushList,List<QywxDailyDetail> qywxDailyDetailList) {
+    private void pushQywxMsg(QywxPushList qywxPushList,List<QywxDailyDetail> qywxDailyDetailList)throws Exception {
         if(null==qywxDailyDetailList||qywxDailyDetailList.size()==0)
         {
             qywxDailyMapper.updatePushList(qywxPushList.getPushId(),"F","","","推送列表为空");

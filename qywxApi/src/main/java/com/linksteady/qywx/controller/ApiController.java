@@ -69,7 +69,7 @@ public class ApiController {
     }
 
     @PostMapping("/addMsgTemplate")
-    public String addMsgTemplate(String addparam){
+    public String addMsgTemplate(String addparam) throws Exception {
        return qywxGropMsgService.addMsgTemplate( JSONObject.parseObject(addparam));
     }
 
