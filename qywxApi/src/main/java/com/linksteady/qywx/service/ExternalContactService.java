@@ -28,20 +28,17 @@ public interface ExternalContactService {
 
     Map<String,Object> getExternalContractDetailBatch(String cursor, String followerUserId, List<String> externalUserList) throws WxErrorException;
 
-//    /**
-//     * 保存外部联系人列表
-//     */
-//    void saveExternalUserList(String corpId,String followerUserId,List<String> externalUserList);
+    /**
+     * 保存外部联系人ID
+     */
+    void saveExternalUserId(String followerUserId,String externalUserId);
 
-//    /**
-//     * 保存外部联系人ID
-//     */
-//    void saveExternalUserId(String corpId,String followerUserId,String externalUserId);
+    /**
+     * 更新外部联系人
+     */
+    void updateExternalContract(ExternalContact externalContact);
 
-//    /**
-//     * 更新外部联系人
-//     */
-//    void updateExternalContract(ExternalContact externalContact);
+    void deleteExternalContract(String followerUserId,String externalUserId);
 
 //    /**
 //     * 获取本地的所有客户列表

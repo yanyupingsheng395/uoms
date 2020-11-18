@@ -20,6 +20,9 @@ public class RedisConfigStorageImpl implements RedisConfigStorage {
     protected final static String  QYWX_EC_EVNET_TOKEN="qywx:ec:token";
     protected final static String  QYWX_EC_EVNET_AESKEY="qywx:ec:aeskey";
 
+    protected final static String  QYWX_ENABLED_WELCOME="qywx:ec:welcome";
+    protected final static String  QYWX_MP_APP_ID="qywx:mpappid";
+
     private JedisPool jedisPool;
 
     public RedisConfigStorageImpl(JedisPool jedisPool) {
@@ -33,8 +36,6 @@ public class RedisConfigStorageImpl implements RedisConfigStorage {
         }
         return baseApiUrl + path;
     }
-
-
 
     @Override
     public String getSecret() {
@@ -131,6 +132,38 @@ public class RedisConfigStorageImpl implements RedisConfigStorage {
         try(Jedis jedis=jedisPool.getResource())
         {
             jedis.set(QYWX_EC_EVNET_AESKEY,ecEventAesKey);
+        }
+    }
+
+    @Override
+    public String getEnableWelcome() {
+        try(Jedis jedis=jedisPool.getResource())
+        {
+            return jedis.get(QYWX_ENABLED_WELCOME);
+        }
+    }
+
+    @Override
+    public void setEnableWelcome(String enableWelcome) {
+        try(Jedis jedis=jedisPool.getResource())
+        {
+            jedis.set(QYWX_ENABLED_WELCOME,enableWelcome);
+        }
+    }
+
+    @Override
+    public String getMpAppId() {
+        try(Jedis jedis=jedisPool.getResource())
+        {
+            return jedis.get(QYWX_MP_APP_ID);
+        }
+    }
+
+    @Override
+    public void setMpAppId(String mpAppId) {
+        try(Jedis jedis=jedisPool.getResource())
+        {
+            jedis.set(QYWX_MP_APP_ID,mpAppId);
         }
     }
 

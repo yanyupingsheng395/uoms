@@ -33,4 +33,12 @@
         update uo_qywx_param set ec_event_token=#{eventToken},ec_event_aeskey=#{eventAesKey}
     </update>
 
+    <update id="updateEnableWelcome">
+         update uo_qywx_param set enable_welcome=#{enableWelcome}
+    </update>
+
+    <update id="updateMpAppId">
+        update uo_qywx_param set mp_appid=#{mpAppId}
+    </update>
+
 </mapper>

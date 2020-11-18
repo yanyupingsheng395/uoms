@@ -1,34 +1,22 @@
 package com.linksteady.operate.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
-import com.linksteady.common.annotation.Log;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.QywxMessage;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.enums.ConfigEnum;
 import com.linksteady.common.service.ConfigService;
-import com.linksteady.common.util.OkHttpUtil;
-import com.linksteady.common.util.crypto.SHA1;
 import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.domain.QywxDailyDetail;
 import com.linksteady.operate.domain.QywxDailyHeader;
 import com.linksteady.operate.domain.QywxDailyStaffEffect;
-import com.linksteady.operate.domain.QywxMsgResult;
 import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.exception.PushQywxMessageException;
 import com.linksteady.operate.exception.SendCouponException;
 import com.linksteady.operate.service.*;
 import com.linksteady.operate.vo.FollowUserVO;
-import com.linksteady.operate.vo.SourceConfigVO;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.assertj.core.util.Lists;
-import org.postgresql.jdbc.TimestampUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -36,9 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
@@ -121,35 +107,29 @@ public class QywxDailyController {
     @GetMapping("/getTaskOverViewData")
     public ResponseBo getTaskOverViewData(Long headId) {
         // 首先判断状态和任务日期 如果任务是待执行及当天的任务，则执行文案、优惠券匹配
-        QywxDailyHeader qywxDailyHeader=qywxDailyService.getHeadInfo(headId);
-        if(null==qywxDailyHeader)
-        {
+        QywxDailyHeader qywxDailyHeader = qywxDailyService.getHeadInfo(headId);
+        if (null == qywxDailyHeader) {
             return ResponseBo.error("不存在的每日运营计划!");
         }
 
-        String currentDay=DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now());
-        if(qywxDailyHeader.getTotalNum()==0)
-        {
+        String currentDay = DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now());
+        if (qywxDailyHeader.getTotalNum() == 0) {
             return ResponseBo.error("当前计划没有待运营的用户！");
         }
 
         //待执行状态且是当天的任务
-        if("todo".equals(qywxDailyHeader.getStatus())&&currentDay.equals(qywxDailyHeader.getTaskDateStr()))
-        {
+        if ("todo".equals(qywxDailyHeader.getStatus()) && currentDay.equals(qywxDailyHeader.getTaskDateStr())) {
             //如果已经进行了优惠券的发放
-            if("Y".equals(qywxDailyHeader.getCouponSendFlag()))
-            {
+            if ("Y".equals(qywxDailyHeader.getCouponSendFlag())) {
                 //直接返回
                 return ResponseBo.ok();
             }
 
             //验证配置是否通过校验
             Map<String, Object> validMap = dailyConfigService.validUserGroupForQywx();
-            if(validMap.get("flag").equals("未通过"))
-            {
+            if (validMap.get("flag").equals("未通过")) {
                 return ResponseBo.error("成长组尚未完成配置，请先进行配置!");
-            }else
-            {
+            } else {
                 //首先获取锁
                 if (qywxDailyService.getTransContentLock(String.valueOf(headId))) {
                     try {
@@ -168,8 +148,7 @@ public class QywxDailyController {
                     return ResponseBo.error("其他用户正在生成文案，请稍后再操作！");
                 }
             }
-        }else
-        {
+        } else {
             //直接返回
             return ResponseBo.ok();
         }
@@ -185,15 +164,15 @@ public class QywxDailyController {
         int limit = request.getLimit();
         int offset = request.getOffset();
         Long headId = Long.parseLong(request.getParam().get("headId"));
-        String followUserId=request.getParam().get("followUserId");
-        List<QywxDailyDetail> dataList = qywxDailyDetailService.getQywxDetailList(headId,limit, offset,followUserId);
-        int count = qywxDailyDetailService.getQywxDetailCount(headId,followUserId);
+        String followUserId = request.getParam().get("followUserId");
+        List<QywxDailyDetail> dataList = qywxDailyDetailService.getQywxDetailList(headId, limit, offset, followUserId);
+        int count = qywxDailyDetailService.getQywxDetailCount(headId, followUserId);
         return ResponseBo.okOverPaging(null, count, dataList);
     }
 
     @GetMapping("/getTaskDt")
     public ResponseBo getTaskDt(@RequestParam("headId") Long headId) {
-        Date taskDate=qywxDailyService.getHeadInfo(headId).getTaskDate();
+        Date taskDate = qywxDailyService.getHeadInfo(headId).getTaskDate();
         return ResponseBo.okWithData(null, new SimpleDateFormat("yyyyMMdd").format(taskDate));
     }
 
@@ -204,7 +183,7 @@ public class QywxDailyController {
      * @return
      */
     @GetMapping("/submitTask")
-    public ResponseBo submitTask(Long headId,Long effectDays) {
+    public ResponseBo submitTask(Long headId, Long effectDays) {
         if (null == effectDays || effectDays < 1 || effectDays > 10) {
             return ResponseBo.error("参数错误，请通过系统界面进行操作！");
         }
@@ -221,7 +200,7 @@ public class QywxDailyController {
             return ResponseBo.error("当前任务非待执行状态，请返回刷新后重试！");
         }
 
-        String validateLabel =(String)dailyConfigService.validUserGroupForQywx().get("flag");
+        String validateLabel = (String) dailyConfigService.validUserGroupForQywx().get("flag");
         if (validateLabel.equalsIgnoreCase("未通过")) {
             return ResponseBo.error("成长组配置验证未通过！");
         }
@@ -229,43 +208,39 @@ public class QywxDailyController {
         try {
 
             //判断优惠券是否已发放 如果未发放，则进行优惠券的发放
-            if("N".equals(qywxDailyHeader.getCouponSendFlag()))
-            {
+            if ("N".equals(qywxDailyHeader.getCouponSendFlag())) {
                 try {
-                    boolean flag=qywxSendCouponService.sendCouponToUser(headId);
-                    if(!flag)
-                    {
+                    boolean flag = qywxSendCouponService.sendCouponToUser(headId);
+                    if (!flag) {
                         throw new SendCouponException("券已发出，但接口返回的结果为异常");
                     }
-                } catch(Exception e) {
+                } catch (Exception e) {
                     throw new SendCouponException("发送优惠券异常");
                 }
             }
-            qywxDailyService.push(qywxDailyHeader,effectDays);
+            qywxDailyService.push(qywxDailyHeader, effectDays);
 
             //获取是否有推送失败的情况
-            int count=qywxDailyService.getPushErrorCount(headId);
+            int count = qywxDailyService.getPushErrorCount(headId);
 
-            if(count>0)
-            {
+            if (count > 0) {
                 throw new PushQywxMessageException("推送企业微信消息存在错误");
-            }else
-            {
+            } else {
                 return ResponseBo.ok();
             }
         } catch (Exception e) {
             log.error("企业微信每日运营推送错误，错误堆栈为", e);
             if (e instanceof OptimisticLockException) {
                 return ResponseBo.error(e.getMessage());
-            }else if (e instanceof SendCouponException) {
+            } else if (e instanceof SendCouponException) {
                 //标记
                 qywxDailyService.updateStatusToDoneCouponError(headId);
                 return ResponseBo.error("发送优惠券失败，请联系系统运维人员!");
-            }else if (e instanceof PushQywxMessageException) {
+            } else if (e instanceof PushQywxMessageException) {
                 //标记
                 qywxDailyService.updateStatusToDonePushError(headId);
                 return ResponseBo.error("发送企业微信消息失败，请联系系统运维人员!");
-            }  else {
+            } else {
                 return ResponseBo.error("推送出现未知错误，请联系系统运维人员!");
             }
         }
@@ -279,12 +254,12 @@ public class QywxDailyController {
      */
     @GetMapping("/getTaskInfo")
     public ResponseBo getTaskInfo(@RequestParam Long headId) {
-        QywxDailyHeader qywxDailyHeader=qywxDailyService.getHeadInfo(headId);
-        Map<String,String> result=Maps.newHashMap();
-        result.put("taskDateStr",qywxDailyHeader.getTaskDateStr());
-        result.put("successNum",qywxDailyHeader.getSuccessNum()==null?"0":String.valueOf(qywxDailyHeader.getSuccessNum()));
-        result.put("effectDays",qywxDailyHeader.getEffectDays()==null?"0":String.valueOf(qywxDailyHeader.getEffectDays()));
-        return ResponseBo.okWithData(null,result);
+        QywxDailyHeader qywxDailyHeader = qywxDailyService.getHeadInfo(headId);
+        Map<String, String> result = Maps.newHashMap();
+        result.put("taskDateStr", qywxDailyHeader.getTaskDateStr());
+        result.put("successNum", qywxDailyHeader.getSuccessNum() == null ? "0" : String.valueOf(qywxDailyHeader.getSuccessNum()));
+        result.put("effectDays", qywxDailyHeader.getEffectDays() == null ? "0" : String.valueOf(qywxDailyHeader.getEffectDays()));
+        return ResponseBo.okWithData(null, result);
     }
 
     /**
@@ -307,9 +282,9 @@ public class QywxDailyController {
         int limit = request.getLimit();
         int offset = request.getOffset();
         Long headId = Long.parseLong(request.getParam().get("headId"));
-        String followUserId=request.getParam().get("followUserId");
-        List<QywxDailyDetail> dataList = qywxDailyDetailService.getConversionList(headId,limit, offset,followUserId);
-        int count = qywxDailyDetailService.getConversionCount(headId,followUserId);
+        String followUserId = request.getParam().get("followUserId");
+        List<QywxDailyDetail> dataList = qywxDailyDetailService.getConversionList(headId, limit, offset, followUserId);
+        int count = qywxDailyDetailService.getConversionCount(headId, followUserId);
         return ResponseBo.okOverPaging(null, count, dataList);
     }
 
@@ -356,16 +331,16 @@ public class QywxDailyController {
         Map<String, Object> result = Maps.newHashMap();
         result.put("flag", "通过");
         result.put("desc", "");
-        return ResponseBo.okWithData("",result);
+        return ResponseBo.okWithData("", result);
     }
 
     /**
      * 企业微信测试推送
      */
     @GetMapping("/testQywxPush")
-    public ResponseBo testQywxPush(String title,String pathAddress,String senderId,String externalContact,String messageTest) {
+    public ResponseBo testQywxPush(String title, String pathAddress, String senderId, String externalContact, String messageTest) {
         try {
-            testPush(title,pathAddress,senderId,externalContact,messageTest);
+            testPush(title, pathAddress, senderId, externalContact, messageTest);
             return ResponseBo.ok();
         } catch (Exception e) {
             return ResponseBo.error(e.getMessage());
@@ -375,11 +350,11 @@ public class QywxDailyController {
 
     /**
      * 推送的实际方法
+     *
      * @return
      */
-    private String  testPush(String title,String pathAddress,String senderId,String externalContact,String messageTest) throws Exception
-    {
-        QywxMessage qywxMessage=new QywxMessage();
+    private String testPush(String title, String pathAddress, String senderId, String externalContact, String messageTest) throws Exception {
+        QywxMessage qywxMessage = new QywxMessage();
         qywxMessage.setText(messageTest);
         qywxMessage.setMpTitle(title);
 
@@ -396,8 +371,8 @@ public class QywxDailyController {
         qywxMessage.setMpAppid(appId);
         qywxMessage.setMpPage(pathAddress);
 
-        List<String> externalContactList=asList(externalContact);
-        String result=qywxMessageService.pushQywxMessage(qywxMessage,senderId,externalContactList);
+        List<String> externalContactList = asList(externalContact);
+        String result = qywxMessageService.pushQywxMessage(qywxMessage, senderId, externalContactList);
 
         return result;
     }
@@ -413,80 +388,11 @@ public class QywxDailyController {
      */
     @GetMapping("/manualSubmitCoupon")
     public ResponseBo submitTask(Long headId) {
-        boolean flag=qywxSendCouponService.sendCouponToUser(headId);
-        if(!flag)
-        {
+        boolean flag = qywxSendCouponService.sendCouponToUser(headId);
+        if (!flag) {
             return ResponseBo.error();
-        }else
-        {
+        } else {
             return ResponseBo.ok();
         }
-    }
-
-    /**
-     * 更新推送结果
-     */
-    @GetMapping("/manualSyncPushResult")
-    public ResponseBo manualSyncPushResult() {
-        //获取所有待同步的msgId
-        List<String> msgIdList=qywxDailyService.getPushMsgIdList();
-
-        for(String msgId:msgIdList)
-        {
-            //删除响应的结果
-            qywxDailyService.deletePushResult(msgId);
-
-            //重新同步结果
-            //构造推送参数
-            JSONObject param=new JSONObject();
-            param.put("msgid",msgId);
-
-            String corpId=configService.getValueByName(ConfigEnum.qywxCorpId.getKeyCode());
-            String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
-            String signature= SHA1.gen(timestamp,param.toJSONString());
-            String qywcDomainUrl=configService.getValueByName(ConfigEnum.qywxDomainUrl.getKeyCode());
-            String url=qywcDomainUrl+"/push/getGroupMsgResult?corpId="+corpId+"&timestamp="+timestamp+"&signature="+signature;
-
-            String result= OkHttpUtil.postRequestByJson(url,param.toJSONString());
-            log.info("{}获取推送的结果为{}",msgId,result);
-
-            JSONObject jsonObject = JSON.parseObject(result);
-            String code = jsonObject.getString("code");
-
-            if(StringUtils.isNotEmpty(code)&&code.equalsIgnoreCase("200"))
-            {
-               //构造结果
-                JSONArray detailList = jsonObject.getJSONArray("data");
-
-                List<QywxMsgResult> qywxMsgResultList= Lists.newArrayList();
-                QywxMsgResult qywxMsgResult=null;
-                JSONObject obj = null;
-                for(int i=0;i<detailList.size();i++)
-                {
-                    obj=detailList.getJSONObject(i);
-                    qywxMsgResult=new QywxMsgResult();
-
-                    qywxMsgResult.setExternalUserId(obj.getString("external_userid"));
-                    qywxMsgResult.setChatId(obj.getString("chat_id"));
-                    qywxMsgResult.setFollowUserId(obj.getString("userid"));
-                    qywxMsgResult.setStatus(obj.getIntValue("status"));
-                    qywxMsgResult.setSendTime(obj.getString("send_time"));
-                    if(obj.getIntValue("status")==1)
-                    {
-                       qywxMsgResult.setSendTimeDt(new Date(Long.parseLong(obj.getString("send_time"))*1000));
-                    }
-                    qywxMsgResult.setMsgId(msgId);
-
-                    qywxMsgResultList.add(qywxMsgResult);
-                }
-                qywxDailyService.saveMsgResult(qywxMsgResultList);
-
-            }else
-            {
-                log.error("通过微信推送结果失败，返回结果为{}",result);
-            }
-
-        }
-        return ResponseBo.ok();
     }
 }

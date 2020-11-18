@@ -337,25 +337,5 @@ public class QywxDailyServiceImpl implements QywxDailyService {
         qywxDailyMapper.updateStatusToDonePushError(headId);
     }
 
-    @Override
-    public List<String> getPushMsgIdList() {
-        return qywxDailyMapper.getPushMsgIdList();
-    }
-
-    @Override
-    public void deletePushResult(String msgId) {
-        qywxDailyMapper.deletePushResult(msgId);
-    }
-
-    @Override
-    public void saveMsgResult(List<QywxMsgResult> qywxMsgResultList) {
-        qywxDailyMapper.saveMsgResult(qywxMsgResultList);
-    }
-
-    @Override
-    public void updateExecStatus() {
-        qywxDailyMapper.updateExecStatus();
-    }
-
 
 }

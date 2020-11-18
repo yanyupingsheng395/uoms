@@ -119,7 +119,7 @@ public class ExternalContactServiceImpl implements ExternalContactService {
         }
 
         log.debug("获取到的客户详情为:{}", userDetail);
-        ExternalContact externalContact = new ExternalContact().buildFromJsonObject(jsonObject, followerUserId);
+        ExternalContact externalContact = new ExternalContact().buildFromJsonObjectSingle(jsonObject, followerUserId);
         return externalContact;
     }
 
@@ -165,6 +165,21 @@ public class ExternalContactServiceImpl implements ExternalContactService {
         result.put("externalContactList",externalContactList);
 
         return result;
+    }
+
+    @Override
+    public void saveExternalUserId(String followerUserId, String externalUserId) {
+        externalContactMapper.saveExternalUserId(followerUserId, externalUserId);
+    }
+
+    @Override
+    public void updateExternalContract(ExternalContact externalContact) {
+        externalContactMapper.updateExternalContract(externalContact);
+    }
+
+    @Override
+    public void deleteExternalContract(String followerUserId, String externalUserId) {
+        externalContactMapper.deleteExternalContract(followerUserId,externalUserId);
     }
 
 

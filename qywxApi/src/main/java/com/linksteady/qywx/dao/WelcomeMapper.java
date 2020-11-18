@@ -2,7 +2,7 @@ package com.linksteady.qywx.dao;
 
 import com.linksteady.qywx.domain.QywxWelcome;
 
-public interface WelcomeMessageMapper {
+public interface WelcomeMapper {
 
     /**
      * 获取当前使用的欢迎语

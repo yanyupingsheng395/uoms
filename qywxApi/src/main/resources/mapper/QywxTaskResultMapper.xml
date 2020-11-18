@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.qywx.dao.QywxTaskResultMapper">
+    <select id="getPushMsgIdList" resultType="string">
+        select distinct msgid from uo_qywx_push_list where push_status='S' and push_date::date>=current_date-1
+    </select>
+
+    <delete id="deletePushResult">
+        delete from uo_qywx_msg_result where msg_id=#{msgId}
+    </delete>
+
+    <insert id="saveMsgResult">
+        insert into uo_qywx_msg_result(
+        msg_id,
+        external_userid,
+        chat_id,
+        follow_user_id,
+        status,
+        send_time,
+        send_time_dt
+        )values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.msgId},
+            #{item.externalUserId},
+            #{item.chatId},
+            #{item.followUserId},
+            #{item.status},
+            #{item.sendTime},
+            #{item.sendTimeDt})
+        </foreach>
+    </insert>
+
+    <update id="updateExecStatus">
+        update uo_qywx_daily_detail as d1 set exec_status=d2.status
+        from uo_qywx_msg_result d2
+        where d1.msg_id=d2.msg_id and d1.qywx_contract_id=d2.external_userid
+    </update>
+
+</mapper>

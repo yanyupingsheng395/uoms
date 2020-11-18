@@ -13,4 +13,8 @@ public interface ParamMapper {
     void updateCorpInfo(String corpId,String applicationSecret);
 
     void updateContact(String eventToken, String eventAesKey);
+
+    void updateEnableWelcome(String enableWelcome);
+
+    void updateMpAppId(String mpAppId);
 }

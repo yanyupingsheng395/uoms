@@ -107,7 +107,6 @@ public class EventCryptUtils {
         //修改微信变态的消息内容格式，方便解析
         xml = xml.replace("</PicList><PicList>", "");
         final WxXmlMessage xmlMessage = XStreamTransformer.fromXml(WxXmlMessage.class, xml);
-        xmlMessage.setAllFieldsMap(XmlUtils.xml2Map(xml));
         return xmlMessage;
     }
 

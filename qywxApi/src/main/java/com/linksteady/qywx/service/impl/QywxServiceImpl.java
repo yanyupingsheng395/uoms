@@ -58,22 +58,6 @@ public class QywxServiceImpl implements QywxService {
     }
 
     @Override
-    public boolean checkSignature(String msgSignature, String timestamp, String nonce, String data) {
-//        try {
-//            log.debug("校验签名是否正确:apptoken:{},生成的签名：{},微信的签名:{}",this.redisConfigStorage.getAppToken(),
-//                    SHA1.gen(this.redisConfigStorage.getAppToken(), timestamp, nonce, data),
-//                    msgSignature);
-//            log.debug("参数为{},{},{},{}",timestamp,nonce,data,msgSignature);
-//            return SHA1.gen(this.redisConfigStorage.getAppToken(), timestamp, nonce, data)
-//                    .equals(msgSignature);
-//        } catch (Exception e) {
-//            log.error("Checking signature failed, and the reason is :" + e.getMessage());
-//            return false;
-//        }
-        return true;
-    }
-
-    @Override
     public synchronized String getAccessToken() throws WxErrorException {
         String accessToken=this.redisConfigStorage.getAccessToken();
 
@@ -149,5 +133,51 @@ public class QywxServiceImpl implements QywxService {
         paramMapper.updateContact(eventToken,eventAesKey);
         this.redisConfigStorage.setEcEventToken(eventToken);
         this.redisConfigStorage.setEcEventAesKey(eventAesKey);
+    }
+
+    @Override
+    public String getEnableWelcome() {
+        String enableWelcome=this.redisConfigStorage.getEnableWelcome();
+
+        if(StringUtils.isEmpty(enableWelcome))
+        {
+            QywxParam qywxParam=paramMapper.getQywxParam();
+            enableWelcome=qywxParam==null?"":qywxParam.getEnableWelcome();
+            if(!StringUtils.isEmpty(enableWelcome)) {
+                this.redisConfigStorage.setEnableWelcome(enableWelcome);
+            }
+        }
+        return this.redisConfigStorage.getEnableWelcome();
+    }
+
+    @Override
+    public synchronized void setEnableWelcome(String enableWelcome) {
+         //更新到数据库
+        paramMapper.updateEnableWelcome(enableWelcome);
+        //更新到redis
+        this.redisConfigStorage.setEnableWelcome(enableWelcome);
+    }
+
+    @Override
+    public String getMpAppId() {
+        String mpAppId=this.redisConfigStorage.getMpAppId();
+
+        if(StringUtils.isEmpty(mpAppId))
+        {
+            QywxParam qywxParam=paramMapper.getQywxParam();
+            mpAppId=qywxParam==null?"":qywxParam.getMpAppId();
+            if(!StringUtils.isEmpty(mpAppId)) {
+                this.redisConfigStorage.setMpAppId(mpAppId);
+            }
+        }
+        return this.redisConfigStorage.getMpAppId();
+    }
+
+    @Override
+    public synchronized void setMpAppId(String mpAppId) {
+        //更新到数据库
+        paramMapper.updateMpAppId(mpAppId);
+        //更新到redis
+        this.redisConfigStorage.setMpAppId(mpAppId);
     }
 }

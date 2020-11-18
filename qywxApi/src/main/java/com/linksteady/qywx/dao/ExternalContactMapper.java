@@ -56,4 +56,6 @@ public interface ExternalContactMapper {
 
     void saveExternalContractBatch(List<ExternalContact> externalContacts);
 
+    void saveExternalUserId(String followerUserId, String externalUserId);
+
 }

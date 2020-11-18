@@ -51,4 +51,19 @@ public interface RedisConfigStorage {
 
     void setEcEventAesKey(String ecEventAesKey);
 
+
+    String getEnableWelcome();
+
+    void setEnableWelcome(String enableWelcome);
+
+    /**
+     * 获取小程序appID
+     */
+    String getMpAppId();
+
+    /**
+     * 设置小程序appid
+     */
+    void setMpAppId(String mpAppId);
+
 }

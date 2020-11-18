@@ -67,4 +67,7 @@ public class QywxParam implements Serializable {
 
     private String mpAppId;
 
+
+    private String enableWelcome;
+
 }

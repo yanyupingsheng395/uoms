@@ -1,6 +1,7 @@
 package com.linksteady.qywx.controller;
 
 import com.linksteady.common.util.crypto.SHA1;
+import com.linksteady.qywx.service.EventService;
 import com.linksteady.qywx.service.QywxService;
 import com.linksteady.qywx.utils.EventCryptUtils;
 import com.linksteady.qywx.vo.WxXmlMessage;
@@ -21,6 +22,8 @@ public class ExternalContactEventController {
     @Autowired
     QywxService qywxService;
 
+    @Autowired
+    EventService eventService;
     /**
      * 接收事件 (验证)
      * @return
@@ -35,6 +38,8 @@ public class ExternalContactEventController {
                 "\n接收企业微信系统事件：[msgSignature=[{}],"
                         + " timestamp=[{}], nonce=[{}], echostr=\n{}\n ", msgSignature, timestamp, nonce, echostr);
 
+        log.info("token:{}",qywxService.getEcEventToken());
+        log.info("aeskey:{}",qywxService.getEcEventAesKey());
         // 验证安全签名
         String signature = SHA1.gen(qywxService.getEcEventToken(), timestamp, nonce, echostr);
         if (!signature.equals(msgSignature)) {
@@ -68,7 +73,9 @@ public class ExternalContactEventController {
                 requestBody
         );
 
-        log.debug("\n消息解密后内容为：\n{} ", inMessage.toString());
+        log.info("\n消息解密后内容为：\n{} ", inMessage.toString());
+
+
         return null;
     }
 }

@@ -118,6 +118,12 @@ public class ExternalContact implements Serializable {
     @Transient
     private String fixFlag;
 
+    /**
+     * 获取批量用户的详细信息使用此接口构造
+     * @param jsonObject
+     * @param followerUserId
+     * @return
+     */
     public ExternalContact buildFromJsonObject(JSONObject jsonObject,String followerUserId) {
         if (null != jsonObject) {
             JSONObject externalContract = jsonObject.getJSONObject("external_contact");
@@ -161,4 +167,67 @@ public class ExternalContact implements Serializable {
         this.setFollowerUserId(followerUserId);
         return this;
     }
+
+    /**
+     * 获取单个用户的详细信息使用此构造方法
+     * @param jsonObject
+     * @param followerUserId
+     * @return
+     */
+    public ExternalContact buildFromJsonObjectSingle(JSONObject jsonObject,String followerUserId) {
+        if(null!=jsonObject)
+        {
+            JSONObject externalContract=jsonObject.getJSONObject("external_contact");
+
+            this.setExternalUserid(externalContract.getString("external_userid"));
+            this.setName(externalContract.getString("name"));
+            this.setPosition(externalContract.getString("position"));
+            this.setAvatar(externalContract.getString("avatar"));
+            this.setCorpName(externalContract.getString("corp_name"));
+            this.setCorpFullName(externalContract.getString("corp_full_name"));
+            this.setType(externalContract.getString("type"));
+            this.setGender(externalContract.getString("gender"));
+            this.setUnionid(externalContract.getString("unionid"));
+            this.setExternalProfile(externalContract.getString("external_profile"));
+
+            this.setFollowUser(jsonObject.getString("follow_user"));
+
+            JSONArray jsonArray=jsonObject.getJSONArray("follow_user");
+            jsonArray.stream().forEach(i->{
+                JSONObject temp=(JSONObject)i;
+                //获取当前企业员工打上的标签和备注
+                if(followerUserId.equals(temp.getString("userid")))
+                {
+                    this.setRemark(temp.getString("remark"));
+                    this.setDescription(temp.getString("description"));
+                    this.setCreatetime(temp.getString("createtime"));
+                    this.setTags(temp.getString("tags"));
+                    this.setRemarkCorpName(temp.getString("remark_corp_name"));
+                    this.setRemarkMobiles(temp.getString("remark_mobiles"));
+                    this.setState(temp.getString("state"));
+
+                    this.setAddWay(temp.getIntValue("add_way"));
+                    this.setOperUserId(temp.getString("oper_userid"));
+
+                    JSONArray remarkMobiles=temp.getJSONArray("remark_mobiles");
+                    if(null!=remarkMobiles&&remarkMobiles.size()>0)
+                    {
+                        for(int m=0;m<remarkMobiles.size();m++)
+                        {
+                            if(StringUtils.isNotEmpty(remarkMobiles.getString(m)))
+                            {
+                                this.setMobile(remarkMobiles.getString(m));
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        this.setFollowerUserId(followerUserId);
+        return this;
+    }
+
+
+
 }

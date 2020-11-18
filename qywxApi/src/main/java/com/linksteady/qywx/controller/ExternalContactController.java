@@ -24,7 +24,7 @@ public class ExternalContactController{
     private ExternalContactService externalContactService;
 
     /**
-     * 获取导购运行结果的数据
+     * 同步外部客户
      * @param request
      * @return
      */
@@ -34,7 +34,7 @@ public class ExternalContactController{
             externalContactService.syncExternalContact();
             return ResponseBo.ok();
         } catch (Exception e) {
-            log.error("同步具有外部客户联系功能的成员失败，原因为{}",e);
+            log.error("同步外部客户失败，原因为{}",e);
             return ResponseBo.error();
         }
     }

@@ -1,9 +1,13 @@
 package com.linksteady.qywx.task;
 
+import com.linksteady.qywx.service.ExternalContactService;
+import com.linksteady.qywx.service.FollowUserService;
+import com.linksteady.qywx.service.QywxTaskResultService;
 import com.linksteady.smp.starter.annotation.JobHandler;
 import com.linksteady.smp.starter.domain.ResultInfo;
 import com.linksteady.smp.starter.jobclient.service.IJobHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -11,9 +15,26 @@ import org.springframework.stereotype.Component;
 @JobHandler(value = "syncQywxData")
 public class SyncQywxData extends IJobHandler {
 
+    @Autowired
+    FollowUserService followUserService;
+
+    @Autowired
+    ExternalContactService externalContactService;
+
+    @Autowired
+    QywxTaskResultService qywxTaskResultService;
+
     @Override
     public ResultInfo execute(String param) {
         try {
+            followUserService.syncDept();
+            followUserService.syncQywxFollowUser();
+            externalContactService.syncExternalContact();
+            //todo 全量匹配
+
+            //同步发送任务的执行结果
+            qywxTaskResultService.syncPushResult();
+            qywxTaskResultService.updateExecStatus();
 
             return ResultInfo.success("");
         } catch (Exception e) {
