@@ -70,8 +70,9 @@ public class QywxGropMsgServiceImpl implements QywxGropMsgService {
             throw new RuntimeException("调用添加企业微信群发消息任务返回结果为空！");
         }else{
             String errcode=object.getString("errcode");
+            String errmsg=object.getString("errmsg");
             if(!"0".equals(errcode)){
-                throw new RuntimeException("调用添加企业微信群发消息任务失败！");
+                throw new RuntimeException("调用添加企业微信群发消息任务失败！错误消息："+errmsg);
             }
         }
         return result;
