@@ -94,7 +94,7 @@ public class QywxMdiaServiceImpl implements QywxMdiaService {
 
         JSONObject resultObject = JSON.parseObject(result);
         if (null==resultObject||resultObject.getIntValue("code")!= 200) {
-            throw  new LinkSteadyException("获取素材ID失败");
+            throw  new LinkSteadyException("获取素材失败");
         }else
         {
             String mediaId=resultObject.getString("data");
