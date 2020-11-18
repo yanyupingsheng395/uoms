@@ -180,4 +180,19 @@ public class QywxServiceImpl implements QywxService {
         //更新到redis
         this.redisConfigStorage.setMpAppId(mpAppId);
     }
+
+    @Override
+    public String getCorpId() {
+        String corpId=this.redisConfigStorage.getCorpId();
+
+        if(StringUtils.isEmpty(corpId))
+        {
+            QywxParam qywxParam=paramMapper.getQywxParam();
+            corpId=qywxParam==null?"":qywxParam.getCorpId();
+            if(!StringUtils.isEmpty(corpId)) {
+                this.redisConfigStorage.setCorpId(corpId);
+            }
+        }
+        return this.redisConfigStorage.getCorpId();
+    }
 }

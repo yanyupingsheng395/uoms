@@ -54,26 +54,16 @@ public class QywxGropMsgServiceImpl implements QywxGropMsgService {
     }
 
     @Override
-    public String addMsgTemplate(JSONObject param) throws Exception {
+    public String addMsgTemplate(JSONObject param) throws WxErrorException{
         String result="";
-        String token="";
-        try {
-            token=qywxService.getAccessToken();
-        }catch (Exception e){
-          throw new RuntimeException(e);
-        }
+        String token=qywxService.getAccessToken();
         StringBuffer url=new StringBuffer(qywxService.getRedisConfigStorage().getApiUrl(WxPathConsts.ExternalContacts.ADD_MSG_TEMPLATE));
         url.append(token);
         result=OkHttpUtil.postRequestByJson(url.toString(),param.toJSONString());
         JSONObject object = JSONObject.parseObject(result);
-        if(null==object){
-            throw new RuntimeException("调用添加企业微信群发消息任务返回结果为空！");
-        }else{
-            String errcode=object.getString("errcode");
-            String errmsg=object.getString("errmsg");
-            if(!"0".equals(errcode)){
-                throw new RuntimeException("调用添加企业微信群发消息任务失败！错误消息："+errmsg);
-            }
+        if(null==object||!"0".equals(object.getString("errcode"))){
+            log.error("推送企业微信消息失败，接口返回结果为{}",result);
+            return "";
         }
         return result;
     }

@@ -57,4 +57,10 @@ public interface QywxService {
      */
     void setMpAppId(String mpAppId);
 
+
+    /**
+     * 读取corpId
+     */
+    String getCorpId();
+
 }

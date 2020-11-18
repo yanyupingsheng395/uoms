@@ -2,6 +2,7 @@ package com.linksteady.qywx.service;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.linksteady.qywx.exception.WxErrorException;
 
 public interface QywxGropMsgService {
     /**
@@ -20,5 +21,5 @@ public interface QywxGropMsgService {
     /**
      *添加企业群发消息任务
      */
-     String addMsgTemplate(JSONObject param) throws Exception;
+     String addMsgTemplate(JSONObject param) throws WxErrorException;
 }

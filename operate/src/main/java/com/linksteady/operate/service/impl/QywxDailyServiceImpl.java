@@ -102,8 +102,7 @@ public class QywxDailyServiceImpl implements QywxDailyService {
             throw new OptimisticLockException("记录已被其他用户修改，请返回刷新后重试");
         }
         Long headId = qywxDailyHeader.getHeadId();
-
-        String appId = configService.getValueByName(ConfigEnum.qywxMiniProgramAppId.getKeyCode());
+        String appId = qywxMessageService.getMpAppId();
 
         //按导购分组
         List<FollowUserVO> followUserIdList =qywxDailyDetailMapper.getFollowUserList(headId);

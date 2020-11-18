@@ -92,7 +92,8 @@ public class QywxDeptAndUserServiceImpl implements QywxDeptAndUserService {
 
     @Override
     public Tree<QywxDeptAndUser> getDeptAndUserTree() throws LinkSteadyException {
-        String corpId = configService.getValueByName(ConfigEnum.qywxCorpId.getKeyCode());
+      //  String corpId = configService.getValueByName(ConfigEnum.qywxCorpId.getKeyCode());
+        String corpId="";
         List<QywxDeptAndUser> deptAndUsers = qywxDeptAndUserMapper.getDeptAndUserData(corpId);
         List<QywxDeptAndUser> tmpList = deptAndUsers.stream().filter(x -> StringUtils.isNotEmpty(x.getDeptId()) && StringUtils.isNotEmpty(x.getDeptName()) && StringUtils.isNotEmpty(x.getDeptParentId()))
                 .collect(Collectors.toList());

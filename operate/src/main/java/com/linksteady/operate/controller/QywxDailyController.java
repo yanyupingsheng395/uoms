@@ -365,7 +365,7 @@ public class QywxDailyController {
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
-        String appId = configService.getValueByName(ConfigEnum.qywxMiniProgramAppId.getKeyCode());
+        String appId =qywxMessageService.getMpAppId();
 
         qywxMessage.setMpPicMediaId(mediaId);
         qywxMessage.setMpAppid(appId);

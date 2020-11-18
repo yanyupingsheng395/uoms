@@ -39,7 +39,6 @@ public class QywxMessageServiceImpl implements QywxMessageService {
      */
     @Override
     public String pushQywxMessage(QywxMessage message, String sender, List<String> externalUserList)throws Exception {
-        log.debug("添加消息任务队列收到事件{}", message,sender,externalUserList.toString());
         int retryTimes=0;
         do{
             try{
@@ -107,13 +106,16 @@ public class QywxMessageServiceImpl implements QywxMessageService {
                 }
                 String url=sysInfoBo.getSysDomain()+"/addMsgTemplate";
                 String result= OkHttpUtil.postRequest(url,addparam);
+                if(StringUtils.isEmpty(result))
+                {
+                    throw new LinkSteadyException("添加消息任务推送错误！");
+                }
                 return result;
             }catch (Exception e){
                 log.error("添加消息任务处理异常，异常原因为{}",e);
                 if(retryTimes+1>maxRetryTimes)
                 {
                     log.warn("推送消息重试达到最大次数，接收到的参数为{}",message,sender,externalUserList.toString());
-                    //todo 此处后续要增加监测机制
                 }else{
                     //线程休眠
                     long delayMins=1000* (1 << retryTimes);
@@ -126,6 +128,30 @@ public class QywxMessageServiceImpl implements QywxMessageService {
                 }
             }
         }while (retryTimes++<maxRetryTimes);
-        return null;
+        throw new LinkSteadyException("添加消息任务推送错误");
+    }
+
+    @Override
+    public String getCorpId() {
+        SysInfoBo sysInfoBo = commonFunService.getSysInfoByCode(CommonConstant.QYWX_CODE);
+        if(null==sysInfoBo||StringUtils.isEmpty(sysInfoBo.getSysDomain()))
+        {
+            return "";
+        }
+        String url=sysInfoBo.getSysDomain()+"/api/getCorpId";
+        String result= OkHttpUtil.getRequest(url);
+        return result;
+    }
+
+    @Override
+    public String getMpAppId() {
+        SysInfoBo sysInfoBo = commonFunService.getSysInfoByCode(CommonConstant.QYWX_CODE);
+        if(null==sysInfoBo||StringUtils.isEmpty(sysInfoBo.getSysDomain()))
+        {
+            return "";
+        }
+        String url=sysInfoBo.getSysDomain()+"/api/getMpAppId";
+        String result= OkHttpUtil.getRequest(url);
+        return result;
     }
 }

@@ -14,4 +14,14 @@ public interface QywxMessageService {
      */
     String pushQywxMessage(QywxMessage message, String sender, List<String> externalUserList)throws Exception;
 
+    /**
+     * 获取corpID
+     */
+    String getCorpId();
+
+    /**
+     * 获取mpAppid
+     */
+    String getMpAppId();
+
 }

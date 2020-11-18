@@ -332,7 +332,7 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
                 throw new LinkSteadyException(validCount+"条文案为空，请核对活动配置！");
             }
             Long headId = activityPlan.getHeadId();
-            String appId = configService.getValueByName(ConfigEnum.qywxMiniProgramAppId.getKeyCode());
+            String appId = qywxMessageService.getMpAppId();
             //按导购分组
             List<FollowUserVO> followUserIdList =qywxDailyDetailMapper.getFollowUserList(headId);
             followUserIdList.forEach(x -> {
