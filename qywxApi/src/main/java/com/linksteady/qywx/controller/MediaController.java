@@ -23,7 +23,6 @@ public class MediaController extends VerifyController{
                                    @RequestParam("identityType")String identityType,
                                    @RequestParam("identityId") Long identityId){
         try {
-            //备注 此接口不进行调用IP校验，因为本地应用也会调用
             return ResponseBo.okWithData(null,mediaService.getMpMediaId(identityType, identityId));
         } catch (Exception e) {
             return ResponseBo.error(e.getMessage());

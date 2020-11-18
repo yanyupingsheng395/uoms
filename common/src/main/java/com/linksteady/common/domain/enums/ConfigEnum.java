@@ -61,15 +61,7 @@ public enum  ConfigEnum {
     prodUrlEnabled("op.source.produrl_enabled"),
 
     pathActiveList("op.daily.pathactive.list"),
-
-    qywxCorpId("qywx.corpid"),
-    qywxDomainUrl("qywx.domainUrl"),
-    qywxDomainIpAddress("qywx.domainIpAddress"),
-    qywxMiniProgramAppId("qywx.miniProgramAppId"),
-    qywxApiUrl("qywx.qywxApiUrl"),
-
     sendCouponUrl("op.sendCouponUrl");
-
 
     private String keyCode;
 

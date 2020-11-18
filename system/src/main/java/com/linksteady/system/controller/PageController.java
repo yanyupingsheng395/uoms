@@ -2,6 +2,7 @@ package com.linksteady.system.controller;
 
 import com.linksteady.common.annotation.Log;
 import com.linksteady.common.bo.UserBo;
+import com.linksteady.common.constant.CommonConstant;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.*;
 import com.linksteady.common.service.CommonFunService;
@@ -93,7 +94,7 @@ public class PageController extends BaseController {
     @ResponseBody
     public ResponseBo getUserMenu() {
         UserBo userBo = super.getCurrentUser();
-        SysInfoBo sysInfoBo=commonFunService.getSysInfoByCode("system");
+        SysInfoBo sysInfoBo=commonFunService.getSysInfoByCode(CommonConstant.SYS_CODE);
         if(null==sysInfoBo)
         {
             return ResponseBo.error("");
