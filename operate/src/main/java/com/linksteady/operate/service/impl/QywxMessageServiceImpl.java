@@ -4,19 +4,16 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.linksteady.common.domain.QywxMessage;
+import com.linksteady.common.domain.SysInfoBo;
+import com.linksteady.common.service.CommonFunService;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.common.util.OkHttpUtil;
-import com.linksteady.common.util.crypto.SHA1;
-import com.linksteady.common.domain.enums.ConfigEnum;
 import com.linksteady.operate.service.QywxMessageService;
-import com.linksteady.qywx.service.QywxGropMsgService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 
 /**
@@ -28,9 +25,8 @@ public class QywxMessageServiceImpl implements QywxMessageService {
 
     @Autowired
     ConfigService configService;
-
     @Autowired
-    QywxGropMsgService qywxGropMsgService;
+    private CommonFunService commonFunService;
 
     /**
      * 给企业微信发送单人消息
@@ -110,8 +106,16 @@ public class QywxMessageServiceImpl implements QywxMessageService {
 
             param.put("miniprogram",tempContent);
         }
-
-        String result=qywxGropMsgService.addMsgTemplate(param);
+        String addparam = JSONObject.toJSONString(param);
+        SysInfoBo qywx = commonFunService.getSysInfoByCode("qywx");
+        String url="";
+        if(qywx!=null){
+            String domain = qywx.getSysDomain();
+            if(StringUtils.isNotEmpty(domain)){
+                url=domain+"/addMsgTemplate";
+            }
+        }
+        String result= OkHttpUtil.postRequest(url,addparam);
         return result;
     }
 }

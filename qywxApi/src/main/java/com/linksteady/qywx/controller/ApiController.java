@@ -1,9 +1,12 @@
 package com.linksteady.qywx.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.common.util.crypto.SHA1;
+import com.linksteady.qywx.service.QywxGropMsgService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,6 +23,8 @@ public class ApiController {
 
     private static final String CLOSE_WEICOME="/api/closeWelcome";
 
+    @Autowired
+    QywxGropMsgService qywxGropMsgService;
 
     /**
      * 打开欢迎语
@@ -61,6 +66,11 @@ public class ApiController {
     @RequestMapping("/status")
     public ResponseBo status() {
         return ResponseBo.ok("up");
+    }
+
+    @PostMapping("/addMsgTemplate")
+    public String addMsgTemplate(String addparam){
+       return qywxGropMsgService.addMsgTemplate( JSONObject.parseObject(addparam));
     }
 
 }
