@@ -1,6 +1,7 @@
 package com.linksteady.qywx.controller;
 
 import com.google.common.collect.Maps;
+import com.linksteady.common.constant.CommonConstant;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.SysInfoBo;
 import com.linksteady.common.service.CommonFunService;
@@ -69,7 +70,7 @@ public class QywxSettingController {
     public ResponseBo getContact(){
         String eventToken = qywxService.getEcEventToken();
         String eventAesKey = qywxService.getEcEventAesKey();
-        SysInfoBo qywx = commonFunService.getSysInfoByCode("qywx");
+        SysInfoBo qywx = commonFunService.getSysInfoByCode(CommonConstant.QYWX_CODE);
         String eventUrl="";
         if(qywx!=null){
             String domain = qywx.getSysDomain();

@@ -20,4 +20,9 @@ public class CommonConstant {
      */
     public static final String DIAG_CODE = "mdss";
 
+    /**
+     * 诊断系统编码
+     */
+    public static final String QYWX_CODE = "qywx";
+
 }

@@ -1,6 +1,7 @@
 package com.linksteady.qywx.controller;
 
 import com.linksteady.common.bo.UserBo;
+import com.linksteady.common.constant.CommonConstant;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.Menu;
 import com.linksteady.common.domain.ResponseBo;
@@ -55,8 +56,8 @@ public class RootPathController extends BaseController {
     @ResponseBody
     public ResponseBo getUserMenu() {
         UserBo userBo = super.getCurrentUser();
-        SysInfoBo operate=commonFunService.getSysInfoByCode("qywx");
-        SysInfoBo system=commonFunService.getSysInfoByCode("system");
+        SysInfoBo operate=commonFunService.getSysInfoByCode(CommonConstant.QYWX_CODE);
+        SysInfoBo system=commonFunService.getSysInfoByCode(CommonConstant.SYS_CODE);
 
         if(null==operate)
         {

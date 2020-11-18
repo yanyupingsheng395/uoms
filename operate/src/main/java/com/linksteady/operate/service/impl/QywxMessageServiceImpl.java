@@ -3,6 +3,7 @@ package com.linksteady.operate.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.linksteady.common.constant.CommonConstant;
 import com.linksteady.common.domain.QywxMessage;
 import com.linksteady.common.domain.SysInfoBo;
 import com.linksteady.common.service.CommonFunService;
@@ -36,11 +37,6 @@ public class QywxMessageServiceImpl implements QywxMessageService {
      */
     @Override
     public String pushQywxMessage(QywxMessage message, String sender, List<String> externalUserList) {
-//        String corpId=configService.getValueByName(ConfigEnum.qywxCorpId.getKeyCode());
-//        String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
-//        String signature= SHA1.gen(timestamp);
-//        String qywcDomainUrl=configService.getValueByName(ConfigEnum.qywxDomainUrl.getKeyCode());
-//        String url=qywcDomainUrl+"/push/addMsgTemplate?corpId="+corpId+"&timestamp="+timestamp+"&signature="+signature;
 
         //构造推送参数
         JSONObject param=new JSONObject();
@@ -107,14 +103,12 @@ public class QywxMessageServiceImpl implements QywxMessageService {
             param.put("miniprogram",tempContent);
         }
         String addparam = JSONObject.toJSONString(param);
-        SysInfoBo qywx = commonFunService.getSysInfoByCode("qywx");
-        String url="";
-        if(qywx!=null){
-            String domain = qywx.getSysDomain();
-            if(StringUtils.isNotEmpty(domain)){
-                url=domain+"/addMsgTemplate";
-            }
+        SysInfoBo sysInfoBo = commonFunService.getSysInfoByCode(CommonConstant.QYWX_CODE);
+        if(null==sysInfoBo||StringUtils.isEmpty(sysInfoBo.getSysDomain()))
+        {
+            //todo
         }
+        String url=sysInfoBo.getSysDomain()+"/addMsgTemplate";
         String result= OkHttpUtil.postRequest(url,addparam);
         return result;
     }

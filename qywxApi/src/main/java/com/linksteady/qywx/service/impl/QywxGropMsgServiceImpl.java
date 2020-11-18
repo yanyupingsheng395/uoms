@@ -58,8 +58,9 @@ public class QywxGropMsgServiceImpl implements QywxGropMsgService {
         String result="";
         try {
             String token=qywxService.getAccessToken();
-            String url=WxPathConsts.DEFAULT_CP_BASE_URL+WxPathConsts.ExternalContacts.ADD_MSG_TEMPLATE+token;
-            result=OkHttpUtil.postRequestByJson(url,param.toJSONString());
+            StringBuffer url=new StringBuffer(qywxService.getRedisConfigStorage().getApiUrl(WxPathConsts.ExternalContacts.ADD_MSG_TEMPLATE));
+            url.append(token);
+            result=OkHttpUtil.postRequestByJson(url.toString(),param.toJSONString());
         }catch (WxErrorException e){
             log.info("添加企业微信任务失败",e);
         }
