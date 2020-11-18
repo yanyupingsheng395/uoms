@@ -9,6 +9,7 @@ import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.common.util.crypto.SHA1;
 import com.linksteady.common.domain.enums.ConfigEnum;
 import com.linksteady.operate.service.QywxMessageService;
+import com.linksteady.qywx.service.QywxGropMsgService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public class QywxMessageServiceImpl implements QywxMessageService {
     @Autowired
     ConfigService configService;
 
+    @Autowired
+    QywxGropMsgService qywxGropMsgService;
+
     /**
      * 给企业微信发送单人消息
      * @param message
@@ -36,11 +40,11 @@ public class QywxMessageServiceImpl implements QywxMessageService {
      */
     @Override
     public String pushQywxMessage(QywxMessage message, String sender, List<String> externalUserList) {
-        String corpId=configService.getValueByName(ConfigEnum.qywxCorpId.getKeyCode());
-        String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
-        String signature= SHA1.gen(timestamp);
-        String qywcDomainUrl=configService.getValueByName(ConfigEnum.qywxDomainUrl.getKeyCode());
-        String url=qywcDomainUrl+"/push/addMsgTemplate?corpId="+corpId+"&timestamp="+timestamp+"&signature="+signature;
+//        String corpId=configService.getValueByName(ConfigEnum.qywxCorpId.getKeyCode());
+//        String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
+//        String signature= SHA1.gen(timestamp);
+//        String qywcDomainUrl=configService.getValueByName(ConfigEnum.qywxDomainUrl.getKeyCode());
+//        String url=qywcDomainUrl+"/push/addMsgTemplate?corpId="+corpId+"&timestamp="+timestamp+"&signature="+signature;
 
         //构造推送参数
         JSONObject param=new JSONObject();
@@ -107,7 +111,7 @@ public class QywxMessageServiceImpl implements QywxMessageService {
             param.put("miniprogram",tempContent);
         }
 
-        String result= OkHttpUtil.postRequestByJson(url,param.toJSONString());
+        String result=qywxGropMsgService.addMsgTemplate(param);
         return result;
     }
 }
