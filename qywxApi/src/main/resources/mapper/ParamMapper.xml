@@ -20,7 +20,6 @@
         <result column="ec_event_aeskey" jdbcType="VARCHAR" property="ecEventAesKey"/>
     </resultMap>
 
-
     <select id="getQywxParam" resultMap="paramMap">
         select * from uo_qywx_param
     </select>
