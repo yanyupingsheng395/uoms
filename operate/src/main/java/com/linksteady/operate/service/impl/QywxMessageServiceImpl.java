@@ -25,6 +25,7 @@ import java.util.List;
 @Service
 public class QywxMessageServiceImpl implements QywxMessageService {
     private static final int maxRetryTimes=3;
+    private static final String addMsg="/addMsgTemplate";
 
     @Autowired
     ConfigService configService;
@@ -104,8 +105,9 @@ public class QywxMessageServiceImpl implements QywxMessageService {
                 if(null==sysInfoBo||StringUtils.isEmpty(sysInfoBo.getSysDomain())){
                     throw new LinkSteadyException("企业微信应用未配置！");
                 }
-                String url=sysInfoBo.getSysDomain()+"/addMsgTemplate";
-                String result= OkHttpUtil.postRequest(url,addparam);
+                StringBuffer url=new StringBuffer(sysInfoBo.getSysDomain());
+                url.append(addMsg);
+                String result= OkHttpUtil.postRequest(url.toString(),addparam);
                 if(StringUtils.isEmpty(result))
                 {
                     throw new LinkSteadyException("添加消息任务推送错误！");
