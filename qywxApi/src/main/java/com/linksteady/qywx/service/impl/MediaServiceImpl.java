@@ -155,7 +155,7 @@ public class MediaServiceImpl implements MediaService {
 
             String tempMediaResult= OkHttpUtil.postUploadMedia(requestUrl.toString(),file);
             JSONObject resultObject = JSON.parseObject(tempMediaResult);
-            if (null==resultObject||resultObject.getIntValue("code")!= 200) {
+            if (null==resultObject||resultObject.getIntValue("errcode")!= 0) {
                 log.error("上传小程序卡片图片到临时素材失败");
                 return null;
             }
