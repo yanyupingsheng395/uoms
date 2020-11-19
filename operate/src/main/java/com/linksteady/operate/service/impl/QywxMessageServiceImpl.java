@@ -25,7 +25,7 @@ import java.util.List;
 @Service
 public class QywxMessageServiceImpl implements QywxMessageService {
     private static final int maxRetryTimes=3;
-    private static final String addMsg="/addMsgTemplate";
+    private static final String addMsg="/api/addMsgTemplate";
 
     @Autowired
     ConfigService configService;
