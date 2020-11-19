@@ -46,8 +46,7 @@ public class QywxBaseDataServiceImpl implements QywxBaseDataService {
     @Override
     public Tree<QywxDeptUser> getDeptAndUserTree() throws Exception {
       //  String corpId = configService.getValueByName(ConfigEnum.qywxCorpId.getKeyCode());
-        String corpId="";
-        List<QywxDeptUser> deptUserList = qywxBaseDataMapper.getDeptAndUserData(corpId);
+        List<QywxDeptUser> deptUserList = qywxBaseDataMapper.getDeptAndUserData();
         List<QywxDeptUser> tmpList = deptUserList.stream().filter(x -> StringUtils.isNotEmpty(x.getDeptId()) && StringUtils.isNotEmpty(x.getDeptName()) && StringUtils.isNotEmpty(x.getDeptParentId()))
                 .collect(Collectors.toList());
         if(deptUserList.size() == 0 || tmpList.size() == 0) {

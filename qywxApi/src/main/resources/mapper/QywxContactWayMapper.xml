@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.qywx.dao.QywxContactWayMapper">
+    <resultMap id="BaseResultMap" type="com.linksteady.qywx.domain.QywxContactWay">
+        <result property="contactWayId" jdbcType="DECIMAL" column="contactway_id"/>
+        <result property="qrCode" jdbcType="VARCHAR" column="qrcode"/>
+        <result property="contactType" jdbcType="VARCHAR" column="contact_type"/>
+        <result property="scene" jdbcType="VARCHAR" column="scene"/>
+        <result property="style" jdbcType="VARCHAR" column="style"/>
+        <result property="skipVerify" jdbcType="BOOLEAN" column="skip_verify"/>
+        <result property="state" jdbcType="VARCHAR" column="state"/>
+        <result property="usersList" jdbcType="VARCHAR" column="user_list"/>
+        <result property="deptList" jdbcType="VARCHAR" column="dept_list"/>
+        <result property="party" jdbcType="VARCHAR" column="party"/>
+        <result property="configId" jdbcType="VARCHAR" column="config_id"/>
+        <result property="createDt" jdbcType="TIMESTAMP" column="create_dt"/>
+        <result property="updateDt" jdbcType="TIMESTAMP" column="update_dt"/>
+        <result property="createBy" jdbcType="VARCHAR" column="create_by"/>
+        <result property="updateBy" jdbcType="VARCHAR" column="update_by"/>
+        <result property="externalUserNum" jdbcType="DECIMAL" column="externaluser_num"/>
+        <result property="shortUrl" jdbcType="VARCHAR" column="short_url"/>
+    </resultMap>
+
+    <delete id="deleteContactWay">
+        delete from uo_qywx_contact_way where config_id=#{configId}
+    </delete>
+
+    <update id="updateShortUrl">
+        update uo_qywx_contact_way set
+                short_url=#{shortUrl},
+                update_dt=now(),
+                update_by=#{updateBy} where contactway_id=#{contactWayId}
+    </update>
+
+    <select id="getContactWayById" resultMap="BaseResultMap">
+        select contactway_id,qrcode,contact_type,scene,style,skip_verify,state,user_list,party,dept_list,
+                config_id,create_dt,update_dt,create_by,update_by,externaluser_num,short_url
+        from uo_qywx_contact_way where  contactway_id=#{contactWayId}
+    </select>
+
+    <select id="getContactWayList" resultMap="BaseResultMap">
+       select contactway_id,qrcode,contact_type,scene,style,skip_verify,state,user_list,party,dept_list,
+                config_id,create_dt,update_dt,create_by,update_by,externaluser_num,short_url
+        from uo_qywx_contact_way
+        <where>
+            <if test="qstate != null and qstate != ''">
+                state like concat('%', #{qstate}, '%')
+            </if>
+        </where>
+        ORDER BY update_dt desc
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="getContactWayCount" resultType="int">
+        select count(*)
+        from uo_qywx_contact_way
+        <where>
+            <if test="qstate != null and qstate != ''">
+                state like concat('%', #{qstate}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="getContactWayValidUrlList" resultMap="BaseResultMap">
+        select contactway_id,qrcode,contact_type,scene,style,skip_verify,state,user_list,party,
+        config_id,create_dt,update_dt,create_by,update_by,externaluser_num,short_url
+        from uo_qywx_contact_way
+        where coalesce(short_url,'')!=''
+        ORDER BY update_dt desc
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="getContactWayValidUrlCount" resultType="int">
+        select count(*)
+        from uo_qywx_contact_way where coalesce(short_url,'')!=''
+    </select>
+
+    <update id="updateContactWayFullInfo">
+        update uo_qywx_contact_way set
+                short_url=#{shortUrl},
+                qrcode=#{qrCode},
+                config_id=#{configId},
+                update_dt=now(),
+                update_by=#{updateBy}
+         where contactway_id=#{contactWayId}
+    </update>
+
+    <update id="updateContactWayQrCode">
+        update uo_qywx_contact_way set
+                qrcode=#{qrCode},
+                update_dt=now(),
+                update_by=#{updateBy}
+         where contactway_id=#{contactWayId}
+    </update>
+
+    <update id="updateContractWay">
+        update uo_qywx_contact_way set
+                contact_type=#{contactType},
+                scene=#{scene},
+                style=#{style},
+                skip_verify=#{skipVerify},
+                state=#{state},
+                user_list=#{usersList},
+                party=#{party},
+                update_dt=#{updateDt},
+                update_by=#{updateBy},
+                qrcode = #{qrCode},
+                short_url = #{shortUrl}
+         where contactway_id=#{contactWayId}
+    </update>
+
+    <insert id="saveContactWay"  useGeneratedKeys="true" keyProperty="contactWayId" keyColumn="contactway_id">
+         insert into uo_qywx_contact_way(
+             contact_type,
+             scene,
+             style,
+             skip_verify,
+             state,
+             user_list,
+             dept_list,
+             party,
+             config_id,
+             create_dt,
+             update_dt,
+             create_by,
+             update_by
+         ) values(
+            #{contactType},
+            #{scene},
+            #{style},
+            #{skipVerify},
+            #{state},
+            #{usersList},
+            #{deptList},
+            #{party},
+            #{configId},
+            #{createDt},
+            #{updateDt},
+            #{createBy},
+            #{updateBy}
+         );
+    </insert>
+
+    <select id="getCurrentDomain" resultType="string">
+            select domain from t_system where code='operate'
+    </select>
+
+    <select id="getQrcodeByConfigId" resultMap="BaseResultMap">
+        select qrcode,state from uo_qywx_contact_way where config_id=#{configId}
+    </select>
+
+    <select id="getRefrenceCount" resultType="int">
+        select count(*) from uo_qywx_contact_way where config_id=#{configId}
+        and contactway_id in (
+            select distinct uo_qywx_add_user_header.contactway_id from uo_qywx_add_user_header
+            union
+            select distinct uo_qywx_trigger_header.contactway_id from uo_qywx_trigger_header
+                )
+    </select>
+</mapper>

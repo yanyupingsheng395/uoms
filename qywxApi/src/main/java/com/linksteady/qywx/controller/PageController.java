@@ -44,4 +44,13 @@ public class PageController  extends BaseController {
     public String qywxBaseDataList() {
         return "qywx/baseData/deptUser";
     }
+
+    /**
+     * 渠道活码
+     */
+    @Log(value = "渠道活码", location = "用户成长系统")
+    @RequestMapping("/contactWay/list")
+    public String contactWayList() {
+        return "qywx/contactWay/list";
+    }
 }
