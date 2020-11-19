@@ -19,7 +19,7 @@ public interface QywxBaseDataMapper {
 
     int getDeptTableCount();
 
-    List<QywxDeptUser> getDeptAndUserData(String corpId);
+    List<QywxDeptUser> getDeptAndUserData();
 
     List<String> getUserIdsByDeptId(List<String> deptIds);
 }

@@ -23,8 +23,7 @@
     <select id="getDeptAndUserData" resultType="com.linksteady.qywx.domain.QywxDeptUser">
         select uqd.id dept_id, uqd.name dept_name, uqd.parent_id dept_parent_id, user_id, user_name
         from uo_qywx_followuser_list uqfl
-                 left join (select * from uo_qywx_dept where corp_id = #{corpId}) uqd on uqfl.dept_id = uqd.id
-        where uqfl.corp_id = #{corpId}
+                 left join (select * from uo_qywx_dept) uqd on uqfl.dept_id = uqd.id
     </select>
 
     <select id="getUserIdsByDeptId" resultType="string">
