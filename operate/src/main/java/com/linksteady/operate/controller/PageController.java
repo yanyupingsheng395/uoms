@@ -569,15 +569,6 @@ public class PageController extends BaseController {
         }
     }
 
-    /**
-     * 渠道活码
-     */
-    @Log(value = "渠道活码", location = "用户成长系统")
-    @RequestMapping("/contactWay/list")
-    public String contactWayList() {
-        return "operate/contactWay/list";
-    }
-
     @RequestMapping("/qywxAddUserMonitor")
     public String addUserMonitor() {
         return "operate/addUserMonitor/monitor";
