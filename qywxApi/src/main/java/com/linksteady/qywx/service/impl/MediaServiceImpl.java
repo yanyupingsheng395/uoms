@@ -5,10 +5,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Maps;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.common.util.crypto.SHA1;
+import com.linksteady.qywx.constant.WxPathConsts;
 import com.linksteady.qywx.dao.MediaMapper;
 import com.linksteady.qywx.domain.QywxMediaImg;
 import com.linksteady.qywx.domain.QywxParam;
+import com.linksteady.qywx.exception.WxErrorException;
 import com.linksteady.qywx.service.MediaService;
+import com.linksteady.qywx.service.QywxService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +32,8 @@ public class MediaServiceImpl implements MediaService {
 
     @Autowired
     MediaMapper mediaMapper;
+    @Autowired
+    private QywxService qywxService;
 
     /**
      * identityType 可选的值有 PRODUCT表示商品 COUPON表示优惠券
@@ -65,6 +70,7 @@ public class MediaServiceImpl implements MediaService {
         {
            //找不到，调用生成逻辑
             byte[] mediaContent = getMediaContent(identityType, identityId);
+            log.info("");
             JSONObject object = getMediaId(mediaContent);
             mediaId=(String)object.get("mediaId");
             LocalDateTime expreDt= (LocalDateTime) object.get("expreDt");
@@ -115,18 +121,28 @@ public class MediaServiceImpl implements MediaService {
     private  JSONObject  getMediaId(byte[] mediaContent){
             //调用企业微信接口，完成临时素材的上传
             //todo
-            String corpId= "";
-            String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
-            String signature= SHA1.gen(timestamp);
-            //todo
-            String qywxDomainUrl= "";
+//            String corpId= "";
+//            String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
+//            String signature= SHA1.gen(timestamp);
+//            String qywxDomainUrl= "";
+//            String url=qywxDomainUrl+"/api/uploadTempMedia";
+//            Map<String,String> param= Maps.newHashMap();
+//            param.put("corpId",corpId);
+//            param.put("timestamp",timestamp);
+//            param.put("signature",signature);
+//            param.put("fileType","image");
+            String token="";
+            try {
+                token=qywxService.getAccessToken();
+            }catch ( WxErrorException e){
+                log.error("企业token未获取到！");
+            }
+            String type="image";
+            StringBuffer requestUrl = new StringBuffer(qywxService.getRedisConfigStorage().getApiUrl(WxPathConsts.Media.MEDIA_UPLOAD));
+            requestUrl.append(type);
+            requestUrl.append("&access_token=" + token);
+            log.info("上传临时素材的请求url:{}", requestUrl.toString());
 
-            String url=qywxDomainUrl+"/api/uploadTempMedia";
-            Map<String,String> param= Maps.newHashMap();
-            param.put("corpId",corpId);
-            param.put("timestamp",timestamp);
-            param.put("signature",signature);
-            param.put("fileType","image");
             File file= null;
             try {
                 file = byteArrayToFile(mediaContent,"miniprogram_media_temp.png");
@@ -137,14 +153,14 @@ public class MediaServiceImpl implements MediaService {
                 return null;
             }
 
-            String tempMediaResult= OkHttpUtil.postFileAndData(url,param,file);
+            String tempMediaResult= OkHttpUtil.postUploadMedia(requestUrl.toString(),file);
             JSONObject resultObject = JSON.parseObject(tempMediaResult);
             if (null==resultObject||resultObject.getIntValue("code")!= 200) {
                 log.error("上传小程序卡片图片到临时素材失败");
                 return null;
             }
             //获取微信传过来的mediaId;
-            String mediaId=resultObject.getString("data");
+            String mediaId=resultObject.getString("media_id");
             JSONObject js=new JSONObject();
             LocalDateTime expreDt=LocalDateTime.now().plusDays(3);
             js.put("mediaId",mediaId);

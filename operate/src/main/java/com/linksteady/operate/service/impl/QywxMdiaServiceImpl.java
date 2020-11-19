@@ -90,7 +90,6 @@ public class QywxMdiaServiceImpl implements QywxMdiaService {
             throw new Exception("企业微信模块尚未配置");
         }
         String qywxUrl=sysInfoBo.getSysDomain();
-
         String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
         String identityType="PRODUCT";
         String signature= SHA1.gen(timestamp,identityType,productId);
@@ -103,10 +102,9 @@ public class QywxMdiaServiceImpl implements QywxMdiaService {
         param.put("identityType",identityType);
         param.put("identityId",productId);
         String result=OkHttpUtil.postRequestByFormBody(url,param);
-
         JSONObject resultObject = JSON.parseObject(result);
         if (null==resultObject||resultObject.getIntValue("code")!= 200) {
-            throw  new LinkSteadyException("获取素材失败");
+            throw  new LinkSteadyException("获取素材失败"+result);
         }else
         {
             String mediaId=resultObject.getString("data");
