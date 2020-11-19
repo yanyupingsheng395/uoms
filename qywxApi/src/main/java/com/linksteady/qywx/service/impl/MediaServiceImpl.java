@@ -7,6 +7,7 @@ import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.common.util.crypto.SHA1;
 import com.linksteady.qywx.constant.WxPathConsts;
 import com.linksteady.qywx.dao.MediaMapper;
+import com.linksteady.qywx.domain.QywxImage;
 import com.linksteady.qywx.domain.QywxMediaImg;
 import com.linksteady.qywx.domain.QywxParam;
 import com.linksteady.qywx.exception.WxErrorException;
@@ -24,6 +25,7 @@ import java.net.URL;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -34,6 +36,43 @@ public class MediaServiceImpl implements MediaService {
     MediaMapper mediaMapper;
     @Autowired
     private QywxService qywxService;
+
+    @Override
+    public int getImageCount() {
+        return mediaMapper.getImageCount();
+    }
+
+    @Override
+    public List<QywxImage> getImageList(int limit, int offset) {
+        return mediaMapper.getImageList(limit,offset);
+    }
+
+    @Override
+    public void uploadImage(String title, File file,String opUserName) throws Exception {
+        //todo 此处代码要进行迁移
+//        //上传到企业微信
+//        String corpId=configService.getValueByName(ConfigEnum.qywxCorpId.getKeyCode());
+//        String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
+//        String signature= SHA1.gen(timestamp);
+//        String qywxDomainUrl=configService.getValueByName(ConfigEnum.qywxDomainUrl.getKeyCode());
+//        //2.提交到企业微信端
+//        String url=qywxDomainUrl+"/api/uploadImg";
+//
+//        Map<String,String> param= Maps.newHashMap();
+//        param.put("corpId",corpId);
+//        param.put("timestamp",timestamp);
+//        param.put("signature",signature);
+//        String result=OkHttpUtil.postFileAndData(url,param,file);
+//
+//        JSONObject resultObject = JSON.parseObject(result);
+//        if (null==resultObject||resultObject.getIntValue("code")!= 200) {
+//            throw  new LinkSteadyException("上传素材(图片)到企业微信失败");
+//        }else
+//        {
+//            String imgUrl=resultObject.getString("data");
+//            qywxMdiaMapper.saveMediaImg(title,imgUrl,opUserName);
+//        }
+    }
 
     /**
      * identityType 可选的值有 PRODUCT表示商品 COUPON表示优惠券
@@ -120,17 +159,6 @@ public class MediaServiceImpl implements MediaService {
      */
     private  JSONObject  getMediaId(byte[] mediaContent){
             //调用企业微信接口，完成临时素材的上传
-            //todo
-//            String corpId= "";
-//            String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
-//            String signature= SHA1.gen(timestamp);
-//            String qywxDomainUrl= "";
-//            String url=qywxDomainUrl+"/api/uploadTempMedia";
-//            Map<String,String> param= Maps.newHashMap();
-//            param.put("corpId",corpId);
-//            param.put("timestamp",timestamp);
-//            param.put("signature",signature);
-//            param.put("fileType","image");
             String token="";
             try {
                 token=qywxService.getAccessToken();

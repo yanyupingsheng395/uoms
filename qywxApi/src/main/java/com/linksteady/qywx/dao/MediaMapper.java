@@ -1,10 +1,12 @@
 package com.linksteady.qywx.dao;
 
+import com.linksteady.qywx.domain.QywxImage;
 import com.linksteady.qywx.domain.QywxMediaImg;
 import com.linksteady.qywx.domain.QywxParam;
 import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface MediaMapper {
     /**
@@ -42,4 +44,11 @@ public interface MediaMapper {
      * @param identityType
      */
     void saveQywxMediaImg(byte[] mediaContent, LocalDateTime nowtime, String mediaId, LocalDateTime expreDt, Long identityId, String identityType);
+
+    int getImageCount();
+
+    List<QywxImage> getImageList(int limit, int offset);
+
+    void saveMediaImg(String title,String url,String insertBy);
+
 }

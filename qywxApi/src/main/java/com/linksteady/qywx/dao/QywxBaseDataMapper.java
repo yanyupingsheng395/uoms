@@ -1,7 +1,6 @@
-package com.linksteady.operate.dao;
+package com.linksteady.qywx.dao;
 
-import com.linksteady.operate.domain.QywxDeptAndUser;
-import org.apache.ibatis.annotations.Param;
+import com.linksteady.qywx.domain.QywxDeptUser;
 
 import java.util.List;
 import java.util.Map;
@@ -10,11 +9,7 @@ import java.util.Map;
  * @author hxcao
  * @date 2020/8/27
  */
-public interface QywxDeptAndUserMapper {
-
-    void saveUserList(@Param("userList") List<Map> userList);
-
-    void saveDeptList(@Param("deptList") List<Map> deptList);
+public interface QywxBaseDataMapper {
 
     List<Map<String, Object>> getUserTableData(Integer limit, Integer offset);
 
@@ -24,7 +19,7 @@ public interface QywxDeptAndUserMapper {
 
     int getDeptTableCount();
 
-    List<QywxDeptAndUser> getDeptAndUserData(String corpId);
+    List<QywxDeptUser> getDeptAndUserData(String corpId);
 
     List<String> getUserIdsByDeptId(List<String> deptIds);
 }

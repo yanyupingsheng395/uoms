@@ -1,31 +1,17 @@
 package com.linksteady.operate.service.impl;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
-import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.dao.QywxContactWayMapper;
-import com.linksteady.operate.dao.QywxDeptAndUserMapper;
 import com.linksteady.operate.domain.QywxContactWay;
-import com.linksteady.common.domain.enums.ConfigEnum;
-import com.linksteady.operate.domain.QywxDeptAndUser;
-import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.QywxContactWayService;
 import com.linksteady.operate.service.ShortUrlService;
-import com.linksteady.common.util.OkHttpUtil;
-import com.linksteady.operate.util.SHA1;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.util.*;
-import java.util.function.BinaryOperator;
-import java.util.stream.Collectors;
+import java.util.List;
 
 /**
  * @author huang
@@ -69,7 +55,7 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
     ShortUrlService shortUrlService;
 
     @Autowired
-    private QywxDeptAndUserMapper qywxDeptAndUserMapper;
+  //  private QywxDeptAndUserMapper qywxDeptAndUserMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)

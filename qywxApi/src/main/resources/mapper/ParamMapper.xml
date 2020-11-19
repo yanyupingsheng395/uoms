@@ -12,7 +12,6 @@
         <result column="last_update_dt" jdbcType="TIMESTAMP" property="lastUpdateDt"/>
         <result column="version" jdbcType="DECIMAL" property="version"/>
         <result column="last_sync_order_dt" jdbcType="TIMESTAMP" property="lastSyncOrderDt"/>
-
         <result column="corp_id" jdbcType="VARCHAR" property="corpId"/>
         <result column="application_secret" jdbcType="VARCHAR" property="secret"/>
         <result column="mp_appid" jdbcType="VARCHAR" property="mpAppId"/>

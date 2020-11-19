@@ -49,9 +49,6 @@ public class ShiroConfig {
     @Autowired
     JedisPool jedisPool;
 
-    @Autowired
-    private RedisTemplate redisTemplate;
-
     private String cipherKey="Vfixl8Hi8tXf/hS8jt2AHw==";
 
     /**

@@ -605,25 +605,6 @@ public class PageController extends BaseController {
         return "operate/welcome/effect";
     }
 
-    /**
-     * 企业微信素材(图片)上传
-     *
-     * @return
-     */
-    @RequestMapping("/qywxMediaImage")
-    public String qywxMediaImage() {
-        return "operate/media/imgList";
-    }
-
-    /**
-     * 企业微信部门和导购列表
-     *
-     * @return
-     */
-    @RequestMapping("/qywxDeptAndUser/list")
-    public String qywxDeptAndUserList() {
-        return "operate/qywxConfig/deptAndUser";
-    }
 
     @Log(value = "企业微信-每日运营配置", location = "用户成长系统")
     @RequestMapping("/qywxDailyConfig")

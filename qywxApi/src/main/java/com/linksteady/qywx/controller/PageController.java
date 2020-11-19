@@ -22,4 +22,26 @@ public class PageController  extends BaseController {
     public String application(){
         return "qywx/qywxsettings/applicationSetting";
     }
+
+
+    /**
+     * 企业微信素材(图片)上传
+     *
+     * @return
+     */
+    @RequestMapping("/qywxMediaImage")
+    public String qywxMediaImage() {
+        return "qywx/media/imgList";
+    }
+
+
+    /**
+     * 企业微信部门和导购列表
+     *
+     * @return
+     */
+    @RequestMapping("/qywxBaseData/list")
+    public String qywxBaseDataList() {
+        return "qywx/baseData/deptUser";
+    }
 }

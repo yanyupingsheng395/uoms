@@ -18,19 +18,17 @@
         <result column="url_type" jdbcType="VARCHAR" property="urlType"/>
     </resultMap>
 
+    <resultMap id="BaseResultMap" type="com.linksteady.qywx.domain.QywxImage">
+        <result property="imgId" jdbcType="DECIMAL" column="img_id"/>
+        <result property="imgUrl" jdbcType="VARCHAR" column="img_url"/>
+        <result property="insertDt" jdbcType="TIMESTAMP" column="insert_dt"/>
+        <result property="insertBy" jdbcType="VARCHAR" column="insert_by"/>
+        <result property="imgTitle" jdbcType="VARCHAR" column="img_title"/>
+    </resultMap>
+
     <resultMap id="paramMap" type="com.linksteady.qywx.domain.QywxParam">
-        <result column="daily_add_num" jdbcType="DECIMAL" property="dailyAddNum"/>
-        <result column="daily_add_rate" jdbcType="DOUBLE" property="dailyAddRate"/>
-        <result column="daily_add_rate" jdbcType="VARCHAR" property="dailyAddRateStr"/>
         <result column="last_update_by" jdbcType="VARCHAR" property="lastUpdateBy"/>
         <result column="last_update_dt" jdbcType="TIMESTAMP" property="lastUpdateDt"/>
-        <result column="daily_apply_num" jdbcType="DECIMAL" property="dailyApplyNum"/>
-        <result column="trigger_num" jdbcType="DECIMAL" property="triggerNum"/>
-        <result column="version" jdbcType="DECIMAL" property="version"/>
-        <result column="last_sync_order_dt" jdbcType="TIMESTAMP" property="lastSyncOrderDt"/>
-        <result column="party_change_flag" jdbcType="VARCHAR" property="partyChangeFlag"/>
-        <result column="auth_scope_change_flag" jdbcType="VARCHAR" property="authScopeChangeFlag"/>
-        <result column="follow_user_change_flag" jdbcType="VARCHAR" property="followUserChangeFlag"/>
         <result column="media_content" property="mediaContent" typeHandler="org.apache.ibatis.type.ByteArrayTypeHandler"/>
         <result column="coupon_media_content" property="couponMediaContent" typeHandler="org.apache.ibatis.type.ByteArrayTypeHandler"/>
     </resultMap>
@@ -53,7 +51,7 @@
     </select>
 
     <select id="getMediaContent" resultMap="paramMap">
-        select daily_add_num,daily_add_rate,last_update_dt,
+        select last_update_dt,
         <if test="type!=null and type=='COUPON'">
             coupon_media_content
         </if>
@@ -68,5 +66,19 @@
     <insert id="saveQywxMediaImg">
         insert  into uo_qywx_media_img(img_content, insert_dt,media_id, media_expire_date, identity_id, identity_type)
         values (#{mediaContent},#{nowtime},#{mediaId},#{expreDt},#{identityId},#{identityType})
+    </insert>
+
+    <select id="getImageCount" resultType="int">
+        select count(*) from uo_qywx_images
+    </select>
+
+    <select id="getImageList" resultMap="BaseResultMap">
+        select * from uo_qywx_images order by insert_dt desc limit #{limit} offset #{offset}
+    </select>
+
+    <insert id="saveMediaImg">
+        insert into uo_qywx_images(img_title,img_url,insert_dt,insert_by) values(
+           #{title},#{url},now(),#{insertBy}
+        )
     </insert>
 </mapper>

@@ -15,9 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import redis.clients.jedis.JedisPool;
-
 import javax.annotation.PostConstruct;
-
 
 @Service
 @Slf4j
@@ -37,6 +35,7 @@ public class QywxServiceImpl implements QywxService {
         RedisConfigStorageImpl redisConfigStorage=new RedisConfigStorageImpl(jedisPool);
         QywxParam qywxParam=paramMapper.getQywxParam();
 
+        //将数据库中的代码同步到redis中
         if(null==qywxParam)
         {
             throw new Exception("参数表配置错误");
