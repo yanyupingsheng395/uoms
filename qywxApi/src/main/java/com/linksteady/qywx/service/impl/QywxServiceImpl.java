@@ -49,6 +49,23 @@ public class QywxServiceImpl implements QywxService {
         {
             redisConfigStorage.setSecret(qywxParam.getSecret());
         }
+
+        if(null!=qywxParam&&!StringUtils.isEmpty(qywxParam.getEcEventToken()))
+        {
+            redisConfigStorage.setEcEventToken(qywxParam.getEcEventToken());
+        }
+        if(null!=qywxParam&&!StringUtils.isEmpty(qywxParam.getEcEventAesKey()))
+        {
+            redisConfigStorage.setEcEventAesKey(qywxParam.getEcEventAesKey());
+        }
+        if(null!=qywxParam&&!StringUtils.isEmpty(qywxParam.getMpAppId()))
+        {
+            redisConfigStorage.setMpAppId(qywxParam.getMpAppId());
+        }
+        if(null!=qywxParam&&!StringUtils.isEmpty(qywxParam.getEnableWelcome()))
+        {
+            redisConfigStorage.setEnableWelcome(qywxParam.getEnableWelcome());
+        }
         this.redisConfigStorage=redisConfigStorage;
     }
 
