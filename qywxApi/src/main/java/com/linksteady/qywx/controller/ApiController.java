@@ -7,9 +7,7 @@ import com.linksteady.qywx.service.QywxGropMsgService;
 import com.linksteady.qywx.service.QywxService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -30,10 +28,11 @@ public class ApiController {
         return ResponseBo.ok("up");
     }
 
-    @PostMapping("/addMsgTemplate")
-    public String addMsgTemplate(String addparam) {
+    @RequestMapping("/addMsgTemplate")
+    public String addMsgTemplate(@RequestBody String data) {
         try {
-            return qywxGropMsgService.addMsgTemplate( JSONObject.parseObject(addparam));
+            log.info("addMsgTemplate--->"+data);
+            return qywxGropMsgService.addMsgTemplate( JSONObject.parseObject(data));
         } catch (WxErrorException e) {
             return "";
         }

@@ -59,6 +59,7 @@ public class QywxGropMsgServiceImpl implements QywxGropMsgService {
         String token=qywxService.getAccessToken();
         StringBuffer url=new StringBuffer(qywxService.getRedisConfigStorage().getApiUrl(WxPathConsts.ExternalContacts.ADD_MSG_TEMPLATE));
         url.append(token);
+        log.info("addMsgTemplate--->"+url+"-->"+param);
         result=OkHttpUtil.postRequestByJson(url.toString(),param.toJSONString());
         JSONObject object = JSONObject.parseObject(result);
         if(null==object||!"0".equals(object.getString("errcode"))){

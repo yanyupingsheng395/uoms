@@ -100,14 +100,14 @@ public class QywxMessageServiceImpl implements QywxMessageService {
 
                     param.put("miniprogram",tempContent);
                 }
-                String addparam = JSONObject.toJSONString(param);
                 SysInfoBo sysInfoBo = commonFunService.getSysInfoByCode(CommonConstant.QYWX_CODE);
                 if(null==sysInfoBo||StringUtils.isEmpty(sysInfoBo.getSysDomain())){
                     throw new LinkSteadyException("企业微信应用未配置！");
                 }
                 StringBuffer url=new StringBuffer(sysInfoBo.getSysDomain());
                 url.append(addMsg);
-                String result= OkHttpUtil.postRequest(url.toString(),addparam);
+                log.info("pushQywxMessage--->"+url.toString()+"---》"+param.toJSONString());
+                String result= OkHttpUtil.postRequestByJson(url.toString(),param.toJSONString());
                 if(StringUtils.isEmpty(result))
                 {
                     throw new LinkSteadyException("添加消息任务推送错误！");
