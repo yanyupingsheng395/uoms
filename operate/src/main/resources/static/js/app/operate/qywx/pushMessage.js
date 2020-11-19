@@ -51,12 +51,10 @@ function pushMessage(){
     var externalContact=$("#externalContact").val();
     var messageTest=$("#messageTest").val();
     $.get("/qywxDaily/testQywxPush", {title: title, pathAddress:pathAddress,senderId:senderId,externalContact:externalContact,messageTest:messageTest}, function (r) {
-        var data=r.msg;
-        var resultmsg=JSON.parse(data);
-        if(resultmsg.code==200){
+        if(r.code==200){
             $MB.n_success("发送成功，请前往企业微信端查看！");
-        }else if (resultmsg.code==500){
-            $MB.n_danger(resultmsg.msg);
+        }else if (r.code==500){
+            $MB.n_danger(r.msg);
         }
     });
 }
