@@ -250,7 +250,7 @@
         insert_dt,
         update_dt
         ) values
-        (#{followerUserId},#{external_userid},0,now(),now())
+        (#{followerUserId},#{externalUserId},0,now(),now())
         ON CONFLICT(external_userid,follow_user_id) DO UPDATE SET delete_flag=0
     </insert>
 

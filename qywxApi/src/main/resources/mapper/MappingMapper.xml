@@ -13,7 +13,7 @@
    </update>
 
     <select id="getUserIdByUnionId" resultType="long">
-        select id from w_users where union_id=#{unionId}
+        select id from w_users where unionid=#{unionId}
     </select>
 
     <update id="updateMappingInfo">

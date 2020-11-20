@@ -256,4 +256,39 @@ public class OkHttpUtil {
         return null;
     }
 
+
+    /**
+     * 上传图片到企业微信
+     * @param url
+     * @param file
+     * @return
+     */
+    public static String postUploadImg(String url,File file){
+        // form 表单形式上传
+        MultipartBody.Builder requestBody = new MultipartBody.Builder().setType(MultipartBody.FORM);
+        if(file != null){
+            // MediaType.parse() 里面是上传的文件类型。
+            RequestBody fileBody = RequestBody.create(MediaType.parse("image/png"), file);
+
+            // 参数分别为， 请求key ，文件名称 ， RequestBody
+            requestBody.addPart(Headers.of("Content-Disposition","form-data;name=\"fieldNameHere\";filename=\""+file.getName()+"\";filelength="+file.length()),fileBody);
+
+        }
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("Content-Type", "image/png")
+                .post(requestBody.build())
+                .build();
+
+        Call call = okHttpClient.newCall(request);
+        try {
+            Response response = call.execute();
+            ResponseBody responseBody = response.body();
+            return responseBody.string();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.linksteady.qywx.controller;
 
 import com.linksteady.common.util.crypto.SHA1;
+import com.linksteady.qywx.exception.WxErrorException;
 import com.linksteady.qywx.service.EventService;
 import com.linksteady.qywx.service.QywxService;
 import com.linksteady.qywx.utils.EventCryptUtils;
@@ -24,6 +25,7 @@ public class ExternalContactEventController {
 
     @Autowired
     EventService eventService;
+
     /**
      * 接收事件 (验证)
      * @return
@@ -72,9 +74,12 @@ public class ExternalContactEventController {
                 nonce,
                 requestBody
         );
-
         log.info("\n消息解密后内容为：\n{} ", inMessage.toString());
-
+        try {
+            eventService.handlerEvent(inMessage);
+        }catch (Exception e){
+            log.info("\n处理web联系人事件失败：\n{} ", e);
+        }
 
         return null;
     }
