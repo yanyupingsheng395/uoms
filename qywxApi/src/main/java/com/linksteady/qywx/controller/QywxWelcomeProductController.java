@@ -1,8 +1,8 @@
-package com.linksteady.operate.controller;
+package com.linksteady.qywx.controller;
 
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.operate.domain.QywxWelcomeProduct;
-import com.linksteady.operate.service.QywxWelcomeProductService;
+import com.linksteady.qywx.domain.QywxWelcomeProduct;
+import com.linksteady.qywx.service.WelcomeProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,35 +20,35 @@ import java.util.List;
 public class QywxWelcomeProductController {
 
     @Autowired
-    private QywxWelcomeProductService qywxWelcomeProductService;
+    private WelcomeProductService welcomeProductService;
 
     @GetMapping("/getTableDataList")
     public ResponseBo getTableDataList(Integer limit, Integer offset) {
-        int count = qywxWelcomeProductService.getTableDataCount();
-        List<QywxWelcomeProduct> dataList = qywxWelcomeProductService.getTableDataList(limit, offset);
+        int count = welcomeProductService.getTableDataCount();
+        List<QywxWelcomeProduct> dataList = welcomeProductService.getTableDataList(limit, offset);
         return ResponseBo.okOverPaging(null, count, dataList);
     }
 
     @PostMapping("/saveData")
     public ResponseBo saveData(QywxWelcomeProduct qywxWelcomeProduct) {
-        qywxWelcomeProductService.saveData(qywxWelcomeProduct);
+        welcomeProductService.saveData(qywxWelcomeProduct);
         return ResponseBo.ok();
     }
 
     @GetMapping("/getDataById")
     public ResponseBo getDataById(String productId) {
-        return ResponseBo.okWithData(null, qywxWelcomeProductService.getDataById(productId));
+        return ResponseBo.okWithData(null, welcomeProductService.getDataById(productId));
     }
 
     @PostMapping("/updateData")
     public ResponseBo updateData(QywxWelcomeProduct qywxWelcomeProduct) {
-        qywxWelcomeProductService.updateData(qywxWelcomeProduct);
+        welcomeProductService.updateData(qywxWelcomeProduct);
         return ResponseBo.ok();
     }
 
     @PostMapping("/deleteProductById")
     public ResponseBo deleteProductById(String productId) {
-        qywxWelcomeProductService.deleteProductById(productId);
+        welcomeProductService.deleteProductById(productId);
         return ResponseBo.ok();
     }
 }

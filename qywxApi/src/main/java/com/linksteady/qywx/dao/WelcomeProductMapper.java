@@ -1,6 +1,6 @@
-package com.linksteady.operate.dao;
+package com.linksteady.qywx.dao;
 
-import com.linksteady.operate.domain.QywxWelcomeProduct;
+import com.linksteady.qywx.domain.QywxWelcomeProduct;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import java.util.List;
  * @author hxcao
  * @date 2020/9/8
  */
-public interface QywxWelcomeProductMapper {
+public interface WelcomeProductMapper {
     int getTableDataCount();
 
     List<QywxWelcomeProduct> getTableDataList(Integer limit, Integer offset);

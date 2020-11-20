@@ -2,10 +2,10 @@ package com.linksteady.operate.controller;
 
 import com.linksteady.common.annotation.Log;
 import com.linksteady.common.controller.BaseController;
+import com.linksteady.common.domain.enums.ConfigEnum;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.domain.*;
-import com.linksteady.common.domain.enums.ConfigEnum;
 import com.linksteady.operate.service.*;
 import com.linksteady.operate.vo.SourceConfigVO;
 import org.apache.commons.lang3.StringUtils;
@@ -57,8 +57,6 @@ public class PageController extends BaseController {
     @Autowired
     private QywxParamService qywxParamService;
 
-    @Autowired
-    private QywxWelcomeService qywxWelcomeService;
 
     @Log(value = "用户成长监控", location = "用户成长系统")
     @RequestMapping("/operator/user")
@@ -568,34 +566,6 @@ public class PageController extends BaseController {
             return "operate/addUserTrigger/add";
         }
     }
-
-    @RequestMapping("/qywxAddUserMonitor")
-    public String addUserMonitor() {
-        return "operate/addUserMonitor/monitor";
-    }
-
-    @RequestMapping("/qywxWelcome")
-    public String welcome() {
-        return "operate/welcome/list";
-    }
-
-    @RequestMapping("/qywxWelcome/add")
-    public String addWelcome() {
-        return "operate/welcome/add";
-    }
-
-    @RequestMapping("/qywxWelcome/edit")
-    public String editWelcome(Model model, String id) {
-        QywxWelcome qywxWelcome = qywxWelcomeService.getDataById(id);
-        model.addAttribute("welcome", qywxWelcome);
-        return "operate/welcome/edit";
-    }
-
-    @RequestMapping("/qywxWelcome/effect")
-    public String effectWelcome() {
-        return "operate/welcome/effect";
-    }
-
 
     @Log(value = "企业微信-每日运营配置", location = "用户成长系统")
     @RequestMapping("/qywxDailyConfig")

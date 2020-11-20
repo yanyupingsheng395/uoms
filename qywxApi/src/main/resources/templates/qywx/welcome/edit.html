@@ -55,42 +55,59 @@
                 <div class="row">
                     <div class="col-sm-12 search-collapse">
                         <div class="row">
-                            <h5 class="navbar-page-title">新建欢迎语</h5>
+                            <h5 class="navbar-page-title">编辑欢迎语</h5>
                         </div>
                     </div>
                     <div class="col-md-12 select-table table-striped">
                         <div class="row m-t-10">
                             <div class="col-md-6">
                                 <form class="form-horizontal" id="welcomeFormData">
-                                    <input type="hidden" name="id" id="qywxWelcomeId"/>
+                                    <input type="hidden" th:value="${welcome.id}" name="id"/>
                                     <div class="form-group">
                                         <label class="col-xs-12" style="font-weight: bold;">欢迎语名称</label>
                                         <div class="col-xs-12">
-                                            <input class="form-control" type="text" name="welcomeName"/>
+                                            <input class="form-control" type="text" name="welcomeName" th:value="${welcome.welcomeName}"/>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="col-xs-12" style="font-weight: bold;">欢迎语配置策略</label>
                                         <div class="col-xs-12">
                                             <label class="radio-inline">
-                                                <input type="radio" name="policyType" value="M" onclick="policyClick()" checked="checked">
+                                                <input type="radio"  disabled="disabled" th:checked="${welcome.policyType eq 'M'} ? true:false" value="M" onclick="policyClick()" checked="checked">
+                                                <input type="radio" style="display: none"  name="policyType" th:checked="${welcome.policyType eq 'M'} ? true:false" value="M" checked="checked">
                                                 自定义
                                             </label>
                                             <label class="radio-inline">
-                                                <input type="radio" name="policyType" value="A" onclick="policyClick()">
+                                                <input type="radio" disabled="disabled" th:checked="${welcome.policyType eq 'M'} ? false:true" value="A" onclick="policyClick()">
+                                                <input type="radio" name="policyType" style="display: none"  th:checked="${welcome.policyType eq 'M'} ? false:true" value="A">
                                                 智能策略
                                             </label>
                                         </div>
                                     </div>
-                                    <div class="form-group" id="intelPolicy" style="display: none">
+                                    <div class="form-group" id="intelPolicy" th:if="!${welcome.policyType eq 'M'}">
                                         <label class="col-xs-12" style="font-weight: bold;">智能策略配置方案</label>
                                         <div class="col-xs-12">
                                             <label class="radio-inline">
-                                                <input type="radio" name="policyTypeTmp" value="COUPON">
+                                                <input type="radio"  disabled="disabled" value="COUPON" th:checked="${welcome.policyType eq 'COUPON'} ? true:false">
+                                                <input type="radio" name="policyTypeTmp" style="display:none"  value="COUPON" th:checked="${welcome.policyType eq 'COUPON'} ? true:false">
                                                 派发领券页
                                             </label>
                                             <label class="radio-inline">
-                                                <input type="radio" name="policyTypeTmp" value="PRODUCT">
+                                                <input type="radio"  disabled="disabled" value="PRODUCT" th:checked="${welcome.policyType eq 'PRODUCT'} ? true:false">
+                                                <input type="radio" name="policyTypeTmp" style="display:none" value="PRODUCT" th:checked="${welcome.policyType eq 'PRODUCT'} ? true:false">
+                                                派发商品页
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group" id="intelPolicy" th:if="${welcome.policyType eq 'M'}" style="display: none;">
+                                        <label class="col-xs-12" style="font-weight: bold;">智能策略配置方案</label>
+                                        <div class="col-xs-12">
+                                            <label class="radio-inline">
+                                                <input type="radio" name="policyTypeTmp" value="COUPON" th:checked="${welcome.policyType eq 'COUPON'} ? true:false">
+                                                派发领券页
+                                            </label>
+                                            <label class="radio-inline">
+                                                <input type="radio" name="policyTypeTmp" value="PRODUCT" th:checked="${welcome.policyType eq 'PRODUCT'} ? true:false">
                                                 派发商品页
                                             </label>
                                         </div>
@@ -99,13 +116,17 @@
                                         <label class="col-xs-12" style="font-weight: bold;">欢迎语素材</label>
                                         <div class="col-md-12">
                                             <ul id="myTabs" class="nav nav-tabs" role="tablist">
-                                                <li class="active"><a href="#text" id="text-tab" role="tab" data-toggle="tab"><i class="fa fa-file-text-o"></i>&nbsp;文本</a>
+                                                <li class="active"><a href="#text" id="text-tab" role="tab"
+                                                                      data-toggle="tab"><i class="fa fa-file-text-o"></i>&nbsp;文本</a>
                                                 </li>
-                                                <li><a href="#image" id="image-tab" role="tab" data-toggle="tab"><i class="fa fa-image"></i>&nbsp;图片</a>
+                                                <li><a href="#image" id="image-tab" role="tab"
+                                                                      data-toggle="tab"><i class="fa fa-image"></i>&nbsp;图片</a>
                                                 </li>
-                                                <li><a href="#web" id="web-tab" role="tab" data-toggle="tab"><i class="fa fa-link"></i>&nbsp;网页</a>
+                                                <li><a href="#web" id="web-tab" role="tab"
+                                                       data-toggle="tab"><i class="fa fa-link"></i>&nbsp;网页</a>
                                                 </li>
-                                                <li><a href="#miniprogram" id="miniprogram-tab" role="tab" data-toggle="tab"><i class="fa fa-skyatlas"></i>&nbsp;小程序</a>
+                                                <li><a href="#miniprogram" id="miniprogram-tab" role="tab"
+                                                       data-toggle="tab"><i class="fa fa-skyatlas"></i>&nbsp;小程序</a>
                                                 </li>
                                             </ul>
                                             <div id="myTabContent" class="tab-content"
@@ -114,7 +135,7 @@
                                                 <div class="tab-pane fade active in" id="text">
                                                     <div class="row">
                                                         <div class="col-md-12">
-                                                            <textarea class="form-control" name="content" rows="6" placeholder="请输入欢迎语内容" id="textContent1" data-emojiable="true"></textarea>
+                                                            <textarea th:text="${welcome.content}" class="form-control" name="content" rows="6" placeholder="请输入欢迎语内容" id="textContent1" data-emojiable="true" ></textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -126,7 +147,7 @@
                                                                 <div class="form-group" style="margin-bottom: 2px;">
                                                                     <label class="col-md-3 control-label">图片地址：</label>
                                                                     <div class="col-md-7">
-                                                                        <input class="form-control" name="picUrl"/>
+                                                                        <input class="form-control" th:value="${welcome.picUrl}" name="picUrl"/>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -138,25 +159,25 @@
                                                         <div class="form-group">
                                                             <label class="col-md-3 control-label">消息标题：</label>
                                                             <div class="col-md-7">
-                                                                <input class="form-control" name="linkTitle">
+                                                                <input class="form-control" name="linkTitle" th:value="${welcome.linkTitle}">
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
                                                             <label class="col-md-3 control-label">消息描述：</label>
                                                             <div class="col-md-7">
-                                                                <input class="form-control" name="linkDesc">
+                                                                <input class="form-control" name="linkDesc" th:value="${welcome.linkDesc}">
                                                             </div>
                                                         </div>
                                                         <div class="form-group">
                                                             <label class="col-md-3 control-label">消息地址：</label>
                                                             <div class="col-md-7">
-                                                                <input class="form-control" name="linkUrl">
+                                                                <input class="form-control" name="linkUrl" th:value="${welcome.linkUrl}">
                                                             </div>
                                                         </div>
                                                         <div class="form-group" style="margin-bottom: 2px;">
                                                             <label class="col-md-3 control-label">封面地址：</label>
                                                             <div class="col-md-7">
-                                                                <input class="form-control" name="linkPicurl">
+                                                                <input class="form-control" name="linkPicurl" th:value="${welcome.linkPicurl}">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -166,20 +187,20 @@
                                                         <div class="form-group">
                                                             <label class="col-md-3 control-label">小程序标题：</label>
                                                             <div class="col-md-7">
-                                                                <input class="form-control" name="miniprogramTitle" id="minititle">
+                                                                <input class="form-control" readonly="readonly" name="miniprogramTitle" id="minititle" th:value="${welcome.miniprogramTitle}">
                                                             </div>
                                                         </div>
                                                         <div class="form-group" style="margin-bottom: 2px;">
                                                             <label class="col-md-3 control-label">小程序地址：</label>
                                                             <div class="col-md-7">
-                                                                <input class="form-control" name="miniprogramPage" id="miniaddress">
+                                                                <input class="form-control" readonly="readonly" name="miniprogramPage" id="miniaddress" th:value="${welcome.miniprogramPage}">
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <input type="hidden" value="" name="qywxCouponId" id="qywxCouponId">
-                                                    <input type="hidden" value="" name="qywxProductId" id="qywxProductId">
+                                                    <input type="hidden" value="" name="qywxCouponId" id="qywxCouponId" th:value="${welcome.qywxCouponId}">
+                                                    <input type="hidden" value="" name="qywxProductId" id="qywxProductId" th:value="${welcome.qywxProductId}">
                                                 </div>
                                             </div>
                                         </div>
@@ -195,10 +216,13 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="col-xs-12 text-center">
-                                            <button class="btn btn-primary btn-sm" name='save' type="button" onclick="saveData(this)"><i
-                                                    class="fa fa-save"></i>&nbsp;保存
+                                            <button class="btn btn-primary btn-sm" type="button" onclick="saveData(this)" name='update'><i
+                                                    class="fa fa-save"></i>&nbsp;更新
                                             </button>
-                                            <button class="btn btn-primary btn-sm" type="button" onclick="getViewData()" id="configBtn" style="display: none;"><i
+                                            <button th:if="!${welcome.policyType eq 'M'}" class="btn btn-primary btn-sm" type="button" onclick="getViewData()" id="configBtn"><i
+                                                    class="fa fa-cog"></i>&nbsp;去配置
+                                            </button>
+                                            <button th:if="${welcome.policyType eq 'M'}" class="btn btn-primary btn-sm" type="button" onclick="getViewData()" id="configBtn" style="display: none;"><i
                                                     class="fa fa-cog"></i>&nbsp;去配置
                                             </button>
                                             <button class="btn btn-secondary btn-sm" type="button"
@@ -218,10 +242,11 @@
                                     <div id='wxChat' style="height: 300px;width: 100%;background-color: rgb(235,235,235);border-bottom-left-radius: 10px;border-bottom-right-radius: 10px">
                                         <div class="send" id="preview">
                                             <div class="arrow"></div>
-                                            <span id="wxPreview" style="word-break:normal;width:auto;display:block;white-space:pre-wrap;word-wrap:break-word;overflow:hidden;">请输入欢迎语内容</span>
+                                            <span id="wxPreview" th:text="${welcome.content}" style="word-break:normal;width:auto;display:block;white-space:pre-wrap;word-wrap:break-word;overflow:hidden;">请输入消息内容</span>
                                         </div>
 
                                         <div id="chatDiv">
+<!-- 消息预览，JS拼接了代码，此处为不需要-->
 <!--                                            <div style="overflow:hidden;">-->
 <!--                                                <div class="send" style="position: relative;margin-top: 200px;">-->
 <!--                                                    <div class="arrow"></div>-->
@@ -476,8 +501,8 @@
 <th:block th:include="common/include::common-js"/>
 <th:block th:include="common/include::bootstrap-table-js"/>
 <th:block th:include="common/include::jquery-confirm-js"/>
-<script data-th-src="@{/js/app/operate/welcome/emoji-picker.js}"></script>
-<script data-th-src="@{/js/app/operate/welcome/add.js}"></script>
+<script data-th-src="@{/js/app/qywx/welcome/emoji-picker.js}"></script>
+<script data-th-src="@{/js/app/qywx/welcome/add.js}"></script>
 <script>
     $(function() {
         emojiPicker = new EmojiPicker.EmojiPicker({

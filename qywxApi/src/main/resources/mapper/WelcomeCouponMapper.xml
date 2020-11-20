@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.linksteady.operate.dao.QywxWelcomeCouponMapper">
+<mapper namespace="com.linksteady.qywx.dao.WelcomeCouponMapper">
 
     <select id="getTableDataCount" resultType="int">
         select count(1) from uo_qywx_welcome_coupon
     </select>
 
-    <select id="getTableDataList" resultType="com.linksteady.operate.domain.QywxWelcomeCoupon">
+    <select id="getTableDataList" resultType="com.linksteady.qywx.domain.QywxWelcomeCoupon">
         select coupon_id, coupon_code, coupon_deno, coupon_threshold, to_char(end_date, 'yyyy-mm-dd') end_date, coupon_url, coupon_scene, check_flag, check_comment from uo_qywx_welcome_coupon limit #{limit} offset #{offset}
     </select>
 
@@ -15,7 +15,7 @@
         values (#{couponCode}, #{couponDeno}, #{couponThreshold}, to_date(#{endDate}, 'yyyy-mm-dd'), #{couponUrl}, #{couponScene})
     </insert>
 
-    <select id="getDataById" resultType="com.linksteady.operate.domain.QywxWelcomeCoupon">
+    <select id="getDataById" resultType="com.linksteady.qywx.domain.QywxWelcomeCoupon">
         select coupon_id, coupon_code, coupon_deno, coupon_threshold, to_char(end_date, 'yyyy-mm-dd') end_date, coupon_url, coupon_scene from uo_qywx_welcome_coupon where coupon_id = #{couponId}::integer
     </select>
 

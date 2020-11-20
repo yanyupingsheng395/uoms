@@ -1,6 +1,7 @@
-package com.linksteady.operate.service;
+package com.linksteady.qywx.service;
 
-import com.linksteady.operate.domain.QywxWelcomeProduct;
+
+import com.linksteady.qywx.domain.QywxWelcomeProduct;
 
 import java.util.List;
 
@@ -8,7 +9,7 @@ import java.util.List;
  * @author hxcao
  * @date 2020/9/8
  */
-public interface QywxWelcomeProductService {
+public interface WelcomeProductService {
     int getTableDataCount();
 
     List<QywxWelcomeProduct> getTableDataList(Integer limit, Integer offset);

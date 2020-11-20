@@ -1,7 +1,6 @@
-package com.linksteady.operate.service;
+package com.linksteady.qywx.dao;
 
-import com.linksteady.operate.domain.QywxWelcomeCoupon;
-import com.linksteady.operate.domain.QywxWelcomeProduct;
+import com.linksteady.qywx.domain.QywxWelcomeCoupon;
 
 import java.util.List;
 
@@ -9,7 +8,7 @@ import java.util.List;
  * @author hxcao
  * @date 2020/9/8
  */
-public interface QywxWelcomeCouponService {
+public interface WelcomeCouponMapper {
 
     int getTableDataCount();
 
@@ -17,7 +16,7 @@ public interface QywxWelcomeCouponService {
 
     void saveData(QywxWelcomeCoupon qywxWelcomeCoupon);
 
-    QywxWelcomeCoupon getDataById(String couponId);
+    List<QywxWelcomeCoupon> getDataById(String couponId);
 
     void updateData(QywxWelcomeCoupon qywxWelcomeCoupon);
 

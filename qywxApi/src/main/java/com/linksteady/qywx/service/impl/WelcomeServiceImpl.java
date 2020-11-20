@@ -16,6 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -186,6 +189,62 @@ public class WelcomeServiceImpl implements WelcomeService {
             }else
             {
                 throw new Exception("发送欢迎语接口失败,原因为:"+error.getErrorMsg());
+            }
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Integer saveData(QywxWelcome qywxWelcome) {
+        String policyType = qywxWelcome.getPolicyType();
+        if (StringUtils.isNotEmpty(policyType) && policyType.equalsIgnoreCase("A")) {
+            qywxWelcome.setPolicyType(qywxWelcome.getPolicyTypeTmp());
+        }
+        welcomeMapper.saveData(qywxWelcome);
+        System.out.println(qywxWelcome);
+        return qywxWelcome.getId();
+    }
+
+    @Override
+    public int getDataCount() {
+        return welcomeMapper.getDataCount();
+    }
+
+    @Override
+    public List<QywxWelcome> getDataList(Integer limit, Integer offset) {
+        return welcomeMapper.getDataList(limit, offset);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteById(String id) {
+        welcomeMapper.deleteById(id);
+    }
+
+    @Override
+    public QywxWelcome getDataById(String id) {
+        List<QywxWelcome> welcomeList = welcomeMapper.getDataById(id);
+        return welcomeList.size() > 0 ? welcomeList.get(0) : null;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateData(QywxWelcome qywxWelcome) {
+        String policyType = qywxWelcome.getPolicyType();
+        if (StringUtils.isNotEmpty(policyType) && policyType.equalsIgnoreCase("A")) {
+            qywxWelcome.setPolicyType(qywxWelcome.getPolicyTypeTmp());
+        }
+        welcomeMapper.updateData(qywxWelcome);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateStatus(String id, String status) {
+        if(StringUtils.isNotEmpty(status)) {
+            if(status.equalsIgnoreCase("start")) {
+                welcomeMapper.updateStartStatus(id, status);
+            } else if(status.equalsIgnoreCase("stop")) {
+                welcomeMapper.updateStopStatus(id, status);
             }
         }
     }

@@ -1,8 +1,8 @@
-package com.linksteady.operate.controller;
+package com.linksteady.qywx.controller;
 
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.operate.domain.QywxWelcome;
-import com.linksteady.operate.service.QywxWelcomeService;
+import com.linksteady.qywx.domain.QywxWelcome;
+import com.linksteady.qywx.service.WelcomeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +17,7 @@ import java.util.List;
 public class QywxWelcomeController {
 
     @Autowired
-    private QywxWelcomeService qywxWelcomeService;
+    private WelcomeService qywxWelcomeService;
 
     @PostMapping("/saveData")
     public ResponseBo saveData(QywxWelcome qywxWelcome) {
