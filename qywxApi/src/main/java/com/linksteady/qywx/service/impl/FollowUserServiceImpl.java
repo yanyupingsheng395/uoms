@@ -35,6 +35,7 @@ public class FollowUserServiceImpl implements FollowUserService {
 
         requestUrl.append("?access_token="+qywxService.getAccessToken());
         String followUserResult= OkHttpUtil.getRequest(requestUrl.toString());
+        log.info("获取导购信息返回的结果为{}",followUserResult);
         JSONObject jsonObject = JSON.parseObject(followUserResult);
         WxError error = WxError.fromJsonObject(jsonObject);
         if (error.getErrorCode() != 0) {
