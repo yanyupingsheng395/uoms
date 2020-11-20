@@ -81,15 +81,6 @@ public class ExternalContact implements Serializable {
     @Transient
     private String createTimeStr;
 
-    @Column(name = "mapping_flag")
-    private String mappingFlag;
-
-    @Column(name = "operate_user_id")
-    private String operateUserId;
-
-    @Column(name = "mapping_date")
-    private Date mappingDate;
-
     @Column(name = "relation")
     private String relation;
 

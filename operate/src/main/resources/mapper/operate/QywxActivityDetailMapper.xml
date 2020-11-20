@@ -91,14 +91,14 @@
         from uo_qywx_activity_detail
         left join
              (
-                   select  uo_qywx_external_contact_list.follow_user_id,
-                           uo_qywx_external_contact_list.external_contact_id,
-                           uo_qywx_followuser_list.user_name follow_user_name,
-                           uo_qywx_external_contact_list.name qywx_contact_name
-                   from uo_qywx_external_contact_list join uo_qywx_followuser_list
-                   on uo_qywx_external_contact_list.follow_user_id=uo_qywx_followuser_list.user_id
+                   select  uo_qywx_external_user_list.follow_user_id,
+                           uo_qywx_external_user_list.external_userid,
+                           uo_qywx_follower_user_list.name follow_user_name,
+                           uo_qywx_external_user_list.name qywx_contact_name
+                   from uo_qywx_external_user_list join uo_qywx_follower_user_list
+                   on uo_qywx_external_user_list.follow_user_id=uo_qywx_follower_user_list.user_id
              ) t2 on uo_qywx_activity_detail.follow_user_id= t2.follow_user_id
-               and uo_qywx_activity_detail.qywx_contract_id=t2.external_contact_id
+               and uo_qywx_activity_detail.qywx_contract_id=t2.external_userid
         where plan_id=#{planId}::int8
         limit #{limit} offset #{offset}
     </select>

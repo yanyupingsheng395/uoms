@@ -24,12 +24,13 @@ public class MappingServiceImpl implements MappingService {
 
     @Override
     public Long updateMappingInfo(String followUserId,String externalUserId,String unionId) {
-        //判断当前手机号是否在当前库存在
+        //判断unionid是否已经存在
         Long userId=mappingMapper.getUserIdByUnionId(unionId);
 
         //更新
         synchronized (this.updateMappingLock)
         {
+            //如果已经存在，则更新 否则清除匹配信息
             if(null!=userId)
             {
                 mappingMapper.updateMappingInfo(userId,followUserId,externalUserId);
@@ -43,6 +44,11 @@ public class MappingServiceImpl implements MappingService {
 
     @Override
     public void mappingAll() {
-        //todo
+        mappingMapper.mappingAll();
+    }
+
+    @Override
+    public void unMappingAll() {
+        mappingMapper.unMappingAll();
     }
 }

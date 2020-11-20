@@ -2,6 +2,7 @@ package com.linksteady.qywx.task;
 
 import com.linksteady.qywx.service.ExternalContactService;
 import com.linksteady.qywx.service.FollowUserService;
+import com.linksteady.qywx.service.MappingService;
 import com.linksteady.qywx.service.QywxTaskResultService;
 import com.linksteady.smp.starter.annotation.JobHandler;
 import com.linksteady.smp.starter.domain.ResultInfo;
@@ -24,13 +25,19 @@ public class SyncQywxData extends IJobHandler {
     @Autowired
     QywxTaskResultService qywxTaskResultService;
 
+    @Autowired
+    MappingService mappingService;
+
     @Override
     public ResultInfo execute(String param) {
         try {
             followUserService.syncDept();
             followUserService.syncQywxFollowUser();
             externalContactService.syncExternalContact();
+
             //todo 全量匹配
+            mappingService.mappingAll();
+            mappingService.unMappingAll();
 
             //同步发送任务的执行结果
             qywxTaskResultService.syncPushResult();

@@ -16,4 +16,14 @@ public interface MappingMapper {
 
     void updateMappingInfo(Long userId,String followUserId,String externalUserId);
 
+    /**
+     * 进行一次匹配操作
+     */
+    void mappingAll();
+
+    /**
+     * 对已匹配上的用户进行清除操作
+     */
+    void unMappingAll();
+
 }

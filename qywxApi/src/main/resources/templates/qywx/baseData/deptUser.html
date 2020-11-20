@@ -54,7 +54,7 @@
     getUserTableData();
     function getUserTableData() {
         var settings = {
-            url: "/qywxBaseData/getUserTableData",
+            url: "/qywxBaseData/getFollowUserList",
             pagination: true,
             sidePagination: "server",
             pageList: [10, 25, 50, 100],
@@ -70,7 +70,7 @@
                     align: 'center',
                     width: 150
                 }, {
-                    field: 'user_name',
+                    field: 'name',
                     title: '用户名称',
                     align: 'center'
                 }
@@ -82,7 +82,7 @@
     getDeptTableData();
     function getDeptTableData() {
         var settings = {
-            url: "/qywxBaseData/getDeptTableData",
+            url: "/qywxBaseData/getDeptList",
             pageSize: 10,
             pagination: true,
             sidePagination: "server",

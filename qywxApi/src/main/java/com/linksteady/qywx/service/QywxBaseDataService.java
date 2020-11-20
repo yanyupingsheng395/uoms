@@ -12,13 +12,13 @@ import java.util.Map;
  */
 public interface QywxBaseDataService {
 
-    List<Map<String, Object>> getUserTableData(Integer limit, Integer offset);
+    List<Map<String, Object>> getFollowUserList(Integer limit, Integer offset);
 
-    List<Map<String, Object>> getDeptTableData(Integer limit, Integer offset);
+    List<Map<String, Object>> getDeptList(Integer limit, Integer offset);
 
-    int getUserTableCount();
+    int getFollowUserCount();
 
-    int getDeptTableCount();
+    int getDeptCount();
 
     Tree<QywxDeptUser> getDeptAndUserTree() throws Exception;
 }

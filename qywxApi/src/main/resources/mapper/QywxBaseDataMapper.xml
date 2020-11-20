@@ -2,34 +2,43 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.qywx.dao.QywxBaseDataMapper">
 
-    <select id="getUserTableData" resultType="map">
-        select user_id, user_name, insert_dt, insert_by, update_dt, update_by, corp_id, flag from uo_qywx_followuser_list order by user_id asc
+    <select id="getFollowUserList" resultType="map">
+        select user_id, name, insert_dt, update_dt from uo_qywx_follower_user_list order by user_id asc
         limit #{limit} offset #{offset}
     </select>
 
-    <select id="getDeptTableData" resultType="map">
-        select id, name, parent_id, order_no, insert_dt, update_dt, enabled, corp_id, insert_by, update_by from uo_qywx_dept order by id asc
+    <select id="getDeptList" resultType="map">
+        select
+            id,
+            name,
+            parent_id,
+            order_no,
+            insert_dt,
+            update_dt,
+            insert_by,
+            update_by
+        from uo_qywx_dept order by id asc
         limit #{limit} offset #{offset}
     </select>
 
-    <select id="getUserTableCount" resultType="int">
-        select count(1) from uo_qywx_followuser_list
+    <select id="getFollowUserCount" resultType="int">
+        select count(1) from uo_qywx_follower_user_list
     </select>
 
-    <select id="getDeptTableCount" resultType="int">
+    <select id="getDeptCount" resultType="int">
         select count(1) from uo_qywx_dept
     </select>
 
     <select id="getDeptAndUserData" resultType="com.linksteady.qywx.domain.QywxDeptUser">
-        select uqd.id dept_id, uqd.name dept_name, uqd.parent_id dept_parent_id, user_id, user_name
-        from uo_qywx_followuser_list uqfl
-                 left join (select * from uo_qywx_dept) uqd on uqfl.dept_id = uqd.id
+        select uqd.id dept_id, uqd.name dept_name, uqd.parent_id dept_parent_id, user_id, uqfl.name user_name
+        from uo_qywx_follower_user_list uqfl
+                 left join (select * from uo_qywx_dept) uqd on uqfl.main_department::int4 = uqd.id
     </select>
 
     <select id="getUserIdsByDeptId" resultType="string">
-        select user_id from uo_qywx_followuser_list where dept_id in
+        select user_id from uo_qywx_follower_user_list where main_department in
         <foreach collection="list" separator="," open="(" close=")" item="item">
-            #{item}::integer
+            #{item}
         </foreach>
     </select>
 </mapper>

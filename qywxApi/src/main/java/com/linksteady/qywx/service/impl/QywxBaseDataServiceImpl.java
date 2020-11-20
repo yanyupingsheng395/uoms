@@ -24,28 +24,27 @@ public class QywxBaseDataServiceImpl implements QywxBaseDataService {
 
 
     @Override
-    public List<Map<String, Object>> getUserTableData(Integer limit, Integer offset) {
-        return qywxBaseDataMapper.getUserTableData(limit, offset);
+    public List<Map<String, Object>> getFollowUserList(Integer limit, Integer offset) {
+        return qywxBaseDataMapper.getFollowUserList(limit, offset);
     }
 
     @Override
-    public List<Map<String, Object>> getDeptTableData(Integer limit, Integer offset) {
-        return qywxBaseDataMapper.getDeptTableData(limit, offset);
+    public List<Map<String, Object>> getDeptList(Integer limit, Integer offset) {
+        return qywxBaseDataMapper.getDeptList(limit, offset);
     }
 
     @Override
-    public int getUserTableCount() {
-        return qywxBaseDataMapper.getUserTableCount();
+    public int getFollowUserCount() {
+        return qywxBaseDataMapper.getFollowUserCount();
     }
 
     @Override
-    public int getDeptTableCount() {
-        return qywxBaseDataMapper.getDeptTableCount();
+    public int getDeptCount() {
+        return qywxBaseDataMapper.getDeptCount();
     }
 
     @Override
     public Tree<QywxDeptUser> getDeptAndUserTree() throws Exception {
-      //  String corpId = configService.getValueByName(ConfigEnum.qywxCorpId.getKeyCode());
         List<QywxDeptUser> deptUserList = qywxBaseDataMapper.getDeptAndUserData();
         List<QywxDeptUser> tmpList = deptUserList.stream().filter(x -> StringUtils.isNotEmpty(x.getDeptId()) && StringUtils.isNotEmpty(x.getDeptName()) && StringUtils.isNotEmpty(x.getDeptParentId()))
                 .collect(Collectors.toList());

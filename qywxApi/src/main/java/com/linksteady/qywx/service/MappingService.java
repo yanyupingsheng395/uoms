@@ -15,4 +15,9 @@ public interface MappingService {
      */
     void mappingAll();
 
+    /**
+     * 对已匹配上的用户进行清除操作
+     */
+    void unMappingAll();
+
 }

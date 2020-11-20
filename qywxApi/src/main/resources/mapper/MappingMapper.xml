@@ -6,7 +6,7 @@
         update w_users set
              qywx_user_id=null,
              qywx_mapping_flag='N',
-             qywx_mapping_date=now(),
+             qywx_unmapping_date=now(),
              qywx_follow_user_id=null
         where qywx_user_id=#{externalUserId}
           and qywx_follow_user_id=#{followUserId}
@@ -23,6 +23,29 @@
              qywx_mapping_date=now(),
              qywx_follow_user_id=#{followUserId}
         where id=#{userId}
+    </update>
+
+    <update id="mappingAll">
+        update w_users set
+            qywx_follow_user_id=uqeul.follow_user_id,
+            qywx_user_id=uqeul.external_userid,
+            qywx_mapping_flag='Y',
+            qywx_mapping_date=now(),
+            state=uqeul.state
+         from uo_qywx_external_user_list uqeul where uqeul.unionid=w_users.unionid
+        and w_users.qywx_mapping_flag='N' and w_users.valid_status=1
+    </update>
+    
+    <update id="unMappingAll">
+        update w_users set
+            qywx_follow_user_id=null,
+            qywx_user_id=null,
+            qywx_mapping_flag='N',
+            state=null,
+            qywx_unmapping_date=now()
+        where qywx_mapping_flag='Y' and unionid not in(
+               select distinct unionid from uo_qywx_external_user_list
+            )
     </update>
 
 </mapper>

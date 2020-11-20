@@ -300,7 +300,7 @@
         from (
             SELECT * FROM
                     (SELECT ROW_NUMBER() OVER (partition BY user_phone ORDER BY add_date desc) rowId,*
-                    from uo_qywx_external_contact_list) t
+                    from uo_qywx_external_user_list) t
                 WHERE rowId=1
                  ) u where
             u.user_phone=uo_qywx_trigger_list.phone_num

@@ -11,13 +11,13 @@ import java.util.Map;
  */
 public interface QywxBaseDataMapper {
 
-    List<Map<String, Object>> getUserTableData(Integer limit, Integer offset);
+    List<Map<String, Object>> getFollowUserList(Integer limit, Integer offset);
 
-    List<Map<String, Object>> getDeptTableData(Integer limit, Integer offset);
+    List<Map<String, Object>> getDeptList(Integer limit, Integer offset);
 
-    int getUserTableCount();
+    int getFollowUserCount();
 
-    int getDeptTableCount();
+    int getDeptCount();
 
     List<QywxDeptUser> getDeptAndUserData();
 

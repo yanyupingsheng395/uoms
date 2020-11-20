@@ -78,7 +78,7 @@ public class ExternalContactEventController {
         try {
             eventService.handlerEvent(inMessage);
         }catch (Exception e){
-            log.info("\n处理web联系人事件失败：\n{} ", e);
+            log.info("\n处理外部联系人事件失败：\n{} ", e);
         }
 
         return null;

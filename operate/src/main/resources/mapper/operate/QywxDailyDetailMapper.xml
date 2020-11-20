@@ -134,14 +134,14 @@
          FROM
               uo_qywx_daily_detail left join
               (
-                    select  uo_qywx_external_contact_list.follow_user_id,
-                            uo_qywx_external_contact_list.external_contact_id,
-                            uo_qywx_followuser_list.user_name follow_user_name,
-                            uo_qywx_external_contact_list.name qywx_contact_name
-                    from uo_qywx_external_contact_list join uo_qywx_followuser_list
-                    on uo_qywx_external_contact_list.follow_user_id=uo_qywx_followuser_list.user_id
+                    select  uo_qywx_external_user_list.follow_user_id,
+                            uo_qywx_external_user_list.external_userid,
+                            uo_qywx_follower_user_list.name follow_user_name,
+                            uo_qywx_external_user_list.name qywx_contact_name
+                    from uo_qywx_external_user_list join uo_qywx_follower_user_list
+                    on uo_qywx_external_user_list.follow_user_id=uo_qywx_follower_user_list.user_id
               ) t2 on uo_qywx_daily_detail.follow_user_id= t2.follow_user_id
-                and uo_qywx_daily_detail.qywx_contract_id=t2.external_contact_id
+                and uo_qywx_daily_detail.qywx_contract_id=t2.external_userid
          WHERE  head_id = #{headId}
         <if test="followUserId != '' and followUserId != null and followUserId !='-1'" >
             and uo_qywx_daily_detail.follow_user_id = #{followUserId}
@@ -188,9 +188,9 @@
     </select>
 
     <select id="getFollowUserList" resultMap="followUserResult">
-        select follow_user_id,coalesce(user_name,'未知') follow_user_name from
+        select follow_user_id,coalesce(name,'未知') follow_user_name from
             (select distinct follow_user_id from uo_qywx_daily_detail where head_id=#{headId}) t1 left join
-            uo_qywx_followuser_list on t1.follow_user_id=uo_qywx_followuser_list.user_id
+            uo_qywx_follower_user_list on t1.follow_user_id=uo_qywx_follower_user_list.user_id
             order by follow_user_id asc
     </select>
 

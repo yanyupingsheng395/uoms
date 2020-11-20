@@ -20,33 +20,17 @@ public class QywxBaseDataController {
     @Autowired
     private QywxBaseDataService qywxBaseDataService;
 
-    @RequestMapping("/getUserTableData")
+    @RequestMapping("/getFollowUserList")
     @ResponseBody
-    public ResponseBo getUserTableData(Integer limit, Integer offset) {
-        int count = qywxBaseDataService.getUserTableCount();
-        return ResponseBo.okOverPaging(null, count, qywxBaseDataService.getUserTableData(limit, offset));
+    public ResponseBo getFollowUserList(Integer limit, Integer offset) {
+        int count = qywxBaseDataService.getFollowUserCount();
+        return ResponseBo.okOverPaging(null, count, qywxBaseDataService.getFollowUserList(limit, offset));
     }
 
-    @RequestMapping("/getDeptTableData")
+    @RequestMapping("/getDeptList")
     @ResponseBody
-    public ResponseBo getDeptTableData(Integer limit, Integer offset) {
-        int count = qywxBaseDataService.getDeptTableCount();
-        return ResponseBo.okOverPaging(null, count, qywxBaseDataService.getDeptTableData(limit, offset));
-    }
-
-    /**
-     * 获取组织架构数据树
-     * @return
-     */
-    @RequestMapping("/getDeptAndUserTree")
-    @ResponseBody
-    public ResponseBo getDeptAndUserTree() {
-        Tree<QywxDeptUser> deptAndUserTree = null;
-        try {
-            deptAndUserTree = qywxBaseDataService.getDeptAndUserTree();
-        } catch (Exception e) {
-            return ResponseBo.error("未获取到可联系成员，请先完成组织架构数据的上传！");
-        }
-        return ResponseBo.okWithData(null, deptAndUserTree);
+    public ResponseBo getDeptList(Integer limit, Integer offset) {
+        int count = qywxBaseDataService.getDeptCount();
+        return ResponseBo.okOverPaging(null, count, qywxBaseDataService.getDeptList(limit, offset));
     }
 }
