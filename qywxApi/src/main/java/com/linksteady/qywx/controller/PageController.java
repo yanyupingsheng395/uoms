@@ -61,21 +61,33 @@ public class PageController  extends BaseController {
         return "qywx/contactWay/list";
     }
 
+    /**
+     * 拉新效果监控
+     */
     @RequestMapping("/qywxAddUserMonitor")
     public String addUserMonitor() {
         return "qywx/addUserMonitor/monitor";
     }
 
+    /**
+     * 设置欢迎语
+     */
     @RequestMapping("/qywxWelcome")
     public String welcome() {
         return "qywx/welcome/list";
     }
 
+    /**
+     * 添加欢迎语
+     */
     @RequestMapping("/qywxWelcome/add")
     public String addWelcome() {
         return "qywx/welcome/add";
     }
 
+    /**
+     *更新欢迎语
+     */
     @RequestMapping("/qywxWelcome/edit")
     public String editWelcome(Model model, String id) {
         QywxWelcome qywxWelcome = welcomeService.getDataById(id);

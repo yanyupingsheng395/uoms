@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <title>用户成长系统</title>
+    <th:block th:include="common/include :: common-css" />
+    <th:block th:include="common/include::bootstrap-table-css" />
+    <th:block th:include="common/include::bootstrap-select-css" />
+    <th:block th:include="common/include::jquery-confirm-css" />
+    <th:block th:include="common/include :: datepicker-css" />
+    <th:block th:include="common/include :: datetimepicker-css" />
+    <script data-th-src="@{/plugins/clipboard.min.js}"></script>
+</head>
+
+<body class="gray-bg">
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-div ui-layout-center">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <div class="row">
+                            <h5 class="navbar-page-title">企业微信拉新效果监控</h5>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <hr class="hr m-t-0 m-b-5"/>
+                            </div>
+                        </div>
+                        <form id="user-form">
+                            <div class="select-list">
+                                <ul>
+                                    <li>
+                                        周期：<select name="" id="datePeriod">
+                                        <option value="Y">年</option>
+                                        <option value="M" selected>月</option>
+                                        <option value="D">日</option>
+                                    </select>
+                                    </li>
+                                    <li>
+                                        开始时间：<input type="text" name="startDt" class="js-datepicker" id="startDt"/>
+                                    </li>
+                                    <li>
+                                        结束时间：<input type="text" name="endDt" class="js-datepicker" id="endDt"/>
+                                    </li>
+                                    <li>
+                                        <a class="btn btn-primary btn-rounded btn-sm" id="btn_query" onclick="search_data()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                        <a class="btn btn-warning btn-rounded btn-sm" onclick="reset_data()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-12 select-table table-striped">
+                        <div class="row">
+                            <p class="navbar-page-title">整体拉新效果</p>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <hr class="hr m-t-0 m-b-5"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-offset-2 col-md-8">
+                                <div id="chart1" style="height: 300px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 select-table table-striped">
+                        <div class="row">
+                            <p class="navbar-page-title">不同添加方式的拉新效果</p>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <hr class="hr m-t-0 m-b-5"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div id="chart2" style="height: 350px;"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <div id="chart3" style="height: 350px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<th:block th:include="common/include::footer" />
+<th:block th:include="common/include::bootstrap-year-calendar-js" />
+<th:block th:include="common/include::datepicker-js" />
+<th:block th:include="common/include::datetimepicker-js" />
+<th:block th:include="common/include::perfect-scrollbar" />
+<th:block th:include="common/include::jquery-validate-js" />
+<th:block th:include="common/include::common-js" />
+<th:block th:include="common/include::bootstrap-table-js" />
+<th:block th:include="common/include::bootstrap-select-js" />
+<th:block th:include="common/include::jquery-confirm-js" />
+<th:block th:include="common/include::echarts" />
+<script data-th-src="@{/js/app/qywx/common/template.js}"></script>
+<script data-th-src="@{/js/app/qywx/addUserMonitor/monitor.js}"></script>
+<script>
+    init_date_begin("startDt", "endDt", "yyyy-mm",1,2 ,1);
+    init_date_end("startDt", "endDt", "yyyy-mm",1,2 ,1);
+    $('#startDt').datepicker("setEndDate", new Date());
+    $('#endDt').datepicker("setEndDate", new Date());
+    var currentYear = new Date().getFullYear();
+    var currentMonth = new Date().getMonth() + 1;
+    $("#startDt").val(currentYear + "-01");
+    $("#endDt").val(currentYear + "-" + (currentMonth < 10 ? "0" + currentMonth : currentMonth));
+    getData();
+</script>
+</body>
+</html>

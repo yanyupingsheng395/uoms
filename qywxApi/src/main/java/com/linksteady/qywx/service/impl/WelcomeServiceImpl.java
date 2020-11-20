@@ -95,10 +95,10 @@ public class WelcomeServiceImpl implements WelcomeService {
         String policyType=qywxWelcome.getPolicyType();
         if("PRODUCT".equals(policyType))
         {
-           return mediaService.getMpMediaId("PRODUCT",Long.parseLong(qywxWelcome.getQywxProductId()));
+           return mediaService.getMpMediaId("PRODUCT",qywxWelcome.getQywxProductId());
         }else if("COUPON".equals(policyType))
         {
-            return mediaService.getMpMediaId("COUPON",Long.parseLong(qywxWelcome.getQywxCouponId()));
+            return mediaService.getMpMediaId("COUPON",qywxWelcome.getQywxCouponId());
         }else
         {
             return mediaService.getMpMediaId("PRODUCT",-1L);

@@ -1,7 +1,9 @@
 var $qywxsetting = $( "#qywx-setting-form" );
-var qywx_validator;
 var $qywxcontact = $( "#qywx-contact-form" );
+var $qywxappid = $( "#qywx-apples-form" );
 var qywx_contact_validator;
+var qywx_validator;
+var qywx_mp_appid;
 String.prototype.endWith = function (str) {
     if (str == null || str == "" || this.length == 0 || str.length > this.length)
         return false;
@@ -14,6 +16,7 @@ String.prototype.endWith = function (str) {
 $(function () {
     validBasic();
     validQywxContact();
+    validQywxAppId();
     getQywxParam();
 });
 
@@ -53,6 +56,125 @@ function updateWxSetting() {
         } );
     }
 }
+
+/**
+ * 获取外部联系人信息
+ */
+function getContact() {
+    $.get("/qywx/getContact",function (r) {
+        if(r.code === 200) {
+            $("#eventUrl").val(r.msg.eventUrl);
+            $("#eventToken").val(r.msg.eventToken);
+            $("#eventAesKey").val(r.msg.eventAesKey);
+        }else {
+            $MB.n_danger("获取数据异常！");
+        }
+    });
+}
+
+/**
+ * 更新外部联系人信息
+ */
+function updateContact() {
+    var validator = $qywxcontact.validate();
+   if(validator.form()){
+       var eventToken= $("#eventToken").val();
+       var eventAesKey= $("#eventAesKey").val();
+       var data ="eventToken="+eventToken+"&eventAesKey="+eventAesKey;
+       $.post( "/qywx/updateContact", data, function (r) {
+           if (r.code === 200) {
+               $MB.n_success("更新成功！");
+           } else {
+               $MB.n_danger( "更新失败" );
+           }
+       } );
+   }
+}
+
+/**
+ * 获取小程序ID
+ */
+function getAppID(){
+    $.get("/qywx/getAppID",function (r) {
+        if(r.code === 200) {
+            $("#mpappid").val(r.msg.appId);
+        }else {
+            $MB.n_danger("获取数据异常！");
+        }
+    });
+}
+
+/**
+ * 更新小程序ID
+ */
+function setMpAppId(){
+    var validator = $qywxappid.validate();
+    if(validator.form()){
+        var mpappid= $("#mpappid").val();
+        var data ="mpappid="+mpappid;
+        $.post( "/qywx/setMpAppId", data, function (r) {
+            if (r.code === 200) {
+                $MB.n_success("更新成功！");
+            } else {
+                $MB.n_danger( "更新失败" );
+            }
+        } );
+    }
+}
+
+/**
+ * 获取是否开启欢迎语
+ */
+function getEnableWel(){
+    $.get("/qywx/getEnableWel",function (r) {
+        if(r.code === 200) {
+            if("N"== r.msg.status){
+                $("#closeWel").attr("checked","checked");
+                $('#openWel').removeAttr("checked");
+            }else{
+                $("#openWel").attr("checked","checked");
+                $('#closeWel').removeAttr("checked");
+            }
+        }else {
+            $MB.n_danger("获取数据异常！");
+        }
+    });
+}
+
+/**
+ * 设置欢迎语状态
+ */
+function setEnableWelcome(){
+    var status= $("input[name='isopenwel']:checked").val();
+    var data ="status="+status;
+    $.post( "/qywx/setEnableWelcome", data, function (r) {
+        if (r.code === 200) {
+            $MB.n_success("更新成功！");
+        } else {
+            $MB.n_danger( "更新失败" );
+        }
+    } );
+}
+
+
+
+
+$("#navTabs1").find('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+    var startDt = $("#startDt").val();
+    if (startDt == "") {
+        $MB.n_warning("请选择时间！");
+    } else {
+        if (e.target.href.endWith("#qywxSetting")) {
+            getQywxParam();
+        }else if(e.target.href.endWith("#qywxContact")){
+            getContact();
+        }else if(e.target.href.endWith("#qywxAppletsId")){
+            getAppID();
+        }else if(e.target.href.endWith("#qywxWelcome")){
+            getEnableWel();
+        }
+    }
+});
 
 function validBasic() {
     var icon = "<i class='fa fa-close'></i> ";
@@ -112,50 +234,25 @@ function validQywxContact() {
     } );
 }
 
-/**
- * 获取外部联系人信息
- */
-function getContact() {
-    $.get("/qywx/getContact",function (r) {
-        if(r.code === 200) {
-            $("#eventUrl").val(r.msg.eventUrl);
-            $("#eventToken").val(r.msg.eventToken);
-            $("#eventAesKey").val(r.msg.eventAesKey);
-        }else {
-            $MB.n_danger("获取数据异常！");
+function validQywxAppId() {
+    var icon = "<i class='fa fa-close'></i> ";
+    qywx_mp_appid = $qywxappid.validate( {
+        rules: {
+            mpappid: {
+                required: true
+            }
+        },
+        errorPlacement: function (error, element) {
+            if (element.is( ":checkbox" ) || element.is( ":radio" )) {
+                error.appendTo( element.parent().parent() );
+            } else {
+                error.insertAfter( element );
+            }
+        },
+        messages: {
+            mpappid: {
+                required: icon + "请输入小程序ID"
+            }
         }
-    });
+    } );
 }
-
-/**
- * 更新外部联系人信息
- */
-function updateContact() {
-    var validator = $qywxcontact.validate();
-   if(validator.form()){
-       var eventToken= $("#eventToken").val();
-       var eventAesKey= $("#eventAesKey").val();
-       var data ="eventToken="+eventToken+"&eventAesKey="+eventAesKey;
-       $.post( "/qywx/updateContact", data, function (r) {
-           if (r.code === 200) {
-               $MB.n_success("更新成功！");
-           } else {
-               $MB.n_danger( "更新失败" );
-           }
-       } );
-   }
-}
-
-
-$("#navTabs1").find('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-    var startDt = $("#startDt").val();
-    if (startDt == "") {
-        $MB.n_warning("请选择时间！");
-    } else {
-        if (e.target.href.endWith("#qywxSetting")) {
-            getQywxParam();
-        }else{
-            getContact();
-        }
-    }
-});

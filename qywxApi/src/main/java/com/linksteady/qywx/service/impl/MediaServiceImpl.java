@@ -2,14 +2,13 @@ package com.linksteady.qywx.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.collect.Maps;
 import com.linksteady.common.util.OkHttpUtil;
-import com.linksteady.common.util.crypto.SHA1;
 import com.linksteady.qywx.constant.WxPathConsts;
 import com.linksteady.qywx.dao.MediaMapper;
 import com.linksteady.qywx.domain.QywxImage;
 import com.linksteady.qywx.domain.QywxMediaImg;
 import com.linksteady.qywx.domain.QywxParam;
+import com.linksteady.qywx.domain.WxError;
 import com.linksteady.qywx.exception.WxErrorException;
 import com.linksteady.qywx.service.MediaService;
 import com.linksteady.qywx.service.QywxService;
@@ -24,18 +23,17 @@ import java.io.*;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
-import java.util.Map;
 
 @Service
 @Slf4j
 public class MediaServiceImpl implements MediaService {
 
-    @Autowired
+    @Autowired(required = false)
     MediaMapper mediaMapper;
     @Autowired
     private QywxService qywxService;
+
 
     @Override
     public int getImageCount() {
@@ -49,29 +47,23 @@ public class MediaServiceImpl implements MediaService {
 
     @Override
     public void uploadImage(String title, File file,String opUserName) throws Exception {
-        //todo 此处代码要进行迁移
-//        //上传到企业微信
-//        String corpId=configService.getValueByName(ConfigEnum.qywxCorpId.getKeyCode());
-//        String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
-//        String signature= SHA1.gen(timestamp);
-//        String qywxDomainUrl=configService.getValueByName(ConfigEnum.qywxDomainUrl.getKeyCode());
-//        //2.提交到企业微信端
-//        String url=qywxDomainUrl+"/api/uploadImg";
-//
-//        Map<String,String> param= Maps.newHashMap();
-//        param.put("corpId",corpId);
-//        param.put("timestamp",timestamp);
-//        param.put("signature",signature);
-//        String result=OkHttpUtil.postFileAndData(url,param,file);
-//
-//        JSONObject resultObject = JSON.parseObject(result);
-//        if (null==resultObject||resultObject.getIntValue("code")!= 200) {
-//            throw  new LinkSteadyException("上传素材(图片)到企业微信失败");
-//        }else
-//        {
-//            String imgUrl=resultObject.getString("data");
-//            qywxMdiaMapper.saveMediaImg(title,imgUrl,opUserName);
-//        }
+        StringBuffer requestUrl = new StringBuffer(qywxService.getRedisConfigStorage().getApiUrl(WxPathConsts.Media.IMG_UPLOAD));
+        requestUrl.append("?access_token=" + qywxService.getAccessToken());
+        log.info("上传图片的请求url:{}", requestUrl.toString());
+        String result = OkHttpUtil.postUploadImg(requestUrl.toString(), file);
+        log.info("上传图片返回的结果为{}", result);
+        JSONObject jsonObject = JSON.parseObject(result);
+        WxError error = WxError.fromJsonObject(jsonObject);
+        if (error.getErrorCode() != 0) {
+            throw new WxErrorException(error);
+        }
+        if (null==jsonObject||jsonObject.getIntValue("errcode")!= 0) {
+            throw  new Exception("上传素材(图片)到企业微信失败");
+        }else
+        {
+            String imgUrl=jsonObject.getString("url");
+            mediaMapper.saveMediaImg(title,imgUrl,opUserName);
+        }
     }
 
     /**

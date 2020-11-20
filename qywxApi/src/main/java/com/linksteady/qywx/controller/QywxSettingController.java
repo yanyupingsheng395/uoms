@@ -98,4 +98,53 @@ public class QywxSettingController {
             return ResponseBo.error();
         }
     }
+
+    /**
+     * 获取小程序ID
+     */
+    @GetMapping("/getAppID")
+    public ResponseBo getAppID(){
+        String appId = qywxService.getMpAppId();
+        Map<String,Object> result= Maps.newHashMap();
+        result.put("appId",appId);
+        return ResponseBo.ok(result);
+    }
+
+    /**
+     * 更新小程序ID
+     */
+    @PostMapping("/setMpAppId")
+    public ResponseBo setMpAppId(String mpappid){
+        try {
+            qywxService.setMpAppId(mpappid);
+            return ResponseBo.ok();
+        }catch (Exception e){
+            return ResponseBo.error();
+        }
+    }
+
+    /**
+     * 获取是否开启欢迎语
+     */
+    @GetMapping("/getEnableWel")
+    public ResponseBo getEnableWel(){
+        String status = qywxService.getEnableWelcome();
+        Map<String,Object> result= Maps.newHashMap();
+        result.put("status",status);
+        return ResponseBo.ok(result);
+    }
+
+    /**
+     * 设置欢迎语状态
+     */
+    @PostMapping("/setEnableWelcome")
+    public ResponseBo setEnableWelcome(String status){
+        try {
+            qywxService.setEnableWelcome(status);
+            return ResponseBo.ok();
+        }catch (Exception e){
+            return ResponseBo.error();
+        }
+    }
+
 }

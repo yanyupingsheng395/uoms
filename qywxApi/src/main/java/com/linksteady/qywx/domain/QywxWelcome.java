@@ -39,12 +39,14 @@ public class QywxWelcome implements Serializable {
 
     private String miniprogramPage;
 
-    private String qywxCouponId;
+    private Long qywxCouponId;
 
-    private String qywxProductId;
+    private Long qywxProductId;
 
     private String validFlag;
 
     private String status;
+
+    private String updateBy;
 
 }

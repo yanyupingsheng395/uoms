@@ -39,7 +39,7 @@ public class WxError implements Serializable {
 
     public static WxError getWxError(int errorCode,String errorMsg)
     {
-        WxErrorBuilder errorBuilder = WxError.builder();
+        WxError.WxErrorBuilder errorBuilder = WxError.builder();
         errorBuilder.errorCode(errorCode);
         errorBuilder.errorMsg(errorMsg);
         return  errorBuilder.build();
