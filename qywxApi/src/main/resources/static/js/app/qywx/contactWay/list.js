@@ -136,6 +136,7 @@ $( "#btn_edit" ).click( function () {
         $MB.n_warning( '请选择需要编辑的渠道活码！' );
         return;
     }
+    createUserTree();
     let contactWayId = selected[0].contactWayId;
     //获取数据 并进行填充
     $.post( "/contactWay/getContactWayById", {"contactWayId": contactWayId}, function (r) {
@@ -148,12 +149,11 @@ $( "#btn_edit" ).click( function () {
             $form.find( "input[name='state']" ).val( d.state ).attr( "readOnly", "readOnly" );
             $form.find( "input[name='usersList']" ).val(d.usersList);
             $form.find( "input[name='deptList']" ).val(d.deptList);
-            createUserTree();
+            $form.find( "input[name='shortUrl']" ).val( d.shortUrl );
             var nodes = $('#userSelectTree').jstree(true);
             nodes.uncheck_all();
             checkTree(d.usersList);
             checkTree(d.deptList);
-            $form.find( "input[name='shortUrl']" ).val( d.shortUrl );
         } else {
             $MB.n_danger( r['msg'] );
         }
