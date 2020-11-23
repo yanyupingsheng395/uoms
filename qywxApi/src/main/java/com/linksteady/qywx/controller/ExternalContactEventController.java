@@ -61,7 +61,7 @@ public class ExternalContactEventController {
                                @RequestParam("timestamp") String timestamp,
                                @RequestParam("nonce") String nonce,
                                @RequestParam("msg_signature") String msgSignature) {
-        log.info(
+        log.debug(
                 "\n接收企业微信系统事件：[msgSignature=[{}],"
                         + " timestamp=[{}], nonce=[{}], requestBody=[\n{}\n] ", msgSignature, timestamp, nonce, requestBody);
 
@@ -74,11 +74,11 @@ public class ExternalContactEventController {
                 nonce,
                 requestBody
         );
-        log.info("\n消息解密后内容为：\n{} ", inMessage.toString());
+        log.info("接收消息:{}", inMessage.toString());
         try {
             eventService.handlerEvent(inMessage);
         }catch (Exception e){
-            log.info("\n处理外部联系人事件失败：\n{} ", e);
+            log.info("处理外部联系人事件失败：{} ", e);
         }
 
         return null;

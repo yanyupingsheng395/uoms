@@ -29,9 +29,10 @@ public class EventServiceImpl implements EventService {
     public void handlerEvent(WxXmlMessage inMessage) throws WxErrorException {
        if("event".equals(inMessage.getMsgType())&&"change_external_contact".equals(inMessage.getEvent()))
        {
-
+           log.info("外部联系人事件");
            if(StringUtils.equalsAnyIgnoreCase(inMessage.getChangeType(),"add_external_contact","edit_external_contact","add_half_external_contact"))
            {
+               log.info("新增、编辑外部联系人");
                 //添加联系人事件
                //更新外部联系人信息 并持久化到数据库
                ExternalContact externalContact=externalContactService.getExternalContractDetail(inMessage.getUserId(),inMessage.getExternalUserId());
@@ -58,6 +59,7 @@ public class EventServiceImpl implements EventService {
                }
            }else if(StringUtils.equalsAnyIgnoreCase(inMessage.getChangeType(),"del_external_contact","del_follow_user"))
            {
+               log.info("删除外部联系人");
                //删除外部联系人 删除跟进成员 则从本地库中进行删除。
                externalContactService.deleteExternalContract(
                        inMessage.getUserId(),
@@ -67,7 +69,7 @@ public class EventServiceImpl implements EventService {
                mappingService.deleteMappingInfo(inMessage.getUserId(),inMessage.getExternalUserId());
            }else if("transfer_fail".equals(inMessage.getChangeType()))
            {
-              //客户接替失败事件
+              //todo 客户接替失败事件
 
            }else
            {

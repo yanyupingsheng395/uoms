@@ -79,16 +79,13 @@ public class QywxTaskResultServiceImpl implements QywxTaskResultService {
                         qywxMsgResult.setSendTimeDt(new Date(Long.parseLong(obj.getString("send_time"))*1000));
                     }
                     qywxMsgResult.setMsgId(msgId);
-
                     qywxMsgResultList.add(qywxMsgResult);
                 }
                 qywxTaskResultMapper.saveMsgResult(qywxMsgResultList);
-
             }else
             {
                 log.error("通过微信推送结果失败，返回结果为{}",result);
             }
-
         }
     }
 
