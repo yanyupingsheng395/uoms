@@ -20,9 +20,20 @@ public class TreeUtils {
 		List<Tree<T>> topNodes = new ArrayList<>();
 		nodes.forEach(children -> {
 			String pid = children.getParentId();
-			if (pid == null || "0".equals(pid)) {
+			if(pid == null || "0".equals(pid)){//如果ParentId是null，或是0，那么就是父节点。
 				topNodes.add(children);
-				return;
+			}else{
+				boolean flag=false;
+				for (Tree<T> node : nodes) {
+					String parentId = node.getParentId();//循环获取父ID，如果pid，比后续循环出来的父ID都小，那么这个pid就是父节点。。
+					if(Integer.parseInt(pid)<Integer.parseInt(parentId)){
+						flag=true;
+						break;
+					}
+				}
+				if(flag){
+					topNodes.add(children);
+				}
 			}
 			for (Tree<T> parent : nodes) {
 				String id = parent.getId();
