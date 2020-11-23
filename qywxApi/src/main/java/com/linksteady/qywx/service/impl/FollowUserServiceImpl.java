@@ -35,7 +35,7 @@ public class FollowUserServiceImpl implements FollowUserService {
 
         requestUrl.append("?access_token="+qywxService.getAccessToken());
         String followUserResult= OkHttpUtil.getRequest(requestUrl.toString());
-        log.info("获取导购信息返回的结果为{}",followUserResult);
+        log.debug("获取导购信息返回的结果为{}",followUserResult);
         JSONObject jsonObject = JSON.parseObject(followUserResult);
         WxError error = WxError.fromJsonObject(jsonObject);
         if (error.getErrorCode() != 0) {
@@ -75,6 +75,7 @@ public class FollowUserServiceImpl implements FollowUserService {
     @Transactional(rollbackFor = Exception.class)
     public synchronized void syncQywxFollowUser() throws Exception
     {
+        log.info("同步具有外部联系权限的成员列表");
         //获取配置了客户联系功能的成员列表
         List<String> followerUserList =this.selectFollowUserList();
         //更新删除标记位为1
@@ -97,16 +98,18 @@ public class FollowUserServiceImpl implements FollowUserService {
             followUser = selectUserDetail(followerUserId);
             followUserMapper.updateFollowUser(followUser);
         }
+        log.info("同步具有外部联系权限的成员列表结束");
     }
 
     @Override
     public synchronized void syncDept() throws Exception {
+        log.info("开始同步部门信息");
         StringBuffer requestUrl=new StringBuffer(qywxService.getRedisConfigStorage().getApiUrl(WxPathConsts.Department.DEPARTMENT_LIST));
         requestUrl.append("?access_token="+qywxService.getAccessToken());
 
         String deptResult= OkHttpUtil.getRequest(requestUrl.toString());
         JSONObject jsonObject = JSON.parseObject(deptResult);
-        log.info("获取部门列表接口返回的结果为{}",jsonObject);
+        log.debug("获取部门列表接口返回的结果为{}",jsonObject);
         WxError error = WxError.fromJsonObject(jsonObject);
         if (error.getErrorCode() != 0) {
             throw new WxErrorException(error);
@@ -127,5 +130,6 @@ public class FollowUserServiceImpl implements FollowUserService {
         }
 
         followUserMapper.deleteDept();
+        log.info("同步部门信息结束");
     }
 }

@@ -67,9 +67,6 @@ public class QywxDailyController {
     private QywxDailyCouponService qywxDailyCouponService;
 
     @Autowired
-    QywxSendCouponService qywxSendCouponService;
-
-    @Autowired
     QywxMdiaService qywxMdiaService;
 
     /**
@@ -206,18 +203,6 @@ public class QywxDailyController {
         }
 
         try {
-
-            //判断优惠券是否已发放 如果未发放，则进行优惠券的发放
-            if ("N".equals(qywxDailyHeader.getCouponSendFlag())) {
-                try {
-                    boolean flag = qywxSendCouponService.sendCouponToUser(headId);
-                    if (!flag) {
-                        throw new SendCouponException("券已发出，但接口返回的结果为异常");
-                    }
-                } catch (Exception e) {
-                    throw new SendCouponException("发送优惠券异常");
-                }
-            }
             qywxDailyService.push(qywxDailyHeader, effectDays);
 
             //获取是否有推送失败的情况
@@ -384,15 +369,10 @@ public class QywxDailyController {
     }
 
     /**
-     * 补充发送优惠券
+     * 手工发送优惠券
      */
     @GetMapping("/manualSubmitCoupon")
-    public ResponseBo submitTask(Long headId) {
-        boolean flag = qywxSendCouponService.sendCouponToUser(headId);
-        if (!flag) {
-            return ResponseBo.error();
-        } else {
-            return ResponseBo.ok();
-        }
+    public ResponseBo manualSubmitCoupon(Long headId) {
+        return ResponseBo.error(qywxDailyService.manualSubmitCoupon(headId));
     }
 }

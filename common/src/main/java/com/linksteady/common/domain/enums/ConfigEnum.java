@@ -61,7 +61,8 @@ public enum  ConfigEnum {
     prodUrlEnabled("op.source.produrl_enabled"),
 
     pathActiveList("op.daily.pathactive.list"),
-    sendCouponUrl("op.sendCouponUrl");
+    sendCouponUrl("op.sendCouponUrl"),
+    sendCouponIdentityType("op.sendCouponIdentityType");
 
     private String keyCode;
 

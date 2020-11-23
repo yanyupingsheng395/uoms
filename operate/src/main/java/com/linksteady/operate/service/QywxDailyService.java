@@ -63,4 +63,10 @@ public interface QywxDailyService {
     void updateStatusToDonePushError(long headId);
 
 
+    /**
+     * 手工发送优惠券
+     */
+    String manualSubmitCoupon(long headId);
+
+
 }

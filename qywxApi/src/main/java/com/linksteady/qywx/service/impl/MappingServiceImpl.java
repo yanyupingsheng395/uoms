@@ -2,6 +2,7 @@ package com.linksteady.qywx.service.impl;
 
 import com.linksteady.qywx.dao.MappingMapper;
 import com.linksteady.qywx.service.MappingService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
  * 用户匹配的相关服务类
  */
 @Service
+@Slf4j
 public class MappingServiceImpl implements MappingService {
 
     @Autowired
@@ -44,11 +46,13 @@ public class MappingServiceImpl implements MappingService {
 
     @Override
     public void mappingAll() {
+        log.info("匹配全部外部联系人开始");
         mappingMapper.mappingAll();
     }
 
     @Override
     public void unMappingAll() {
+        log.info("清除过期的匹配信息");
         mappingMapper.unMappingAll();
     }
 }

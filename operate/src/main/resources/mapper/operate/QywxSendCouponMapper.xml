@@ -10,7 +10,8 @@
 
     <resultMap id="sendCouponVOMap" type="com.linksteady.operate.vo.SendCouponVO">
         <result property="businessId" jdbcType="VARCHAR" column="detail_id"></result>
-        <result property="userIdentity" jdbcType="VARCHAR" column="user_phone"></result>
+        <result property="userPhone" jdbcType="VARCHAR" column="user_phone"></result>
+        <result property="unionId" jdbcType="VARCHAR" column="unionid"></result>
     </resultMap>
 
     <select id="getCouponList" resultMap="couponInfoVOMap">
@@ -28,7 +29,7 @@
     </select>
 
     <select id="getCouponUserList" resultMap="sendCouponVOMap">
-        select detail_id,user_phone from uo_qywx_daily_detail where head_id=#{headId} and coupon_id=#{couponId}
+        select detail_id,user_phone,unionid from uo_qywx_daily_detail where head_id=#{headId} and coupon_id=#{couponId}
         and sendresult &lt;&gt; 'S'
         order by detail_id asc limit #{limit} offset #{offset}
     </select>

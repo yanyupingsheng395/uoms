@@ -40,8 +40,8 @@ public class SyncQywxData extends IJobHandler {
             mappingService.unMappingAll();
 
             //同步发送任务的执行结果
-            qywxTaskResultService.syncPushResult();
-            qywxTaskResultService.updateExecStatus();
+//            qywxTaskResultService.syncPushResult();
+//            qywxTaskResultService.updateExecStatus();
 
             return ResultInfo.success("");
         } catch (Exception e) {

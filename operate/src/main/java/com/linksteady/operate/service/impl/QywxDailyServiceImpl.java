@@ -12,9 +12,11 @@ import com.linksteady.operate.dao.QywxDailyMapper;
 import com.linksteady.operate.domain.*;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.exception.OptimisticLockException;
+import com.linksteady.operate.exception.SendCouponException;
 import com.linksteady.operate.service.QywxDailyService;
 import com.linksteady.operate.service.QywxMdiaService;
 import com.linksteady.operate.service.QywxMessageService;
+import com.linksteady.operate.service.QywxSendCouponService;
 import com.linksteady.operate.vo.FollowUserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -59,6 +61,9 @@ public class QywxDailyServiceImpl implements QywxDailyService {
     @Autowired
     QywxMdiaService qywxMdiaService;
 
+    @Autowired
+    QywxSendCouponService qywxSendCouponService;
+
     @Override
     public List<QywxDailyHeader> getHeadList(int limit, int offset, String taskDate) {
         return qywxDailyMapper.getHeadList(limit, offset, taskDate);
@@ -102,6 +107,18 @@ public class QywxDailyServiceImpl implements QywxDailyService {
             throw new OptimisticLockException("记录已被其他用户修改，请返回刷新后重试");
         }
         Long headId = qywxDailyHeader.getHeadId();
+        //判断优惠券是否已发放 如果未发放，则进行优惠券的发放
+        if ("N".equals(qywxDailyHeader.getCouponSendFlag())) {
+            try {
+                boolean flag = qywxSendCouponService.sendCouponToUser(headId);
+                if (!flag) {
+                    throw new SendCouponException("券已发出，但接口返回的结果为异常");
+                }
+            } catch (Exception e) {
+                throw new SendCouponException("发送优惠券异常");
+            }
+        }
+
         String appId = qywxMessageService.getMpAppId();
 
         //按导购分组
@@ -343,6 +360,18 @@ public class QywxDailyServiceImpl implements QywxDailyService {
     @Override
     public void updateStatusToDonePushError(long headId) {
         qywxDailyMapper.updateStatusToDonePushError(headId);
+    }
+
+    @Override
+    public synchronized String manualSubmitCoupon(long headId) {
+        QywxDailyHeader header=qywxDailyMapper.getHeadInfo(headId);
+        if(null!=header&&"N".equals(header.getCouponSendFlag()))
+        {
+            boolean flag=qywxSendCouponService.sendCouponToUser(headId);
+            return flag?"发券成功":"发券失败";
+        }else {
+            return "不存在的ID或当前记录已发过券了";
+        }
     }
 
 

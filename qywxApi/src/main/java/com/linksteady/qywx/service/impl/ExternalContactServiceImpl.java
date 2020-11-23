@@ -45,6 +45,7 @@ public class ExternalContactServiceImpl implements ExternalContactService {
     @Transactional(rollbackFor = Exception.class)
     public void syncExternalContact() throws Exception
     {
+        log.info("同步外部联系人开始");
         //设置当前企业所有外部客户的删除标记为1
         externalContactMapper.updateDeleteFlag();
 
@@ -75,6 +76,7 @@ public class ExternalContactServiceImpl implements ExternalContactService {
 
         //删除
         externalContactMapper.deleteExternalUser();
+        log.info("同步外部联系人结束");
     }
 
     @Override
