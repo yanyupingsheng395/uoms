@@ -70,8 +70,4 @@
 
     </update>
 
-    <update id="updateSendCouponFlag">
-        update uo_qywx_daily_header set coupon_send_flag='Y' where head_id=#{headId}
-    </update>
-
 </mapper>

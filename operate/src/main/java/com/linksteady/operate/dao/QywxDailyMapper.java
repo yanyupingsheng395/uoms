@@ -45,5 +45,7 @@ public interface QywxDailyMapper {
 
     void updateStatusToDonePushError(long headId);
 
+    void updateSendCouponFlag(long headId);
+
 
 }

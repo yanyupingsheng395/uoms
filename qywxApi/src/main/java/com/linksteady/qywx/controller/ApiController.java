@@ -3,11 +3,14 @@ package com.linksteady.qywx.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.qywx.exception.WxErrorException;
+import com.linksteady.qywx.service.MediaService;
 import com.linksteady.qywx.service.QywxGropMsgService;
 import com.linksteady.qywx.service.QywxService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api")
@@ -19,6 +22,9 @@ public class ApiController {
 
     @Autowired
     QywxService qywxService;
+
+    @Autowired
+    MediaService mediaService;
 
     /**
      * 返回接口应用的状态
@@ -61,6 +67,19 @@ public class ApiController {
         } catch (Exception e) {
             log.error("获取企业微信关联的小程序出错，错误原因为{}",e);
             return "";
+        }
+    }
+
+    @RequestMapping("/getMpMediaId")
+    public ResponseBo getMpMediaId(HttpServletRequest request,
+                                   @RequestParam("signature")String signature,
+                                   @RequestParam("timestamp")String timestamp,
+                                   @RequestParam("identityType")String identityType,
+                                   @RequestParam("identityId") Long identityId){
+        try {
+            return ResponseBo.okWithData(null,mediaService.getMpMediaId(identityType, identityId));
+        } catch (Exception e) {
+            return ResponseBo.error(e.getMessage());
         }
     }
 

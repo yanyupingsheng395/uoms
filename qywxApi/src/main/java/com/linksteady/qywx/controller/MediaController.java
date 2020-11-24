@@ -25,19 +25,6 @@ public class MediaController extends BaseController {
     @Autowired
     MediaService mediaService;
 
-    @RequestMapping("/getMpMediaId")
-    public ResponseBo getMpMediaId(HttpServletRequest request,
-                                   @RequestParam("signature")String signature,
-                                   @RequestParam("timestamp")String timestamp,
-                                   @RequestParam("identityType")String identityType,
-                                   @RequestParam("identityId") Long identityId){
-        try {
-            return ResponseBo.okWithData(null,mediaService.getMpMediaId(identityType, identityId));
-        } catch (Exception e) {
-            return ResponseBo.error(e.getMessage());
-        }
-    }
-
     /**
      * 获取图片列表
      * @param request

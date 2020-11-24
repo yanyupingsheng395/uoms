@@ -90,8 +90,6 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
 
             }
         }
-        qywxSendCouponMapper.updateSendCouponFlag(headId);
-
         return sendCouponSuccess;
     }
 

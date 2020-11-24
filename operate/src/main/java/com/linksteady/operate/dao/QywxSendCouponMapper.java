@@ -38,6 +38,4 @@ public interface QywxSendCouponMapper {
      */
     void updateCouponSendRecord(String sendResult,long sendRecordId,List<SendCouponVO> sendCouponVOList);
 
-    void updateSendCouponFlag(long headId);
-
 }

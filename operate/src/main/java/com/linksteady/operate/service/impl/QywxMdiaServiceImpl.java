@@ -43,7 +43,7 @@ public class QywxMdiaServiceImpl implements QywxMdiaService {
         String identityType="PRODUCT";
         String signature= SHA1.gen(timestamp,identityType,productId);
         //调用http请求
-        String url=qywxUrl+"/wxMedia/getMpMediaId";
+        String url=qywxUrl+"/api/getMpMediaId";
 
         Map<String,String> param= Maps.newHashMap();
         param.put("timestamp",timestamp);

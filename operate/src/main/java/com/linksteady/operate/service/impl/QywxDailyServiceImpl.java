@@ -113,6 +113,9 @@ public class QywxDailyServiceImpl implements QywxDailyService {
                 boolean flag = qywxSendCouponService.sendCouponToUser(headId);
                 if (!flag) {
                     throw new SendCouponException("券已发出，但接口返回的结果为异常");
+                }else
+                {
+                    qywxDailyMapper.updateSendCouponFlag(headId);
                 }
             } catch (Exception e) {
                 throw new SendCouponException("发送优惠券异常");
@@ -248,20 +251,26 @@ public class QywxDailyServiceImpl implements QywxDailyService {
             List<String> contactIdList=qywxDailyDetailList.stream().map(QywxDailyDetail::getQywxContractId).collect(Collectors.toList());
             String result = qywxMessageService.pushQywxMessage(qywxMessage, qywxPushList.getFollowUserId(), contactIdList);
             log.info("日运营企微：推送结果【{}】", result);
-            JSONObject jsonObject = JSON.parseObject(result);
-            String msgId = jsonObject.getString("msg");
-            String code = jsonObject.getString("code");
-            String failList = jsonObject.getString("data");
-            String status="S";
 
-            if(StringUtils.isNotEmpty(code)&&code.equalsIgnoreCase("200"))
+            String status="S";
+            String msgId ="";
+            String failList="";
+            if(StringUtils.isEmpty(result))
             {
-                qywxDailyMapper.updatePushList(qywxPushList.getPushId(),status,msgId,failList,"推送成功");
+                 status="F";
             }else
             {
-                status="F";
-                qywxDailyMapper.updatePushList(qywxPushList.getPushId(),status,"","","调用企业微信接口失败");
+                JSONObject jsonObject = JSON.parseObject(result);
+                msgId = jsonObject.getString("msgid");
+                int errcode = jsonObject.getIntValue("errcode");
+                failList = jsonObject.getString("fail_list");
+
+                if(errcode!=0)
+                {
+                    status="F";
+                }
             }
+            qywxDailyMapper.updatePushList(qywxPushList.getPushId(),status,msgId,failList,"推送成功");
 
             //更新uo_qywx_daily_detail表上的push_id (这种更新要确保取数的时候是按detail_id进行了排序)
             List<Long> detailIdList=qywxDailyDetailList.stream().map(QywxDailyDetail::getDetailId).collect(Collectors.toList());
