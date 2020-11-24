@@ -1,6 +1,7 @@
 package com.linksteady.qywx.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Splitter;
 import com.linksteady.common.service.ConfigService;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
@@ -37,7 +39,7 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
     @Autowired(required = false)
     QywxContactWayMapper qywxContactWayMapper;
 
-    @Autowired
+    @Autowired(required = false)
     QywxBaseDataMapper qywxBaseDataMapper;
 
 
@@ -48,17 +50,23 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
     @Transactional(rollbackFor = Exception.class)
     public void saveContactWay(QywxContactWay qywxContactWay, String userName) throws Exception{
         //渠道码类型 单人 or 多人
-        String usersListStr = qywxContactWay.getUsersList();
-        String deptListStr = qywxContactWay.getDeptList();
+        String usersListStr = qywxContactWay.getUsersList();//选择人
+        String deptListStr = qywxContactWay.getDeptList();//选择部门
         HashSet<String> userList = new HashSet<>();
         if(StringUtils.isNotEmpty(usersListStr)) {
             userList = new HashSet<>(Arrays.asList(usersListStr.split(",")));
         }
+        HashSet<String> deptList = new HashSet<>();
         if(StringUtils.isNotEmpty(deptListStr)) {
+            deptList = new HashSet<>(Arrays.asList(deptListStr.split(",")));
+        }else{
+            qywxContactWay.setDeptList(null);
+        }
+   /*     if(StringUtils.isNotEmpty(deptListStr)) {
             List<String> deptUserIdList = qywxBaseDataMapper.getUserIdsByDeptId(Arrays.asList(deptListStr.split(",")));
             userList.addAll(deptUserIdList);
-        }
-        if(userList.size() > 1) {
+        }*/
+        if(userList.size() > 1||deptList.size()>0) {
             qywxContactWay.setContactType("2");
         }else if(userList.size() == 1){
             qywxContactWay.setContactType("1");
@@ -84,7 +92,17 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
         params.put("skip_verify",qywxContactWay.getSkipVerify());
         params.put("state",qywxContactWay.getState());
         List userLists= Splitter.on(',').trimResults().omitEmptyStrings().splitToList(qywxContactWay.getUsersList());
-        params.put("user",JSON.parseArray(JSON.toJSONString(userLists)));
+        if(userLists.size()>0){
+            params.put("user",JSON.parseArray(JSON.toJSONString(userLists)));
+        }
+        if(StringUtils.isNotEmpty(deptListStr)){//如果部门选择不为null
+            String[] split1 = deptListStr.split(",");
+            JSONArray jsonArray=new JSONArray();
+            for (int i = 0; i <split1.length; i++) {
+                jsonArray.add(Integer.parseInt(split1[i]));
+            }
+            params.put("party",jsonArray);
+        }
         log.info("渠道活码发送的参数为{}",JSON.toJSONString(params));
         String url= qywxService.getRedisConfigStorage().getApiUrl(WxPathConsts.ExternalContacts.ADD_CONTACT_WAY)+qywxService.getAccessToken();
         String result=OkHttpUtil.postRequest(url,JSON.toJSONString(params));
@@ -114,8 +132,7 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateContractWay(QywxContactWay qywxContactWay) throws Exception{
-        //更新数据库
-        qywxContactWayMapper.updateContractWay(qywxContactWay);
+
 
         JSONObject param=new JSONObject();
         param.put("type",qywxContactWay.getContactType());
@@ -128,8 +145,23 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
             throw new Exception("configId不能为空");
         }
         param.put("config_id",configId);
-        List userList= Splitter.on(',').trimResults().omitEmptyStrings().splitToList(qywxContactWay.getUsersList());
-        param.put("user",JSON.parseArray(JSON.toJSONString(userList)));
+        List userList= Splitter.on(',').trimResults().omitEmptyStrings().splitToList(qywxContactWay.getUsersList());//获取人员列表
+        List deptlist = Splitter.on(',').trimResults().omitEmptyStrings().splitToList(qywxContactWay.getDeptList());//获取部门列表
+        if(userList.size() > 1||deptlist.size()>0) {
+            param.put("type","2");
+            qywxContactWay.setContactType("2");
+        }else if(userList.size() == 1){
+            param.put("type","1");
+            qywxContactWay.setContactType("1");
+        }
+        if(userList.size()>0){
+            param.put("user",JSON.parseArray(JSON.toJSONString(userList)));
+        }
+        if(deptlist.size()>0){
+            param.put("party",JSON.parseArray(JSON.toJSONString(deptlist)));
+        }else{
+            qywxContactWay.setDeptList(null);
+        }
         log.info("渠道活码发送的参数为{}",JSON.toJSONString(param));
         String url= qywxService.getRedisConfigStorage().getApiUrl(WxPathConsts.ExternalContacts.UPDATE_CONTACT_WAY)+qywxService.getAccessToken();
         String result=OkHttpUtil.postRequest(url,param.toJSONString());
@@ -144,7 +176,10 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
             {
                 qrCode=contactDetail.getString("qr_code");
             }
+            //更新数据库
+            qywxContactWayMapper.updateContractWay(qywxContactWay);
             qywxContactWayMapper.updateContactWayQrCode(qywxContactWay.getContactWayId(),qrCode,qywxContactWay.getUpdateBy());
+
         }else
         {
             throw new Exception("更新失败！");
