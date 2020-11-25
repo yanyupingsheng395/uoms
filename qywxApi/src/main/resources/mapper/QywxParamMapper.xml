@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.qywx.dao.QywxParamMapper">
+    <resultMap id="paramMap" type="com.linksteady.qywx.domain.QywxParam">
+        <result column="daily_add_num" jdbcType="DECIMAL" property="dailyAddNum"/>
+        <result column="daily_add_rate" jdbcType="DOUBLE" property="dailyAddRate"/>
+        <result column="daily_add_rate" jdbcType="VARCHAR" property="dailyAddRateStr"/>
+        <result column="daily_apply_num" jdbcType="DECIMAL" property="dailyApplyNum"/>
+        <result column="trigger_num" jdbcType="DECIMAL" property="triggerNum"/>
+        <result column="active_num" jdbcType="DECIMAL" property="activeNum"/>
+        <result column="last_update_by" jdbcType="VARCHAR" property="lastUpdateBy"/>
+        <result column="last_update_dt" jdbcType="TIMESTAMP" property="lastUpdateDt"/>
+        <result column="version" jdbcType="DECIMAL" property="version"/>
+        <result column="last_sync_order_dt" jdbcType="TIMESTAMP" property="lastSyncOrderDt"/>
+    </resultMap>
+
+    <resultMap id="addUserHistoryMap" type="com.linksteady.qywx.domain.AddUserHistoryVO">
+        <result column="phone_num" jdbcType="VARCHAR" property="phoneNum"/>
+    </resultMap>
+
+    <select id="getQywxParam" resultMap="paramMap">
+        select daily_add_num,
+               daily_add_rate,
+               daily_apply_num,
+               trigger_num,
+               (daily_apply_num - trigger_num) active_num,
+               last_update_by,
+               last_update_dt,
+               version,
+               last_sync_order_dt
+        from uo_qywx_param
+        limit 1
+    </select>
+
+    <update id="updateQywxParam">
+        update uo_qywx_param
+        set daily_add_num=#{dailyAddNum},
+            daily_add_rate=#{dailyAddRate},
+            daily_apply_num=#{applyNum},
+            last_update_by=#{opUser},
+            last_update_dt=now()
+    </update>
+
+    <update id="updateTriggerNum">
+        update uo_qywx_param
+        set trigger_num=#{triggerNum},
+            last_update_by=#{opUser},
+            last_update_dt=now()
+    </update>
+
+    <update id="updateVersion">
+        update uo_qywx_param
+        set version=version + 1
+        where version = #{version}
+    </update>
+
+    <update id="updateOrderSyncTimes">
+         update uo_qywx_param set
+            last_sync_order_dt=#{orderSyncDt}
+    </update>
+
+    <insert id="insertAddUserHistory">
+        insert into uo_qywx_add_user_history(phone_num,insert_dt)
+        values(#{phone_num},now()) on conflict (phone_num) do nothing
+    </insert>
+
+    <delete id="deleteAddUserHistory">
+        delete from uo_qywx_add_user_history where current_date-insert_dt::date &gt;=#{diffDays}
+    </delete>
+
+    <select id="getAddUserHistory" resultMap="addUserHistoryMap">
+        select distinct phone_num from uo_qywx_add_user_history where current_date-insert_dt::date &gt;=#{diffDays}
+    </select>
+
+    <insert id="insertAddUserListHistory">
+        insert into uo_qywx_add_user_history(phone_num,insert_dt) values
+        <foreach collection="list" item="item" index="index"
+                 separator=",">
+            (#{item},now())
+        </foreach>
+        on conflict (phone_num) do nothing
+    </insert>
+
+</mapper>

@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.qywx.dao.AddUserTriggerMapper">
+
+    <resultMap id="base" type="com.linksteady.qywx.domain.AddUserHead">
+        <result column="id" jdbcType="DECIMAL" property="id"/>
+        <result column="send_type" jdbcType="VARCHAR" property="sendType"/>
+        <result column="apply_user_cnt" jdbcType="DECIMAL" property="applyUserCnt"/>
+        <result column="apply_pass_cnt" jdbcType="DECIMAL" property="applyPassCnt"/>
+        <result column="apply_pass_rate" jdbcType="DECIMAL" property="applyPassRate"/>
+        <result column="task_start_dt" jdbcType="TIMESTAMP" property="taskStartDt"/>
+        <result column="task_status" jdbcType="VARCHAR" property="taskStatus"/>
+        <result column="region_id" jdbcType="VARCHAR" property="regionId"/>
+        <result column="region_name" jdbcType="VARCHAR" property="regionName"/>
+        <result column="source_id" jdbcType="VARCHAR" property="sourceId"/>
+        <result column="source_name" jdbcType="VARCHAR" property="sourceName"/>
+        <result column="daily_user_cnt" jdbcType="DECIMAL" property="dailyUserCnt"/>
+        <result column="daily_apply_rate" jdbcType="VARCHAR" property="dailyApplyRate"/>
+        <result column="daily_add_user_cnt" jdbcType="DECIMAL" property="dailyAddUserCnt"/>
+        <result column="daily_wait_days" jdbcType="DECIMAL" property="dailyWaitDays"/>
+        <result column="daily_add_total" jdbcType="DECIMAL" property="dailyAddTotal"/>
+        <result column="task_name" jdbcType="VARCHAR" property="taskName"/>
+        <result column="contactway_id" jdbcType="VARCHAR" property="contactWayId"/>
+        <result column="contactway_url" jdbcType="VARCHAR" property="contactWayUrl"/>
+        <result column="sms_content" jdbcType="VARCHAR" property="smsContent"/>
+        <result column="wait_user_cnt" jdbcType="DECIMAL" property="waitUserCnt"/>
+        <result column="delivered_user_cnt" jdbcType="DECIMAL" property="deliveredUserCnt"/>
+        <result column="is_source_name" jdbcType="VARCHAR" property="isSourceName"/>
+        <result column="is_prod_name" jdbcType="VARCHAR" property="isProdName"/>
+        <result column="apply_success_num" jdbcType="DECIMAL" property="applySuccessNum"/>
+        <result column="state" jdbcType="VARCHAR" property="state"/>
+    </resultMap>
+
+    <resultMap id="scheduleMap" type="com.linksteady.qywx.domain.AddUserSchedule">
+        <result column="schedule_id" jdbcType="DECIMAL" property="scheduleId"/>
+        <result column="head_id" jdbcType="DECIMAL" property="headId"/>
+        <result column="actual_apply_num" jdbcType="DECIMAL" property="actualApplyNum"/>
+        <result column="schedule_date" jdbcType="TIMESTAMP" property="scheduleDate"/>
+        <result column="remain_user_cnt" jdbcType="DECIMAL" property="remainUserCnt"/>
+        <result column="sms_content" jdbcType="VARCHAR" property="smsContent"/>
+
+        <result column="source_id" jdbcType="VARCHAR" property="sourceId"/>
+        <result column="source_name" jdbcType="VARCHAR" property="sourceName"/>
+        <result column="region_id" jdbcType="VARCHAR" property="regionId"/>
+        <result column="region_name" jdbcType="VARCHAR" property="regionName"/>
+        <result column="apply_success_num" jdbcType="DECIMAL" property="applySuccessNum"/>
+    </resultMap>
+
+    <resultMap id="scheduleEffectVO" type="com.linksteady.qywx.domain.QywxScheduleEffectVO">
+        <result column="statis_date_wid" jdbcType="VARCHAR" property="statisDateWid"/>
+        <result column="cnt" jdbcType="DECIMAL" property="cnt"/>
+    </resultMap>
+
+    <resultMap id="triggerQueueMap" type="com.linksteady.qywx.domain.AddUserTriggerQueue">
+        <result column="queue_id" jdbcType="DECIMAL" property="queueId"/>
+        <result column="order_id" jdbcType="DECIMAL" property="orderId"/>
+        <result column="user_id" jdbcType="DECIMAL" property="userId"/>
+        <result column="order_dt" jdbcType="TIMESTAMP" property="orderDt"/>
+        <result column="mobile" jdbcType="VARCHAR" property="mobile"/>
+        <result column="source_name" jdbcType="VARCHAR" property="sourceName"/>
+        <result column="product_name" jdbcType="VARCHAR" property="productName"/>
+        <result column="source_id" jdbcType="VARCHAR" property="sourceId"/>
+        <result column="region_id" jdbcType="VARCHAR" property="regionId"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMap" type="com.linksteady.qywx.domain.QywxContactWay">
+        <result property="contactWayId" jdbcType="DECIMAL" column="contactway_id"/>
+        <result property="qrCode" jdbcType="VARCHAR" column="qrcode"/>
+        <result property="contactType" jdbcType="VARCHAR" column="contact_type"/>
+        <result property="scene" jdbcType="VARCHAR" column="scene"/>
+        <result property="style" jdbcType="VARCHAR" column="style"/>
+        <result property="skipVerify" jdbcType="BOOLEAN" column="skip_verify"/>
+        <result property="state" jdbcType="VARCHAR" column="state"/>
+        <result property="usersList" jdbcType="VARCHAR" column="user_list"/>
+        <result property="party" jdbcType="VARCHAR" column="party"/>
+        <result property="configId" jdbcType="VARCHAR" column="config_id"/>
+        <result property="createDt" jdbcType="TIMESTAMP" column="create_dt"/>
+        <result property="updateDt" jdbcType="TIMESTAMP" column="update_dt"/>
+        <result property="createBy" jdbcType="VARCHAR" column="create_by"/>
+        <result property="updateBy" jdbcType="VARCHAR" column="update_by"/>
+        <result property="externalUserNum" jdbcType="DECIMAL" column="externaluser_num"/>
+        <result property="shortUrl" jdbcType="VARCHAR" column="short_url"/>
+    </resultMap>
+
+    <select id="getContactWayById" resultMap="BaseResultMap">
+        select contactway_id,qrcode,contact_type,scene,style,skip_verify,state,user_list,party,
+                config_id,create_dt,update_dt,create_by,update_by,externaluser_num,short_url
+        from uo_qywx_contact_way where  contactway_id=#{contactWayId}
+    </select>
+
+    <select id="getHeadCount" resultType="int">
+        select count(1) from uo_qywx_trigger_header
+    </select>
+
+    <select id="getHeadPageList" resultMap="base">
+        select id,
+            task_name,
+            apply_user_cnt,
+            apply_pass_cnt,
+            apply_pass_rate,
+            task_start_dt,
+            task_status,
+            send_type,
+            apply_success_num,
+            state
+         from uo_qywx_trigger_header
+          left join uo_qywx_contact_way on uo_qywx_trigger_header.contactway_id=uo_qywx_contact_way.contactway_id
+        order by uo_qywx_trigger_header.insert_dt desc
+        limit #{limit} offset #{offset}
+    </select>
+
+    <insert id="saveHeadData">
+        <selectKey resultType="java.lang.Integer" order="BEFORE" keyProperty="id">
+            select nextval('uo_qywx_trigger_header_id_seq'::regclass)
+        </selectKey>
+        insert into uo_qywx_trigger_header(id, send_type, task_status, task_name, region_id, region_name, source_id, source_name)
+        values (#{id}, #{sendType}, 'edit', #{taskName}, #{regionId}, #{regionName}, #{sourceId}, #{sourceName})
+    </insert>
+
+    <delete id="deleteHead">
+        delete from uo_qywx_trigger_header where id = #{id}::integer
+    </delete>
+
+    <select id="getHeadById" resultMap="base">
+        select * from uo_qywx_trigger_header where id = #{id}
+    </select>
+
+    <select id="getSource" resultType="map">
+        select source_id id, source_name as name from w_source
+    </select>
+
+    <select id="getAddUserListCount" resultType="int">
+         select count(*) from uo_qywx_trigger_list where head_id= #{headId}
+    </select>
+
+    <update id="updateSmsContentAndContactWay">
+        update uo_qywx_trigger_header set
+            sms_content = #{smsContent},
+            contactway_id =  #{contactWayId}::integer,
+            contactway_url = #{contactWayUrl},
+            is_source_name = #{isSourceName},
+            is_prod_name = #{isProdName}
+        where id= #{headId}::integer
+    </update>
+
+    <update id="updateHeadVersion">
+        update uo_qywx_trigger_header set version=version+1 where id= #{headId} and version=#{version}
+    </update>
+
+    <select id="getRunningScheduleCount" resultType="int">
+        select count(*) from uo_qywx_trigger_schedule where status='doing'
+    </select>
+
+    <select id="getRunningSchedule" resultMap="scheduleMap">
+        select * from uo_qywx_trigger_schedule where status='doing' limit 1
+    </select>
+
+    <insert id="saveAddUserSchedule" useGeneratedKeys="true" keyProperty="scheduleId" keyColumn="schedule_id">
+       insert into uo_qywx_trigger_schedule
+       (
+                head_id,
+                apply_num,
+                apply_rate,
+                wait_add_num,
+                remain_user_cnt,
+                contactway_id,
+                state,
+                contactway_url,
+                sms_content,
+                status,
+                insert_dt,
+                insert_by,
+                update_dt,
+                update_by,
+                schedule_date_wid,
+                schedule_date,
+                apply_pass_num,
+                apply_success_num,
+                actual_apply_num,
+                source_id,
+                source_name,
+                region_id,
+                region_name
+       ) values(
+                #{headId},
+                #{applyNum},
+                #{applyRate},
+                #{waitAddNum},
+                #{remainUserCnt},
+                #{contactwayId},
+                #{state},
+                #{contactwayUrl},
+                #{smsContent},
+                #{status},
+                #{insertDt},
+                #{insertBy},
+                #{updateDt},
+                #{updateBy},
+                #{scheduleDateWid},
+                #{scheduleDate},
+                #{applyPassNum},
+                #{applySuccessNum},
+                #{actualApplyNum},
+                #{sourceId},
+                #{sourceName},
+                #{regionId},
+                #{regionName}
+       )
+    </insert>
+
+    <update id="updateHeadToDoing">
+           update uo_qywx_trigger_header set
+             task_status='doing',
+             update_dt=now(),
+             update_by=#{opUserName}
+           where
+             id=#{headId}
+    </update>
+
+
+    <select id="getSendAndApplyData" resultType="map">
+        select schedule_date_wid date, apply_num applyNum, apply_pass_num applyPassNum, schedule_id scheduleId from uo_qywx_trigger_schedule where head_id = #{headId}::integer
+        order by schedule_date_wid asc
+    </select>
+
+    <select id="getStatisApplyData" resultType="map">
+        select statis_day statisDay, statis_pass_num num, statis_pass_rate rate from uo_qywx_trigger_effect where head_id = #{headId}::integer and schedule_id = #{scheduleId}::integer
+        order by statis_day asc
+    </select>
+
+    <select id="geRegionData" resultType="map">
+        select id, name, pid from w_region
+    </select>
+
+    <select id="getScheduleCount" resultType="int">
+        select count(*) from uo_qywx_trigger_schedule where head_id=#{headId}
+    </select>
+
+    <update id="updatePushResult">
+        update uo_qywx_trigger_list set
+              push_status = t4.push_status,
+              push_date   = t4.push_date,
+              is_push     = t4.is_push
+        from uo_op_push_list_large as t4
+        where id = t4.source_id
+        and t4.source_code = 'TADDUSER'
+        and uo_qywx_trigger_list.insert_dt::date>=(current_date-3)
+    </update>
+
+    <update id="updateScheduleToDone">
+        update uo_qywx_trigger_schedule set status='done' where
+          status='doing' and not exists(
+              select 1 from uo_qywx_add_user_list l
+              where l.head_id=uo_qywx_trigger_schedule.head_id
+                and l.schedule_id=uo_qywx_trigger_schedule.schedule_id
+                and l.is_push='0'
+          )
+    </update>
+
+    <update id="updateHeadToStop">
+        update uo_qywx_trigger_header set task_status='stop' where
+          task_status='doing' and not exists (
+             select 1 from uo_qywx_trigger_schedule s where s.head_id=uo_qywx_trigger_header.id and s.status='doing')
+    </update>
+
+    <update id="calculateScheduleEffect">
+         update uo_qywx_trigger_schedule c
+             set (apply_success_num,apply_pass_num)=
+        (select
+            count(id) success_num,
+            count(case when is_add_qywx='1'then is_add_qywx end) pass_num
+        from uo_qywx_trigger_list
+        where is_push='1'
+          and push_status='S'
+          and uo_qywx_trigger_list.head_id=c.head_id
+          and uo_qywx_trigger_list.schedule_id=c.schedule_id
+          and c.insert_dt::date>=current_date-30)
+    </update>
+
+    <update id="calculateHeadEffect">
+          update uo_qywx_trigger_header c
+                 set (apply_success_num,apply_pass_cnt,apply_pass_rate)=
+            (select
+                count(id) success_num,
+                count(case when is_add_qywx='1'then is_add_qywx end) pass_num,
+               (case when count(id)=0::int8 then 0 else
+                    round(count(case when is_add_qywx='1'then id end)/count(id),4)*100 end) rate
+            from uo_qywx_trigger_list
+            where is_push='1'
+              and push_status='S'
+              and uo_qywx_trigger_list.head_id=c.id)
+    </update>
+
+    <delete id="deleteScheduleEffect">
+        delete from uo_qywx_trigger_effect where schedule_id in (
+            select schedule_id from uo_qywx_trigger_schedule where insert_dt::date>=current_date-10
+        )
+    </delete>
+
+    <select id="getLastScheduleList" resultMap="scheduleMap">
+        select * from uo_qywx_trigger_schedule order by schedule_id desc limit 10
+    </select>
+
+    <select id="getScheduleCovStatis" resultMap="scheduleEffectVO">
+        select to_char(add_qywx_date, 'yyyymmdd') statis_date_wid,count(id) cnt
+          from uo_qywx_trigger_list
+        where schedule_id=#{scheduleId}
+          and is_push='1'
+          and push_status='S'
+          and is_add_qywx='1'
+        group by to_char(add_qywx_date, 'yyyymmdd')
+    </select>
+
+    <select id="saveScheduleEffect">
+        insert into uo_qywx_trigger_effect(head_id,schedule_id,apply_date,apply_num,statis_date,statis_day,statis_pass_num,statis_pass_rate) values
+        <foreach collection="list" separator="," item="item">
+            (#{item.headId}, #{item.scheduleId}, #{item.applyDate}, #{item.applyNum}, #{item.statisDate}, #{item.statisDay}, #{item.statisPassNum}, #{item.statisPassRate})
+        </foreach>
+    </select>
+
+    <update id="updateQywxAddInfo">
+        update uo_qywx_trigger_list set
+               is_add_qywx='1',
+               add_qywx_date=add_date
+        from (
+            SELECT * FROM
+                    (SELECT ROW_NUMBER() OVER (partition BY user_phone ORDER BY add_date desc) rowId,*
+                    from uo_qywx_external_user_list) t
+                WHERE rowId=1
+                 ) u where
+            u.user_phone=uo_qywx_trigger_list.phone_num
+        and u.state=uo_qywx_trigger_list.state
+        and uo_qywx_trigger_list.is_push='1'
+        and uo_qywx_trigger_list.insert_dt::date>=current_date-30
+    </update>
+
+    <select id="getOrders" resultMap="triggerQueueMap">
+        SELECT
+            order_id,
+            user_id,
+            order_dt,
+            mobile,
+            source_name,
+            product_name,
+            region_id,
+            source_id
+
+        from (
+            select w_orders.id order_id,
+                w_orders.user_id,
+                w_orders.order_dt,
+                w_users.mobile,
+                w_source.source_name,
+                w_product.ebp_product_name product_name,
+                w_order_details.price,
+                w_users.area region_id,
+                w_source.source_id,
+                ROW_NUMBER() OVER (partition BY w_users.mobile ORDER BY w_order_details.price desc) rn
+            from
+                w_order_details join w_orders on w_order_details.order_id=w_orders.id
+            and w_order_details.order_dt::timestamp &gt;= #{orderDt}::timestamp
+            and w_orders.valid_status='1'
+            join w_users on w_orders.user_id=w_users.id
+            and w_users.valid_status='1'
+            and w_users.qywx_mapping_flag='N'
+            join w_source on w_orders.source_id=w_source.source_id
+            join w_product on w_order_details.product_id=w_product.product_id
+            and w_product.ebp_product_id!= -1 ) t where rn=1 order by order_dt asc
+    </select>
+
+    <insert id="addToTriggerQueue">
+            insert into uo_qywx_trigger_user_queue(
+                order_id,
+                user_id,
+                mobile,
+                order_dt,
+                source_name,
+                product_name,
+                insert_dt
+            )
+        values
+        <foreach collection="list" item="item" index="index"
+                 separator=",">
+                (#{item.orderId},
+                #{item.userId},
+                #{item.mobile},
+                #{item.orderDt},
+                #{item.sourceName},
+                #{item.productName},
+                now())
+        </foreach>
+        on conflict (mobile) do nothing
+    </insert>
+
+    <select id="getTriggerQueueInfo" resultType="map">
+        select max(queue_id) max_queue_id,count(*)  record_num from(
+          select * from uo_qywx_trigger_user_queue order by queue_id asc limit #{slotsNum}
+      ) t
+    </select>
+
+    <delete id="deleteTriggerQueue">
+        delete from uo_qywx_trigger_user_queue where queue_id&lt;=#{queueId}
+    </delete>
+
+    <update id="updateScheduleRemainUserCnt">
+        update uo_qywx_trigger_schedule
+        set remain_user_cnt=remain_user_cnt-#{costSlots} ,
+            actual_apply_num=actual_apply_num+#{actualApplyNum},
+            apply_success_num=apply_success_num+#{actualApplyNum}
+        where schedule_id=#{scheduleId}
+    </update>
+
+    <select id="getTriggerQueueData" resultMap="triggerQueueMap">
+        select
+                queue_id,
+                order_id,
+                user_id,
+                mobile,
+                order_dt,
+                source_name,
+                product_name,
+                insert_dt
+        from uo_qywx_trigger_user_queue where queue_id&lt;= #{queueId} order by queue_id asc limit #{limit} offset #{offset}
+    </select>
+
+    <select id="getStatus" resultType="string">
+        select task_status from uo_qywx_trigger_header where id = #{headId}::integer
+    </select>
+
+    <insert id="insertAddUserList" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+       insert into uo_qywx_trigger_list(
+         head_id,user_id,phone_num,is_push,push_status,insert_dt,update_dt,sms_content,schedule_id,state
+       ) values
+        <foreach collection="list" item="item" index="index"
+                 separator=",">
+            (#{item.headId},
+            #{item.userId},
+            #{item.phoneNum},
+            #{item.isPush},
+            #{item.pushStatus},
+            #{item.insertDt},
+            #{item.updateDt},
+            #{item.smsContent},
+            #{item.scheduleId},
+            #{item.state})
+        </foreach>
+    </insert>
+
+    <insert id="pushToPushListLarge">
+        INSERT INTO uo_op_push_list_large(
+            PUSH_CONTENT,
+            PUSH_STATUS,
+            SOURCE_CODE,
+            SOURCE_ID,
+            USER_PHONE,
+            IS_PUSH,
+            PUSH_SCHEDULING_DATE
+        ) values
+        <foreach collection="adduserList" item="item" index="index"
+                 separator=",">
+            (#{item.smsContent},
+            'P',
+            'TADDUSER',
+            #{item.id},
+            #{item.phoneNum},
+            '0',
+            #{scheduleDate})
+        </foreach>
+    </insert>
+
+    <update id="updateHeadApplyUserCnt">
+        update uo_qywx_trigger_header
+        set apply_user_cnt=apply_user_cnt+#{applyUserCnt},
+            apply_success_num=apply_success_num+#{applyUserCnt}
+        where id=#{headId}
+    </update>
+
+</mapper>

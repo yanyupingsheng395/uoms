@@ -1,0 +1,222 @@
+<div th:if="${opType eq 'save'}">
+    <div class="row">
+        <span class="navbar-page-title">编辑申请消息</span>
+        <div class="col-md-12">
+            <hr class="hr m-t-0 m-t-10" style="margin-bottom: 10px;">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <label class="control-label" style="font-size: 10px;">配置消息中的二维码</label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <form class="form-inline">
+                <div class="row">
+                    <div class="col-md-12">
+                        <input type="hidden" id="qrId"/>
+                        获取二维码链接：<input id='qrCode' type="text" style="border: none 0;outline: medium;background: transparent;-webkit-appearance: none;  -moz-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+                        -moz-tap-highlight-color: transparent;border-bottom: 1px solid #ccc;" onclick="selectQrCode()"/>
+                        <a id="copyQrCodeBtn" style="cursor: pointer;font-size: 12px;" class="copy_btn"><i class="fa fa-clone"></i>复制二维码短链</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <hr style="margin-top: 10px;margin-bottom: 10px;">
+    <div class="row">
+        <div class="col-md-12">
+            <label class="control-label" style="font-size: 10px;">编辑好友申请消息</label>
+            <div>
+                <textarea placeholder="请输入消息内容..." id="smsContent" name="smsContent" style="height: 102px;width:520px;border: solid 1px #ebebeb;" oninput="smsContentInput(this)"></textarea>
+                <div class="wordstatis">
+                    长度估算：当前内容字数<span id="snum1" style="color:rgb(255, 152, 0);"></span>
+                    ,签名+内容+退订信息 三部分总字数<span id="snum2" style="color:rgb(255, 152, 0);"></span>
+                    ,按照<span id="snum3" style="color:rgb(255, 0, 0);font-size: 14px;font-weight: bold"></span>条文案发送并计费。
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr class="hr m-t-0 m-b-5"/>
+    <div class="row">
+        <div class="col-md-12 control-label" style="text-align: left;margin-left: 15px;padding-left: 5px;">
+            <ol class="list-inline">文案编写说明：</ol>
+            <ol style="padding-inline-start: 20px">
+                <li class="smscomments">1.文案字数=运营者编写内容的字数+签名长度+退订信息长度；</li>
+                <li class="smscomments">2.计费规则：文案字数<=70个字数，按照70个字数一条计算；文案字数>70个字数，即为长信息，按照67个字数记为一条；</li>
+
+                <li class="smscomments">3.当前系统支持在文案中使用的变量及其占用长度、签名长度、退订信息长度情况如下：</li>
+                <ul>
+                    <li class="smsvariable">&nbsp;&nbsp;签名：[[${sourceConfig.signature}]]，占<font color="red">[[${sourceConfig.signatureLen}]]</font>个字符；</li>
+                    <li class="smsvariable">&nbsp;&nbsp;退订信息：[[${sourceConfig.unsubscribe}]]，占<font color="red">[[${sourceConfig.unsubscribeLen}]]</font>个字符；</li>
+                </ul>
+                <li  class="smscomments">4.编写文案时起始位置请<font color="red">不要包含</font>签名信息[[${sourceConfig.signature}]]</li>
+                <li  class="smscomments">5.编写文案时结束位置请<font color="red">不要包含</font>退订信息[[${sourceConfig.unsubscribe}]]</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row m-t-10">
+        <div class="col-md-12">
+            <a class="btn btn-secondary btn-sm" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="true" aria-controls="collapseExample">
+                预览效果
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="m-t-10 collapse" id="collapseExample" aria-expanded="true">
+                <div class="well" style="height: 490px;padding: 8px;margin-bottom: 15px;">
+                    <div class="row">
+                        <div class="col-md-offset-4 col-md-4 text-left">
+                            <div style="position:absolute;height: 470px;width:100%;background:url(/static/images/app_content_01.png) no-repeat -23px -39px;}"></div>
+                            <div class="bubble" style="position: relative;margin-top: 140px;width: 233px;">
+                                <div class="demo clearfix">
+                                    <span class="triangle" style="left: 42px"></span>
+                                    <div class="article" id="article" style="font-size: 12px;">请输入消息内容...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="clear: both;">
+        <div class="col-md-12 text-right">
+            <div class="btn-group-sm" role="group">
+                <a class="btn btn-primary" onclick="updateSmsContent()">
+                    <i class="fa fa-save"></i> 保存
+                </a>
+                <a class="btn btn-secondary" onclick="stepBreak(0)">
+                    <i class="fa fa-arrow-left"></i> 上一步
+                </a>
+                <a class="btn btn-secondary" href="/page/addUser">
+                    <i class="fa fa-backward"></i> 返回
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:if="${opType eq 'update'}">
+    <div class="row">
+        <span style="margin-top: 5px;" class="navbar-page-title">编辑申请消息</span>
+        <div class="col-md-12">
+            <hr class="hr m-t-0 m-t-5" style="margin-bottom: 5px;">
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <label class="control-label" style="font-size: 10px;">配置消息中的二维码</label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <form class="form-inline">
+                <div class="row">
+                    <div class="col-md-12">
+                        <input type="hidden" id="qrId" th:value="${addUserHead.contactWayId}"/>
+                        获取二维码链接：<input id='qrCode' type="text" style="background-color:#ccc;border: none 0;outline: medium;background: transparent;-webkit-appearance: none;-moz-appearance: none;-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+                        -moz-tap-highlight-color: transparent;border-bottom: 1px solid #ccc;" th:value="${addUserHead.contactWayUrl}" onclick="selectQrCode()"/>
+                        <a id="copyQrCodeBtn" style="cursor: pointer;font-size: 12px;" class="copy_btn" th:data-clipboard-text="${addUserHead.contactWayUrl}"><i class="fa fa-clone"></i>复制二维码短链</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <hr style="margin-top: 10px;margin-bottom: 10px;">
+    <div class="row">
+        <div class="col-md-12">
+            <label class="control-label" style="font-size: 10px;">编辑好友申请消息</label>
+            <div>
+                <textarea th:text="${addUserHead.smsContent}" placeholder="请输入文案内容..." id="smsContent" name="smsContent" style="height: 102px;width:520px;border: solid 1px #ebebeb;" oninput="smsContentInput(this)"></textarea>
+                <div class="wordstatis">
+                    长度估算：当前内容字数<span id="snum1" style="color:rgb(255, 152, 0);"></span>
+                    ,签名+内容+退订信息 三部分总字数<span id="snum2" style="color:rgb(255, 152, 0);"></span>
+                    ,按照<span id="snum3" style="color:rgb(255, 0, 0);font-size: 14px;font-weight: bold"></span>条文案发送并计费。
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr class="hr m-t-0 m-b-5"/>
+    <div class="row">
+        <div class="col-md-12 control-label" style="text-align: left;margin-left: 15px;padding-left: 5px;">
+            <ol class="list-inline">文案编写说明：</ol>
+            <ol style="padding-inline-start: 20px">
+                <li class="smscomments">1.文案字数=运营者编写内容的字数+签名长度+退订信息长度；</li>
+                <li class="smscomments">2.计费规则：文案字数<=70个字数，按照70个字数一条计算；文案字数>70个字数，即为长信息，按照67个字数记为一条；</li>
+
+                <li class="smscomments">3.当前系统支持在文案中使用的变量及其占用长度、签名长度、退订信息长度情况如下：</li>
+                <ul>
+                    <li class="smsvariable">&nbsp;&nbsp;签名：[[${sourceConfig.signature}]]，占<font color="red">[[${sourceConfig.signatureLen}]]</font>个字符；</li>
+                    <li class="smsvariable">&nbsp;&nbsp;退订信息：[[${sourceConfig.unsubscribe}]]，占<font color="red">[[${sourceConfig.unsubscribeLen}]]</font>个字符；</li>
+                </ul>
+                <li  class="smscomments">4.编写文案时起始位置请<font color="red">不要包含</font>签名信息[[${sourceConfig.signature}]]</li>
+                <li  class="smscomments">5.编写文案时结束位置请<font color="red">不要包含</font>退订信息[[${sourceConfig.unsubscribe}]]</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row m-t-10">
+        <div class="col-md-12">
+            <a class="btn btn-secondary btn-sm" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="true" aria-controls="collapseExample">
+                效果预览
+            </a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="m-t-10 collapse" id="collapseExample" aria-expanded="true">
+                <div class="well" style="height: 490px;padding: 8px;margin-bottom: 15px;">
+                    <div class="row">
+                        <div class="col-md-offset-4 col-md-4 text-left">
+                            <div style="position:absolute;height: 470px;width:100%;background:url(/static/images/app_content_01.png) no-repeat -23px -39px;}"></div>
+                            <div class="bubble" style="position: relative;margin-top: 140px;width: 233px;">
+                                <div class="demo clearfix">
+                                    <span class="triangle" style="left: 42px"></span>
+                                    <div class="article" id="article" style="font-size: 12px;" th:text="${addUserHead.smsContent}">请输入消息内容...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 text-right">
+            <div class="btn-group-sm" role="group">
+                <a class="btn btn-primary" onclick="updateSmsContent()">
+                    <i class="fa fa-save"></i> 保存
+                </a>
+                <a class="btn btn-secondary" onclick="stepBreak(0)">
+                    <i class="fa fa-arrow-left"></i> 上一步
+                </a>
+                <a class="btn btn-secondary" href="/page/addUser">
+                    <i class="fa fa-backward"></i> 返回
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="selectQrModal" data-keyboard="false" data-backdrop="static" tabindex="-1">
+    <div class="modal-dialog" style="width: 70%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title pull-left">选择二维码</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 table-striped">
+                        <table class="table table-hover table-bordered" id="qrDataTable"></table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-save btn-sm" onclick="setQrCode()">确定</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>

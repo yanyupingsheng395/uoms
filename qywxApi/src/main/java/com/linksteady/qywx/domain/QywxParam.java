@@ -38,6 +38,11 @@ public class QywxParam implements Serializable {
      * 自动触发人数(根据订单自动触发)
      */
     private int triggerNum;
+
+    /**
+     * 主动触发人数（手工推送）
+     */
+    private int activeNum;
     /**
      * 版本号
      */

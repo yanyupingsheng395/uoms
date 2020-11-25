@@ -416,6 +416,7 @@ function rebuildData(usersList, deptLis) {
 function regionRemove(dom, id, selid) {
     $( dom ).parent().remove();
    if(selid=="region1"){
+       id=parseInt(id);
        dept_list.splice( dept_list.indexOf( id ), 1 );
    }else if(selid=="region2"){
        user_list.splice( user_list.indexOf( id ), 1 );
