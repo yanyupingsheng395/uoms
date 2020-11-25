@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.operate.dao.AddUserTriggerMapper;
-import com.linksteady.operate.dao.QywxContactWayMapper;
 import com.linksteady.operate.dao.QywxParamMapper;
 import com.linksteady.operate.domain.AddUserHead;
 import com.linksteady.operate.domain.AddUserSchedule;
@@ -38,9 +37,6 @@ public class AddUserTriggerServiceImpl implements AddUserTriggerService {
 
     @Autowired
     private QywxParamMapper qywxParamMapper;
-
-    @Autowired
-    private QywxContactWayMapper qywxContactWayMapper;
 
     @Override
     public int getHeadCount() {
@@ -139,7 +135,7 @@ public class AddUserTriggerServiceImpl implements AddUserTriggerService {
 
         addUserSchedule.setRemainUserCnt(qywxParam.getTriggerNum());
 
-        QywxContactWay qywxContactWay=qywxContactWayMapper.getContactWayById(addUserHead.getContactWayId());
+        QywxContactWay qywxContactWay=addUserTriggerMapper.getContactWayById(addUserHead.getContactWayId());
         addUserSchedule.setContactwayId(qywxContactWay.getContactWayId());
         addUserSchedule.setState(qywxContactWay.getState());
         addUserSchedule.setContactwayUrl(addUserHead.getContactWayUrl());

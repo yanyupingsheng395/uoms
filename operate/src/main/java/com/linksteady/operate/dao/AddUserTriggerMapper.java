@@ -171,8 +171,10 @@ public interface AddUserTriggerMapper {
      */
     void updateHeadApplyUserCnt(long headId,long applyUserCnt);
 
-
-
+    /**
+     *根据活吗ID获取渠道活吗数据
+     */
+    QywxContactWay getContactWayById(Long contactWayId);
 }
 
 

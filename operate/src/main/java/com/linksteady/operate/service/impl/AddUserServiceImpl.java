@@ -4,14 +4,11 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.common.util.SpringUtils;
 import com.linksteady.operate.dao.AddUserMapper;
-import com.linksteady.operate.dao.QywxContactWayMapper;
+import com.linksteady.operate.dao.AddUserTriggerMapper;
 import com.linksteady.operate.dao.QywxParamMapper;
 import com.linksteady.operate.domain.*;
 import com.linksteady.operate.exception.OptimisticLockException;
-import com.linksteady.operate.service.AddUserJobService;
 import com.linksteady.operate.service.AddUserService;
 import com.linksteady.operate.vo.AddUserHistoryVO;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +38,7 @@ public class AddUserServiceImpl implements AddUserService {
     private AddUserMapper addUserMapper;
 
     @Autowired
-    private QywxContactWayMapper qywxContactWayMapper;
+    private AddUserTriggerMapper addUserTriggerMapper;
 
     @Autowired
     QywxParamMapper qywxParamMapper;
@@ -241,7 +238,7 @@ public class AddUserServiceImpl implements AddUserService {
         //按当前转化率剩余人数预计添加好友数量
         addUserSchedule.setRemainAddNum((long)Math.floor(afterWaitNum*addUserHead.getDailyApplyRate()));
 
-        QywxContactWay qywxContactWay=qywxContactWayMapper.getContactWayById(addUserHead.getContactWayId());
+        QywxContactWay qywxContactWay=addUserTriggerMapper.getContactWayById(addUserHead.getContactWayId());
         addUserSchedule.setContactwayId(qywxContactWay.getContactWayId());
         addUserSchedule.setState(qywxContactWay.getState());
         addUserSchedule.setContactwayUrl(addUserHead.getContactWayUrl());
