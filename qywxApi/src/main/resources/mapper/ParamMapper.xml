@@ -19,6 +19,10 @@
         <result column="ec_event_aeskey" jdbcType="VARCHAR" property="ecEventAesKey"/>
     </resultMap>
 
+    <resultMap id="addUserHistoryMap" type="com.linksteady.qywx.domain.AddUserHistoryVO">
+        <result column="phone_num" jdbcType="VARCHAR" property="phoneNum"/>
+    </resultMap>
+
     <select id="getQywxParam" resultMap="paramMap">
         select * from uo_qywx_param
     </select>
@@ -38,5 +42,54 @@
     <update id="updateMpAppId">
         update uo_qywx_param set mp_appid=#{mpAppId}
     </update>
+
+    <update id="updateQywxParam">
+        update uo_qywx_param
+        set daily_add_num=#{dailyAddNum},
+            daily_add_rate=#{dailyAddRate},
+            daily_apply_num=#{applyNum},
+            last_update_by=#{opUser},
+            last_update_dt=now()
+    </update>
+
+    <update id="updateTriggerNum">
+        update uo_qywx_param
+        set trigger_num=#{triggerNum},
+            last_update_by=#{opUser},
+            last_update_dt=now()
+    </update>
+
+    <update id="updateVersion">
+        update uo_qywx_param
+        set version=version + 1
+        where version = #{version}
+    </update>
+
+    <update id="updateOrderSyncTimes">
+         update uo_qywx_param set
+            last_sync_order_dt=#{orderSyncDt}
+    </update>
+
+    <insert id="insertAddUserHistory">
+        insert into uo_qywx_add_user_history(phone_num,insert_dt)
+        values(#{phone_num},now()) on conflict (phone_num) do nothing
+    </insert>
+
+    <delete id="deleteAddUserHistory">
+        delete from uo_qywx_add_user_history where current_date-insert_dt::date &gt;=#{diffDays}
+    </delete>
+
+    <select id="getAddUserHistory" resultMap="addUserHistoryMap">
+        select distinct phone_num from uo_qywx_add_user_history where current_date-insert_dt::date &gt;=#{diffDays}
+    </select>
+
+    <insert id="insertAddUserListHistory">
+        insert into uo_qywx_add_user_history(phone_num,insert_dt) values
+        <foreach collection="list" item="item" index="index"
+                 separator=",">
+            (#{item},now())
+        </foreach>
+        on conflict (phone_num) do nothing
+    </insert>
 
 </mapper>

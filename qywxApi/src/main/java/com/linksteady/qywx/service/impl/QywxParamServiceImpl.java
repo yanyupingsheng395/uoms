@@ -1,6 +1,6 @@
 package com.linksteady.qywx.service.impl;
 
-import com.linksteady.qywx.dao.QywxParamMapper;
+import com.linksteady.qywx.dao.ParamMapper;
 import com.linksteady.qywx.domain.QywxParam;
 import com.linksteady.qywx.service.QywxParamService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +19,12 @@ import javax.persistence.OptimisticLockException;
 public class QywxParamServiceImpl implements QywxParamService {
 
     @Autowired
-    private QywxParamMapper qywxParamMapper;
+    private ParamMapper paramMapper;
 
 
     @Override
     public QywxParam getQywxParam() {
-        return qywxParamMapper.getQywxParam();
+        return paramMapper.getQywxParam();
     }
 
     /**
@@ -35,7 +35,7 @@ public class QywxParamServiceImpl implements QywxParamService {
     @Override
     @Transactional
     public QywxParam updateQywxParam(int dailyAddNum, double dailyAddRate,String opUser,int version) throws Exception{
-        int count=qywxParamMapper.updateVersion(version);
+        int count=paramMapper.updateVersion(version);
         if(count==0)
         {
             throw new OptimisticLockException("配置数据已被修改，请返回列表界面重试！");
@@ -43,7 +43,7 @@ public class QywxParamServiceImpl implements QywxParamService {
         //计算可被推送的总人数
         int applyNum=(int)Math.floor(dailyAddNum/dailyAddRate*100);
 
-        QywxParam qywxParam=qywxParamMapper.getQywxParam();
+        QywxParam qywxParam=paramMapper.getQywxParam();
         int triggerNum=qywxParam.getTriggerNum();
         if(applyNum<triggerNum)
         {
@@ -51,9 +51,9 @@ public class QywxParamServiceImpl implements QywxParamService {
         }
 
         //更新到数据库
-        qywxParamMapper.updateQywxParam(dailyAddNum,dailyAddRate,applyNum,opUser);
+        paramMapper.updateQywxParam(dailyAddNum,dailyAddRate,applyNum,opUser);
 
-        return qywxParamMapper.getQywxParam();
+        return paramMapper.getQywxParam();
 
     }
 
@@ -64,13 +64,13 @@ public class QywxParamServiceImpl implements QywxParamService {
     @Override
     @Transactional
     public QywxParam updateTriggerNum(int triggerNum,String opUser,int version) throws Exception{
-        int count=qywxParamMapper.updateVersion(version);
+        int count=paramMapper.updateVersion(version);
 
         if(count==0)
         {
             throw new OptimisticLockException("配置数据已被修改，请返回列表界面重试！");
         }
-        QywxParam qywxParam=qywxParamMapper.getQywxParam();
+        QywxParam qywxParam=paramMapper.getQywxParam();
         //每日可申请的总人数
         int applyNum=qywxParam.getDailyApplyNum();
 
@@ -79,8 +79,8 @@ public class QywxParamServiceImpl implements QywxParamService {
             throw new Exception("更新错误，自动触发人数大于可发送的总人数！");
         }
         //更新到数据库
-        qywxParamMapper.updateTriggerNum(triggerNum,opUser);
+        paramMapper.updateTriggerNum(triggerNum,opUser);
 
-        return qywxParamMapper.getQywxParam();
+        return paramMapper.getQywxParam();
     }
 }
