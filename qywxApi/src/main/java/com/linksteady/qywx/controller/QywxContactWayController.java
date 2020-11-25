@@ -1,5 +1,6 @@
 package com.linksteady.qywx.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
@@ -26,6 +27,7 @@ import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -97,12 +99,6 @@ public class QywxContactWayController extends BaseController {
     @RequestMapping("/contactWay/update")
     @ResponseBody
     public ResponseBo update(QywxContactWay qywxContactWay) {
-        if (qywxContactWay.getUsersList().indexOf(",") != -1) {
-            qywxContactWay.setContactType("2");
-        } else {
-            qywxContactWay.setContactType("1");
-        }
-
         qywxContactWay.setUpdateDt(new Date());
         qywxContactWay.setUpdateBy(getCurrentUser().getUsername());
         //固定值为2 表示生成二维码
@@ -235,6 +231,30 @@ public class QywxContactWayController extends BaseController {
             return ResponseBo.error("未获取到可联系成员，请先完成组织架构数据的上传！");
         }
         return ResponseBo.okWithData(null, deptAndUserTree);
+    }
+
+    @RequestMapping("/contactWay/getDept")
+    @ResponseBody
+    public ResponseBo getDept(){
+        List<Map<String, Object>> dept =null;
+        try {
+            dept = baseDataService.getDept();
+        }catch (Exception e){
+            return ResponseBo.error("未获取到可联系部门，请先完成组织架构数据的上传！");
+        }
+        return ResponseBo.okWithData(null, dept);
+    }
+
+    @RequestMapping("/contactWay/getUser")
+    @ResponseBody
+    public ResponseBo getUser(){
+        List<Map<String, Object>> userlist =null;
+        try {
+            userlist = baseDataService.getUser();
+        }catch (Exception e){
+            return ResponseBo.error("未获取到可联系成员，请先完成组织架构数据的上传！");
+        }
+        return ResponseBo.okWithData(null, userlist);
     }
 
 }

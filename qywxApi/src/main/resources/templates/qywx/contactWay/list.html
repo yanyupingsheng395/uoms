@@ -12,6 +12,24 @@
     <th:block th:include="common/include::bootstrap-select-css" />
     <th:block th:include="common/include::jquery-confirm-css" />
     <script data-th-src="@{/plugins/clipboard.min.js}"></script>
+    <style>
+        .tag {
+            border: none;
+            -moz-border-radius: 2px;
+            -webkit-border-radius: 2px;
+            display: block;
+            float: left;
+            padding: 2px 5px;
+            text-decoration: none;
+            background: #33cabb;
+            color: #fff;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            font-family: 'Microsoft yahei', Roboto, sans-serif;
+            font-size: 13px;
+            line-height: 18px;
+        }
+    </style>
 </head>
 
 <body class="gray-bg">
@@ -94,15 +112,6 @@
                             <input class="form-control" type="text" id="state" name="state"/>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">可联系成员：</label>
-                        <div class="col-md-8 input-group">
-                            <div id="userSelectTree"></div>
-                            <input type="hidden" name="usersList">
-                            <input type="hidden" name="deptList">
-                            <input type="hidden" name="validUser">
-                        </div>
-                    </div>
                     <div id="qrCodeDiv">
                         <div class="form-group mg-stop">
                             <label class="col-md-3 control-label">长链接：</label>
@@ -121,11 +130,31 @@
                             </div>
                         </div>
                     </div>
+                    <div class="form-group mg-stop">
+                        <label class="col-md-3 control-label">部门：</label>
+                        <div class="col-md-8 input-group">
+                            <select class="form-control" id="region1" style="width: 640px;"></select>
+                            <a onclick="addRegion('region1')" style="cursor: pointer;">&nbsp;<i class="fa fa-plus-circle"></i></a>
+                        </div>
+                    </div>
+                    <div class="form-group mg-stop">
+                        <label class="col-md-3 control-label">职员：</label>
+                        <div class="col-md-8 input-group">
+                            <select class="form-control" id="region2" style="width: 640px;"></select>
+                            <a onclick="addRegion('region2')" style="cursor: pointer;">&nbsp;<i class="fa fa-plus-circle"></i></a>
+                        </div>
+                        <div class="row m-t-15">
+                            <div class="col-md-12" id="alllist"></div>
+                        </div>
+                        <input type="hidden" name="usersList">
+                        <input type="hidden" name="deptList">
+                        <input type="hidden" name="validUser">
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary btn-sm" id="btn_save" name="save">确定</button>
-                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal" id="btn_close">关闭</button>
             </div>
         </div>
     </div>

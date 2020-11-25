@@ -10,6 +10,7 @@ import com.linksteady.qywx.constant.WxPathConsts;
 import com.linksteady.qywx.dao.QywxBaseDataMapper;
 import com.linksteady.qywx.dao.QywxContactWayMapper;
 import com.linksteady.qywx.domain.QywxContactWay;
+import com.linksteady.qywx.domain.QywxContactWayDetail;
 import com.linksteady.qywx.domain.QywxDeptUser;
 import com.linksteady.qywx.service.QywxContactWayService;
 import com.linksteady.qywx.service.QywxService;
@@ -83,9 +84,9 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
         qywxContactWay.setUpdateBy(userName);
 
         //保存渠道活码
-        qywxContactWayMapper.saveContactWay(qywxContactWay);
+         qywxContactWayMapper.saveContactWay(qywxContactWay);
         Long contactWayId=qywxContactWay.getContactWayId();
-
+        insertContactWayDetail(deptListStr,usersListStr,contactWayId);
         JSONObject params=new JSONObject();
         params.put("type",qywxContactWay.getContactType());
         params.put("scene",qywxContactWay.getScene());
@@ -129,11 +130,32 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
         }
     }
 
+    private void insertContactWayDetail(String deptListStr,String usersListStr,Long contactWayId){
+        List<QywxContactWayDetail> alllist=new ArrayList<>();
+        if(StringUtils.isNotEmpty(deptListStr)){
+            List<String> strings = Arrays.asList(deptListStr.split(","));
+            List<Long> longs = strings.stream().map(x -> Long.parseLong(x)).collect(Collectors.toList());
+            List<QywxContactWayDetail> deptList1 = qywxContactWayMapper.getDeptList(contactWayId, longs);
+            if(deptList1.size()>0){
+                deptList1.stream().forEach(x->x.setInsertDt(new Date()));
+                alllist.addAll(deptList1);
+            }
+        }
+        if(StringUtils.isNotEmpty(usersListStr)){
+            List<QywxContactWayDetail> userListDetail= qywxContactWayMapper.getUserList(contactWayId ,Arrays.asList(usersListStr.split(",")));
+            if(userListDetail.size()>0){
+                userListDetail.stream().forEach(x->x.setInsertDt(new Date()));
+                alllist.addAll(userListDetail);
+            }
+        }
+        if(alllist.size()>0){
+            qywxContactWayMapper.insertContactWayDetail(alllist);
+        }
+    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateContractWay(QywxContactWay qywxContactWay) throws Exception{
-
-
         JSONObject param=new JSONObject();
         param.put("type",qywxContactWay.getContactType());
         param.put("scene",qywxContactWay.getScene());
@@ -147,13 +169,6 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
         param.put("config_id",configId);
         List userList= Splitter.on(',').trimResults().omitEmptyStrings().splitToList(qywxContactWay.getUsersList());//获取人员列表
         List deptlist = Splitter.on(',').trimResults().omitEmptyStrings().splitToList(qywxContactWay.getDeptList());//获取部门列表
-        if(userList.size() > 1||deptlist.size()>0) {
-            param.put("type","2");
-            qywxContactWay.setContactType("2");
-        }else if(userList.size() == 1){
-            param.put("type","1");
-            qywxContactWay.setContactType("1");
-        }
         if(userList.size()>0){
             param.put("user",JSON.parseArray(JSON.toJSONString(userList)));
         }
@@ -176,6 +191,8 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
             {
                 qrCode=contactDetail.getString("qr_code");
             }
+            qywxContactWayMapper.deleteContactWayDetail(qywxContactWay.getConfigId());
+            insertContactWayDetail(qywxContactWay.getDeptList(),qywxContactWay.getUsersList(),qywxContactWay.getContactWayId());
             //更新数据库
             qywxContactWayMapper.updateContractWay(qywxContactWay);
             qywxContactWayMapper.updateContactWayQrCode(qywxContactWay.getContactWayId(),qrCode,qywxContactWay.getUpdateBy());
@@ -193,25 +210,35 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
 
     @Override
     public List<QywxContactWay> getContactWayList(int limit,int offset,String qstate) {
-        String corpId =qywxService.getCorpId();
         List<QywxContactWay> contactWayList = qywxContactWayMapper.getContactWayList(limit, offset, qstate);
-        List<QywxDeptUser> deptAndUserData = qywxBaseDataMapper.getDeptAndUserData();
-        Map<String, String> userMap = deptAndUserData.stream().filter(x->StringUtils.isNotEmpty(x.getUserId()) && StringUtils.isNotEmpty(x.getUserName())).collect(Collectors.toMap(QywxDeptUser::getUserId, QywxDeptUser::getUserName, BinaryOperator.minBy(Comparator.naturalOrder())));
-        Map<String, String> deptMap = deptAndUserData.stream().filter(x->StringUtils.isNotEmpty(x.getDeptId()) && StringUtils.isNotEmpty(x.getDeptName())).collect(Collectors.toMap(QywxDeptUser::getDeptId, QywxDeptUser::getDeptName, BinaryOperator.minBy(Comparator.naturalOrder())));
-        contactWayList.stream().forEach(x->{
-            String userIds = x.getUsersList();
-            String deptIds = x.getDeptList();
-            if(StringUtils.isNotEmpty(userIds)) {
-                List<String> userIdList = Arrays.asList(userIds.split(","));
-                List<String> userNameList = userIdList.stream().map(k->userMap.get(k)).collect(Collectors.toList());
-                x.setUsersList(StringUtils.join(userNameList, ","));
+        for (QywxContactWay qywxContactWay : contactWayList) {
+            List<QywxContactWayDetail> contactWayDetail = qywxContactWayMapper.getContactWayDetail(qywxContactWay.getContactWayId());
+            List<String> userlist = contactWayDetail.stream().filter(x -> "U".equals(x.getObjType())).map(QywxContactWayDetail::getObjName).collect(Collectors.toList());
+            if(userlist.size()>0){
+                qywxContactWay.setUsersList(StringUtils.join(userlist, ","));
             }
-            if(StringUtils.isNotEmpty(deptIds)) {
-                List<String> deptIdList = Arrays.asList(deptIds.split(","));
-                List<String> deptNameList = deptIdList.stream().map(k->deptMap.get(k)).collect(Collectors.toList());
-                x.setDeptList(StringUtils.join(deptNameList, ","));
+            List<String> deptNameList = contactWayDetail.stream().filter(x -> "D".equals(x.getObjType())).map(QywxContactWayDetail::getObjName).collect(Collectors.toList());
+            if(deptNameList.size()>0){
+                qywxContactWay.setDeptList(StringUtils.join(deptNameList, ","));
             }
-        });
+        }
+   //     List<QywxDeptUser> deptAndUserData = qywxBaseDataMapper.getDeptAndUserData();
+        //        Map<String, String> userMap = deptAndUserData.stream().filter(x->StringUtils.isNotEmpty(x.getUserId()) && StringUtils.isNotEmpty(x.getUserName())).collect(Collectors.toMap(QywxDeptUser::getUserId, QywxDeptUser::getUserName, BinaryOperator.minBy(Comparator.naturalOrder())));
+//        Map<String, String> deptMap = deptAndUserData.stream().filter(x->StringUtils.isNotEmpty(x.getDeptId()) && StringUtils.isNotEmpty(x.getDeptName())).collect(Collectors.toMap(QywxDeptUser::getDeptId, QywxDeptUser::getDeptName, BinaryOperator.minBy(Comparator.naturalOrder())));
+//        contactWayList.stream().forEach(x->{
+//            String userIds = x.getUsersList();
+//            String deptIds = x.getDeptList();
+//            if(StringUtils.isNotEmpty(userIds)) {
+//                List<String> userIdList = Arrays.asList(userIds.split(","));
+//                List<String> userNameList = userIdList.stream().map(k->userMap.get(k)).collect(Collectors.toList());
+//                x.setUsersList(StringUtils.join(userNameList, ","));
+//            }
+//            if(StringUtils.isNotEmpty(deptIds)) {
+//                List<String> deptIdList = Arrays.asList(deptIds.split(","));
+//                List<String> deptNameList = deptIdList.stream().map(k->deptMap.get(k)).collect(Collectors.toList());
+//                x.setDeptList(StringUtils.join(deptNameList, ","));
+//            }
+//        });
         return contactWayList;
 
     }
@@ -283,8 +310,10 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
         JSONObject jsonObject = JSON.parseObject(result);
         if (null != jsonObject && jsonObject.getIntValue("errcode")== 0)
         {
+            qywxContactWayMapper.deleteContactWayDetail(configId);
             //从数据库进行删除
             qywxContactWayMapper.deleteContactWay(configId);
+
         }else
         {
             throw new Exception("删除失败！");

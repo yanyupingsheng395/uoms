@@ -3,6 +3,11 @@ var $contactWayForm = $( "#contactWay_edit" );
 var modifyUrlValidator;
 var userSelect = $contactWayForm.find( "select[name='userSelect']" );
 var $usersList = $contactWayForm.find( "input[name='usersList']" );
+var userData;
+var deptData;
+var dept_list=[] ;//添加部门的集合
+var user_list =[];//添加人员的集合
+var Single=false;//在更新时，判断当前活吗是不是单人的。如果是单人的，就不能转成多人。
 $( function () {
     validateRule();
     modifyUrlValidateRule();
@@ -148,31 +153,17 @@ $( "#btn_edit" ).click( function () {
             $form.find( "input[name='configId']" ).val( d.configId );
             $form.find( "input[name='state']" ).val( d.state ).attr( "readOnly", "readOnly" );
             $form.find( "input[name='usersList']" ).val(d.usersList);
-            $form.find( "input[name='deptList']" ).val(d.deptList);
+            $form.find( "input[name='deptList']" ).val(d.party);
             $form.find( "input[name='shortUrl']" ).val( d.shortUrl );
-            var nodes = $('#userSelectTree').jstree(true);
-            nodes.uncheck_all();
-            checkTree(d.usersList);
-            checkTree(d.deptList);
+            if(d.contactType==1){
+                Single=true;
+            }
+            rebuildData(d.usersList,d.party);
         } else {
             $MB.n_danger( r['msg'] );
         }
     } );
 } );
-
-$( "#add_modal" ).on( 'hidden.bs.modal', function () {
-    var nodes = $('#userSelectTree').jstree(true);
-    nodes.uncheck_all();
-    nodes.close_all();
-});
-
-function checkTree(ids) {
-    if(ids !== '' && ids !== null) {
-        var idArr = ids.split(",");
-        $('#userSelectTree').jstree('select_node', idArr, true);
-        $('#userSelectTree').jstree().close_all();
-    }
-}
 
 /**
  * 新增按钮
@@ -213,7 +204,24 @@ $( "#btn_delete" ).click( function () {
 
 $( "#add_modal" ).on( 'hidden.bs.modal', function () {
     //执行一些清空操作
+    clearData();
+} );
+
+$( "#btn_close" ).click( function () {
+    clearData();
+})
+
+/**
+ * 清空数据
+ */
+function clearData(){
+    userData=null;
+    deptData=null;
+    Single=false;
+    $("#alllist").html("");
     $( "#btn_save" ).attr( "name", "save" );
+    dept_list=[];
+    user_list=[];
     $contactWayForm.validate().resetForm();
     $contactWayForm.find( "input[name='contactWayId']" ).val( "" );
     $contactWayForm.find( "input[name='configId']" ).val( "" );
@@ -221,13 +229,19 @@ $( "#add_modal" ).on( 'hidden.bs.modal', function () {
     $contactWayForm.find( "input[name='usersList']" ).val( "" );
     $contactWayForm.find( "input[name='deptList']" ).val( "" );
     $contactWayForm.find( "input[name='validUser']" ).val( "" );
-} );
+}
 
 $( "#btn_save" ).click( function () {
     var name = $( this ).attr( "name" );
     getDeptAndUserId();
     var validator = $contactWayForm.validate();
     var flag = validator.form();
+    if(Single){
+        if(user_list.length>1){
+            $MB.n_danger( "该渠道活吗初始类型是单人，不能添加多人！");
+            return;
+        }
+    }
     if (flag) {
         //打开遮罩层
         $MB.loadingDesc( 'show', '保存中，请稍候...' );
@@ -237,10 +251,10 @@ $( "#btn_save" ).click( function () {
                     closeModal();
                     $MB.n_success( r.msg );
                     $MB.refreshTable( "contactWayTable" );
+                    clearData();
                 } else {
                     $MB.n_danger( r.msg );
-                }
-                ;
+                };
                 $MB.loadingDesc( 'hide' );
             } );
         }
@@ -250,6 +264,7 @@ $( "#btn_save" ).click( function () {
                     closeModal();
                     $MB.n_success( r.msg );
                     $MB.refreshTable( "contactWayTable" );
+                    clearData();
                 } else {
                     $MB.n_danger( r.msg );
                 }
@@ -318,35 +333,97 @@ function modifyUrlValidateRule() {
 }
 
 function createUserTree() {
-    $.post( "/contactWay/getDeptAndUserTree", {}, function (r) {
-        var data = r.data;
+    $.post( "/contactWay/getDept", {}, function (r) {
+        deptData = r.data;
+        var html="";
         if (r.code === 200) {
-            $( '#userSelectTree' ).jstree( {
-                "core": {
-                    'data': data.children
-                },
-                "state": {
-                    "disabled": true
-                },
-                "checkbox": {
-                    "three_state": false
-                },
-                "plugins": ["wholerow", "checkbox"]
-            } );
-            $( '#add_modal' ).modal( 'show' );
+          for(var i=0;i<deptData.length;i++){
+             html= html+"<option value='"+deptData[i].id+"'>"+deptData[i].name+"</option>";
+          }
+          $("#region1").html(html);
         } else {
             $MB.n_warning( r.msg );
         }
     } );
+
+    $.post( "/contactWay/getUser", {}, function (r) {
+        userData = r.data;
+        var html="";
+        if (r.code === 200) {
+            for(var i=0;i<userData.length;i++){
+                html= html+"<option value='"+userData[i].user_id+"'>"+userData[i].name+"</option>";
+            }
+            $("#region2").html(html);
+        } else {
+            $MB.n_warning( r.msg );
+        }
+    } );
+    $( '#add_modal' ).modal( 'show' );
 }
 
+/**
+ * 添加标签
+ * @param selid
+ */
+function addRegion(selid) {
+    var id = $( "#" + selid ).find( "option:selected" ).val();
+    var name = $( "#" + selid ).find( "option:selected" ).text();
+    if(selid=="region1"){
+        if(dept_list.indexOf(id)==-1){
+            dept_list.push(id);
+            $( "#alllist" ).append( "<span class=\"tag\"><span>" + name + "&nbsp;&nbsp;</span><a style=\"color: #fff;cursor: pointer;\" onclick=\"regionRemove(this, \'" + id + "\', \'" + selid + "\')\">x</a></span>" );
+        }
+    }else if(selid=="region2"){
+        if(user_list.indexOf(id)==-1){
+            user_list.push(id);
+            $( "#alllist" ).append( "<span class=\"tag\"><span>" + name + "&nbsp;&nbsp;</span><a style=\"color: #fff;cursor: pointer;\" onclick=\"regionRemove(this, \'" + id + "\', \'" + selid + "\')\">x</a></span>" );
+        }
+    }
+}
+
+function rebuildData(usersList, deptLis) {
+    if(usersList!=""&&usersList!=null){
+        usersList=usersList.split(',');
+        var selid2="region2";
+        for(var i=0;i<userData.length;i++){
+            for (var j=0;j<usersList.length;j++){
+                if(userData[i].user_id==usersList[j]){
+                    user_list.push(userData[i].user_id);
+                    $( "#alllist" ).append( "<span class=\"tag\"><span>" + userData[i].name + "&nbsp;&nbsp;</span><a style=\"color: #fff;cursor: pointer;\" onclick=\"regionRemove(this, \'" + userData[i].user_id + "\', \'" + selid2 + "\')\">x</a></span>" );
+                }
+            }
+        }
+    }
+    if(deptLis!=""&&deptLis!=null){
+        deptLis=deptLis.split(',');
+        var selid="region1";
+        for(var i=0;i<deptData.length;i++){
+            for (var j=0;j<deptLis.length;j++){
+                if(deptData[i].id==deptLis[j]){
+                    dept_list.push(deptData[i].id);
+                    $( "#alllist" ).append( "<span class=\"tag\"><span>" + deptData[i].name + "&nbsp;&nbsp;</span><a style=\"color: #fff;cursor: pointer;\" onclick=\"regionRemove(this, \'" + deptData[i].id + "\', \'" + selid + "\')\">x</a></span>" );
+                }
+            }
+        }
+
+    }
+}
+
+// 移除region数据
+function regionRemove(dom, id, selid) {
+    $( dom ).parent().remove();
+   if(selid=="region1"){
+       dept_list.splice( dept_list.indexOf( id ), 1 );
+   }else if(selid=="region2"){
+       user_list.splice( user_list.indexOf( id ), 1 );
+   }
+}
+
+
 function getDeptAndUserId() {
-    var checkedNodes = $( '#userSelectTree' ).jstree( true ).get_checked( true );
-    var userIds = checkedNodes.filter( (v, k) => v.original['type'] === 'user' ).map( (v, k) => v['id'] );
-    var deptIds = checkedNodes.filter( (v, k) => v.original['type'] === 'dept' ).map( (v, k) => v['id'] );
-    $( "input[name='usersList']" ).val( userIds.join( "," ) );
-    $( "input[name='deptList']" ).val( deptIds.join( "," ) );
-    $( "input[name='validUser']" ).val( userIds.join( "," ) + deptIds.join( "," ));
+    $( "input[name='usersList']" ).val( user_list.join( "," ) );
+    $( "input[name='deptList']" ).val( dept_list.join( "," ) );
+    $( "input[name='validUser']" ).val( user_list.join( "," ) + dept_list.join( "," ));
 
 }
 

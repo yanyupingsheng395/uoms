@@ -21,6 +21,15 @@
         <result property="shortUrl" jdbcType="VARCHAR" column="short_url"/>
     </resultMap>
 
+    <resultMap id="contactWayDetail" type="com.linksteady.qywx.domain.QywxContactWayDetail">
+        <result property="contactWayDetailId" jdbcType="DECIMAL" column="contactway_detail_id"/>
+        <result property="contactWayId" jdbcType="DECIMAL" column="contactway_id"/>
+        <result property="objId" jdbcType="VARCHAR" column="obj_id"/>
+        <result property="objName" jdbcType="VARCHAR" column="obj_name"/>
+        <result property="objType" jdbcType="VARCHAR" column="obj_type"/>
+        <result property="insertDt" jdbcType="VARCHAR" column="insert_dt"/>
+    </resultMap>
+
     <delete id="deleteContactWay">
         delete from uo_qywx_contact_way where config_id=#{configId}
     </delete>
@@ -33,13 +42,13 @@
     </update>
 
     <select id="getContactWayById" resultMap="BaseResultMap">
-        select contactway_id,qrcode,contact_type,scene,style,skip_verify,state,user_list,party,dept_list,
+        select contactway_id,qrcode,contact_type,scene,style,skip_verify,state,user_list,party,party,
                 config_id,create_dt,update_dt,create_by,update_by,externaluser_num,short_url
         from uo_qywx_contact_way where  contactway_id=#{contactWayId}
     </select>
 
     <select id="getContactWayList" resultMap="BaseResultMap">
-       select contactway_id,qrcode,contact_type,scene,style,skip_verify,state,user_list,party,dept_list,
+       select contactway_id,qrcode,contact_type,scene,style,skip_verify,state,party,
                 config_id,create_dt,update_dt,create_by,update_by,externaluser_num,short_url
         from uo_qywx_contact_way
         <where>
@@ -95,18 +104,16 @@
 
     <update id="updateContractWay">
         update uo_qywx_contact_way set
-                contact_type=#{contactType},
                 scene=#{scene},
                 style=#{style},
                 skip_verify=#{skipVerify},
                 state=#{state},
                 user_list=#{usersList},
-                party=#{party},
+                party=#{deptList},
                 update_dt=#{updateDt},
                 update_by=#{updateBy},
                 qrcode = #{qrCode},
-                short_url = #{shortUrl},
-                dept_list =#{deptList}
+                short_url = #{shortUrl}
          where contactway_id=#{contactWayId}
     </update>
 
@@ -118,7 +125,6 @@
              skip_verify,
              state,
              user_list,
-             dept_list,
              party,
              config_id,
              create_dt,
@@ -133,7 +139,6 @@
             #{state},
             #{usersList},
             #{deptList},
-            #{party},
             #{configId},
             #{createDt},
             #{updateDt},
@@ -147,7 +152,7 @@
     </select>
 
     <select id="getQrcodeByConfigId" resultMap="BaseResultMap">
-        select qrcode,state from uo_qywx_contact_way where config_id=#{configId}
+        select qrcode,state,contactway_id from uo_qywx_contact_way where config_id=#{configId}
     </select>
 
     <select id="getRefrenceCount" resultType="int">
@@ -158,4 +163,32 @@
             select distinct uo_qywx_trigger_header.contactway_id from uo_qywx_trigger_header
                 )
     </select>
+
+    <select id="getContactWayDetail" resultMap="contactWayDetail">
+        select contactway_detail_id,obj_id,obj_name,obj_type from uo_qywx_contact_way_detail where contactway_id=#{contactWayId}
+    </select>
+
+    <select id="getDeptList" resultMap="contactWayDetail">
+    select id as obj_id,name as obj_name,#{contactWayId} as contactway_id,'D' as obj_type from uo_qywx_dept where id in
+        <foreach item="item" index="index" collection="deptListStr" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    <select id="getUserList" resultMap="contactWayDetail">
+        select user_id as obj_id,name as obj_name,#{contactWayId} as contactway_id,'U' as obj_type from uo_qywx_follower_user_list where user_id in
+        <foreach item="item" index="index" collection="usersListStr" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <insert id="insertContactWayDetail">
+        insert into uo_qywx_contact_way_detail( contactway_id, obj_id, obj_name, obj_type,insert_dt) values
+        <foreach collection="list" separator="," item="item">
+            (#{item.contactWayId}, #{item.objId}, #{item.objName}, #{item.objType},#{item.insertDt})
+        </foreach>
+    </insert>
+
+    <delete id="deleteContactWayDetail">
+        delete from uo_qywx_contact_way_detail where contactway_id=(select contactway_id from uo_qywx_contact_way where config_id=#{configId})
+    </delete>
 </mapper>

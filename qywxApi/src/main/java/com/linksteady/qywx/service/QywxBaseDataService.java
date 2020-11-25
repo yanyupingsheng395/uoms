@@ -1,5 +1,6 @@
 package com.linksteady.qywx.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.linksteady.common.domain.Tree;
 import com.linksteady.qywx.domain.QywxDeptUser;
 
@@ -20,5 +21,7 @@ public interface QywxBaseDataService {
 
     int getDeptCount();
 
-    Tree<QywxDeptUser> getDeptAndUserTree() throws Exception;
+    Tree<QywxDeptUser>  getDeptAndUserTree() throws Exception;
+    List<Map<String, Object>> getDept() throws Exception;
+    List<Map<String, Object>> getUser() throws Exception;
 }

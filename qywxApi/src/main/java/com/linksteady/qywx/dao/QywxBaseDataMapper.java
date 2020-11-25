@@ -22,4 +22,8 @@ public interface QywxBaseDataMapper {
     List<QywxDeptUser> getDeptAndUserData();
 
     List<String> getUserIdsByDeptId(List<String> deptIds);
+
+    void getQywxDept();
+
+    List<Map<String, Object>> getUserList();
 }

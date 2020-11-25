@@ -32,7 +32,7 @@
     <select id="getDeptAndUserData" resultType="com.linksteady.qywx.domain.QywxDeptUser">
         select uqd.id dept_id, uqd.name dept_name, uqd.parent_id dept_parent_id, user_id, uqfl.name user_name
         from uo_qywx_follower_user_list uqfl
-                 left join (select * from uo_qywx_dept) uqd on uqfl.main_department::int4 = uqd.id
+                 right join (select * from uo_qywx_dept) uqd on uqfl.main_department::int4 = uqd.id
     </select>
 
     <select id="getUserIdsByDeptId" resultType="string">
@@ -40,5 +40,9 @@
         <foreach collection="list" separator="," open="(" close=")" item="item">
             #{item}
         </foreach>
+    </select>
+
+    <select id="getUserList" resultType="map">
+        select user_id,name,main_department from uo_qywx_follower_user_list where delete_flag=0 and operate_flag='Y'
     </select>
 </mapper>

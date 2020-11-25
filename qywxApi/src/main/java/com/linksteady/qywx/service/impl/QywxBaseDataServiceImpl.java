@@ -1,6 +1,7 @@
 package com.linksteady.qywx.service.impl;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.linksteady.common.domain.Tree;
 import com.linksteady.common.util.TreeUtils;
 import com.linksteady.qywx.dao.QywxBaseDataMapper;
@@ -10,16 +11,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 
 @Service
 public class QywxBaseDataServiceImpl implements QywxBaseDataService {
 
-    @Autowired
+    @Autowired(required = false)
     private QywxBaseDataMapper qywxBaseDataMapper;
 
 
@@ -45,6 +44,7 @@ public class QywxBaseDataServiceImpl implements QywxBaseDataService {
 
     @Override
     public Tree<QywxDeptUser> getDeptAndUserTree() throws Exception {
+        //  String corpId = configService.getValueByName(ConfigEnum.qywxCorpId.getKeyCode());
         List<QywxDeptUser> deptUserList = qywxBaseDataMapper.getDeptAndUserData();
         List<QywxDeptUser> tmpList = deptUserList.stream().filter(x -> StringUtils.isNotEmpty(x.getDeptId()) && StringUtils.isNotEmpty(x.getDeptName()) && StringUtils.isNotEmpty(x.getDeptParentId()))
                 .collect(Collectors.toList());
@@ -54,6 +54,26 @@ public class QywxBaseDataServiceImpl implements QywxBaseDataService {
         LinkedHashSet<Tree<QywxDeptUser>> trees = new LinkedHashSet<>();
         buildTrees(trees, deptUserList);
         return TreeUtils.build(new ArrayList<>(trees));
+    }
+
+    @Override
+    public List<Map<String, Object>> getDept() throws Exception {
+        return qywxBaseDataMapper.getDeptList(100, 0);//查询部门
+    }
+
+    @Override
+    public List<Map<String, Object>> getUser() throws Exception {
+        return qywxBaseDataMapper.getUserList();
+    }
+
+    private JSONObject toJsonObj(Map<String, String> map) {
+        JSONObject jsonObject=new JSONObject();
+        Iterator it = map.keySet().iterator();
+        while (it.hasNext()) {
+            String key = (String) it.next();
+            jsonObject.put(key, map.get(key));
+        }
+        return jsonObject;
     }
 
     private void buildTrees(LinkedHashSet<Tree<QywxDeptUser>> trees, List<QywxDeptUser> deptAndUsers) {
