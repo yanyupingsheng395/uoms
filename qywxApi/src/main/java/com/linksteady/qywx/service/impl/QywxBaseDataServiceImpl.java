@@ -58,7 +58,7 @@ public class QywxBaseDataServiceImpl implements QywxBaseDataService {
 
     @Override
     public List<Map<String, Object>> getDept() throws Exception {
-        return qywxBaseDataMapper.getDeptList(100, 0);//查询部门
+        return qywxBaseDataMapper.getDeptList(0, 0);//查询部门
     }
 
     @Override

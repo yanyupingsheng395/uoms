@@ -18,7 +18,9 @@
             insert_by,
             update_by
         from uo_qywx_dept order by id asc
-        limit #{limit} offset #{offset}
+        <if test="limit!=0 and limit !=''">
+            limit #{limit} offset #{offset}
+        </if>
     </select>
 
     <select id="getFollowUserCount" resultType="int">
