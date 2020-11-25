@@ -38,14 +38,6 @@ $(function () {
         }, {
             field: 'mobile',
             title: '手机'
-        }, {
-            field: 'ssex',
-            title: '性别',
-            formatter: function (value, row, index) {
-                if (value === '0') return '男';
-                else if (value === '1') return '女';
-                else return '未知';
-            }
         },{
             field: 'status',
             title: '状态',
@@ -58,8 +50,13 @@ $(function () {
             field: 'expireDate',
             title: '失效日期'
         },{
-            field: 'description',
-            title: '备注'
+            field: 'userType',
+            title: '登录类型',
+            formatter: function (value, row, index) {
+                if (value === 'PASS') return '<span class="badge bg-success">密码</span>';
+                if (value === 'QYWX') return '<span class="badge bg-warning">企微扫码</span>';
+                if (value === 'QYWX') return '<span class="badge bg-warning">密码 | 企微扫码</span>';
+            }
         }, {
                 field: 'createDt',
                 title: '创建时间'

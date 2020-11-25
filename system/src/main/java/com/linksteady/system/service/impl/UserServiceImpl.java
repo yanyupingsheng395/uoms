@@ -1,20 +1,25 @@
 package com.linksteady.system.service.impl;
 
 import com.linksteady.common.bo.UserBo;
+import com.linksteady.common.domain.LogTypeEnum;
+import com.linksteady.common.domain.QueryRequest;
+import com.linksteady.common.domain.SysLog;
+import com.linksteady.common.domain.User;
+import com.linksteady.common.service.LogService;
+import com.linksteady.common.service.impl.BaseService;
+import com.linksteady.common.util.HttpContextUtils;
+import com.linksteady.common.util.IPUtils;
+import com.linksteady.common.util.MD5Utils;
 import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
+import com.linksteady.system.config.SystemProperties;
 import com.linksteady.system.dao.UserMapper;
 import com.linksteady.system.dao.UserRoleMapper;
-import com.linksteady.common.domain.QueryRequest;
-import com.linksteady.common.domain.User;
 import com.linksteady.system.domain.UserRole;
 import com.linksteady.system.domain.UserWithRole;
-import com.linksteady.common.service.impl.BaseService;
-import com.linksteady.common.util.MD5Utils;
 import com.linksteady.system.service.UserRoleService;
 import com.linksteady.system.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +28,16 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service("userService")
@@ -46,7 +55,13 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     private UserRoleService userRoleService;
 
     @Autowired
+    SystemProperties systemProperties;
+
+    @Autowired
     ExceptionNoticeHandler exceptionNoticeHandler;
+
+    @Autowired
+    private LogService logService;
 
     @Override
     public User findByName(String userName,Long userId) {
@@ -84,16 +99,6 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void updateTheme(String theme, String userName) {
-        Example example = new Example(User.class);
-        example.createCriteria().andCondition("username=", userName);
-        User user = new User();
-        user.setTheme(theme);
-        this.userMapper.updateByExampleSelective(user, example);
-    }
-
-    @Override
     @Transactional(rollbackFor = RuntimeException.class)
     public void addUser(User user, Long[] roles){
         UserBo userBo = (UserBo) SecurityUtils.getSubject().getPrincipal();
@@ -101,17 +106,17 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         user.setPassword(MD5Utils.encrypt(user.getUsername(), user.getPassword()));
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        //如果日期为空则有效期为当前日期推后一年
         if(null==user.getExpire()||"".equals(user.getExpire()))
         {
-            user.setExpireDate(Date.from(LocalDate.parse("2999-12-31",dtf).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+            user.setExpireDate(Date.from(LocalDate.now().plusYears(1).atStartOfDay(ZoneId.systemDefault()).toInstant()));
         }else
         {
             user.setExpireDate(Date.from(LocalDate.parse(user.getExpire(),dtf).atStartOfDay(ZoneId.systemDefault()).toInstant()));
         }
 
-        user.setAvatar("default.jpg");
-        user.setTheme("cyan");
         user.setCreateBy(userBo.getUsername());
+        user.setUserType("PASS");
         userMapper.saveUser(user);
 
         UserService userService=(UserService)AopContext.currentProxy();
@@ -133,9 +138,13 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     @Transactional(rollbackFor = Exception.class)
     public void updateUser(User user, Long[] roles) {
         UserBo userBo=(UserBo) SecurityUtils.getSubject().getPrincipal();
+
+        //如下几个字段不允许更新
         user.setPassword(null);
         user.setUsername(null);
         user.setFirstLogin(null);
+        user.setUserType(null);
+
         user.setUpdateDt(new Date());
         user.setUpdateBy(userBo.getUsername());
         String expire=user.getExpire();
@@ -164,16 +173,21 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
         this.userRoleService.deleteUserRolesByUserId(userIds);
     }
 
+    /**
+     * 更新最后一次登录时间
+     * @param userName
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateLoginTime(String userName) {
-        Example example = new Example(User.class);
-        example.createCriteria().andCondition("lower(username)=", userName.toLowerCase());
-        User user = new User();
-        user.setLastLoginTime(new Date());
-        this.userMapper.updateByExampleSelective(user, example);
+        this.userMapper.updateLastLoginTime(userName.toLowerCase());
     }
 
+    /**
+     * 查询用户及其角色
+     * @param userId
+     * @return
+     */
     @Override
     public UserWithRole findById(Long userId) {
         List<UserWithRole> list = this.userMapper.findUserWithRole(userId);
@@ -198,19 +212,10 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void updateUserProfile(User user) {
-        user.setUsername(null);
-        user.setPassword(null);
-        this.updateNotNull(user);
-    }
-
-    @Override
     public void resetPassword(Long userId) {
         UserBo userBo = (UserBo) SecurityUtils.getSubject().getPrincipal();
         //获取用户名
         User user=this.selectByKey(userId);
-
         String defaultPwd = userMapper.getDefaultPwd();
         String password=MD5Utils.encrypt(user.getUsername(),defaultPwd);
         this.userMapper.resetPassword(userId,password,userBo.getUsername());
@@ -224,5 +229,33 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     @Override
     public String getDefaultPwd() {
         return userMapper.getDefaultPwd();
+    }
+
+
+    /**
+     * 记录登录事件
+     *
+     * @return
+     */
+    @Override
+    public void logLoginEvent(String userName, String operation) {
+        // 获取request
+        HttpServletRequest request = HttpContextUtils.getHttpServletRequest();
+        // 设置IP地址
+        String ip = IPUtils.getIpAddr(request);
+        long time = 0;
+        if (systemProperties.isOpenAopLog()) {
+            // 保存日志
+            SysLog log = new SysLog();
+            log.setUsername(userName);
+            log.setIp(ip);
+            log.setTime(time);
+            log.setMethod("com.linksteady.system.controller.LoginController.login()");
+            log.setParams(userName);
+            log.setLocation("系统管理");
+            log.setLogType(LogTypeEnum.PAGE);
+            log.setOperation(operation);
+            logService.saveLog(log);
+        }
     }
 }

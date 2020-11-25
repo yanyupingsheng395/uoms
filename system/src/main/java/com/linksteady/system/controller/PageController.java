@@ -39,9 +39,6 @@ public class PageController extends BaseController {
     @Autowired
     CommonFunService commonFunService;
 
-    @Value("${app.version}")
-    private String version;
-
     @Autowired
     private UserService userService;
 
@@ -53,7 +50,6 @@ public class PageController extends BaseController {
         // 登录成后，即可通过 Subject 获取登录的用户信息
         UserBo userBo = super.getCurrentUser();
         model.addAttribute("user", userBo);
-        model.addAttribute("version", version);
         return "index";
     }
 
@@ -62,7 +58,6 @@ public class PageController extends BaseController {
         // 登录成后，即可通过 Subject 获取登录的用户信息
         UserBo userBo = super.getCurrentUser();
         model.addAttribute("user", userBo);
-        model.addAttribute("version", version);
         return "main";
     }
 
@@ -72,9 +67,7 @@ public class PageController extends BaseController {
         // 登录成后，即可通过 Subject 获取登录的用户信息
         UserBo userBo = super.getCurrentUser();
         User user = this.userService.findUserProfile(userBo.getUserId());
-
         model.addAttribute("user", user);
-        model.addAttribute("version", version);
 
         if(null!=user.getFirstLogin()&&"Y".equals(user.getFirstLogin()))
         {
@@ -104,7 +97,6 @@ public class PageController extends BaseController {
         Map<String, Object> result = new HashMap<>(16);
         String userName = userBo.getUsername();
         result.put("username", userName);
-        result.put("version", version);
         String sysDomain = sysInfoBo.getSysDomain();
         result.put("navigatorUrl",sysDomain +"/main");
         result.put("logoutUrl",sysDomain + "/logout");

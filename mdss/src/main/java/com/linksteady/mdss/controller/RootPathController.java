@@ -81,20 +81,6 @@ public class RootPathController extends BaseController {
         return "index";
     }
 
-    @RequestMapping("/sysinfo")
-    @ResponseBody
-    public ResponseBo getSysInfo() {
-        String username = ((User) SecurityUtils.getSubject().getPrincipal()).getUsername();
-        Map result= Maps.newHashMap();
-        result.put("appname",appname);
-        result.put("version",version);
-        result.put("appdesc",appdesc);
-        result.put("buildtime",buildTime);
-        result.put("bootversion",bootversion);
-        result.put("currentUser",username);
-        return ResponseBo.okWithData("",result);
-    }
-
     /**
      * 获取登录用户的菜单
      * @return

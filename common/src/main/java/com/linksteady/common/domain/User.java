@@ -21,19 +21,6 @@ public class User implements Serializable {
 
 	public static final String STATUS_LOCK = "0";
 
-	public static final String DEFAULT_THEME = "green";
-
-	public static final String DEFAULT_AVATAR = "default.jpg";
-
-	/**
-	 * 性别
-	 */
-	public static final String SEX_MALE = "0";
-
-	public static final String SEX_FEMALE = "1";
-
-	public static final String SEX_UNKNOW = "2";
-
 	@Id
 	@Column(name = "USER_ID",insertable = false)
 	private Long userId;
@@ -56,18 +43,6 @@ public class User implements Serializable {
 
 	@Column(name = "LAST_LOGIN_TIME")
 	private Date lastLoginTime;
-
-	@Column(name = "SSEX")
-	private String ssex;
-
-	@Column(name = "THEME")
-	private String theme;
-
-	@Column(name = "AVATAR")
-	private String avatar;
-
-	@Column(name = "DESCRIPTION")
-	private String description;
 
 	@Transient
 	private String roleName;
@@ -95,6 +70,12 @@ public class User implements Serializable {
 
 	@Column(name = "FIRSTLOGIN")
 	private String firstLogin ="Y";
+
+	/**
+	 * 用户类型 默认为 PASS 用户名密码登录  其余值： QYWX 使用企业微信扫码登录 ALL 两者皆可登录
+	 */
+	@Column(name = "USER_TYPE")
+	private String userType ="PASS";
 
 	/**
 	 * 用户所拥有的菜单 key:sysCode

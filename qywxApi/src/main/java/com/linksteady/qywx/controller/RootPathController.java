@@ -29,11 +29,7 @@ public class RootPathController extends BaseController {
     CommonFunService commonFunService;
     @Autowired
     ExceptionNoticeHandler exceptionNoticeHandler;
-    /**
-     * 当前版本
-     */
-    @Value("${app.version}")
-    private String version;
+
 
     @RequestMapping("/")
     public String root() {
@@ -45,7 +41,6 @@ public class RootPathController extends BaseController {
         // 登录成后，即可通过 Subject 获取登录的用户信息
         UserBo userBo = super.getCurrentUser();
         model.addAttribute("user", userBo);
-        model.addAttribute("version", version);
         return "index";
     }
     /**
@@ -68,7 +63,6 @@ public class RootPathController extends BaseController {
         Map<String, Object> result = new HashMap<>(16);
         String userName = userBo.getUsername();
         result.put("username", userName);
-        result.put("version", version);
         String systemDomain = system.getSysDomain();
         result.put("navigatorUrl", systemDomain + "/main");
         result.put("logoutUrl", systemDomain + "/logout");

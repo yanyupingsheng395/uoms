@@ -2,14 +2,9 @@ package com.linksteady.system.service;
 
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.User;
-import com.linksteady.system.domain.UserWithRole;
 import com.linksteady.common.service.IService;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-
+import com.linksteady.system.domain.UserWithRole;
 import java.util.List;
-import java.util.Map;
 
 public interface UserService extends IService<User> {
 
@@ -20,8 +15,6 @@ public interface UserService extends IService<User> {
     User findByName(String userName);
 
     List<User> findUsers(User user, QueryRequest request);
-
-    void updateTheme(String theme, String userName);
 
     void addUser(User user, Long[] roles) throws Exception;
 
@@ -35,11 +28,11 @@ public interface UserService extends IService<User> {
 
     User findUserProfile(Long userId);
 
-    void updateUserProfile(User user);
-
     void resetPassword(Long userId);
 
     String getDefaultPwd();
 
     List<User> findAllUser();
+
+    void logLoginEvent(String userName, String operation);
 }

@@ -16,41 +16,48 @@
 					<span class="login100-form-title-1" th:text="${systemName}"></span>
             </div>
 
-            <form class="login100-form validate-form" id="loginform">
-                <div class="wrap-input100 validate-input m-b-18" data-validate="用户名不能为空">
-                    <span class="label-input100">用户名</span>
-                    <input class="input100" type="text" name="username" placeholder="输入登录用户名">
-                    <span class="focus-input100"></span>
-                </div>
+            <ul id="myTabs" class="nav nav-tabs" role="tablist">
+                <li class="active"><a href="#passLogin" id="passLogin-tab" role="tab" data-toggle="tab">用户名密码登录</a></li>
+                <li><a href="#qywxLogin" role="tab" id="qywxLogin-tab" data-toggle="tab">企业微信扫码登录</a></li>
+            </ul>
+            <div id="myTabContent" class="tab-content">
+                <div class="tab-pane fade active in" id="passLogin">
+                    <form class="login100-form validate-form" id="loginform">
+                        <div class="wrap-input100 validate-input m-b-18" data-validate="用户名不能为空">
+                            <span class="label-input100">用户名</span>
+                            <input class="input100" type="text" name="username" placeholder="输入登录用户名">
+                            <span class="focus-input100"></span>
+                        </div>
 
-                <div class="wrap-input100 validate-input m-b-18" data-validate = "密码不能为空">
-                    <span class="label-input100">密码</span>
-                    <input class="input100" type="password" name="password" placeholder="输入密码">
-                    <span class="focus-input100"></span>
-                </div>
+                        <div class="wrap-input100 validate-input m-b-18" data-validate = "密码不能为空">
+                            <span class="label-input100">密码</span>
+                            <input class="input100" type="password" name="password" placeholder="输入密码">
+                            <span class="focus-input100"></span>
+                        </div>
 
-                <div class="flex-sb-m w-full p-b-18">
-                    <div class="wrap-input100 validate-input m-b-18" data-validate = "验证码不能为空">
-                        <span class="label-input100">验证码</span>
-                        <input class="input100" type="text" name="code" placeholder="输入验证码">
-                        <span class="focus-input100"></span>
-                    </div>
-                    <div style="margin-bottom: 12px;">
-                        <img id="validateCodeImg" data-th-src="@{gifCode}" onclick="reloadCode()" style="vertical-align:middle;display:inline-block" />
-                    </div>
+                        <div class="flex-sb-m w-full p-b-18">
+                            <div class="wrap-input100 validate-input m-b-18" data-validate = "验证码不能为空">
+                                <span class="label-input100">验证码</span>
+                                <input class="input100" type="text" name="code" placeholder="输入验证码">
+                                <span class="focus-input100"></span>
+                            </div>
+                            <div style="margin-bottom: 12px;">
+                                <img id="validateCodeImg" data-th-src="@{gifCode}" onclick="reloadCode()" style="vertical-align:middle;display:inline-block" />
+                            </div>
+                        </div>
+                        <div class="container-login100-form-btn">
+                            <button class="login100-form-btn" id="loginButton" type="button">登录</button>
+                        </div>
+                    </form>
                 </div>
-                <!--<div class="flex-sb-m w-full p-b-30">-->
-                    <!--<div>-->
-                        <!--<a href="#" class="txt1"  data-container="body" data-toggle="popover" data-placement="top"-->
-                           <!--data-content="" title="请发邮件至  service@link-steady.com  寻求帮助!">忘记密码?</a>-->
-                    <!--</div>-->
-                <!--</div>-->
-                <div class="container-login100-form-btn">
-                    <button class="login100-form-btn" id="loginButton" type="button">登录</button>
+                <div class="tab-pane fade" id="qywxLogin">
+                    <div class="w-full p-b-5" style="text-align: center">
+                        <span id="qrMsg"></span>
+                    </div>
+                    <div id="qywxQrCode" style="width: 670px;height: 396px;text-align: center"></div>
                 </div>
-            </form>
+            </div>
         </div>
-
     </div>
     <div style="background:#ebeeef;text-align: center;padding-bottom: 10px;">LinkSteady&copy;版权所有</div>
 </div>
@@ -58,6 +65,7 @@
 <script src='/plugins/bootstrap/bootstrap.min.js'></script>
 <script src='/plugins/bootstrap/bootstrap-notify.min.js'></script>
 <script data-th-src="@{/js/common/common.js}"></script>
-<script src="/js/app/login.js"></script>
+<script src='http://rescdn.qqmail.com/node/ww/wwopenmng/js/sso/wwLogin-1.0.0.js'></script>
+<script data-th-src="@{/js/app/login.js}"></script>
 </body>
 </html>

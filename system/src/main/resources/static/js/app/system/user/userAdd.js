@@ -55,10 +55,8 @@ function clearReset() {
     $userAddForm.find("select[name='rolesSelect']").selectpicker('val', "");
     $userAddForm.find(".user_password").show();
     $userAddForm.find("input[name='status']:checked").removeAttr("checked");
-    $userAddForm.find("input[name='ssex']:checked").removeAttr("checked");
 
     $("input[name='status']:radio[value='1']").prop("checked", true);
-    $("input[name='ssex']:radio[value='0']").prop("checked", true);
 
     $("#user-add-modal-title").html('新增用户');
 }
@@ -107,9 +105,6 @@ function validateRule() {
             },
             status: {
                 required: true
-            },
-            ssex: {
-                required: true
             }
         },
         errorPlacement: function (error, element) {
@@ -128,8 +123,7 @@ function validateRule() {
             password: icon + "请输入密码",
             roles: icon + "请选择用户角色",
             email: icon + "邮箱格式不正确",
-            status: icon + "请选择状态",
-            ssex: icon + "请选择性别"
+            status: icon + "请选择状态"
         }
     });
 }

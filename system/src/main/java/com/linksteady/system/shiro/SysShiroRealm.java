@@ -35,27 +35,61 @@ public class SysShiroRealm extends UoShiroRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 
-        // 获取用户输入的用户名和密码
-        String userName = (String) token.getPrincipal();
-        String password = new String((char[]) token.getCredentials());
+        RetryLimitHashedCredentialsMatcher credentialsMatcher=new RetryLimitHashedCredentialsMatcher();
+        setCredentialsMatcher(credentialsMatcher);
 
-        // 通过用户名到数据库查询用户信息
+        CustomUsernamePasswordToken customUsernamePasswordToken = (CustomUsernamePasswordToken)token ;
+        String userName=customUsernamePasswordToken.getUsername();
+        String password="";
         User user = this.userService.findByName(userName);
-        if (user == null) {
-            throw new UnknownAccountException("用户名或密码错误！");
-        }
-        if (!password.equals(user.getPassword())) {
-            throw new IncorrectCredentialsException("用户名或密码错误！");
-        }
-        if (User.STATUS_LOCK.equals(user.getStatus())) {
-            throw new LockedAccountException("账号已被锁定,请联系管理员！");
+
+        if(null==user)
+        {
+            throw new AuthenticationException("登录失败，不存在的用户!");
         }
 
-        if (null != user.getExpireDate()){
-            Calendar userDate = Calendar.getInstance();
-            userDate.setTime(user.getExpireDate());
-            if(Calendar.getInstance(TimeZone.getDefault()).after(userDate)) {
-                throw new LockedAccountException("账号已过期,请联系管理员！");
+        String loginType=customUsernamePasswordToken.getLoginType();
+        if("QYWX".equals(loginType)&&"PASS".equals(user.getUserType()))
+        {
+            throw new AuthenticationException("登录失败，此用户仅允许通过用户名/密码方式登录!");
+        }
+
+        if("PASS".equals(loginType)&&"QYWX".equals(user.getUserType()))
+        {
+            throw new AuthenticationException("登录失败，此用户仅允许通过企业微信扫码方式登录!");
+        }
+
+        if("QYWX".equals(customUsernamePasswordToken.getLoginType()))
+        {
+            if (User.STATUS_LOCK.equals(user.getStatus())) {
+                throw new LockedAccountException("账号已被锁定,请联系管理员！");
+            }
+
+            if (null != user.getExpireDate()){
+                Calendar userDate = Calendar.getInstance();
+                userDate.setTime(user.getExpireDate());
+                if(Calendar.getInstance(TimeZone.getDefault()).after(userDate)) {
+                    throw new LockedAccountException("账号已过期,请联系管理员！");
+                }
+            }
+        }else
+        {
+            // 获取用户输入的密码
+            password = new String((char[]) token.getCredentials());
+
+            if (!password.equals(user.getPassword())) {
+                throw new IncorrectCredentialsException("用户名或密码错误！");
+            }
+            if (User.STATUS_LOCK.equals(user.getStatus())) {
+                throw new LockedAccountException("账号已被锁定,请联系管理员！");
+            }
+
+            if (null != user.getExpireDate()){
+                Calendar userDate = Calendar.getInstance();
+                userDate.setTime(user.getExpireDate());
+                if(Calendar.getInstance(TimeZone.getDefault()).after(userDate)) {
+                    throw new LockedAccountException("账号已过期,请联系管理员！");
+                }
             }
         }
 

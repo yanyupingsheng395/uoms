@@ -2,9 +2,6 @@ app:
   name: "UOMS"
   description: "link steady 诊断&运营系统-企业微信模块"
   spring-boot-version: "2.0.4.RELEASE"
-  version: @project.version@
-  build:
-    time: @timestamp@
 
 server:
   tomcat:
@@ -146,7 +143,7 @@ shiro:
   # rememberMe cookie有效时长，默认86400秒，即一天
   cookieTimeout: 86400
   # 免认证的路径配置，如静态资源，druid监控页面，注册页面，验证码请求等
-  anonUrl: /contractEvent/**,/api/**,/smpclient/**,/plugins/**,/**/css/**,/**/js/**,/**/fonts/**,/img/**,/images/**,/druid/**,/actuator/**,/test/**,/sysinfo,/login
+  anonUrl: /contractEvent/**,/api/**,/smpclient/**,/plugins/**,/**/css/**,/**/js/**,/**/fonts/**,/img/**,/images/**,/druid/**,/actuator/**,/test/**,/login
   #首次登陆是否强制要求修改密码
   allowResetPassword: false
   # 未授权跳转 url

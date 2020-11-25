@@ -81,21 +81,6 @@ public class UserController extends BaseController {
         return getDataTable(pageInfo);
     }
 
-    @Log("更换主题")
-    @RequestMapping("user/theme")
-    @ResponseBody
-    public ResponseBo updateTheme(User user) {
-        try {
-            this.userService.updateTheme(user.getTheme(), user.getUsername());
-            return ResponseBo.ok();
-        } catch (Exception e) {
-            log.error("修改主题失败", e);
-            //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(e);
-            return ResponseBo.error();
-        }
-    }
-
     @Log("新增用户")
     @RequiresPermissions("user:add")
     @RequestMapping("user/add")
@@ -176,70 +161,6 @@ public class UserController extends BaseController {
 
         String encrypt = MD5Utils.encrypt(userBo.getUsername().toLowerCase(), password);
         return user.getPassword().equals(encrypt);
-    }
-
-    @RequestMapping("user/profile")
-    public String profileIndex(Model model) {
-        UserBo userBo = super.getCurrentUser();
-        User user = this.userService.findUserProfile(userBo.getUserId());
-        String ssex = user.getSsex();
-        if (User.SEX_MALE.equals(ssex)) {
-            user.setSsex("性别：男");
-        } else if (User.SEX_FEMALE.equals(ssex)) {
-            user.setSsex("性别：女");
-        } else {
-            user.setSsex("性别：保密");
-        }
-        model.addAttribute("user", user);
-        return "system/user/profile";
-    }
-
-    @RequestMapping("user/getUserProfile")
-    @ResponseBody
-    public ResponseBo getUserProfile(Long userId) {
-        try {
-            return ResponseBo.ok(this.userService.findUserProfile(userId));
-        } catch (Exception e) {
-            log.error("获取用户信息失败", e);
-            //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(e);
-            return ResponseBo.error("获取用户信息失败，请联系管理员！");
-        }
-    }
-
-    @RequestMapping("user/updateUserProfile")
-    @ResponseBody
-    public ResponseBo updateUserProfile(User user) {
-        try {
-            this.userService.updateUserProfile(user);
-            return ResponseBo.ok("更新个人信息成功！");
-        } catch (Exception e) {
-            log.error("更新用户信息失败", e);
-            //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(e);
-            return ResponseBo.error("更新用户信息失败，请联系管理员！");
-        }
-    }
-
-    @RequestMapping("user/changeAvatar")
-    @ResponseBody
-    public ResponseBo changeAvatar(String imgName) {
-        try {
-            String[] img = imgName.split("/");
-            String realImgName = img[img.length - 1];
-
-            UserBo userBo = super.getCurrentUser();
-            User user = this.userService.findUserProfile(userBo.getUserId());
-
-            user.setAvatar(realImgName);
-            this.userService.updateNotNull(user);
-            return ResponseBo.ok("更新头像成功！");
-        } catch (Exception e) {
-            log.error("更换头像失败", e);
-            //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(e);
-            return ResponseBo.error("更新头像失败，请联系管理员！");
-        }
     }
 
     /**

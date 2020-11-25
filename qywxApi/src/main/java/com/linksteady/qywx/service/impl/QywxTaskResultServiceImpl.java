@@ -54,12 +54,12 @@ public class QywxTaskResultServiceImpl implements QywxTaskResultService {
             log.info("{}获取推送的结果为{}",msgId,result);
 
             JSONObject jsonObject = JSON.parseObject(result);
-            String code = jsonObject.getString("code");
+            int errcode = jsonObject.getIntValue("errcode");
 
-            if(StringUtils.isNotEmpty(code)&&code.equalsIgnoreCase("200"))
+            if(errcode==0)
             {
                 //构造结果
-                JSONArray detailList = jsonObject.getJSONArray("data");
+                JSONArray detailList = jsonObject.getJSONArray("detail_list");
 
                 List<QywxMsgResult> qywxMsgResultList= Lists.newArrayList();
                 QywxMsgResult qywxMsgResult=null;

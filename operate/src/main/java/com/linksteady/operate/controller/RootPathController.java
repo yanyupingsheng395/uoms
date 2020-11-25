@@ -44,33 +44,6 @@ public class RootPathController extends BaseController {
     @Autowired
     private PushConfig pushConfig;
 
-    @Value("${app.name}")
-    private String appname;
-
-    /**
-     * 当前版本
-     */
-    @Value("${app.version}")
-    private String version;
-
-    /**
-     * 当前系统中文名称
-     */
-    @Value("${app.description}")
-    private String appdesc;
-
-    /**
-     * 当前spring boot的版本
-     */
-    @Value("${app.spring-boot-version}")
-    private String bootversion;
-
-    /**
-     * 打包时间
-     */
-    @Value("${app.build.time}")
-    private String buildTime;
-
     @RequestMapping("/")
     public String root() {
         return "redirect:index";
@@ -81,22 +54,7 @@ public class RootPathController extends BaseController {
         // 登录成后，即可通过 Subject 获取登录的用户信息
         UserBo userBo = super.getCurrentUser();
         model.addAttribute("user", userBo);
-        model.addAttribute("version", version);
         return "index";
-    }
-
-    @RequestMapping("/sysinfo")
-    @ResponseBody
-    public ResponseBo getSysInfo() {
-        String username = ((UserBo) SecurityUtils.getSubject().getPrincipal()).getUsername();
-        Map result= Maps.newHashMap();
-        result.put("appname",appname);
-        result.put("version",version);
-        result.put("appdesc",appdesc);
-        result.put("buildtime",buildTime);
-        result.put("bootversion",bootversion);
-        result.put("currentUser",username);
-        return ResponseBo.okWithData("",result);
     }
 
     /**
@@ -119,7 +77,6 @@ public class RootPathController extends BaseController {
         Map<String, Object> result = new HashMap<>(16);
         String userName = userBo.getUsername();
         result.put("username", userName);
-        result.put("version", version);
         String systemDomain = system.getSysDomain();
         result.put("navigatorUrl", systemDomain + "/main");
         result.put("logoutUrl", systemDomain + "/logout");

@@ -40,9 +40,10 @@ public class SyncQywxData extends IJobHandler {
             mappingService.unMappingAll();
 
             //同步发送任务的执行结果
-//            qywxTaskResultService.syncPushResult();
-//            qywxTaskResultService.updateExecStatus();
+            qywxTaskResultService.syncPushResult();
+            qywxTaskResultService.updateExecStatus();
 
+            log.info("同步企业微信任务执行成功");
             return ResultInfo.success("");
         } catch (Exception e) {
             log.error("SyncQywxData失败，错误原因为{}",e);

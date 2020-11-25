@@ -12,8 +12,6 @@ public interface UserMapper extends MyMapper<User> {
 	List<User> findUsers(User user);
 	
 	List<UserWithRole> findUserWithRole(Long userId);
-	
-	User findUserProfile(User user);
 
 	void resetPassword(Long userId, String password, String modifyName);
 
@@ -22,4 +20,6 @@ public interface UserMapper extends MyMapper<User> {
     String getDefaultPwd();
 
     void saveUser(User user);
+
+    void updateLastLoginTime(String userName);
 }

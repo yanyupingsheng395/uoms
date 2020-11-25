@@ -24,7 +24,6 @@ function updateUser() {
             $form.find("input[name='mobile']").val(user.mobile);
             $form.find("input[name='expire']").val(user.expire);
             EXPIRE = user.expire;
-            $form.find("textarea[name='description']").text(user.description);
             init_date("expire", "yyyy-mm-dd", 0, 2, 0, new Date(), "");
             var roleArr = [];
             for (var i = 0; i < user.roleIds.length; i++) {
@@ -33,7 +32,6 @@ function updateUser() {
             $form.find("select[name='rolesSelect']").selectpicker('val', roleArr);
             $form.find("input[name='roles']").val($form.find("select[name='rolesSelect']").selectpicker('val'));
             $("input[name='status']:radio[value='" + user.status + "']").prop("checked", true);
-            $("input[name='ssex']:radio[value='" + user.ssex + "']").prop("checked", true);
             $("#user-add-button").attr("name", "update");
         } else {
             $MB.n_danger(r.msg);

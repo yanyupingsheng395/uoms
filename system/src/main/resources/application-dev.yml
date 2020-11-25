@@ -44,5 +44,5 @@ shiro:
 
 logging:
   level:
-    com.linksteady.system.dao: info
+    com.linksteady.system.dao: debug
 

@@ -3,8 +3,36 @@ $(function(){
         login();
     });
 
-});
+    /**
+     * 为标签页切换增加事件
+     */
+    $("a[data-toggle='tab']").on('shown.bs.tab', function (e) {
+        // 获取已激活的标签页的名称
+        var activeTab = $(e.target).attr("href");
+        if(activeTab=='#qywxLogin')
+        {
+            //企业微信方式登录 获取企业微信的相关参数
+            $.getJSON("/qw/getLoginParam", function (resp) {
+                if (resp.code==200){
+                    console.log(resp.data);
+                    //调用企业微信方法
+                    window.WwLogin({
+                        "id" : "qywxQrCode",
+                        "appid" : resp.data.corpId,
+                        "agentid" : resp.data.agentId,
+                        "redirect_uri" : resp.data.redirectUrl,
+                        "state" : resp.data.random,
+                        "href" : "",
+                    });
+                }else
+                {
+                    $('#qrMsg').text(resp.msg);
+                }
+            })
+        }
+    });
 
+});
 
 document.onkeyup = function (e) {
     if (window.event)

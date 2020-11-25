@@ -83,4 +83,17 @@ public class ApiController {
         }
     }
 
+    /**
+     * 获取accessToken
+     */
+    @RequestMapping("/getAccessToken")
+    public String getAccessToken() {
+        try {
+            return qywxService.getAccessToken();
+        } catch (Exception e) {
+            log.error("获取企业微信的AccessToken，错误原因为{}",e);
+            return "";
+        }
+    }
+
 }
