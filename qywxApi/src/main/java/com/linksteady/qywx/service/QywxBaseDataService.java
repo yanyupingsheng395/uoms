@@ -21,7 +21,6 @@ public interface QywxBaseDataService {
 
     int getDeptCount();
 
-    Tree<QywxDeptUser>  getDeptAndUserTree() throws Exception;
     List<Map<String, Object>> getDept() throws Exception;
     List<Map<String, Object>> getUser() throws Exception;
 }

@@ -221,18 +221,6 @@ public class QywxContactWayController extends BaseController {
      * 获取组织架构数据树
      * @return
      */
-    @RequestMapping("/contactWay/getDeptAndUserTree")
-    @ResponseBody
-    public ResponseBo getDeptAndUserTree() {
-        Tree<QywxDeptUser> deptAndUserTree = null;
-        try {
-            deptAndUserTree = baseDataService.getDeptAndUserTree();
-        } catch (Exception e) {
-            return ResponseBo.error("未获取到可联系成员，请先完成组织架构数据的上传！");
-        }
-        return ResponseBo.okWithData(null, deptAndUserTree);
-    }
-
     @RequestMapping("/contactWay/getDept")
     @ResponseBody
     public ResponseBo getDept(){
@@ -245,6 +233,10 @@ public class QywxContactWayController extends BaseController {
         return ResponseBo.okWithData(null, dept);
     }
 
+    /**
+     * 获取组织架构数据树
+     * @return
+     */
     @RequestMapping("/contactWay/getUser")
     @ResponseBody
     public ResponseBo getUser(){

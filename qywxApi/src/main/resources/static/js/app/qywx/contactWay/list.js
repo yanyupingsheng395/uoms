@@ -368,15 +368,18 @@ function createUserTree() {
 function addRegion(selid) {
     var id = $( "#" + selid ).find( "option:selected" ).val();
     var name = $( "#" + selid ).find( "option:selected" ).text();
-    if(selid=="region1"){
-        if(dept_list.indexOf(id)==-1){
-            dept_list.push(id);
-            $( "#alllist" ).append( "<span class=\"tag\"><span>" + name + "&nbsp;&nbsp;</span><a style=\"color: #fff;cursor: pointer;\" onclick=\"regionRemove(this, \'" + id + "\', \'" + selid + "\')\">x</a></span>" );
-        }
-    }else if(selid=="region2"){
-        if(user_list.indexOf(id)==-1){
-            user_list.push(id);
-            $( "#alllist" ).append( "<span class=\"tag\"><span>" + name + "&nbsp;&nbsp;</span><a style=\"color: #fff;cursor: pointer;\" onclick=\"regionRemove(this, \'" + id + "\', \'" + selid + "\')\">x</a></span>" );
+    if(id!=""&&id!=null){
+        if(selid=="region1"){
+                id=parseInt(id);
+                if(dept_list.indexOf(id)==-1){
+                    dept_list.push(id);
+                    $( "#alllist" ).append( "<span class=\"tag\"><span>" + name + "&nbsp;&nbsp;</span><a style=\"color: #fff;cursor: pointer;\" onclick=\"regionRemove(this, \'" + id + "\', \'" + selid + "\')\">x</a></span>" );
+                }
+        }else if(selid=="region2"){
+            if(user_list.indexOf(id)==-1){
+                user_list.push(id);
+                $( "#alllist" ).append( "<span class=\"tag\"><span>" + name + "&nbsp;&nbsp;</span><a style=\"color: #fff;cursor: pointer;\" onclick=\"regionRemove(this, \'" + id + "\', \'" + selid + "\')\">x</a></span>" );
+            }
         }
     }
 }

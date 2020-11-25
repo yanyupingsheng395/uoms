@@ -43,20 +43,6 @@ public class QywxBaseDataServiceImpl implements QywxBaseDataService {
     }
 
     @Override
-    public Tree<QywxDeptUser> getDeptAndUserTree() throws Exception {
-        //  String corpId = configService.getValueByName(ConfigEnum.qywxCorpId.getKeyCode());
-        List<QywxDeptUser> deptUserList = qywxBaseDataMapper.getDeptAndUserData();
-        List<QywxDeptUser> tmpList = deptUserList.stream().filter(x -> StringUtils.isNotEmpty(x.getDeptId()) && StringUtils.isNotEmpty(x.getDeptName()) && StringUtils.isNotEmpty(x.getDeptParentId()))
-                .collect(Collectors.toList());
-        if(deptUserList.size() == 0 || tmpList.size() == 0) {
-            throw new Exception();
-        }
-        LinkedHashSet<Tree<QywxDeptUser>> trees = new LinkedHashSet<>();
-        buildTrees(trees, deptUserList);
-        return TreeUtils.build(new ArrayList<>(trees));
-    }
-
-    @Override
     public List<Map<String, Object>> getDept() throws Exception {
         return qywxBaseDataMapper.getDeptList(0, 0);//查询部门
     }
