@@ -79,5 +79,10 @@ public class UoShiroRealm extends AuthorizingRealm {
         PrincipalCollection principals = SecurityUtils.getSubject().getPrincipals();
         super.clearCache(principals);
     }
+
+    public void execGetAuthorizationInfo()
+    {
+        this.doGetAuthorizationInfo(null);
+    }
 }
 
