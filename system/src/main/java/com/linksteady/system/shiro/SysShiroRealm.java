@@ -2,6 +2,7 @@ package com.linksteady.system.shiro;
 
 import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.domain.User;
+import com.linksteady.common.service.CommonFunService;
 import com.linksteady.common.shiro.UoShiroRealm;
 import com.linksteady.system.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,9 @@ public class SysShiroRealm extends UoShiroRealm {
     @Autowired
     @Lazy
     private UserService userService;
+
+    @Autowired
+    private CommonFunService commonFunService;
 
     private static final String SALT="linksteady";
 
@@ -92,6 +96,7 @@ public class SysShiroRealm extends UoShiroRealm {
         }
 
         UserBo userBo=new UserBo(user);
+        userBo.setUserMenuTree(commonFunService.getUserMenu(userBo.getUserId()));
         return new SimpleAuthenticationInfo(
                 userBo,
                 user.getPassword(),

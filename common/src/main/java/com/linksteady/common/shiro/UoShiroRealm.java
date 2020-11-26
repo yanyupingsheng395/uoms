@@ -51,12 +51,9 @@ public class UoShiroRealm extends AuthorizingRealm {
             // 处理用户多权限 用逗号分隔
             permissionSet.addAll(Arrays.asList(m.getPerms().split(",")));
         }
-        userBo.setPermission(permissionSet);
-
-        userBo.setUserMenuTree(commonFunService.getUserMenu(userBo.getUserId()));
 
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
-        simpleAuthorizationInfo.setStringPermissions(userBo.getPermission());
+        simpleAuthorizationInfo.setStringPermissions(permissionSet);
         return simpleAuthorizationInfo;
     }
 

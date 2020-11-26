@@ -1,28 +1,23 @@
 package com.linksteady.system.controller;
 
-import com.google.common.collect.Maps;
 import com.linksteady.common.config.ShiroProperties;
 import com.linksteady.common.controller.BaseController;
-import com.linksteady.common.domain.LogTypeEnum;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.common.domain.SysLog;
 import com.linksteady.common.service.ConfigService;
-import com.linksteady.common.service.LogService;
+import com.linksteady.common.shiro.UoShiroRealm;
 import com.linksteady.system.service.UserService;
-import com.linksteady.common.util.HttpContextUtils;
-import com.linksteady.common.util.IPUtils;
-import com.linksteady.common.util.MD5Utils;
-import com.linksteady.system.config.SystemProperties;
 import com.linksteady.system.shiro.CustomUsernamePasswordToken;
 import com.linksteady.system.util.code.img.ImageCode;
 import com.linksteady.system.util.code.img.ImageCodeGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authc.*;
+import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.LockedAccountException;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,7 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.util.Enumeration;
-import java.util.Map;
 
 /**
  * @author
@@ -55,6 +49,9 @@ public class LoginController extends BaseController {
 
     @Autowired
     private ConfigService configService;
+
+    @Autowired
+    UoShiroRealm uoShiroRealm;
 
     @GetMapping("/login")
     public String login(Model model, HttpServletRequest request, HttpServletResponse response) {
@@ -107,9 +104,11 @@ public class LoginController extends BaseController {
         try {
             Subject subject = getSubject();
             if (subject != null) {
+                uoShiroRealm.clearCache();
                 subject.logout();
             }
             super.login(token);
+            uoShiroRealm.execGetAuthorizationInfo();
             this.userService.updateLoginTime(username);
             //记录登录事件
             userService.logLoginEvent(username, "登录成功");

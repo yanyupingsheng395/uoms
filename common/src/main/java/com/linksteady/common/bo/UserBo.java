@@ -26,7 +26,6 @@ public class UserBo implements Serializable {
 
     private String firstLogin ="Y";
 
-    private Set<String> permission;
     private Tree<MenuBo> userMenuTree;
 
     public UserBo(User user) {
@@ -34,7 +33,6 @@ public class UserBo implements Serializable {
         this.username=user.getUsername();
         this.email=user.getEmail();
         this.mobile=user.getMobile();
-        this.permission=user.getPermissionSet();
         this.userMenuTree=user.getUserMenuTree();
         this.firstLogin=getFirstLogin();
     }

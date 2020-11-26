@@ -9,6 +9,7 @@ import com.linksteady.common.domain.SysInfoBo;
 import com.linksteady.common.domain.User;
 import com.linksteady.common.service.CommonFunService;
 import com.linksteady.common.service.ConfigService;
+import com.linksteady.common.shiro.UoShiroRealm;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.system.exception.QywxLoginException;
 import com.linksteady.system.service.QywxLoginService;
@@ -47,6 +48,9 @@ public class QywxLoginController extends BaseController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    UoShiroRealm uoShiroRealm;
 
     private static final String QW_LOGIN_URL="https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=";
 
@@ -168,9 +172,11 @@ public class QywxLoginController extends BaseController {
                         try {
                             Subject subject = getSubject();
                             if (subject != null) {
+                                uoShiroRealm.clearCache();
                                 subject.logout();
                             }
                             super.login(token);
+                            uoShiroRealm.execGetAuthorizationInfo();
                             userService.updateLoginTime(username);
                             //记录登录事件
                             userService.logLoginEvent(username, "企业微信登录成功");
