@@ -157,6 +157,7 @@
         where t1.group_id=t2.group_id
           and t3.coupon_id=t2.coupon_id
           and t3.valid_status='Y'
+          and t3.check_flag='1'
     </select>
 
     <select id="getSysCoupon" resultMap="BaseResultMap">

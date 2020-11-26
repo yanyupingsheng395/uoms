@@ -90,6 +90,7 @@ public class DailyDetailServiceImpl implements DailyDetailService {
     @Transactional(rollbackFor = Exception.class)
     public void generatePushList(Long headerId) throws Exception{
         dailyDetailMapper.deletePushContentTemp(headerId);
+
         //获取group上配置的所有补贴信息
         List<Map<String,Object>> groupCouponInfo=couponMapper.selectGroupCouponInfo();
         Map<String,List<GroupCouponVO>> groupCouponList=groupingCouponByGroupId(groupCouponInfo);
