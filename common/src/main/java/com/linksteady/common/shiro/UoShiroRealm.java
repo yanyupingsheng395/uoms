@@ -2,7 +2,7 @@ package com.linksteady.common.shiro;
 
 
 import com.linksteady.common.bo.UserBo;
-import com.linksteady.common.domain.Menu;
+import com.linksteady.common.domain.MenuBo;
 import com.linksteady.common.service.CommonFunService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -14,6 +14,8 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -25,8 +27,10 @@ import java.util.Set;
  *
  * @author MrBird
  */
+@Component
 public class UoShiroRealm extends AuthorizingRealm {
 
+    @Lazy
     @Autowired
     private CommonFunService commonFunService;
 
@@ -41,9 +45,9 @@ public class UoShiroRealm extends AuthorizingRealm {
         UserBo userBo = (UserBo) SecurityUtils.getSubject().getPrincipal();
 
         // 获取用户权限集
-        List<Menu> permissionList = this.commonFunService.findUserPermissions(userBo.getUserId());
+        List<MenuBo> permissionList = this.commonFunService.findUserPermissions(userBo.getUserId());
         Set<String> permissionSet = new HashSet<>();
-        for (Menu m : permissionList) {
+        for (MenuBo m : permissionList) {
             // 处理用户多权限 用逗号分隔
             permissionSet.addAll(Arrays.asList(m.getPerms().split(",")));
         }
@@ -66,6 +70,14 @@ public class UoShiroRealm extends AuthorizingRealm {
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         return new SimpleAuthenticationInfo();
+    }
+
+    /**
+     * 清除用户缓存
+     */
+    public void clearCache() {
+        PrincipalCollection principals = SecurityUtils.getSubject().getPrincipals();
+        super.clearCache(principals);
     }
 }
 
