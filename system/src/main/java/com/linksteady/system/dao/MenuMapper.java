@@ -8,11 +8,7 @@ import java.util.List;
 
 public interface MenuMapper extends MyMapper<Menu> {
 	
-	List<Menu> findUserPermissions(Long userId);
-	
 	List<Menu> findUserMenus(@Param("userId") Long userId, @Param("sysCode") String sysCode);
-
-	List<Menu> findUserMenusOfAllSys(@Param("userId") Long userId);
 
 	/**
 	 * 	删除父节点，子节点变成顶级节点（根据实际业务调整）

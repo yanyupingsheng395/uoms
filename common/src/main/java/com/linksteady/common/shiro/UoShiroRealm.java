@@ -2,6 +2,8 @@ package com.linksteady.common.shiro;
 
 
 import com.linksteady.common.bo.UserBo;
+import com.linksteady.common.domain.Menu;
+import com.linksteady.common.service.CommonFunService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -11,6 +13,12 @@ import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 自定义实现 ShiroRealm，包含认证和授权两大模块
@@ -18,6 +26,10 @@ import org.apache.shiro.subject.PrincipalCollection;
  * @author MrBird
  */
 public class UoShiroRealm extends AuthorizingRealm {
+
+    @Autowired
+    private CommonFunService commonFunService;
+
     /**
      * 授权模块，获取用户角色和权限
      *
@@ -27,6 +39,18 @@ public class UoShiroRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principal) {
         UserBo userBo = (UserBo) SecurityUtils.getSubject().getPrincipal();
+
+        // 获取用户权限集
+        List<Menu> permissionList = this.commonFunService.findUserPermissions(userBo.getUserId());
+        Set<String> permissionSet = new HashSet<>();
+        for (Menu m : permissionList) {
+            // 处理用户多权限 用逗号分隔
+            permissionSet.addAll(Arrays.asList(m.getPerms().split(",")));
+        }
+        userBo.setPermission(permissionSet);
+
+        userBo.setUserMenuTree(commonFunService.getUserMenu(userBo.getUserId()));
+
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
         simpleAuthorizationInfo.setStringPermissions(userBo.getPermission());
         return simpleAuthorizationInfo;

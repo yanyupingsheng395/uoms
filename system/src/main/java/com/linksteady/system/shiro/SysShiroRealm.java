@@ -25,8 +25,6 @@ public class SysShiroRealm extends UoShiroRealm {
     @Autowired
     @Lazy
     private UserService userService;
-    @Autowired
-    private MenuService menuService;
 
     private static final String SALT="linksteady";
 
@@ -49,7 +47,6 @@ public class SysShiroRealm extends UoShiroRealm {
 
         CustomUsernamePasswordToken customUsernamePasswordToken = (CustomUsernamePasswordToken)token ;
         String userName=customUsernamePasswordToken.getUsername();
-        String password="";
         User user = this.userService.findByName(userName);
 
         if(null==user)
@@ -83,8 +80,6 @@ public class SysShiroRealm extends UoShiroRealm {
             }
         }else
         {
-            // 获取用户输入的密码
-            password = new String((char[]) token.getCredentials());
             if (User.STATUS_LOCK.equals(user.getStatus())) {
                 throw new LockedAccountException("账号已被锁定,请联系管理员！");
             }
@@ -104,20 +99,6 @@ public class SysShiroRealm extends UoShiroRealm {
                 user.getPassword(),
                 ByteSource.Util.bytes(userBo.getUsername().toLowerCase() + SALT),
                 getName());
-
-        // 获取用户权限集
-//        List<Menu> permissionList = this.menuService.findUserPermissions(user.getUserId());
-//        Set<String> permissionSet = new HashSet<>();
-//        for (Menu m : permissionList) {
-//            // 处理用户多权限 用逗号分隔
-//            permissionSet.addAll(Arrays.asList(m.getPerms().split(",")));
-//        }
-//        user.setPermissionSet(permissionSet);
-
-        // 登录成功之后获取菜单
-       // user.setUserMenuTree(menuService.getUserMenu(user.getUserId()));
-
-
 
     }
 }

@@ -48,16 +48,6 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
     private WebApplicationContext applicationContext;
 
     @Override
-    public List<Menu> findUserPermissions(Long userId) {
-        return this.menuMapper.findUserPermissions(userId);
-    }
-
-    @Override
-    public List<Menu> findUserMenus(Long userId) {
-        return this.menuMapper.findUserMenusOfAllSys(userId);
-    }
-
-    @Override
     public List<Menu> findAllMenus(Menu menu) {
         List<Menu> menuList = menuMapper.findAllMenus(menu);
         return menuList;
@@ -121,27 +111,6 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
             tree.setIcon("mdi mdi-database");
             trees.add(tree);
         });
-    }
-
-
-    @Override
-    public Map<String, Tree<Menu>> getUserMenu(Long userId) {
-        List<Menu> menus = this.findUserMenus(userId);
-        Map<String, Tree<Menu>> result = Maps.newHashMap();
-        menus.stream().collect(Collectors.groupingBy(Menu::getSysCode)).entrySet().stream().forEach(x->{
-            List<Tree<Menu>> trees = new ArrayList<>();
-            x.getValue().forEach(menu -> {
-                Tree<Menu> tree = new Tree<>();
-                tree.setId(menu.getMenuId().toString());
-                tree.setParentId(menu.getParentId().toString());
-                tree.setText(menu.getMenuName());
-                tree.setIcon(menu.getIcon());
-                tree.setUrl(menu.getUrl());
-                trees.add(tree);
-            });
-            result.put(x.getKey(), TreeUtils.build(trees));
-        });
-        return result;
     }
 
     @Override

@@ -1,6 +1,11 @@
 package com.linksteady.common.service;
 
+import com.linksteady.common.domain.Menu;
 import com.linksteady.common.domain.SysInfoBo;
+import com.linksteady.common.domain.Tree;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author hxcao
@@ -24,4 +29,10 @@ public interface CommonFunService {
     SysInfoBo getSysInfoById(Long sysId);
 
     boolean checkPassword(Long userId,String newPass);
+
+    List<Menu> findUserPermissions(Long userId);
+
+    List<Menu> findUserMenus(Long userId);
+
+    Map<String, Tree<Menu>> getUserMenu(Long userId);
 }

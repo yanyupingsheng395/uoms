@@ -4,7 +4,11 @@ package com.linksteady.common.dao;
  * Created by hxcao on 2019-06-03
  */
 
+import com.linksteady.common.domain.Menu;
 import com.linksteady.common.domain.SysInfoBo;
+import io.lettuce.core.dynamic.annotation.Param;
+
+import java.util.List;
 
 /**
  * 通用配置表
@@ -31,4 +35,8 @@ public interface CommonFunMapper {
     SysInfoBo getSysInfoById(Long sysId);
 
     int checkPassword(Long userId,String newpass);
+
+    List<Menu> findUserPermissions(Long userId);
+
+    List<Menu> findUserMenusOfAllSys(@Param("userId") Long userId);
 }

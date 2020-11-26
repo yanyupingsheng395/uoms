@@ -18,14 +18,6 @@
         <result column="UPDATE_BY" jdbcType="VARCHAR" property="updateBy" />
     </resultMap>
 
-    <select id="findUserPermissions" resultMap="menu">
-  	select m.perms from t_role r
-        left join t_user_role ur on(r.role_id = ur.role_id)
-        left join t_role_menu rm on(rm.role_id = r.role_id)
-        left join t_menu m on(m.menu_id = rm.menu_id )
-        where ur.user_id = #{userId} and m.perms is not null and m.perms &lt;&gt; ''
-  </select>
-
     <select id="findUserMenus" resultMap="menu">
         select m.* from t_menu m
         where m.type &lt;&gt; '1'
@@ -37,16 +29,6 @@
         left join t_role r on(rm.role_id = r.role_id)
         left join t_user_role ur on(ur.role_id = r.role_id)
         where ur.user_id = #{userId}) order by m.order_num,m.sys_code asc
-    </select>
-
-    <select id="findUserMenusOfAllSys" resultMap="menu">
-        select m.* from t_menu m
-        where m.type &lt;&gt; '1' and m.MENU_ID in
-        (select distinct rm.menu_id from t_role_menu rm
-        left join t_role r on(rm.role_id = r.role_id)
-        left join t_user_role ur on(ur.role_id = r.role_id)
-        left join t_user u on (u.user_id = ur.user_id)
-        where u.user_id = #{userId}) order by m.order_num,m.sys_code asc
     </select>
 
     <update id="changeToTop" parameterType="java.util.List">

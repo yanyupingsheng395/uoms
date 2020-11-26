@@ -11,17 +11,11 @@ import java.util.Map;
 
 public interface MenuService extends IService<Menu> {
 
-    List<Menu> findUserPermissions(Long userId);
-
-    List<Menu> findUserMenus(Long userId);
-
     List<Menu> findAllMenus(Menu menu);
 
     Tree<Menu> getMenuButtonTree();
 
     Tree<Menu> getMenuTree(String sysCode);
-
-    Map<String, Tree<Menu>> getUserMenu(Long userId);
 
     Menu findById(Long menuId);
 
