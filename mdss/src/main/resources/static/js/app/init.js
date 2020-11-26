@@ -75,7 +75,7 @@ function allExceptionCatch() {
 }
 
 function getUserMenu() {
-    $.get("/findUserMenu", function (r) {
+    $.get("/api/findUserMenu", function (r) {
         if(r.code===200)
         {
             var username=r.msg.username;

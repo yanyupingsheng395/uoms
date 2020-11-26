@@ -1,13 +1,12 @@
 package com.linksteady.common.bo;
 
-import com.linksteady.common.domain.Menu;
+import com.linksteady.common.domain.MenuBo;
 import com.linksteady.common.domain.Tree;
 import com.linksteady.common.domain.User;
 import lombok.Data;
 
 import javax.persistence.Id;
 import java.io.Serializable;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -28,7 +27,7 @@ public class UserBo implements Serializable {
     private String firstLogin ="Y";
 
     private Set<String> permission;
-    private Map<String, Tree<Menu>> userMenuTree;
+    private Tree<MenuBo> userMenuTree;
 
     public UserBo(User user) {
         this.userId = user.getUserId();

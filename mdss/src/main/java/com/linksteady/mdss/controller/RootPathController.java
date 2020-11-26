@@ -40,32 +40,6 @@ public class RootPathController extends BaseController {
     @Autowired
     ExceptionNoticeHandler exceptionNoticeHandler;
 
-    @Value("${app.name}")
-    private String appname;
-
-    /**
-     * 当前版本
-     */
-    @Value("${app.version}")
-    private String version;
-
-    /**
-     * 当前系统中文名称
-     */
-    @Value("${app.description}")
-    private String appdesc;
-
-    /**
-     * 当前spring boot的版本
-     */
-    @Value("${app.spring-boot-version}")
-    private String bootversion;
-
-    /**
-     * 打包时间
-     */
-    @Value("${app.build.time}")
-    private String buildTime;
 
     @RequestMapping("/")
     public String root() {
@@ -79,53 +53,5 @@ public class RootPathController extends BaseController {
         model.addAttribute("user", user);
         model.addAttribute("version", version);
         return "index";
-    }
-
-    /**
-     * 获取登录用户的菜单
-     * @return
-     */
-    @RequestMapping("/findUserMenu")
-    @ResponseBody
-    public ResponseBo getUserMenu(HttpServletRequest request) {
-        SysInfoBo sysInfoBo=commonFunService.getSysInfoByCode("mdss");
-
-        String sysId = sysInfo.getId();
-        User user = super.getCurrentUser();
-        if(null==sysId||"".equals(sysId)||"null".equals(sysId))
-        {
-            return ResponseBo.error("");
-        }
-
-        //返回的数据集
-        Map<String, Object> result = new HashMap<>();
-        String userName = user.getUsername();
-        result.put("username", userName);
-        result.put("version", version);
-        String sysDomain = sysInfoBo.getSysDomain();
-        result.put("navigatorUrl",sysDomain +"/main");
-        result.put("logoutUrl",sysDomain + "/logout");
-        result.put("single", user.getUserMenuTree().keySet().size() == 1);
-
-        //获取当前子系统名称
-        String sysName=sysInfo.getName();
-        try {
-            Tree<Menu> tree = user.getUserMenuTree().get(sysId);
-            result.put("tree", tree);
-            return ResponseBo.okWithData(result,sysName);
-        } catch (Exception e) {
-            log.error("获取用户菜单失败", e);
-            //进行异常日志的上报
-            exceptionNoticeHandler.exceptionNotice(e);
-            return ResponseBo.error("获取用户菜单失败！");
-        }
-    }
-
-    @RequestMapping("user/checkPassword")
-    @ResponseBody
-    public boolean checkPassword(String password) {
-        User user = getCurrentUser();
-        String encrypt = MD5Utils.encrypt(user.getUsername().toLowerCase(), password);
-        return user.getPassword().equals(encrypt);
     }
 }

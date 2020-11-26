@@ -80,7 +80,7 @@ function login()
                             location.href = '/resetPass';
                         }else
                         {
-                            location.href = '/main';
+                            location.href = '/index';
                         }
 
                     } else {

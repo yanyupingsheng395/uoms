@@ -174,7 +174,7 @@ public class QywxLoginController extends BaseController {
                             userService.updateLoginTime(username);
                             //记录登录事件
                             userService.logLoginEvent(username, "企业微信登录成功");
-                            return "redirect:/main";
+                            return "redirect:/index";
                         } catch (Exception e) {
                             log.error("{}使用企业微信扫码登录失败，{}", username, e);
                             userService.logLoginEvent(username, "企业微信登录失败");

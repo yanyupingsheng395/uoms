@@ -1,10 +1,8 @@
 package com.linksteady.system.service;
 
-import com.linksteady.common.domain.Menu;
+import com.linksteady.system.domain.Menu;
 import com.linksteady.common.domain.Tree;
 import com.linksteady.common.service.IService;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 import java.util.Map;

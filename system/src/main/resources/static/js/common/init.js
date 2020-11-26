@@ -80,7 +80,7 @@ function allExceptionCatch() {
  */
 function getUserMenu() {
     if(document.getElementsByClassName("sidebar-main").length != 0) {
-        $.get("/findUserMenu", function (r) {
+        $.get("/api/findUserMenu", function (r) {
             if(r.code===200)
             {
                 $(".nav-drawer").html("").html(forTree(r.msg.tree.children));

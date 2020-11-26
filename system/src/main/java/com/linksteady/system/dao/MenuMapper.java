@@ -1,7 +1,7 @@
 package com.linksteady.system.dao;
 
 import com.linksteady.common.config.MyMapper;
-import com.linksteady.common.domain.Menu;
+import com.linksteady.system.domain.Menu;
 import io.lettuce.core.dynamic.annotation.Param;
 
 import java.util.List;

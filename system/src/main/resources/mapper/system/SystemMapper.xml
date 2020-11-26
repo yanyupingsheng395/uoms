@@ -20,17 +20,4 @@
   <select id="findAll" resultMap="BaseResultMap">
     select ID, NAME, CODE, DOMAIN from T_SYSTEM where ENABLE_FLAG = '1' order by SORT_NUM ASC
   </select>
-
-  <select id="findUserSystem" resultMap="BaseResultMap">
-    select * from T_SYSTEM where code in (
-      select m.sys_code from t_menu m
-      where m.type &lt;&gt; '1' and m.MENU_ID in
-          (select distinct rm.menu_id from t_role_menu rm
-          left join t_role r on(rm.role_id = r.role_id)
-          left join t_user_role ur on(ur.role_id = r.role_id)
-          left join t_user u on (u.user_id = ur.user_id)
-          where u.user_id = #{userId})
-    ) and ENABLE_FLAG = '1'
-    ORDER BY SORT_NUM ASC
-  </select>
 </mapper>

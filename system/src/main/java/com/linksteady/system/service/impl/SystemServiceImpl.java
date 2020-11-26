@@ -103,9 +103,4 @@ public class SystemServiceImpl extends BaseService<SysInfo> implements SystemSer
         List<SysInfo> list = this.selectByExample(example);
         return list.isEmpty() ? null : list.get(0);
     }
-
-    @Override
-    public List<SysInfo> findUserSystem(Long userId) {
-          return systemMapper.findUserSystem(userId);
-    }
 }

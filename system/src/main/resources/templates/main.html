@@ -60,53 +60,5 @@
 <th:block th:include="common/include::footer" />
 <th:block th:include="common/include::perfect-scrollbar" />
 <th:block th:include="common/include::common-js" />
-<script>
-    $(function () {
-        getSysInfo();
-    });
-
-    function getSysInfo() {
-        $MB.loading('show');
-        $.get("/system/findUserSystem", {}, function (r) {
-            var code =  "";
-            var i = 0;
-            if(r.msg.list.length === 1) {
-                var data = r.msg.list[0];
-                sysRedirect(data.domain, data.id);
-            }else {
-                $.each(r.msg.list, function (k, v) {
-                    i++;
-                    code += "<div class=\"col-md-3\">\n" +
-                        "<div class=\"system center-block\" style=\"border-radius:200px;height: 200px;width:200px;\">\n" +
-                        "<img src='"+v.logo+"' alt=\"\" class=\"center-block m-auto\" style=\"margin-top:40px;cursor: pointer\" onclick='sysRedirect(\""+v.domain+"\", \""+v.id+"\", \""+v.code+"\")'>\n" +
-                        "</div>\n" +
-                        "<div class=\"text-center\" style=\"margin-top: 10px;\">\n" +
-                        "<p class=\"h4\"><a onclick='sysRedirect(\""+v.domain+"\", \""+v.id+"\", \""+v.code+"\")' style=\"color: #838383;cursor: pointer\">"+v.name+"</a></p>\n" +
-                        "</div>\n" +
-                        "</div>";
-                });
-                $("#sys").html("").append(code);
-                if(i == 1) {
-                    $("#sys").find("div").eq(0).addClass("col-md-offset-4");
-                }else if(i === 2){
-                    $("#sys").find("div").eq(0).addClass("col-md-offset-3");
-                }else if(i === 3){
-                    $("#sys").find("div").eq(0).addClass("col-md-offset-2");
-                }
-                var username = r.msg.username;
-                $("#loginUser").html("").html(username + "<span class=\"caret\"></span>");
-                $MB.loading('hide');
-            }
-        });
-    }
-
-    function sysRedirect(url, id, code) {
-        if(code == "system") {
-            window.location.href = url + "/index";
-        }else {
-            window.location.href = url;
-        }
-    }
-</script>
 </body>
 </html>

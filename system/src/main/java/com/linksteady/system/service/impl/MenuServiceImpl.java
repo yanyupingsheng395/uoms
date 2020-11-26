@@ -1,8 +1,7 @@
 package com.linksteady.system.service.impl;
 
-import com.google.common.collect.Maps;
 import com.linksteady.common.bo.UserBo;
-import com.linksteady.common.domain.Menu;
+import com.linksteady.system.domain.Menu;
 import com.linksteady.common.domain.Tree;
 import com.linksteady.common.service.impl.BaseService;
 import com.linksteady.common.util.TreeUtils;

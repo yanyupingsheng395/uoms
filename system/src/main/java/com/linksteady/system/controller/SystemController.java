@@ -126,19 +126,4 @@ public class SystemController extends BaseController {
         List<SysInfo> list = this.systemService.findAllSystem();
         return ResponseBo.ok(list);
     }
-
-    /**
-     * 用户登录成功后获取权限系统
-     * @return
-     */
-    @RequestMapping("system/findUserSystem")
-    @ResponseBody
-    public ResponseBo findUserSystem() {
-        Map<String, Object> result = Maps.newHashMap();
-        UserBo userBo = super.getCurrentUser();
-        List<SysInfo> list = this.systemService.findUserSystem(userBo.getUserId());
-        result.put("list", list);
-        result.put("username", userBo.getUsername());
-        return ResponseBo.ok(result);
-    }
 }

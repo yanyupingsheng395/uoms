@@ -2,7 +2,7 @@ package com.linksteady.system.controller;
 
 import com.linksteady.common.annotation.Log;
 import com.linksteady.common.controller.BaseController;
-import com.linksteady.common.domain.Menu;
+import com.linksteady.system.domain.Menu;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.Tree;
 import com.linksteady.common.service.CommonFunService;
@@ -10,11 +10,8 @@ import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.system.config.SystemProperties;
 import com.linksteady.system.service.MenuService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +20,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 @Controller
 @Slf4j

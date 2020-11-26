@@ -1,10 +1,8 @@
 package com.linksteady.system.shiro;
 
 import com.linksteady.common.bo.UserBo;
-import com.linksteady.common.domain.Menu;
 import com.linksteady.common.domain.User;
 import com.linksteady.common.shiro.UoShiroRealm;
-import com.linksteady.system.service.MenuService;
 import com.linksteady.system.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.*;

@@ -115,8 +115,6 @@ public class ShiroConfig {
         filterChainDefinitionMap.put(shiroProperties.getResetPasswordUrl(), "user");
         filterChainDefinitionMap.put("/user/updatePassword", "user");
 
-        // 剔除main页面的请求
-        filterChainDefinitionMap.put("/main", "user,resetpass");
         // 获取系统导航的系统信息
         filterChainDefinitionMap.put("/system/findUserSystem", "user,resetpass");
         // 将sysId放到session中

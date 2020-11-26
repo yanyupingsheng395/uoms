@@ -6,7 +6,6 @@ import lombok.Data;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Map;
 import java.util.Set;
 
 @Data
@@ -81,7 +80,7 @@ public class User implements Serializable {
 	 * 用户所拥有的菜单 key:sysCode
 	 */
 	@Transient
-	private Map<String, Tree<Menu>> userMenuTree;
+	private Tree<MenuBo> userMenuTree;
 
 	@Transient
 	private Set<String> permissionSet;
