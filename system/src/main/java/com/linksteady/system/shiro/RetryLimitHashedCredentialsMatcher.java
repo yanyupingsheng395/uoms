@@ -1,9 +1,11 @@
 package com.linksteady.system.shiro;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 
+@Slf4j
 public class RetryLimitHashedCredentialsMatcher extends HashedCredentialsMatcher {
 
     @Override
@@ -14,6 +16,7 @@ public class RetryLimitHashedCredentialsMatcher extends HashedCredentialsMatcher
             return true;
         }
         //不是免密登录，调用父类的方法
-        return super.doCredentialsMatch(customUsernamePasswordToken, info);
+        boolean flag=super.doCredentialsMatch(customUsernamePasswordToken, info);
+        return flag;
     }
 }

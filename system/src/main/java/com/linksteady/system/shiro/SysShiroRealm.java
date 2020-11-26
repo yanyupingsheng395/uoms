@@ -6,7 +6,9 @@ import com.linksteady.common.domain.User;
 import com.linksteady.common.shiro.UoShiroRealm;
 import com.linksteady.system.service.MenuService;
 import com.linksteady.system.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.*;
+import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 
@@ -17,6 +19,7 @@ import java.util.*;
  *
  * @author MrBird
  */
+@Slf4j
 public class SysShiroRealm extends UoShiroRealm {
 
     @Autowired
@@ -24,6 +27,8 @@ public class SysShiroRealm extends UoShiroRealm {
     private UserService userService;
     @Autowired
     private MenuService menuService;
+
+    private static final String SALT="linksteady";
 
     /**
      * 用户认证
@@ -36,6 +41,10 @@ public class SysShiroRealm extends UoShiroRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
 
         RetryLimitHashedCredentialsMatcher credentialsMatcher=new RetryLimitHashedCredentialsMatcher();
+        credentialsMatcher.setHashAlgorithmName("md5");
+        credentialsMatcher.setHashIterations(2);
+        credentialsMatcher.setStoredCredentialsHexEncoded(true);
+        credentialsMatcher.setHashSalted(true);
         setCredentialsMatcher(credentialsMatcher);
 
         CustomUsernamePasswordToken customUsernamePasswordToken = (CustomUsernamePasswordToken)token ;
@@ -76,10 +85,6 @@ public class SysShiroRealm extends UoShiroRealm {
         {
             // 获取用户输入的密码
             password = new String((char[]) token.getCredentials());
-
-            if (!password.equals(user.getPassword())) {
-                throw new IncorrectCredentialsException("用户名或密码错误！");
-            }
             if (User.STATUS_LOCK.equals(user.getStatus())) {
                 throw new LockedAccountException("账号已被锁定,请联系管理员！");
             }
@@ -93,19 +98,26 @@ public class SysShiroRealm extends UoShiroRealm {
             }
         }
 
+        UserBo userBo=new UserBo(user);
+        return new SimpleAuthenticationInfo(
+                userBo,
+                user.getPassword(),
+                ByteSource.Util.bytes(userBo.getUsername().toLowerCase() + SALT),
+                getName());
+
         // 获取用户权限集
-        List<Menu> permissionList = this.menuService.findUserPermissions(user.getUserId());
-        Set<String> permissionSet = new HashSet<>();
-        for (Menu m : permissionList) {
-            // 处理用户多权限 用逗号分隔
-            permissionSet.addAll(Arrays.asList(m.getPerms().split(",")));
-        }
-        user.setPermissionSet(permissionSet);
+//        List<Menu> permissionList = this.menuService.findUserPermissions(user.getUserId());
+//        Set<String> permissionSet = new HashSet<>();
+//        for (Menu m : permissionList) {
+//            // 处理用户多权限 用逗号分隔
+//            permissionSet.addAll(Arrays.asList(m.getPerms().split(",")));
+//        }
+//        user.setPermissionSet(permissionSet);
 
         // 登录成功之后获取菜单
-        user.setUserMenuTree(menuService.getUserMenu(user.getUserId()));
+       // user.setUserMenuTree(menuService.getUserMenu(user.getUserId()));
 
-        UserBo userBo=new UserBo(user);
-        return new SimpleAuthenticationInfo(userBo, password, getName());
+
+
     }
 }

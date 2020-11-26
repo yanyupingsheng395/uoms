@@ -41,9 +41,6 @@ public class MenuController extends BaseController {
     @Autowired
     ExceptionNoticeHandler exceptionNoticeHandler;
 
-    @Value("${app.version}")
-    private String version;
-
     @Log("获取菜单信息")
     @RequestMapping("menu")
     @RequiresPermissions("menu:list")

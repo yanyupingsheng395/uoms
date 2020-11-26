@@ -53,6 +53,7 @@ public class QywxMdiaServiceImpl implements QywxMdiaService {
         String result=OkHttpUtil.postRequestByFormBody(url,param);
         JSONObject resultObject = JSON.parseObject(result);
         if (null==resultObject||resultObject.getIntValue("code")!= 200) {
+            log.error("获取素材失败，接口返回的结果:{}",result);
             throw  new LinkSteadyException("获取素材失败"+result);
         }else
         {

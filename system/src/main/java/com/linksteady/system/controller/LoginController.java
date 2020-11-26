@@ -103,7 +103,6 @@ public class LoginController extends BaseController {
         }
 
         long time2=System.currentTimeMillis();
-        password = MD5Utils.encrypt(username, password);
         CustomUsernamePasswordToken token = new CustomUsernamePasswordToken(username, password,"PASS");
         try {
             Subject subject = getSubject();

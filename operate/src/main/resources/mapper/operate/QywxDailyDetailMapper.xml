@@ -189,13 +189,13 @@
 
     <select id="getFollowUserList" resultMap="followUserResult">
         select follow_user_id,coalesce(name,'未知') follow_user_name from
-            (select distinct follow_user_id from uo_qywx_daily_detail where head_id=#{headId}) t1 left join
+            (select distinct follow_user_id from uo_qywx_daily_detail where head_id=#{headId} and push_status='X') t1 left join
             uo_qywx_follower_user_list on t1.follow_user_id=uo_qywx_follower_user_list.user_id
             order by follow_user_id asc
     </select>
 
     <select id="getMessageSignList" resultType="String">
-         select distinct qywx_msg_sign from uo_qywx_daily_detail where head_id=#{headId} and follow_user_id=#{followUserId}
+         select distinct qywx_msg_sign from uo_qywx_daily_detail where head_id=#{headId} and push_status='X' and follow_user_id=#{followUserId}
     </select>
 
     <select id="getDailyStaffEffect" resultType="com.linksteady.operate.domain.QywxDailyStaffEffect">
@@ -203,12 +203,12 @@
     </select>
 
     <select id="getWaitQywxUserListCount" resultType="int">
-         select count(*) from uo_qywx_daily_detail where head_id = #{headId} and follow_user_id=#{followUserId} and qywx_msg_sign=#{msgSign}
+         select count(*) from uo_qywx_daily_detail where head_id = #{headId} and follow_user_id=#{followUserId} and qywx_msg_sign=#{msgSign} and push_status='X'
     </select>
 
     <select id="getQywxUserList" resultMap="baseResult">
         select * from uo_qywx_daily_detail where
-          head_id = #{headId} and follow_user_id=#{followUserId} and qywx_msg_sign=#{msgSign} order by detail_id asc limit #{limit} offset #{offset}
+          head_id = #{headId} and follow_user_id=#{followUserId} and qywx_msg_sign=#{msgSign} and push_status='X' order by detail_id asc limit #{limit} offset #{offset}
     </select>
 
     <update id="updatePushId">

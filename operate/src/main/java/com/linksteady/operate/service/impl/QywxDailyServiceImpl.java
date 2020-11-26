@@ -122,6 +122,9 @@ public class QywxDailyServiceImpl implements QywxDailyService {
             }
         }
 
+        //todo 预先为所有商品生成mediaid
+
+
         String appId = qywxMessageService.getMpAppId();
 
         //按导购分组
@@ -169,7 +172,6 @@ public class QywxDailyServiceImpl implements QywxDailyService {
                         }
                     }
                 } else {
-
                     int pageNum = waitCount % pageSize == 0 ? (waitCount / pageSize) : ((waitCount / pageSize) + 1);
                     for (int i = 0; i < pageNum; i++) {
                         log.info("当前文本推送条数{}，偏移量为{}", pageSize,i*pageSize);
@@ -381,6 +383,92 @@ public class QywxDailyServiceImpl implements QywxDailyService {
         }else {
             return "不存在的ID或当前记录已发过券了";
         }
+    }
+
+    @Override
+    public String manualSubmitMessage(long headId) {
+        String appId = qywxMessageService.getMpAppId();
+        //按导购分组
+        List<FollowUserVO> followUserIdList =qywxDailyDetailMapper.getFollowUserList(headId);
+
+        followUserIdList.forEach(x -> {
+            String followUserId = x.getFollowUserId();
+            // 推送消息(按消息分组)
+            List<String> msgSignList =qywxDailyDetailMapper.getMessageSignList(headId,followUserId);
+
+            //备注：同一msgSignList下必然是同一个商品
+            msgSignList.forEach(y -> {
+
+                //查询当前签名、当前导购下记录的条数
+                int waitCount=qywxDailyDetailMapper.getWaitQywxUserListCount(headId,followUserId,y);
+                int pageSize = 10000;
+                if (waitCount <= pageSize) {
+                    log.info("当前推送数据量<=10000");
+                    if(waitCount > 0) {
+                        //获取当前待推送的列表
+                        List<QywxDailyDetail> qywxDailyDetailList=qywxDailyDetailMapper.getQywxUserList(headId,followUserId,y,waitCount,0);
+
+                        String mediaId= null;
+                        try {
+                            mediaId = qywxMdiaService.getMpMediaId(qywxDailyDetailList.get(0).getRecProdId());
+                        } catch (Exception e) {
+                            throw new RuntimeException(e.getMessage());
+                        }
+
+                        QywxPushList qywxPushList=new QywxPushList();
+                        qywxPushList.setTextContent(qywxDailyDetailList.get(0).getTextContent());
+                        qywxPushList.setMpTitle(qywxDailyDetailList.get(0).getMpTitle());
+                        qywxPushList.setMpUrl(qywxDailyDetailList.get(0).getMpUrl());
+                        qywxPushList.setMpMediaId(mediaId);
+                        qywxPushList.setMpAppid(appId);
+                        qywxPushList.setExternalContactIds(StringUtils.join(qywxDailyDetailList.stream().map(QywxDailyDetail::getQywxContractId).collect(Collectors.toList()),","));
+                        qywxPushList.setFollowUserId(followUserId);
+                        qywxPushList.setSourceId(qywxDailyDetailList.get(0).getHeadId());
+                        qywxDailyMapper.insertPushList(qywxPushList);
+                        //推送并更新状态
+                        try {
+                            pushQywxMsg(qywxPushList,qywxDailyDetailList);
+                        } catch (Exception e) {
+                            new LinkSteadyException("推送任务出现异常！"+e);
+                        }
+                    }
+                } else {
+                    int pageNum = waitCount % pageSize == 0 ? (waitCount / pageSize) : ((waitCount / pageSize) + 1);
+                    for (int i = 0; i < pageNum; i++) {
+                        log.info("当前文本推送条数{}，偏移量为{}", pageSize,i*pageSize);
+                        List<QywxDailyDetail> tmpUserList = qywxDailyDetailMapper.getQywxUserList(headId,followUserId,y,pageSize,i * pageSize);
+                        if(tmpUserList.size() > 0) {
+
+                            String mediaId="";
+                            try {
+                                mediaId=qywxMdiaService.getMpMediaId(tmpUserList.get(0).getRecProdId());
+                            } catch (Exception e) {
+                                throw new RuntimeException(e.getMessage());
+                            }
+
+                            QywxPushList qywxPushList=new QywxPushList();
+                            qywxPushList.setTextContent(tmpUserList.get(0).getTextContent());
+                            qywxPushList.setMpTitle(tmpUserList.get(0).getMpTitle());
+                            qywxPushList.setMpUrl(tmpUserList.get(0).getMpUrl());
+                            qywxPushList.setMpMediaId(mediaId);
+                            qywxPushList.setMpAppid(appId);
+                            qywxPushList.setExternalContactIds(StringUtils.join(tmpUserList.stream().map(QywxDailyDetail::getQywxContractId).collect(Collectors.toList()),","));
+                            qywxPushList.setFollowUserId(followUserId);
+                            qywxPushList.setSourceId(tmpUserList.get(0).getHeadId());
+                            qywxDailyMapper.insertPushList(qywxPushList);
+                            //推送并更新状态
+                            try {
+                                pushQywxMsg(qywxPushList,tmpUserList);
+                            } catch (Exception e) {
+                                new LinkSteadyException("推送任务出现异常！"+e);
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+        return "success";
     }
 
 

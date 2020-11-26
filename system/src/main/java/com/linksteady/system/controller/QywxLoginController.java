@@ -22,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -95,7 +96,7 @@ public class QywxLoginController extends BaseController {
      * @return
      */
     @GetMapping("/qw/loginRedirect")
-    public String qwLoginRedirect(Model model,HttpServletRequest request)
+    public String qwLoginRedirect(Model model, HttpServletRequest request)
     {
         try {
             //授权码
@@ -175,7 +176,7 @@ public class QywxLoginController extends BaseController {
                             userService.logLoginEvent(username, "企业微信登录成功");
                             return "redirect:/main";
                         } catch (Exception e) {
-                            log.error("{}使用企业微信扫码登录失败，原因为{}", username, e);
+                            log.error("{}使用企业微信扫码登录失败，{}", username, e);
                             userService.logLoginEvent(username, "企业微信登录失败");
                             throw new QywxLoginException("企业微信登录失败，原因为:" + e.getMessage());
                         }
@@ -185,12 +186,8 @@ public class QywxLoginController extends BaseController {
         } catch (QywxLoginException e) {
             log.error("企业微信登录失败，失败的原因为{}",e);
             model.addAttribute("msg", e.getMessage());
-            return "redirect:/qw/qywxLoginError";
+            return "error/qywxLoginError";
         }
     }
 
-    @GetMapping("/qw/qywxLoginError")
-    public String qywxLoginError() {
-        return "error/qywxLoginError";
-    }
 }

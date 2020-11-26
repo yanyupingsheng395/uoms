@@ -69,4 +69,10 @@ public interface QywxDailyService {
     String manualSubmitCoupon(long headId);
 
 
+    /**
+     * 手工发送消息
+     */
+    String manualSubmitMessage(long headId);
+
+
 }

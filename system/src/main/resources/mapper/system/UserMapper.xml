@@ -60,6 +60,6 @@
 	</insert>
 
 	<update id="updateLastLoginTime">
-		UPDATE t_user SET AST_LOGIN_TIME =now() WHERE lower(username)= #{userName}
+		UPDATE t_user SET LAST_LOGIN_TIME =now() WHERE lower(username)= #{userName}
 	</update>
 </mapper>

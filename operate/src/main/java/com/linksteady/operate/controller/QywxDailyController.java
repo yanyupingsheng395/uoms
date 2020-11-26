@@ -373,6 +373,14 @@ public class QywxDailyController {
      */
     @GetMapping("/manualSubmitCoupon")
     public ResponseBo manualSubmitCoupon(Long headId) {
-        return ResponseBo.error(qywxDailyService.manualSubmitCoupon(headId));
+        return ResponseBo.ok(qywxDailyService.manualSubmitCoupon(headId));
+    }
+
+    /**
+     * 手工发送消息
+     */
+    @GetMapping("/manualSubmitMessage")
+    public ResponseBo manualSubmitMessage(Long headId) {
+        return ResponseBo.ok(qywxDailyService.manualSubmitMessage(headId));
     }
 }
