@@ -86,15 +86,8 @@ function getUserMenu() {
             subMenu();
             $("#pageTitle").html("").html(r.data);
 
-            //设置返回导航页
-            $("#navigatorUrl").attr("href",r.msg.navigatorUrl);
-
             //设置退出
             $("#logoutbtn").attr("href",r.msg.logoutUrl);
-
-            if(r.msg.single) {
-                $("#selectSys").attr("hidden", true);
-            }
         }
     });
 }

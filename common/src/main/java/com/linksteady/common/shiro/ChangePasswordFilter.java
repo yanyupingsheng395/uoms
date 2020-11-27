@@ -33,8 +33,6 @@ public class ChangePasswordFilter extends AccessControlFilter {
     protected boolean onAccessDenied(ServletRequest servletRequest, ServletResponse servletResponse) throws Exception {
         ShiroProperties shiroProperties= (ShiroProperties) SpringContextUtils.getBean("shiroProperties");
         //获取是否首次登陆需要强制修改密码
-
-
         Subject subject = getSubject(servletRequest, servletResponse);
         // 表示没有登录，重定向到登录页面
         if (subject.getPrincipal() == null) {

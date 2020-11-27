@@ -22,6 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
@@ -55,6 +56,8 @@ public class QywxLoginController extends BaseController {
     private static final String QW_LOGIN_URL="https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=";
 
     private static final String GET_ACCESS_TOKEN="/api/getAccessToken";
+
+    public static final String oAuthUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?";
 
     /**
      * 跳转到扫码授权登录页面
@@ -193,6 +196,142 @@ public class QywxLoginController extends BaseController {
             log.error("企业微信登录失败，失败的原因为{}",e);
             model.addAttribute("msg", e.getMessage());
             return "error/qywxLoginError";
+        }
+    }
+
+    /**
+     * 企微oauth登录
+     */
+    @RequestMapping("/qw/oauth")
+    public String login(Model model, HttpServletRequest request) {
+        log.info("开始进行登录授权，构造授权url");
+        //构造OAuth链接
+        StringBuffer sbf = new StringBuffer(oAuthUrl);
+        String corpId=qywxLoginService.getCorpId();
+        if(StringUtils.isEmpty(corpId))
+        {
+            model.addAttribute("msg", "管理员尚未完成配置!!");
+            return "error/udferror";
+        }
+        sbf.append("appid=" + corpId);
+
+        String basePath = request.getScheme() + "://" + request.getServerName();
+        String redirectUrl = null;
+        try {
+            redirectUrl = java.net.URLEncoder.encode(basePath + "/qw/oauthRedirect", "utf-8");
+
+            sbf.append("&redirect_uri=" + redirectUrl);
+            sbf.append("&response_type=code");
+            sbf.append("&scope=snsapi_base");
+            sbf.append("&state=linksteady#wechat_redirect");
+
+            log.debug("oauth的链接为:{}", sbf.toString());
+            return "redirect:" + sbf.toString();
+        } catch (UnsupportedEncodingException e) {
+            log.error("oauth回调链接加密错误，原因为{}", e);
+            model.addAttribute("msg", "引导授权失败，稍后再试!");
+            return "error/udfError";
+        }
+    }
+
+    /**
+     * OAuth完成授权的回调请求
+     */
+    @RequestMapping("/qw/oauthRedirect")
+    public String oauthRedirect(Model model, HttpServletRequest request) {
+        //授权码
+        String code = request.getParameter("code");
+        //验证码
+        String stage = request.getParameter("state");
+        //获取用户的身份信息
+        try {
+            if (StringUtils.isEmpty(code) || StringUtils.isEmpty(stage)) {
+                throw new QywxLoginException("非法请求，参数丢失！");
+            }
+            if (StringUtils.isEmpty("linksteady") || !stage.equals("linksteady")) {
+                throw new QywxLoginException("非法的请求链接！");
+            }
+
+            //获取当前应用的accessToken
+            SysInfoBo sysInfoBo = commonFunService.getSysInfoByCode(CommonConstant.QYWX_CODE);
+            if (null == sysInfoBo || StringUtils.isEmpty(sysInfoBo.getSysDomain())) {
+                throw new QywxLoginException("企业微信应用未配置！");
+            }
+
+            StringBuffer getAccessTokenUrl = new StringBuffer(sysInfoBo.getSysDomain());
+            getAccessTokenUrl.append(GET_ACCESS_TOKEN);
+            String accessToken = OkHttpUtil.getRequest(getAccessTokenUrl.toString());
+            if (StringUtils.isEmpty(accessToken)) {
+                throw new QywxLoginException("获取accessToken失败！");
+            }
+
+            StringBuffer getUserInfoUrl = new StringBuffer(QW_LOGIN_URL);
+            getUserInfoUrl.append(accessToken);
+            getUserInfoUrl.append("&code=").append(code);
+
+            String userResult = OkHttpUtil.getRequest(getUserInfoUrl.toString());
+            JSONObject object = JSONObject.parseObject(userResult);
+            if (null == object || !"0".equals(object.getString("errcode"))) {
+                throw new QywxLoginException("微信授权失败！原因为:" + object.getString("errmsg"));
+            } else {
+                //获取UserId(企业微信的userId就是t_user表里的username)
+                String username = object.getString("UserId");
+                if (StringUtils.isEmpty(username)) {
+                    throw new QywxLoginException("您非当前企业的企业成员!");
+                } else {
+                    //判断用户是否已经存在
+                    username = username.toLowerCase();
+                    User user = userService.findByName(username);
+
+                    //当前用户不存在
+                    if (null == user) {
+                        //写入用户表
+                        User newUser = new User();
+                        //备注：用户名需要进行小写处理 因为 用户名:密码登录方式是做了这样处理的
+                        newUser.setUsername(username.toLowerCase());
+                        newUser.setCreateBy("qywxClientLogin");
+                        newUser.setUpdateBy("qywxClientLogin");
+                        newUser.setCreateDt(new Date());
+                        newUser.setUpdateDt(new Date());
+                        newUser.setExpireDate(Date.from(LocalDate.now().plusYears(1).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+                        newUser.setUserType("QYWX");
+                        userService.save(newUser);
+                    }
+
+                    CustomUsernamePasswordToken token = new CustomUsernamePasswordToken(username, "QYWX");
+                    Subject subject = getSubject();
+                    if (subject != null) {
+                        uoShiroRealm.clearCache();
+                        subject.logout();
+                    }
+                    super.login(token);
+                    uoShiroRealm.execGetAuthorizationInfo();
+                    userService.updateLoginTime(username);
+                    //记录登录事件
+                    userService.logLoginEvent(username, "企业微信客户端登录成功");
+
+                    String sourceUrl = (String) request.getSession().getAttribute("sourceUrl");
+                    log.info("用户来源的地址为:{}",sourceUrl);
+                    if (!StringUtils.isEmpty(sourceUrl)) {
+                        String s = sysInfoBo.getSysDomain()+"qwClient/index";
+                        try {
+                            s = java.net.URLDecoder.decode(sourceUrl, "utf-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        request.getSession().setAttribute("sourceUrl", "");
+                        return "redirect:" + sysInfoBo.getSysDomain()+s;
+                    } else {
+                        return "redirect:"+sysInfoBo.getSysDomain()+"qwClient/index";
+                    }
+                }
+            }
+        }catch (Exception e)
+        {
+            //未获得授权的请求
+            log.error("授权已完成，但是获取用户信息失败，原因为{}", e);
+            model.addAttribute("msg", "授权失败!");
+            return "error/udferror";
         }
     }
 

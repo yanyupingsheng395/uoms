@@ -127,31 +127,31 @@ function subMenu() {
             $navHasSubnav.toggleClass( 'open' );
 
             // 新增滚动条处理
-            var scrollHeight  = 0;
-            pervTotal     = $topHasSubNav.prevAll().length,
-                boxHeight     = $scrollBox.outerHeight(),
-                innerHeight   = $('.sidebar-main').outerHeight(),
-                thisScroll    = $scrollBox.scrollTop(),
-                thisSubHeight = $(this).outerHeight(),
-                footHeight    = 121;
-
-            if (footHeight + innerHeight - boxHeight >= (pervTotal * 48)) {
-                scrollHeight = pervTotal * 48;
-            }
-            if ($subnavToggle.parents('.nav-item-has-subnav').length == 1) {
-                $scrollBox.animate({scrollTop: scrollHeight}, 300);
-            } else {
-                // 子菜单操作
-                if (typeof($viSubHeight) != 'undefined' && $viSubHeight != null) {
-                    scrollHeight = thisScroll + thisSubHeight - $viSubHeight;
-                    $scrollBox.animate({scrollTop: scrollHeight}, 300);
-                } else {
-                    if ((thisScroll + boxHeight - $scrollBox[0].scrollHeight) == 0) {
-                        scrollHeight = thisScroll - thisSubHeight;
-                        $scrollBox.animate({scrollTop: scrollHeight}, 300);
-                    }
-                }
-            }
+            // var scrollHeight  = 0;
+            // pervTotal     = $topHasSubNav.prevAll().length,
+            //     boxHeight     = $scrollBox.outerHeight(),
+            //     innerHeight   = $('.sidebar-main').outerHeight(),
+            //     thisScroll    = $scrollBox.scrollTop(),
+            //     thisSubHeight = $(this).outerHeight(),
+            //     footHeight    = 121;
+            //
+            // if (footHeight + innerHeight - boxHeight >= (pervTotal * 48)) {
+            //     scrollHeight = pervTotal * 48;
+            // }
+            // if ($subnavToggle.parents('.nav-item-has-subnav').length == 1) {
+            //     $scrollBox.animate({scrollTop: scrollHeight}, 300);
+            // } else {
+            //     // 子菜单操作
+            //     if (typeof($viSubHeight) != 'undefined' && $viSubHeight != null) {
+            //         scrollHeight = thisScroll + thisSubHeight - $viSubHeight;
+            //         $scrollBox.animate({scrollTop: scrollHeight}, 300);
+            //     } else {
+            //         if ((thisScroll + boxHeight - $scrollBox[0].scrollHeight) == 0) {
+            //             scrollHeight = thisScroll - thisSubHeight;
+            //             $scrollBox.animate({scrollTop: scrollHeight}, 300);
+            //         }
+            //     }
+            // }
         });
     });
 }

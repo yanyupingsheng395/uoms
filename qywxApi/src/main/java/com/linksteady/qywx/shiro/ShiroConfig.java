@@ -3,10 +3,7 @@ package com.linksteady.qywx.shiro;
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
 import com.linksteady.common.config.ShiroProperties;
 import com.linksteady.common.listener.ShiroSessionListener;
-import com.linksteady.common.shiro.ChangePasswordFilter;
-import com.linksteady.common.shiro.CustomUserFilter;
-import com.linksteady.common.shiro.ShiroSessionManger;
-import com.linksteady.common.shiro.UoShiroRealm;
+import com.linksteady.common.shiro.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.codec.Base64;
 import org.apache.shiro.mgt.SecurityManager;
@@ -91,6 +88,7 @@ public class ShiroConfig {
         Map<String, Filter> filters = shiroFilterFactoryBean.getFilters();
         filters.put("user",new CustomUserFilter());
         filters.put("resetpass",new ChangePasswordFilter());
+        filters.put("qwclient",new QwClientFilter());
 
         // 设置 securityManager
         shiroFilterFactoryBean.setSecurityManager(securityManager);
@@ -111,6 +109,9 @@ public class ShiroConfig {
         filterChainDefinitionMap.put(shiroProperties.getLogoutUrl(), "logout");
         //强制修改密码的链接
         filterChainDefinitionMap.put(shiroProperties.getResetPasswordUrl(), "user");
+
+        //企业微信客户端
+        filterChainDefinitionMap.put("/qwClient/**","qwclient");
 
         // 除上以外所有 url都必须认证通过才可以访问，未通过认证自动访问 LoginUrl
         filterChainDefinitionMap.put("/**", "user,resetpass");

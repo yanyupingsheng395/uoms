@@ -40,16 +40,6 @@ public class PageController  extends BaseController {
     private AddUserTriggerService addUserTriggerService;
 
     /**
-     * 活动运营
-     *
-     * @return
-     */
-    @RequestMapping("/activity")
-    public String activity() {
-        return "qywx/activity/list";
-    }
-
-    /**
      * 企业微信应用配置
      */
     @RequestMapping("/application")

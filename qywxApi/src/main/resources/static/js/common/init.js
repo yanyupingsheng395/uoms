@@ -124,15 +124,8 @@ function getUserMenu() {
                 subMenu();
                 $("#pageTitle").html("").html(r.data);
 
-                //设置返回导航页
-                $("#navigatorUrl").attr("href",r.msg.navigatorUrl);
-
                 //设置退出
                 $("#logoutbtn").attr("href",r.msg.logoutUrl);
-
-                if(r.msg.single) {
-                    $("#selectSys").attr("hidden", true);
-                }
             }
         });
     }
@@ -151,31 +144,31 @@ function subMenu() {
             $navHasSubnav.toggleClass( 'open' );
 
             // 新增滚动条处理
-            var scrollHeight  = 0;
-            pervTotal     = $topHasSubNav.prevAll().length,
-                boxHeight     = $scrollBox.outerHeight(),
-                innerHeight   = $('.sidebar-main').outerHeight(),
-                thisScroll    = $scrollBox.scrollTop(),
-                thisSubHeight = $(this).outerHeight(),
-                footHeight    = 121;
-
-            if (footHeight + innerHeight - boxHeight >= (pervTotal * 48)) {
-                scrollHeight = pervTotal * 48;
-            }
-            if ($subnavToggle.parents('.nav-item-has-subnav').length == 1) {
-                $scrollBox.animate({scrollTop: scrollHeight}, 300);
-            } else {
-                // 子菜单操作
-                if (typeof($viSubHeight) != 'undefined' && $viSubHeight != null) {
-                    scrollHeight = thisScroll + thisSubHeight - $viSubHeight;
-                    $scrollBox.animate({scrollTop: scrollHeight}, 300);
-                } else {
-                    if ((thisScroll + boxHeight - $scrollBox[0].scrollHeight) == 0) {
-                        scrollHeight = thisScroll - thisSubHeight;
-                        $scrollBox.animate({scrollTop: scrollHeight}, 300);
-                    }
-                }
-            }
+            // var scrollHeight  = 0;
+            // pervTotal     = $topHasSubNav.prevAll().length,
+            //     boxHeight     = $scrollBox.outerHeight(),
+            //     innerHeight   = $('.sidebar-main').outerHeight(),
+            //     thisScroll    = $scrollBox.scrollTop(),
+            //     thisSubHeight = $(this).outerHeight(),
+            //     footHeight    = 121;
+            //
+            // if (footHeight + innerHeight - boxHeight >= (pervTotal * 48)) {
+            //     scrollHeight = pervTotal * 48;
+            // }
+            // if ($subnavToggle.parents('.nav-item-has-subnav').length == 1) {
+            //     $scrollBox.animate({scrollTop: scrollHeight}, 300);
+            // } else {
+            //     // 子菜单操作
+            //     if (typeof($viSubHeight) != 'undefined' && $viSubHeight != null) {
+            //         scrollHeight = thisScroll + thisSubHeight - $viSubHeight;
+            //         $scrollBox.animate({scrollTop: scrollHeight}, 300);
+            //     } else {
+            //         if ((thisScroll + boxHeight - $scrollBox[0].scrollHeight) == 0) {
+            //             scrollHeight = thisScroll - thisSubHeight;
+            //             $scrollBox.animate({scrollTop: scrollHeight}, 300);
+            //         }
+            //     }
+            // }
         });
     });
 }
@@ -208,8 +201,6 @@ var forTree = function (o) {
 function menu_tree() {
     // 防止域名中包含路由字符串
     var urlStr = location.href;
-    var domain = urlStr.indexOf(".com") > -1 ? ".com" : "localhost";
-    urlStr = urlStr.split(domain)[1];
     $(".sidebar-main ul li a").each(function () {
         if ((urlStr + '/').indexOf($(this).attr('href')) > -1 && $(this).attr('href') != '') {
             $(this).parent("li").addClass("active");

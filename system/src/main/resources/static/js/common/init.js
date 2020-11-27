@@ -201,8 +201,6 @@ var forTree = function (o) {
 function menu_tree() {
     // 防止域名中包含路由字符串
     var urlStr = location.href;
-    var domain = urlStr.indexOf(".com") > -1 ? ".com" : "localhost";
-    urlStr = urlStr.split(domain)[1];
     $(".sidebar-main ul li a").each(function () {
         if ((urlStr + '/').indexOf($(this).attr('href')) > -1 && $(this).attr('href') != '') {
             $(this).parent("li").addClass("active");
