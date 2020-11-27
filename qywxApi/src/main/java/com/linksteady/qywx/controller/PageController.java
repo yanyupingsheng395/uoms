@@ -3,22 +3,21 @@ package com.linksteady.qywx.controller;
 import com.linksteady.common.annotation.Log;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.qywx.config.PushConfig;
-import com.linksteady.qywx.domain.*;
-import com.linksteady.qywx.exception.UdfException;
-import com.linksteady.qywx.exception.WxErrorException;
-import com.linksteady.qywx.service.*;
+import com.linksteady.qywx.domain.AddUserHead;
+import com.linksteady.qywx.domain.QywxParam;
+import com.linksteady.qywx.domain.QywxWelcome;
+import com.linksteady.qywx.service.AddUserService;
+import com.linksteady.qywx.service.AddUserTriggerService;
+import com.linksteady.qywx.service.QywxParamService;
+import com.linksteady.qywx.service.WelcomeService;
 import com.linksteady.qywx.vo.SourceConfigVO;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 @Controller
