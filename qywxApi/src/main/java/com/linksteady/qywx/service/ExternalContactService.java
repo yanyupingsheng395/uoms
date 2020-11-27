@@ -1,9 +1,6 @@
 package com.linksteady.qywx.service;
 
 import com.linksteady.qywx.domain.ExternalContact;
-import com.linksteady.qywx.domain.MappingStatis;
-import com.linksteady.qywx.domain.PhoneFixStatis;
-import com.linksteady.qywx.domain.RepeatStatis;
 import com.linksteady.qywx.exception.WxErrorException;
 
 import java.util.List;
@@ -43,40 +40,7 @@ public interface ExternalContactService {
 
     void deleteExternalContract(String followerUserId,String externalUserId);
 
-//    /**
-//     * 获取本地的所有客户列表
-//     */
-//    List<ExternalContact> selectLocalContractList(String corpId);
-
-//    /**
-//     * 获取本地当前用户的所有客户列表
-//     */
-//    List<ExternalContact> selectLocalContractListByUserId(String userId);
-//
-//    int selectLocalContracCountByUserId(String userId);
-
-//    /**
-//     * 获取当前外部用户的详细信息
-//     * @param corpId
-//     * @param followUserId
-//     * @param externalUserId
-//     * @return
-//     */
-//    ExternalContact getUserInfo(String corpId, String followUserId, String externalUserId);
-
-
     int selectLocalContactCount();
-
-    /**
-     * 手机号不正确列表的数量
-     */
-    int selectRemarkInvalidCount(String corpId, String followUserId);
-
-    /**
-     * 分页获取手机号维护不正确的列表 (空或者格式不正确)
-     */
-    List<ExternalContact> selectRemarkInvalid(int offset,int limit,String corpId, String followUserId);
-
 
     /**
      * 分页获取当前企业的外部联系人
@@ -110,20 +74,5 @@ public interface ExternalContactService {
      * 类型：未购买。根据添加时间筛选人员
      */
     List<ExternalContact> getAddTimeList(String corpId, String followUserId, String addtime);
-
-    /**
-     * 手机号维护情况的统计
-     */
-    List<PhoneFixStatis> getPhoneFixStatis(String corpId);
-
-    /**
-     * 重复添加情况统计
-     */
-    List<RepeatStatis> getRepeatStatis(String corpId);
-
-    /**
-     * 匹配情况
-     */
-    MappingStatis getMappingStatis(String corpId);
 
 }

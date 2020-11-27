@@ -1,9 +1,6 @@
 package com.linksteady.qywx.dao;
 
 import com.linksteady.qywx.domain.ExternalContact;
-import com.linksteady.qywx.domain.MappingStatis;
-import com.linksteady.qywx.domain.PhoneFixStatis;
-import com.linksteady.qywx.domain.RepeatStatis;
 
 import java.util.List;
 
@@ -61,22 +58,5 @@ public interface ExternalContactMapper {
 
     void saveExternalUserId(String followerUserId, String externalUserId);
 
-    /**
-     * 分页 获取手机号不正确外部联系人的总条数
-     * @param corpId
-     * @return
-     */
-    int selectRemarkInvalidCount(String corpId,String followerUserId);
-
-    /**
-     * 分页获取手机号不正确外部联系人
-     */
-    List<ExternalContact> selectRemarkInvalid(int offset, int limit,String corpId, String followerUserId);
-
-    List<PhoneFixStatis> getPhoneFixStatis(String corpId);
-
-    List<RepeatStatis> getRepeatStatis(String corpId);
-
-    MappingStatis getMappingStatis(String corpId);
 
 }

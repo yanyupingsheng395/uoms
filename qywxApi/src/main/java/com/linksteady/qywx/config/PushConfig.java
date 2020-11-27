@@ -1,15 +1,10 @@
 package com.linksteady.qywx.config;
 
-import com.linksteady.common.dao.ConfigMapper;
 import com.linksteady.common.domain.enums.ConfigEnum;
 import com.linksteady.common.service.ConfigService;
-import com.linksteady.qywx.domain.HeartBeatInfo;
-import com.linksteady.qywx.domain.PushSignalEnum;
-import com.linksteady.qywx.service.RedisMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PushConfig {
@@ -19,53 +14,6 @@ public class PushConfig {
 
     @Autowired
     RedisTemplate redisTemplate;
-
-    @Autowired
-    private ConfigMapper configMapper;
-
-    @Autowired
-    private RedisMessageService redisMessageService;
-
-    @Transactional(rollbackFor = Exception.class)
-    public synchronized void sendPushSignal(PushSignalEnum signal, String currentUser) throws Exception{
-        HeartBeatInfo heartBeatInfo =HeartBeatInfo.getInstance();
-        //启动
-        if(signal.getSignalCode().equals(PushSignalEnum.SIGNAL_START.getSignalCode()))
-        {
-            //更新数据库
-            configMapper.updateConfig(ConfigEnum.pushFlag.getKeyCode(),"Y");
-            //重新加载配置到redis
-            configService.loadConfigToRedis();
-            //发送命令到远端
-            heartBeatInfo.setSignal(signal);
-            redisMessageService.sendPushSingal(heartBeatInfo);
-
-        }else if(signal.getSignalCode().equals(PushSignalEnum.SIGNAL_STOP.getSignalCode()))
-        {
-            //更新数据库
-            configMapper.updateConfig(ConfigEnum.pushFlag.getKeyCode(),"N");
-            //重新加载配置到redis
-            configService.loadConfigToRedis();
-            //发送命令到远端
-            heartBeatInfo.setSignal(signal);
-            redisMessageService.sendPushSingal(heartBeatInfo);
-        }else if(signal.getSignalCode().equals(PushSignalEnum.SIGNAL_PRINT.getSignalCode()))
-        {
-            //打印
-            //发送命令到远端
-            heartBeatInfo.setSignal(signal);
-            redisMessageService.sendPushSingal(heartBeatInfo);
-        }else if(signal.getSignalCode().equals(PushSignalEnum.SIGNAL_REFRESH.getSignalCode()))
-        {
-            configService.loadConfigToRedis();
-            //通知推送端也重新加载配置
-            heartBeatInfo.setSignal(signal);
-            redisMessageService.sendPushSingal(heartBeatInfo);
-        }else
-        {
-            //什么也不做
-        }
-    }
 
 
     public int getRepeatPushDays() {

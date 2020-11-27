@@ -3,7 +3,6 @@ package com.linksteady.qywx.controller;
 import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
-import com.linksteady.qywx.domain.QywxUser;
 import com.linksteady.qywx.service.ExternalContactService;
 import com.linksteady.qywx.service.QywxService;
 import lombok.extern.slf4j.Slf4j;

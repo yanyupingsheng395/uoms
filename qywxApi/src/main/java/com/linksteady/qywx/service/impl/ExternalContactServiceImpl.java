@@ -9,7 +9,8 @@ import com.linksteady.common.service.impl.BaseService;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.qywx.constant.WxPathConsts;
 import com.linksteady.qywx.dao.ExternalContactMapper;
-import com.linksteady.qywx.domain.*;
+import com.linksteady.qywx.domain.ExternalContact;
+import com.linksteady.qywx.domain.WxError;
 import com.linksteady.qywx.exception.WxErrorException;
 import com.linksteady.qywx.service.ExternalContactService;
 import com.linksteady.qywx.service.FollowUserService;
@@ -27,7 +28,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -189,29 +189,6 @@ public class ExternalContactServiceImpl extends BaseService<ExternalContact> imp
     }
 
 
-//    /**
-//     * 查询本地某个导购下的外部客户列表
-//     *
-//     * @param userId
-//     * @return
-//     */
-//    @Override
-//    public List<ExternalContact> selectLocalContractListByUserId(String userId) {
-//        List<ExternalContact> result =externalContactMapper.selectLocalContractByUserId(userId);
-//        for (ExternalContact externalContact : result) {
-//            //设置添加时间
-//            externalContact.setCreateTimeStr(TimeStampUtils.timeStampToDateString(externalContact.getCreatetime()));
-//            //设置标签
-//        }
-//        return result;
-//    }
-//
-//    @Override
-//    public int selectLocalContracCountByUserId(String userId) {
-//        return externalContactMapper.selectLocalContracCountByUserId(userId);
-//    }
-
-
     @Override
     public int selectLocalContactCount() {
         return externalContactMapper.selectLocalContactCount();
@@ -287,22 +264,6 @@ public class ExternalContactServiceImpl extends BaseService<ExternalContact> imp
         }
         return externalContactMapper.getGuidanceCount(whereInfo.toString());
     }
-
-    @Override
-    public int selectRemarkInvalidCount(String corpId, String followUserId) {
-        return externalContactMapper.selectRemarkInvalidCount(corpId,followUserId);
-    }
-
-    @Override
-    public List<ExternalContact> selectRemarkInvalid(int offset,int limit,String corpId, String followUserId) {
-        List<ExternalContact> result= externalContactMapper.selectRemarkInvalid(offset,limit,corpId,followUserId);
-        for (ExternalContact externalContact : result) {
-            //设置添加时间
-            externalContact.setCreateTimeStr(TimeStampUtils.timeStampToDateString(externalContact.getCreatetime()));
-        }
-        return result;
-    }
-
 
     @Override
     public List<ExternalContact> getAddTimeList(String corpId, String followUserId, String addtime) {
@@ -381,21 +342,6 @@ public class ExternalContactServiceImpl extends BaseService<ExternalContact> imp
             //设置标签
         }
         return result;
-    }
-
-    @Override
-    public List<PhoneFixStatis> getPhoneFixStatis(String corpId) {
-        return externalContactMapper.getPhoneFixStatis(corpId);
-    }
-
-    @Override
-    public List<RepeatStatis> getRepeatStatis(String corpId) {
-        return externalContactMapper.getRepeatStatis(corpId);
-    }
-
-    @Override
-    public MappingStatis getMappingStatis(String corpId) {
-        return externalContactMapper.getMappingStatis(corpId);
     }
 
 }
