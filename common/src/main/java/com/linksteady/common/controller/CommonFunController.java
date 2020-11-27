@@ -88,7 +88,6 @@ public class CommonFunController extends BaseController {
         String userName = userBo.getUsername();
         result.put("username", userName);
         String systemDomain = system.getSysDomain();
-        result.put("navigatorUrl", systemDomain + "/main");
         result.put("logoutUrl", systemDomain + "/logout");
 
         try {

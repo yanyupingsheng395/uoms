@@ -22,8 +22,16 @@
                         <li> <a href="/logout"><i class="mdi mdi-logout-variant"></i> 退出登录</a> </li>
                     </ul>
                 </li>
-                <li id="selectSys">
-                    <a id="navigatorUrl" class="m-t-5" href=""><i class="mdi mdi-login"></i>系统导航</a>
+
+                <li class="dropdown">
+                    <a type="button" data-toggle="dropdown" aria-expanded="false" style="cursor: pointer;"><i class="mdi mdi-bell"></i>
+                        消&nbsp;&nbsp;&nbsp;&nbsp;息&nbsp;<span class="badge bg-danger" id="noReadCnt">0</span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right" style="width: 400px;" id="dropdownMenu">
+                        <table class="table table-striped" style="margin: 10px;width: 380px;" id="msgTable"></table>
+                        <a href="/page/msg" style="color: #333;margin-left: 10px;"><small>查看所有通知</small></a>
+                        <a href="#" onclick="readAll()" style="color: #333;margin-left: 10px;"><small>全部标为已读</small></a>
+                    </div>
                 </li>
             </ul>
         </div>

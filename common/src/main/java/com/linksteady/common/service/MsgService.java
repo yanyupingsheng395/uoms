@@ -1,6 +1,6 @@
-package com.linksteady.operate.service;
+package com.linksteady.common.service;
 
-import com.linksteady.operate.domain.MsgInfo;
+import com.linksteady.common.domain.MsgInfo;
 
 import java.util.List;
 

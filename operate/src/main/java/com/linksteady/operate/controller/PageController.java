@@ -352,7 +352,7 @@ public class PageController extends BaseController {
     @RequestMapping("/msg")
     @Log(value = "系统消息", location = "用户成长系统")
     public String msgPage() {
-        return "operate/msg/list";
+        return "msg/list";
     }
 
     /**

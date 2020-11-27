@@ -57,6 +57,7 @@
     from t_menu m join t_system
       on m.sys_code=t_system.code
      and m.type='0'
+     and t_system.enable_flag='1'
       and m.MENU_ID in
         (select distinct rm.menu_id from t_role_menu rm
         left join t_role r on(rm.role_id = r.role_id)

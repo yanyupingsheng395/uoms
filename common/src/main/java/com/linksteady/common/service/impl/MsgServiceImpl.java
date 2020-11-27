@@ -1,9 +1,8 @@
-package com.linksteady.qywx.service.impl;
-
+package com.linksteady.common.service.impl;
 import com.linksteady.common.bo.UserBo;
-import com.linksteady.qywx.dao.MsgMapper;
-import com.linksteady.qywx.domain.MsgInfo;
-import com.linksteady.qywx.service.MsgService;
+import com.linksteady.common.dao.MsgMapper;
+import com.linksteady.common.domain.MsgInfo;
+import com.linksteady.common.service.MsgService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

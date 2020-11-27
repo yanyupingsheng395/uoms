@@ -1,11 +1,10 @@
-package com.linksteady.qywx.controller;
+package com.linksteady.common.controller;
 
 import com.google.common.collect.Maps;
-import com.linksteady.common.controller.BaseController;
+import com.linksteady.common.domain.MsgInfo;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.qywx.domain.MsgInfo;
-import com.linksteady.qywx.service.MsgService;
+import com.linksteady.common.service.MsgService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

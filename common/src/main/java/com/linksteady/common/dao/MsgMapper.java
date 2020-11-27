@@ -1,6 +1,6 @@
-package com.linksteady.operate.dao;
+package com.linksteady.common.dao;
 
-import com.linksteady.operate.domain.MsgInfo;
+import com.linksteady.common.domain.MsgInfo;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.linksteady.qywx.domain;
+package com.linksteady.common.domain;
 
 import lombok.Data;
 

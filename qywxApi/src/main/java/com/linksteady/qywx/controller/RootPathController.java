@@ -20,17 +20,4 @@ public class RootPathController extends BaseController {
     @Autowired
     ExceptionNoticeHandler exceptionNoticeHandler;
 
-
-    @RequestMapping("/")
-    public String root() {
-        return "redirect:index";
-    }
-
-    @RequestMapping("/index")
-    public String index(Model model) {
-        // 登录成后，即可通过 Subject 获取登录的用户信息
-        UserBo userBo = super.getCurrentUser();
-        model.addAttribute("user", userBo);
-        return "index";
-    }
 }

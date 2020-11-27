@@ -55,4 +55,15 @@ public class PageController extends BaseController {
             return "index";
         }
     }
+
+    /**
+     * 系统消息
+     *
+     * @return
+     */
+    @RequestMapping("/msg")
+    @Log(value = "系统消息", location = "系统管理")
+    public String msgPage() {
+        return "msg/list";
+    }
 }

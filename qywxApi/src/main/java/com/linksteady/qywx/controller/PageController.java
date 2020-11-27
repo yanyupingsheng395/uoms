@@ -258,4 +258,15 @@ public class PageController  extends BaseController {
             return "qywx/addUserTrigger/add";
         }
     }
+
+    /**
+     * 系统消息
+     *
+     * @return
+     */
+    @RequestMapping("/msg")
+    @Log(value = "系统消息", location = "企业微信模块")
+    public String msgPage() {
+        return "msg/list";
+    }
 }
