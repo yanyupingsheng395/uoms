@@ -1,0 +1,313 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>导购运营结果</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <link rel="icon" data-th-href="@{/static/images/favicon.ico}" type="image/x-icon"/>
+    <link rel="stylesheet" data-th-href="@{/static/css/style.min.css}"/>
+    <link rel="stylesheet" href="/static/weui/css/weui.css"/>
+    <link rel="stylesheet" href="/static/weui/css/weuix.css"/>
+    <link rel="stylesheet" href="/static/weui/css/common.css"/>
+    <link rel="stylesheet" href="/static/plugins/bootstrap-table/bootstrap-table.min.css">
+    <script src="/static/js/common/jquery.min.js"></script>
+    <script src="/static/weui/js/zepto.min.js"></script>
+    <script src="/static/weui/js/zepto.weui.js"></script>
+    <script src="/static/weui/js/php.js"></script>
+    <script src="/static/weui/js/iscroll-lite.js"></script>
+    <script src="/static/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+    <script src="/static/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
+    <script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+
+</head>
+<body ontouchstart class="page-bg">
+<div class="weui-pay" style="padding: 6px;">
+    <div class="weui-pay-inner" style="padding: 9px;">
+        <h1 class="weui-pay-title" style="font-size: 14px;">选择观测周期</h1>
+        <div class="weui-pay" style="padding: 0px;">
+            <ul class="weui-payselect-ul" style="margin-top: 5px;">
+                <li class="weui-payselect-li" style="padding-bottom: 0">
+                    <a href="javascript:;" class="weui-payselect-a weui-payselect-on">昨日</a>
+                </li>
+                <li class="weui-payselect-li" style="padding-bottom: 0">
+                    <a href="javascript:;" class="weui-payselect-a">近7日</a>
+                </li>
+                <li class="weui-payselect-li" style="padding-bottom: 0;text-align: center;">
+                    <a href="javascript:;" class="weui-payselect-a">自定义</a>
+                </li>
+            </ul>
+            <div class="weui-flex" id="date_plate" style="display: none;">
+                <div class="weui-flex__item" style="font-size: 13px;font-weight: normal;">
+                    <div class="placeholder">
+                        <div class="weui-cell" style="padding-left: 0px;padding-bottom: 0px;">
+                            <div class="weui-cell__hd"><label for="dateStart" class="weui-label"
+                                                              style="width: auto;font-weight: normal;">开始时间：</label>
+                            </div>
+                            <div class="weui-cell__bd">
+                                <input class="weui-input" id="dateStart" type="text" placeholder="请选择"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="weui-flex__item" style="font-size: 13px;font-weight: normal;">
+                    <div class="placeholder">
+                        <div class="weui-cell" style="padding-left: 0px;padding-bottom: 0px;">
+                            <div class="weui-cell__hd"><label for="dateEnd" class="weui-label"
+                                                              style="width: auto;font-weight: normal;">结束时间：</label>
+                            </div>
+                            <div class="weui-cell__bd">
+                                <input class="weui-input" id="dateEnd" type="text" placeholder="请选择"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="weui-pay" style="padding: 6px;">
+    <div class="weui-pay-inner" style="padding: 9px;">
+        <h1 class="weui-pay-title" style="font-size: 14px;">用户购买整体情况</h1>
+        <div class="weui-pay-input" style="padding-bottom: 0px;">
+            <div class="weui-grids">
+                <div href="javascript:;" class="weui-grid js_grid">
+                    <p class="weui-grid__label" style="color: #4c4c4c;font-size: 13px;">
+                        用户总数
+                    </p>
+                    <p class="weui-grid__label">
+                        <span id="userTotalCnt"></span>人
+                    </p>
+                </div>
+                <div href="javascript:;" class="weui-grid js_grid">
+                    <p class="weui-grid__label" style="color: #4c4c4c;font-size: 13px;">
+                        添加用户数
+                    </p>
+                    <p class="weui-grid__label">
+                        <span id="addUserCnt"></span>人
+                    </p>
+                </div>
+                <div href="javascript:;" class="weui-grid js_grid">
+                    <p class="weui-grid__label" style="color: #4c4c4c;font-size: 13px;">
+                        购买用户数
+                    </p>
+                    <p class="weui-grid__label">
+                        <span id="purchasedUserCnt"></span>人
+                    </p>
+                </div>
+            </div>
+            <div class="weui-grids" style="border-top: 0px;">
+                <div href="javascript:;" class="weui-grid js_grid" style="border-bottom: 0px;">
+                    <p class="weui-grid__label" style="color: #4c4c4c;font-size: 13px;">
+                        用户购买率
+                    </p>
+                    <p class="weui-grid__label">
+                        <span id="purchasedRate"></span>%
+                    </p>
+                </div>
+                <div href="javascript:;" class="weui-grid js_grid">
+                    <p class="weui-grid__label" style="color: #4c4c4c;font-size: 13px;">
+                        累计购买金额
+                    </p>
+                    <p class="weui-grid__label">
+                        <span id="totalPurchasedAmount"></span>元
+                    </p>
+                </div>
+                <div href="javascript:;" class="weui-grid js_grid">
+                    <p class="weui-grid__label" style="color: #4c4c4c;font-size: 13px;">
+                        观测期购买金额
+                    </p>
+                    <p class="weui-grid__label">
+                        <span id="observePurchasedAmount"></span>元
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="weui-pay" style="padding: 6px;">
+    <div class="weui-pay-inner" style="padding: 9px;">
+        <h1 class="weui-pay-title" style="font-size: 14px;">推荐用户购买情况</h1>
+        <div class="weui-pay-input" style="padding-bottom: 0px;">
+            <div class="weui-grids">
+                <div href="javascript:;" class="weui-grid js_grid">
+                    <p class="weui-grid__label" style="color: #4c4c4c;font-size: 13px;">
+                        接收任务消息数
+                    </p>
+                    <p class="weui-grid__label">
+                        <span id="receiveMsgCnt"></span>条
+                    </p>
+                </div>
+                <div href="javascript:;" class="weui-grid js_grid">
+                    <p class="weui-grid__label" style="color: #4c4c4c;font-size: 13px;">
+                        推送消息数
+                    </p>
+                    <p class="weui-grid__label">
+                        <span id="pushMsgCnt"></span>条
+                    </p>
+                </div>
+                <div href="javascript:;" class="weui-grid js_grid">
+                    <p class="weui-grid__label" style="color: #4c4c4c;font-size: 13px;">
+                        推送消息执行率
+                    </p>
+                    <p class="weui-grid__label">
+                        <span id="pushExecuteRate"></span>%
+                    </p>
+                </div>
+            </div>
+            <div class="weui-grids" style="border-top: 0px;">
+                <div href="javascript:;" class="weui-grid js_grid" style="border-bottom: 0px;">
+                    <p class="weui-grid__label" style="color: #4c4c4c;font-size: 13px;">
+                        消息任务对应推送用户数
+                    </p>
+                    <p class="weui-grid__label">
+                        <span id="pushMsgUserCnt"></span>人
+                    </p>
+                </div>
+                <div href="javascript:;" class="weui-grid js_grid">
+                    <p class="weui-grid__label" style="color: #4c4c4c;font-size: 13px;">
+                        推送用户数
+                    </p>
+                    <p class="weui-grid__label">
+                        <span id="pushUserCnt"></span>人
+                    </p>
+                </div>
+                <div href="javascript:;" class="weui-grid js_grid">
+                    <p class="weui-grid__label" style="color: #4c4c4c;font-size: 13px;">
+                        推送购买用户数
+                    </p>
+                    <p class="weui-grid__label">
+                        <span id="pushAndPurchaseUserCnt"></span>人
+                    </p>
+                </div>
+            </div>
+            <div class="weui-grids" style="border-top: 0px;">
+                <div href="javascript:;" class="weui-grid js_grid" style="border-bottom: 0px;">
+                    <p class="weui-grid__label" style="color: #4c4c4c;font-size: 13px;">
+                        推送转化率
+                    </p>
+                    <p class="weui-grid__label">
+                        <span id="pushConvertRate"></span>%
+                    </p>
+                </div>
+                <div href="javascript:;" class="weui-grid js_grid">
+                    <p class="weui-grid__label" style="color: #4c4c4c;font-size: 13px;">
+                        累计推送购买金额
+                    </p>
+                    <p class="weui-grid__label">
+                        <span id="allPushAmount"></span>元
+                    </p>
+                </div>
+                <div href="javascript:;" class="weui-grid js_grid">
+                    <p class="weui-grid__label" style="color: #4c4c4c;font-size: 13px;">
+                        占整体
+                    </p>
+                    <p class="weui-grid__label">
+                        <span id="allPushAmountScale"></span>%
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    getOperateResultData("0", "", "");
+    $(function(){
+        $("#dateStart").datetimePicker({
+            title: '请选择开始时间',
+            times:function(){return [];},
+            parse:function(str){
+                return str.split("-");
+            },
+            onChange: function (picker, values, displayValues) {
+                console.log(values);
+            },
+            onClose:  function (picker, values, displayValues) {
+                var dateStart = $("#dateStart").val();
+                dateStart = dateStart.replace(/-/g, "");
+                var dateEnd = $("#dateEnd").val();
+                if(dateEnd !== '') {
+                    dateEnd = dateEnd.replace(/-/g, "");
+                    if(dateStart > dateEnd) {
+                        $.toast("<font style='font-size: 14px;'><span class='icon icon-73'></span>&nbsp;开始时间不能大于结束时间！</font>", "text");
+                    }else {
+                        getOperateResultData("2", dateStart, dateEnd);
+                    }
+                }
+            }
+        });
+        $("#dateEnd").datetimePicker({
+            title: '请选择结束时间',
+            times:function(){return [];},
+            parse:function(str){
+                return str.split("-");
+            },
+            onChange: function (picker, values, displayValues) {
+                console.log(values);
+            },
+            onClose:  function (picker, values, displayValues) {
+                var dateStart = $("#dateStart").val();
+                var dateEnd = $("#dateEnd").val();
+                dateStart = dateStart.replace(/-/g, "");
+                dateEnd = dateEnd.replace(/-/g, "");
+                var lastDay = new Date();
+                lastDay.setDate(lastDay.getDate()-1);
+                var last = lastDay.getFullYear() + ((lastDay.getMonth()+1) < 10 ? ("0" + (lastDay.getMonth()+1)) : "0" + (lastDay.getMonth()+1)) + lastDay.getDate();
+                if(dateEnd > last) {
+                    $.toast("<font style='font-size: 14px;'><span class='icon icon-73'></span>&nbsp;结束时间不能大于昨天！</font>", "text");
+                }else {
+                    if(dateStart !== '') {
+                        if(dateStart > dateEnd) {
+                            $.toast("<font style='font-size: 14px;'><span class='icon icon-73'></span>&nbsp;结束时间不能小于开始时间！</font>", "text");
+                        }else {
+                            getOperateResultData("2", dateStart, dateEnd);
+                        }
+                    }
+                }
+            }
+        });
+    });
+    $(".weui-payselect-li").on('click',function(){
+        var during = $(this).text().trim();
+        if(during === '昨日') {
+            getOperateResultData("0", "", "");
+            $("#date_plate").hide();
+        }
+        if(during === '近7日') {
+            getOperateResultData("1", "", "");
+            $("#date_plate").hide();
+        }
+        if(during === '自定义') {
+            $("#date_plate").show();
+        }
+
+        $(this).children().addClass("weui-payselect-on");
+        $(this).siblings().children().removeClass("weui-payselect-on");
+    });
+
+
+    function getOperateResultData(during, startDt, endDt) {
+        $.get("/operateResult/getResultData", {during: during, startDt: startDt, endDt: endDt}, function(r){
+            if(r.code === 200) {
+                var data = r.data;
+                $("#userTotalCnt").text(data['userTotalCnt']);
+                $("#addUserCnt").text(data['userTotalCnt']);
+                $("#purchasedUserCnt").text(data['userTotalCnt']);
+                $("#purchasedRate").text(data['purchasedRate']);
+                $("#totalPurchasedAmount").text(data['totalPurchasedAmount']);
+                $("#observePurchasedAmount").text(data['observePurchasedAmount']);
+                $("#receiveMsgCnt").text(data['receiveMsgCnt']);
+                $("#pushMsgCnt").text(data['pushMsgCnt']);
+                $("#pushExecuteRate").text(data['pushExecuteRate']);
+                $("#pushMsgUserCnt").text(data['pushMsgUserCnt']);
+                $("#pushUserCnt").text(data['pushUserCnt']);
+                $("#pushAndPurchaseUserCnt").text(data['pushAndPurchaseUserCnt']);
+                $("#pushConvertRate").text(data['pushConvertRate']);
+                $("#allPushAmount").text(data['allPushAmount']);
+                $("#allPushAmountScale").text(data['allPushAmountScale']);
+            }
+        });
+    }
+</script>
+</body>
+</html>

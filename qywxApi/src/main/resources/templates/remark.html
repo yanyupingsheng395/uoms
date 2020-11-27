@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>引导登陆页</title>
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" data-th-href="@{/static/images/favicon.ico}" type="image/x-icon"/>
+    <link rel="stylesheet" data-th-href="@{/static/css/style.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/static/css/common.css}"/>
+    <link rel="stylesheet" href="/static/weui/css/weui.css"/>
+    <link rel="stylesheet" href="/static/weui/css/weuix.css"/>
+</head>
+<body ontouchstart>
+<div class="weui-flex" style="margin-top: 100px;">
+    <div class="weui-flex__item"> <div style="text-align: center">欢迎使用 LinkSteady用户成长系统 企业微信版。您尚未登录!</div></div>
+</div>
+<br>
+<div class="weui-flex">
+    <div class="weui-flex__item">
+        <div style="text-align: center">
+            <a href="/outlogin">
+                <img src="//wwcdn.weixin.qq.com/node/wwopen/wwopenmng/style/images/independent/brand/150x30_white$49bdfaf6.png"
+                     srcset="//wwcdn.weixin.qq.com/node/wwopen/wwopenmng/style/images/independent/brand/150x30_white_2x$dc1f5509.png 2x"
+                     alt="企业微信登录"></a>
+        </div>
+    </div>
+</div>
+
+<br>
+<br>
+<div class="weui-flex">
+    <div class="weui-flex__item">
+        <div style="text-align: center">
+            <p>请使用企业微信或微信扫码安装用户成长系统。如果尚未注册企业微信，将会被引导下载、安装、注册企业微信，注册成功后，用户成长系统会被默认安装好。</p>
+            <br>
+                <img th:src="@{/static/images/downloadQrcode.png}"
+                     alt="扫码安装用户成长系统">
+        </div>
+    </div>
+</div>
+</body>
+</html>

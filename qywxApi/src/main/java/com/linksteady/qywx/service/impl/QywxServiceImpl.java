@@ -2,9 +2,11 @@ package com.linksteady.qywx.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.qywx.constant.WxPathConsts;
 import com.linksteady.qywx.dao.ParamMapper;
+import com.linksteady.qywx.domain.ApplicationAdmin;
 import com.linksteady.qywx.domain.QywxParam;
 import com.linksteady.qywx.domain.WxError;
 import com.linksteady.qywx.exception.WxErrorException;
@@ -13,9 +15,12 @@ import com.linksteady.qywx.storage.impl.RedisConfigStorageImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import redis.clients.jedis.JedisPool;
+
 import javax.annotation.PostConstruct;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -211,4 +216,36 @@ public class QywxServiceImpl implements QywxService {
         }
         return this.redisConfigStorage.getCorpId();
     }
+
+    @Override
+    @Transactional
+    public List<ApplicationAdmin> getAdminList(String corpId) throws Exception{
+//        StringBuffer requestUrl=new StringBuffer(redisConfigStorage.getApiUrl(WxPathConsts.Tp.GET_ADMIN_LIST));
+//        requestUrl.append(getSuitAccessToken());
+//
+//        Map<String,Object> param= Maps.newHashMap();
+//        param.put("auth_corpid",corpId);
+//        param.put("agentid",getAgentId(corpId));
+//
+//        String result=OkHttpUtil.postRequestByJson(requestUrl.toString(),param);
+//        JSONObject jsonObject = JSON.parseObject(result);
+//        WxError error = WxError.fromJsonObject(jsonObject);
+//        if (error.getErrorCode() != 0) {
+//            throw new WxErrorException(error);
+//        }
+//        JSONArray adminArray=jsonObject.getJSONArray("admin");
+        //对结果进行保存
+        List<ApplicationAdmin> list= Lists.newArrayList();
+//        ApplicationAdmin applicationAdmin=null;
+//        JSONObject temp=null;
+//        for(int i=0;i<adminArray.size();i++)
+//        {
+//            temp=adminArray.getJSONObject(i);
+//            applicationAdmin=new ApplicationAdmin(corpId,temp.getString("userid"),temp.getIntValue("auth_type"));
+//            list.add(applicationAdmin);
+//        }
+        return list;
+    }
+
+
 }

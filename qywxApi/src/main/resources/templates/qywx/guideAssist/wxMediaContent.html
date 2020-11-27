@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>推送图片</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <link rel="stylesheet" href="/weui/css/weui.css"/>
+    <link rel="stylesheet" href="/weui/css/weuix.css"/>
+    <link rel="stylesheet" href="/weui/css/common.css"/>
+    <link rel="stylesheet" href="/plugins/bootstrap-table/bootstrap-table.min.css">
+</head>
+<body ontouchstart class="page-bg">
+<div class="weui-cells weui-cells_form" style="margin-top: 80%">
+    <div class="weui-cell">
+        <div class="weui-cell__hd">
+            <label class="weui-label">编号id</label>
+        </div>
+        <div class="weui-cell__bd">
+            <input class="weui-input" placeholder="请输入编号ID" id="identityId">
+        </div>
+    </div>
+    <div class="weui-cell">
+        <div class="weui-cell__hd"><label for="choosetype" class="weui-label">选择类型</label></div>
+        <div class="weui-cell__bd">
+            <input class="weui-input" id="choosetype" type="text" value="">
+        </div>
+    </div>
+</div>
+<div class="page-bd-15" style="margin-top: 10%">
+    <a href="javascript:getMediaId();" class="weui-btn bg-green">提交</a>
+</div>
+
+<script src="/js/common/jquery.min.js"></script>
+<script src="/weui/js/zepto.min.js"></script>
+<script src="/weui/js/zepto.weui.js"></script>
+<script src="/weui/js/iscroll-lite.js"></script>
+<script src="/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script data-th-src="@{/js/app/qywx/guideAssist/wxMediaContent.js}"></script>
+</body>
+</html>

@@ -1,7 +1,10 @@
 package com.linksteady.qywx.service;
 
+import com.linksteady.qywx.domain.ApplicationAdmin;
 import com.linksteady.qywx.exception.WxErrorException;
 import com.linksteady.qywx.storage.impl.RedisConfigStorageImpl;
+
+import java.util.List;
 
 
 public interface QywxService {
@@ -62,5 +65,11 @@ public interface QywxService {
      * 读取corpId
      */
     String getCorpId();
+
+    /**
+     * 获取应用管理员列表
+     * @param corpId
+     */
+    List<ApplicationAdmin> getAdminList(String corpId)  throws Exception;
 
 }

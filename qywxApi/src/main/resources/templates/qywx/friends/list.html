@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <title>导购发圈建议</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge"/>
+    <meta name="referrer" content="never">
+    <link rel="icon" data-th-href="@{/images/favicon.ico}" type="image/x-icon"/>
+    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/common.css}"/>
+    <link rel="stylesheet" href="/weui/css/weui.css"/>
+    <link rel="stylesheet" href="/weui/css/weuix.css"/>
+    <!-- bootstrapTable -->
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-table/bootstrap-table.min.css}">
+</head>
+<body ontouchstart class="page-bg" style="font-size: 14px;">
+<div>
+    <div class="weui-pay" style="padding: 6px;">
+        <div class="" style="padding: 9px;background: #ffffff">
+            <h1 class="weui-pay-title" style="font-size: 14px;">参数设置</h1>
+            <div class="weui-flex">
+                <div class="weui-flex__item" style="font-size: 14px;font-weight: normal;">
+                    <div class="weui-cells weui-cells_form">
+                        <div class="weui-cell">
+                            <div class="weui-cell__hd"><label for="pushInterval" class="weui-label">商品朋友圈推送频率(每N天推)</label>
+                            </div>
+                            <div class="weui-cell__bd">
+                                <input class="weui-input" id="pushInterval" type="text" value="1">
+                            </div>
+                        </div>
+                        <div class="weui-cell">
+                            <div class="weui-cell__hd"><label for="pushStartDt" class="weui-label">商品朋友圈开始推送时间</label></div>
+                            <div class="weui-cell__bd">
+                                <input class="weui-input" id="pushStartDt" type="text" value="2020-09-14">
+                            </div>
+                        </div>
+
+                        <div class="weui-cell">
+                            <div class="weui-cell__hd"><label for="productNum" class="weui-label">每条朋友圈体现商品数（个）</label></div>
+                            <div class="weui-cell__bd" style="background-color: #e4e7ea;">
+                                <input class="weui-input" id="productNum" type="text" value="1" readonly>
+                            </div>
+                        </div>
+
+                        <div class="weui-cell">
+                            <div class="weui-cell__hd"><label for="pushNum" class="weui-label">每天可发送商品朋友圈数（条）</label></div>
+                            <div class="weui-cell__bd">
+                                <input class="weui-input" id="pushNum" type="text" value="10">
+                            </div>
+                        </div>
+
+                        <div class="weui-cell">
+                            <div class="weui-cell__hd"><label for="periodNum" class="weui-label">生成几个周期的方案</label></div>
+                            <div class="weui-cell__bd">
+                                <input class="weui-input" id="periodNum" type="text" value="3">
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="weui-btn-area text-center">
+                        <a class="btn btn-primary btn-rounded" id="btn" onclick="generate()">生成方案</a>
+                        <a class="btn btn-secondary btn-rounded" id="clear" onclick="resetCondition()">重置条件</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="weui-pay" style="padding: 6px;">
+        <div class="" style="padding: 9px;background: #ffffff">
+            <h1 class="weui-pay-title" style="font-size: 14px;">导购运营引导</h1>
+            <div class="table-striped" style="width: 100%">
+                <table class="table table-striped table-bordered text-nowrap table-hover" id="friendsTable"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/js/common/jquery.min.js"></script>
+<script src="/weui/js/zepto.min.js"></script>
+<script src="/weui/js/zepto.weui.js"></script>
+<script src="/weui/js/iscroll-lite.js"></script>
+<script src="/weui/js/php.js"></script>
+<script src="/js/common/bootstrap.min.js"></script>
+<script src="/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
+<script>
+    $( function () {
+        $( "#pushStartDt" ).val(getNowFormatDate());
+        loadFriendTable();
+
+        $( "#pushInterval" ).select( {
+            title: "商品朋友圈推送频率(每N天推)",
+            items: [
+                {
+                    title: "1",
+                    value: "1",
+                },
+                {
+                    title: "2",
+                    value: "2",
+                },
+                {
+                    title: "3",
+                    value: "3",
+                },
+                {
+                    title: "4",
+                    value: "4",
+                },
+                {
+                    title: "5",
+                    value: "5",
+                }
+            ]
+        } );
+
+        $( "#pushNum" ).select( {
+            title: "每天可发送商品朋友圈数（条）",
+            items: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15']
+        } );
+
+        $( "#periodNum" ).select( {
+            title: "生成几个周期的方案",
+            items: ['1', '2', '3']
+        } );
+
+        $( "#pushStartDt" ).datetimePicker( {
+            title: '商品朋友圈开始推送时间',
+            years: range( 2020, 2030 ),
+            times: function () {
+                return [];
+            },
+            parse: function (str) {
+                return str.split( "-" );
+            }
+        } );
+    } );
+
+    /**
+     * 加载朋友圈发券策略数据
+     **/
+    function loadFriendTable()
+    {
+        let settings = {
+            url: "/friend/guideList",
+            pagination: true,
+            sidePagination: "server",
+            pageNumber: 1,
+            pageSize: 10,
+            pageList: [10, 25, 50, 100],
+            singleSelect: true,
+            queryParams: function (params) {
+                return {
+                    pageSize: params.limit,
+                    pageNum: (params.offset / params.limit) + 1
+                };
+            },
+            columns: [
+                {
+                    field: 'guideDate',
+                    title: '推送时间'
+                }, {
+                    field: 'guideName',
+                    title: '朋友圈名称'
+                }, {
+                    field: 'pushProduct',
+                    title: '推送商品'
+                }, {
+                    field: 'pushTag',
+                    title: '用户标签'
+                },
+                {
+                    field: 'knowHow',
+                    title: '为什么这样推送'
+                }
+            ]
+        };
+        $("#friendsTable").bootstrapTable('destroy').bootstrapTable(settings);
+    }
+
+    /**
+     * 生成欢迎语方案
+     */
+    function generate()
+    {
+       let pushInterval=$( "#pushInterval" ).val();
+       let pushNum=$( "#pushNum" ).val();
+       let periodNum=$( "#periodNum" ).val();
+       let pushStartDt=$( "#pushStartDt" ).val();
+
+        $.showLoading();
+       //提交ajax请求
+        $.get( "/friend/generatePolicy", {
+                "pushInterval":pushInterval,
+                "pushNum":pushNum,
+                "productNum":$( "#productNum").val(),
+                "periodNum": periodNum,
+                "pushStartDt": pushStartDt
+        }, function (r) {
+            if(r.code==200)
+            {
+                $.hideLoading();
+                $.toast("<font style='font-size: 14px;'><span class='icon icon-71'></span>&nbsp;生成方案成功！</font>", "text");
+                //刷新表格
+                loadFriendTable();
+            }else
+            {
+                $.hideLoading();
+                $.toast("<font style='font-size: 14px;'><span class='icon icon-73'></span>&nbsp;生成方案失败！</font>", "text");
+            }
+        });
+    }
+
+    /**
+     * 清空条件
+     */
+    function resetCondition()
+    {
+        $( "#pushInterval" ).val("1");
+        $( "#pushNum" ).val("10");
+        $( "#periodNum" ).val("3");
+        $( "#pushStartDt" ).val(getNowFormatDate());
+    }
+
+    function getNowFormatDate() {
+        var date = new Date();
+        var seperator1 = "-";
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        var currentdate = year + seperator1 + month + seperator1 + strDate;
+        return currentdate;
+    }
+</script>
+</body>
+</html>

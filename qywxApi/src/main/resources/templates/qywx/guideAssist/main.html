@@ -1,0 +1,168 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>导购助手</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <link rel="stylesheet" href="/weui/css/weui.css"/>
+    <link rel="stylesheet" href="/weui/css/weuix.css"/>
+    <link rel="stylesheet" href="/weui/css/common.css"/>
+    <link rel="stylesheet" href="/plugins/bootstrap-table/bootstrap-table.min.css">
+    <style>
+        .changeColor {
+            background-color: #07C160 !important;
+            color: white;
+        }
+    </style>
+</head>
+<body ontouchstart class="page-bg">
+<div class="container">
+    <div id="tab1" style="display: none;">
+        <div class="weui-pay" style="padding: 6px;">
+            <div class="weui-pay-inner" style="padding: 9px;">
+                <h1 class="weui-pay-title">可引导购买的商品</h1>
+                <div class="weui-pay-intro" style="margin-top: 5px;">
+                    企业消息任务已推荐用户
+                    <span style="color:#000;font-weight: bold" class="user_name"></span>
+                    今日预期购买的首选商品，其他可推荐商品如下：
+                </div>
+                <div class="weui-pay-input" style="padding-bottom: 0px;">
+                    <table id="table1" data-mobile-responsive="true"
+                           class="table table-striped table-bordered text-nowrap"></table>
+                </div>
+            </div>
+        </div>
+        <div class="weui-pay" style="padding: 6px;">
+            <div class="weui-pay-inner" style="padding: 9px;">
+                <h1 class="weui-pay-title">引导购买的优惠券</h1>
+                <div class="weui-pay-intro" style="margin-top: 5px;">
+                    引导用户
+                    <span style="color:#000;font-weight: bold" class="user_name"></span>
+                    购买商品
+                    <span style="color:#000;font-weight: bold" class="product_name1"></span>
+                    ，可以给到用户的优惠券
+                </div>
+                <div class="weui-pay-input" style="padding-bottom: 0px;">
+                    <table id="table4" data-mobile-responsive="true"
+                           class="table table-striped table-bordered text-nowrap"></table>
+                </div>
+            </div>
+        </div>
+        <div class="weui-pay" style="padding: 6px;">
+            <div class="weui-pay-inner" style="padding: 9px;">
+                <h1 class="weui-pay-title">引导购买时机判断</h1>
+                <div class="weui-pay-intro" style="margin-top: 5px;">
+                    用户
+                    <span style="color:#000;font-weight: bold" class="user_name"></span>
+                    已在商品
+                    <span style="color:#000;font-weight: bold" class="product_name1"></span>
+                    所在的类目购买
+                    <span style="color:#000;font-weight: bold" class="rn1"></span>
+                    次，目前需要引导购买第
+                    <span style="color:#000;font-weight: bold" class="rn2"></span>
+                    次；
+                </div>
+                <div class="weui-pay-input" style="padding-bottom: 0px;">
+                    <table id="table2" data-mobile-responsive="true"
+                           class="table  table-striped table-bordered text-nowrap"></table>
+                </div>
+                <div class="weui-pay-intro" style="margin-top: 5px;">
+                    用户<span style="color:#000;font-weight: bold" class="user_name"></span>
+                    在商品 <span style="color:#000;font-weight: bold" class="product_name1"></span>
+                    活跃状态及其含义；
+                </div>
+                <div class="weui-pay-input" style="padding-bottom: 0px;">
+                    <table data-mobile-responsive="true"
+                           class="table  table-striped table-bordered text-nowrap">
+                        <tr>
+                            <td>活跃</td>
+                            <td>最佳时间段</td>
+                        </tr>
+                        <tr>
+                            <td>留存</td>
+                            <td>预防流失时间段</td>
+                        </tr>
+                        <tr>
+                            <td>流失</td>
+                            <td>挽回流失时间段</td>
+                        </tr>
+                        <tr>
+                            <td>沉睡</td>
+                            <td>难以挽回时间段</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="weui-pay" style="padding: 6px;">
+            <div class="weui-pay-inner" style="padding: 9px;">
+                <h1 class="weui-pay-title">引导购买的时间点</h1>
+                <div class="weui-pay-intro" style="margin-top: 5px;">
+                    基于用户
+                    <span style="color:#000;font-weight: bold" class="user_name"></span>
+                    的历史习惯，以下是与用户沟通比较合理的工作日与相应的时间点；
+                </div>
+                <div class="weui-pay-input" style="padding-bottom: 0px;">
+                    <table id="table3" data-mobile-responsive="true"
+                           class="table  table-striped table-bordered text-nowrap"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--第二个tab页-->
+    <div id="tab2" style="display: none;" class="page-bg">
+        <div class="weui-pay" style="padding: 6px;">
+            <div class="" style="padding-top: 9px;padding-right: 9px;padding-left: 9px;background-color: #FFFFFF;">
+                <h1 class="weui-pay-title">选择观测成长范围</h1>
+                <div id="spuList" class="weui-pay" style="padding: 0px;padding-bottom: 0 !important;"></div>
+            </div>
+        </div>
+        <div class="weui-pay" style="padding: 6px;">
+            <div class="weui-pay-inner" style="padding: 9px;">
+                <h1 class="weui-pay-title">用户购买情况</h1>
+                <div class="weui-pay-intro" style="margin-top: 5px;" id="userDesc"></div>
+                <div class="weui-pay-input" style="padding-bottom: 0px;">
+                    <div class="weui-grids">
+                        <table style="font-size: 12px;" id="userStats"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="weui-comment-reply" style="margin-left: 20px;">
+            <div class="nickname">&nbsp;&nbsp;用户购买历程</div>
+        </div>
+        <div class="timeline">
+            <ul id="buyHistory"></ul>
+        </div>
+    </div>
+    <div class="weui-tab" style="height:auto;">
+        <div class="weui-tab__panel">
+            <div id="c0" class="weui-tab__content"></div>
+            <div id="c1" class="weui-tab__content"></div>
+            <div id="c2" class="weui-tab__content">理解用户</div>
+            <div id="c3" class="weui-tab__content">关于我们</div>
+        </div>
+        <div class="weui-tabbar tab-bottom">
+            <a href="javascript:;" class="weui-tabbar__item">
+                    <span style="display: inline-block;position: relative;">
+                        <i class="icon icon-106 f27 weui-tabbar__icon"></i>
+                    </span>
+                <p class="weui-tabbar__label">导购任务</p>
+            </a>
+            <a href="javascript:;" class="weui-tabbar__item">
+                <i class="icon icon-28 f27 weui-tabbar__icon"></i>
+                <p class="weui-tabbar__label">用户历程</p>
+            </a>
+        </div>
+    </div>
+</div>
+<script src="/js/common/jquery.min.js"></script>
+<script src="/weui/js/zepto.min.js"></script>
+<script src="/weui/js/zepto.weui.js"></script>
+<script src="/weui/js/iscroll-lite.js"></script>
+<script src="/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+<script src="/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script data-th-src="@{/js/app/guideAssist/main.js}"></script>
+</body>
+</html>

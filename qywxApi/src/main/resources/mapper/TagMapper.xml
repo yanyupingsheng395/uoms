@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.qywx.dao.TagMapper">
+
+    <resultMap id="tagMap" type="com.linksteady.qywx.domain.QywxTag">
+        <result column="group_id" jdbcType="VARCHAR" property="groupId"/>
+        <result column="group_name" jdbcType="VARCHAR" property="groupName"/>
+        <result column="group_create_time" jdbcType="TIMESTAMP" property="groupCreateTime"/>
+        <result column="group_order" jdbcType="DECIMAL" property="groupOrder"/>
+
+        <result column="tag_id" jdbcType="VARCHAR" property="tagId"/>
+        <result column="tag_name" jdbcType="VARCHAR" property="tagName"/>
+        <result column="tag_create_time" jdbcType="TIMESTAMP" property="tagCreateTime"/>
+        <result column="tag_order" jdbcType="DECIMAL" property="tagOrder"/>
+
+        <result column="insert_dt" jdbcType="TIMESTAMP" property="insertDt"/>
+        <result column="corp_id" jdbcType="VARCHAR" property="corpId"/>
+    </resultMap>
+
+    <resultMap id="tagGroupMap" type="com.linksteady.qywx.domain.TagGroup">
+        <result column="group_id" jdbcType="VARCHAR" property="groupId"/>
+        <result column="group_name" jdbcType="VARCHAR" property="groupName"/>
+    </resultMap>
+
+    <select id="selectTagList" resultMap="tagMap">
+          select
+            group_id,
+            group_name,
+            group_create_time,
+            group_order,
+            tag_id,
+            tag_name,
+            tag_create_time,
+            tag_order,
+            insert_dt,
+            corp_id
+        from qywx_tags where corp_id=#{corpId} order by group_order asc,tag_order asc
+    </select>
+
+    <insert id="saveTags">
+      insert into qywx_tags(
+              group_id,
+              group_name,
+              group_create_time,
+              group_order,
+              tag_id,
+              tag_name,
+              tag_create_time,
+              tag_order,
+              insert_dt,
+              corp_id) values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (   #{item.groupId},
+                #{item.groupName},
+                #{item.groupCreateTime},
+                #{item.groupOrder},
+                #{item.tagId},
+                #{item.tagName},
+                #{item.tagCreateTime},
+                #{item.tagOrder},
+                #{item.insertDt},
+                #{item.corpId}
+            )
+        </foreach>
+        ON CONFLICT(corp_id,tag_id) DO NOTHING
+    </insert>
+
+    <delete id="deleteAllTags">
+        delete from qywx_tags where corp_id=#{corpId}
+    </delete>
+
+    <select id="selectTagGroupList" resultMap="tagGroupMap">
+        select distinct
+            group_id,
+            group_name,
+            group_order
+        from qywx_tags where corp_id=#{corpId} order by group_order asc
+    </select>
+
+</mapper>

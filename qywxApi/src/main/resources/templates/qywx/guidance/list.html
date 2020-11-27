@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <title>导购运营引导</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <meta name="referrer" content="never">
+    <link rel="icon" data-th-href="@{/images/favicon.ico}" type="image/x-icon"/>
+    <link rel="stylesheet" data-th-href="@{/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/style.min.css}"/>
+    <link rel="stylesheet" data-th-href="@{/css/common.css}"/>
+    <link rel="stylesheet" href="/weui/css/weui.css"/>
+    <link rel="stylesheet" href="/weui/css/weuix.css"/>
+    <link rel="stylesheet" href="/weui/css/common.css"/>
+    <!-- bootstrapTable -->
+    <link rel="stylesheet" data-th-href="@{/plugins/bootstrap-table/bootstrap-table.min.css}">
+    <script src="/js/common/jquery.min.js"></script>
+    <script src="/js/common/bootstrap.min.js"></script>
+    <script src="/plugins/bootstrap-table/bootstrap-table.min.js"></script>
+    <script src="/plugins/bootstrap-table/locale/bootstrap-table-zh-CN.js"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+    <script src="/weui/js/zepto.min.js"></script>
+    <script src="/weui/js/zepto.weui.js"></script>
+</head>
+<body ontouchstart class="page-bg" style="font-size: 14px;">
+    <div class="weui-pay" style="padding: 6px;">
+        <div class="" style="padding: 9px;background: #ffffff">
+            <h1 class="weui-pay-title" style="font-size: 14px;">导购运营引导</h1>
+            <div class="weui-tab" id="t1" style="height:44px;">
+                <div class="weui-navbar">
+                    <div class="weui-navbar__item">
+                        已购买
+                    </div>
+                    <div class="weui-navbar__item">
+                        未购买
+                    </div>
+                </div>
+            </div>
+            <div class="weui-flex">
+                <div class="row" style="margin-top: 10px;">
+                    <div class="col-xs-12"  >
+                        <form id="activity-form">
+                            <div class="select-list">
+                                <ul style="font-size: 14px;">
+                                    <div id="isNoBuy">
+                                        <li>
+                                            添加时间：
+                                            <input type="text" id="addtime" value="1日内" data-val="onday"/>
+                                        </li>
+                                    </div>
+                                    <div id="isBuy">
+                                        <li>
+                                            关系强度：
+                                            <input type="text" id="relation" value="一般" data-val="general"/>
+                                        </li>
+                                        <li>
+                                            流失风险：
+                                            <input type="text" id="loss" value="较大" data-val="more"/>
+                                        </li>
+                                        <li>
+                                            阶段价值：
+                                            <input type="text" id="stagevalue" value="一般" data-val="general"/>
+                                        </li>
+                                        <li>
+                                            触达间隔：
+                                            <input type="text" id="interval" value="30天外" data-val="C"/>
+                                        </li>
+                                    </div>
+                                    <li class="pull-right">
+                                        <a class="btn btn-primary btn-rounded btn-sm" onclick="searchData()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                        <a class="btn btn-warning btn-rounded btn-sm" onclick="refreshData()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="weui-pay" style="padding: 6px;">
+        <div class="" style="padding: 9px;background: #ffffff">
+            <h1 class="weui-pay-title" style="font-size: 14px;">导购运营引导</h1>
+            <div class="table-striped" style="width: 100%">
+                <table class="table table-striped table-bordered text-nowrap table-hover" id="dataTable"></table>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    //页面进入时，默认选择已购买（type=0）。
+    var chooseFlag=0;
+    $(function(){
+        chooseBuy();
+        if(!isWeiXin())
+        {
+            //提示
+            $.toptip('此功能仅能在企业微信APP/PC客户端内使用！',20000,'error');
+            return;
+        }else
+        {
+            getGuideList();
+        }
+    });
+    //用户类型，是否选择已购买还是未购买
+    function chooseBuy(){
+        $('#t1').tab({
+            defaultIndex: 0,
+            activeClass: 'tab-green',
+            onToggle: function (index) {
+               if(index==0){
+                   $("#isNoBuy").hide();
+                   $("#isBuy").show();
+                   chooseFlag=0;
+               }else{
+                   $("#isNoBuy").show();
+                   $("#isBuy").hide();
+                   chooseFlag=1;
+               }
+            }
+        })
+    }
+
+    function getGuideList() {
+        $.get("/jsapi/getJsapiInfo", {
+            url:location.href.split('#')[0]
+        }, function (r) {
+            if(r.code==200)
+            {
+                let appId=r.data.corpId;
+                let timestamp=r.data.timestamp;
+                let nonceStr=r.data.nonceStr;
+                let signature=r.data.signature;
+                let agentId=r.data.agentId;
+                let agentSignature=r.data.agentSignature;
+
+                wx.config({
+                    beta: true,// 必须这么写，否则wx.invoke调用形式的jsapi会有问题
+                    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                    appId: appId, // 必填，企业微信的corpID
+                    timestamp: timestamp, // 必填，生成签名的时间戳
+                    nonceStr: nonceStr, // 必填，生成签名的随机串
+                    signature: signature,// 必填，签名，见 附录-JS-SDK使用权限签名算法
+                    jsApiList: ['openUserProfile'] // 必填，需要使用的JS接口列表，凡是要调用的接口都需要传进来
+                });
+                wx.ready(function(){
+                    // config信息验证后会执行ready方法，所有接口调用都必须在config接口获得结果之后，config是一个客户端的异步操作，所以如果需要在页面加载时就调用相关接口，则须把相关接口放在ready函数中调用来确保正确执行。对于用户触发时才调用的接口，则可以直接调用，不需要放在ready函数中。
+                    // wx.agentConfig({
+                    //     corpid: appId, // 必填，企业微信的corpid，必须与当前登录的企业一致
+                    //     agentid: agentId, // 必填，企业微信的应用id （e.g. 1000247）
+                    //     timestamp: timestamp , // 必填，生成签名的时间戳
+                    //     nonceStr: nonceStr, // 必填，生成签名的随机串
+                    //     signature: agentSignature,// 必填，签名，见附录-JS-SDK使用权限签名算法
+                    //     jsApiList: ['openUserProfile'], //必填
+                    //     success: function(res) {
+                    //         getTableData();
+                    //     },
+                    //     fail: function(res) {
+                    //         if(res.errMsg.indexOf('function not exist') > -1){
+                    //             alert('版本过低请升级')
+                    //         }
+                    //     }
+                    // });
+                });
+            }else
+            {
+                console.log(r.data.msg)
+            }
+        });
+    }
+
+    $("#addtime").select({
+        title: "请选择添加时间",
+        items: [
+            {
+                title: "1日内",
+                value: "onday",
+            },
+            {
+                title: "1周内",
+                value: "onweek",
+            },
+            {
+                title: "1月内",
+                value: "onmonth",
+            },
+            {
+                title: "1月外",
+                value: "other",
+            }
+        ],
+        onChange: function(d) {
+            $("#addtime").attr("data-val", this.data.values)
+        }
+    })
+
+    $( "#relation").select( {
+        title: "请选择关系强度",
+        items: [
+            {
+                title: "较弱",
+                value: "weak",
+            },
+            {
+                title: "一般",
+                value: "general",
+            },
+            {
+                title: "较强",
+                value: "strong",
+            }
+        ],
+        onChange: function(d) {
+            $("#relation").attr("data-val", this.data.values)
+        }
+    } );
+    $( "#loss" ).select( {
+        title: "请选择流失风险",
+        items: [
+            {
+                title: "很大",
+                value: "large",
+            },
+            {
+                title: "较大",
+                value: "more",
+            },
+            {
+                title: "一般",
+                value: "general",
+            },
+            {
+                title: "暂无",
+                value: "none",
+            }
+        ],
+        onChange: function(d) {
+            $("#loss").attr("data-val", this.data.values)
+        }
+    } );
+    $( "#stagevalue" ).select( {
+        title: "请选择阶段价值",
+        items: [
+            {
+                title: "偏低",
+                value: "low",
+            },
+            {
+                title: "一般",
+                value: "general",
+            },
+            {
+                title: "较大",
+                value: "large",
+            }
+        ],
+        onChange: function(d) {
+            $("#stagevalue").attr("data-val", this.data.values)
+        }
+    } );
+    $( "#interval" ).select( {
+        title: "请选择触达间隔",
+        items: [
+            {
+                title: "10天内",
+                value: "A",
+            },
+            {
+                title: "30天内",
+                value: "B",
+            },
+            {
+                title: "30天外",
+                value: "C",
+            }
+        ],
+        onChange: function(d) {
+            $("#interval").attr("data-val", this.data.values)
+        }
+    } );
+
+    function getTableData() {
+        var relation;
+        var loss;
+        var stagevalue;
+        var interval;
+        var addtime;
+        var url;
+        if(chooseFlag==0){
+             relation = $("#relation").attr("data-val");
+             loss = $("#loss").attr("data-val");
+             stagevalue = $("#stagevalue").attr("data-val");
+            interval = $("#interval").attr("data-val");
+            url="/qwClient/getGuidanceList";
+        }else{
+            addtime=$("#addtime").attr("data-val");
+            url="/qwClient/getAddTimeList";
+        }
+        let settings = {
+            url: url,
+            pagination: true,
+            sidePagination: "server",
+            pageSize: 10,
+            pageList: [10, 25, 50, 100],
+            singleSelect: true,
+            queryParams: function (params) {
+                return {
+                    pageSize: params.limit,
+                    pageNum: (params.offset / params.limit) + 1,
+                    relation: relation,
+                    loss: loss,
+                    stagevalue: stagevalue,
+                    interval: interval,
+                    addtime: addtime
+                };
+            },
+            columns: [
+                {
+                    field: 'name',
+                    title: '客户名称'
+                }, {
+                    field: 'createTimeStr',
+                    title: '添加时间'
+                }, {
+                    title: '发起会话',
+                    formatter: function (value, row, index) {
+                        return "<a class=\"btn btn-primary btn-rounded btn-sm\" onclick=\"createChatWindow('"+row['followerUserId']+"', '"+row['externalUserid']+"')\">发起会话</a>";
+                    }
+                }
+            ],
+            onDblClickRow : function(row)
+            {
+                wx.invoke('openUserProfile', {
+                    "type": 2, //1表示该userid是企业成员，2表示该userid是外部联系人
+                    "userid":row.externalUserid //可以是企业成员，也可以是外部联系人
+                }, function(res){
+                    if(res.err_msg != "openUserProfile:ok"){
+                        //错误处理
+                    }
+                });
+            }
+        };
+        $("#dataTable").bootstrapTable('destroy').bootstrapTable(settings);
+    }
+
+    function createChatWindow(followerUserId, externalUserid) {
+        wx.openEnterpriseChat({
+            // 注意：userIds和externalUserIds至少选填一个。内部群最多2000人；外部群最多500人；如果有微信联系人，最多40人
+            userIds: followerUserId,    //参与会话的企业成员列表，格式为userid1;userid2;...，用分号隔开。
+            externalUserIds:externalUserid,
+            groupName: '',  // 必填，会话名称。单聊时该参数传入空字符串""即可。
+            success: function(res) {
+                // 回调
+            },
+            fail: function(res) {
+                if(res.errMsg.indexOf('function not exist') > -1){
+                    alert('版本过低请升级')
+                }
+            }
+        });
+    }
+    
+    function searchData() {
+        getTableData();
+    }
+
+    function refreshData() {
+        if(chooseFlag==0){
+            $("#relation").val("一般");
+            $("#relation").attr("data-val", "general");
+            $("#loss").val("较大");
+            $("#loss").attr("data-val", "more");
+            $("#stagevalue").val("一般");
+            $("#stagevalue").attr("data-val", "general");
+            $("#interval").val("30天外");
+            $("#interval").attr("data-val", "C");
+        }else{
+            $("#addtime").val("1日内");
+            $("#addtime").attr("data-val", "onday");
+        }
+        searchData();
+    }
+
+    function isWeiXin(){
+        let ua = window.navigator.userAgent.toLowerCase();
+        if(ua.match(/MicroMessenger/i) == 'micromessenger'){
+            return true;
+        }else{
+            return false;
+        }
+    }
+</script>
+</body>
+</html>

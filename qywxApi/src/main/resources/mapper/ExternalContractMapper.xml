@@ -13,6 +13,27 @@
         <result column="createtime" jdbcType="VARCHAR" property="createtime"/>
     </resultMap>
 
+    <resultMap id="phoneFixMap" type="com.linksteady.qywx.domain.PhoneFixStatis">
+        <result column="follow_user_id" jdbcType="VARCHAR" property="followerUserId"/>
+        <result column="user_cnt" jdbcType="DECIMAL" property="userCnt"/>
+        <result column="blankcnt" jdbcType="DECIMAL" property="blankCnt"/>
+        <result column="invalidcnt" jdbcType="DECIMAL" property="invalidCnt"/>
+    </resultMap>
+
+    <resultMap id="repeatStatisMap" type="com.linksteady.qywx.domain.RepeatStatis">
+        <result column="external_userid" jdbcType="VARCHAR" property="externalUserId"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="cnt" jdbcType="DECIMAL" property="cnt"/>
+        <result column="follow_user" jdbcType="VARCHAR" property="followUser"/>
+    </resultMap>
+
+    <resultMap id="mappingStatisMap" type="com.linksteady.qywx.domain.MappingStatis">
+        <result column="all_cnt" jdbcType="DECIMAL" property="allCnt"/>
+        <result column="mapping_cnt" jdbcType="DECIMAL" property="mappingCnt"/>
+        <result column="unmapping_cnt" jdbcType="DECIMAL" property="unmappingCnt"/>
+        <result column="mapping_rate" jdbcType="DECIMAL" property="mappingRate"/>
+    </resultMap>
+
 
    <insert id="saveExternalUserList">
         insert into uo_qywx_external_user_list(
@@ -253,5 +274,47 @@
         (#{followerUserId},#{externalUserId},0,now(),now())
         ON CONFLICT(external_userid,follow_user_id) DO UPDATE SET delete_flag=0
     </insert>
+
+    <select id="selectRemarkInvalidCount" resultType="int">
+        select count(*) from qywx_external_user_list where corpid=#{corpId} and follow_user_id=#{followerUserId}
+        and  (COALESCE(description,'')='' or (description !~ '^1[3-9]\d{9}$'))
+    </select>
+
+    <select id="selectRemarkInvalid" resultMap="externalUserMap">
+         select external_userid,name,follow_user_id,remark,state,createtime,
+          (case when COALESCE(description,'')='' then 'A' else 'B' end) fix_flag from qywx_external_user_list
+         where corpid=#{corpId} and follow_user_id=#{followerUserId}
+        and  (COALESCE(description,'')='' or (description !~ '^1[3-9]\d{9}$'))
+        order by createtime asc limit #{limit} offset #{offset}
+    </select>
+
+
+    <select id="getPhoneFixStatis" resultMap="phoneFixMap">
+        select follow_user_id,
+       count(*) user_cnt,
+       count(case when COALESCE(description,'')='' then external_userid end) blankcnt,
+       count(case when COALESCE(description,'')!='' and description !~ '^1[3-9]\d{9}$' then external_userid end) invalidcnt
+       from qywx_external_user_list where corpid=#{corpId} group by follow_user_id order by follow_user_id asc
+    </select>
+
+    <select id="getRepeatStatis" resultMap="repeatStatisMap">
+        select * from (
+                  select external_userid,
+                         name,
+                         string_agg(follow_user_id, ',') follow_user,
+                         count(*) cnt
+                  from qywx_external_user_list where corpid=#{corpId}
+                  group by external_userid, name
+              ) t where t.cnt &gt;1 order by cnt desc
+    </select>
+
+    <select id="getMappingStatis" resultMap="mappingStatisMap">
+        select
+          count(*) all_cnt,
+          count(case when mapping_flag='Y' then external_userid end ) mapping_cnt,
+          count(case when mapping_flag='N' then external_userid end ) unmapping_cnt,
+          (case when count(*)=0 then 0 else  trunc(count(case when mapping_flag='Y' then external_userid end )*1.00/count(*),4)*100 end) mapping_rate
+        from qywx_external_user_list where corpid=#{corpId}
+    </select>
 
 </mapper>

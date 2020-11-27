@@ -3,24 +3,27 @@ package com.linksteady.qywx.controller;
 import com.linksteady.common.annotation.Log;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.qywx.config.PushConfig;
-import com.linksteady.qywx.domain.AddUserHead;
-import com.linksteady.qywx.domain.QywxParam;
-import com.linksteady.qywx.domain.QywxWelcome;
-import com.linksteady.qywx.service.AddUserService;
-import com.linksteady.qywx.service.AddUserTriggerService;
-import com.linksteady.qywx.service.QywxParamService;
-import com.linksteady.qywx.service.WelcomeService;
+import com.linksteady.qywx.domain.*;
+import com.linksteady.qywx.exception.UdfException;
+import com.linksteady.qywx.exception.WxErrorException;
+import com.linksteady.qywx.service.*;
 import com.linksteady.qywx.vo.SourceConfigVO;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
 @Controller
 @RequestMapping("/page")
+@Slf4j
 public class PageController  extends BaseController {
 
     @Autowired
@@ -35,9 +38,17 @@ public class PageController  extends BaseController {
     @Autowired
     private QywxParamService qywxParamService;
 
+    @Autowired
+    private QywxService qywxService;
+
+    @Autowired
+    UserService userService;
+
 
     @Autowired
     private AddUserTriggerService addUserTriggerService;
+
+    public static final String oAuthUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?";
 
     /**
      * 企业微信应用配置
@@ -259,4 +270,126 @@ public class PageController  extends BaseController {
     public String msgPage() {
         return "msg/list";
     }
+
+    /**
+     * 聊天工具栏页
+     *
+     * @return
+     */
+    @RequestMapping("/guideAssist/main")
+    public String guideAssist() {
+        return "qywx/guideAssist/main";
+    }
+
+    /**
+     * 默认导航到介绍页
+     *
+     * @return
+     */
+    @RequestMapping("/")
+    public String remark() {
+        return "remark";
+    }
+
+    /**
+     * 请求首页
+     *
+     * @return
+     */
+    @RequestMapping("/index")
+    public String index(Model model, HttpServletRequest request) {
+        QywxUser user = (QywxUser) request.getSession().getAttribute("user");
+        String isAdmin = "N";
+        if (user != null) {
+            isAdmin = user.getIsAdmin();
+            isAdmin = StringUtils.isNotEmpty(isAdmin) ? isAdmin : "N";
+        }
+        model.addAttribute("isAdmin", isAdmin);
+        return "qywxindex";
+    }
+
+    /**
+     * 请求首页
+     *
+     * @return
+     */
+    @RequestMapping("/main")
+    public String main() {
+        return "main";
+    }
+
+    /**
+     * 退出页面
+     *
+     * @return
+     */
+
+    @RequestMapping("/logout")
+    public String logout() {
+        //todo 此处应该是删除cookie 清空session，然后转跳到remark页，暂时先不处理
+        return "qywxindex";
+    }
+
+
+    /**
+     * 配置了 客户联系 功能的 用户列表
+     *
+     * @return
+     */
+    @RequestMapping("/followUserList")
+    public String followUser() {
+        return "qywx/followUser/followUser";
+    }
+
+    /**
+     * 导购结果
+     *
+     * @return
+     */
+    @RequestMapping("/userManager")
+    public String userManager() {
+        return "qywx/userManager/main";
+    }
+
+    /**
+     * 导购运营引导
+     *
+     * @param model
+     * @param request
+     * @return
+     */
+    @RequestMapping("/guidance")
+    public String guidance(Model model, HttpServletRequest request) {
+        return "qywx/guidance/list";
+    }
+
+    /**
+     * 导购发圈建议
+     *
+     * @param model
+     * @param request
+     * @return
+     */
+    @RequestMapping("/friendCirlceGuide")
+    public String friendCirlceGuide(Model model, HttpServletRequest request) {
+        return "qywx/friends/list";
+    }
+
+    /**
+     *微信推送图片
+     */
+    @RequestMapping("/wxMedia")
+    public String wxMedia(){
+        return "qywx/guideAssist/wxMediaContent";
+    }
+
+    /**
+     * 标签显示
+     */
+    @RequestMapping("/tagList")
+    public String tagList(Model model,HttpServletRequest request) {
+        return "tag/tagList";
+    }
+
+
 }

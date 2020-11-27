@@ -3,68 +3,40 @@ package com.linksteady.qywx.controller;
 import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
-import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.qywx.domain.ExternalContact;
 import com.linksteady.qywx.domain.QywxUser;
 import com.linksteady.qywx.service.ExternalContactService;
 import com.linksteady.qywx.service.QywxService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 import java.util.Map;
-
-/**
- * @author huang
- * @date 2020/9/17
- */
 @Slf4j
 @RestController
-@RequestMapping("/contract")
-public class ExternalContactController extends BaseController {
-
-    @Autowired
-    private ExternalContactService externalContactService;
+@RequestMapping("/qwClient")
+public class QywxClientController  extends BaseController {
 
     @Autowired
     QywxService qywxService;
+    @Autowired
+    private ExternalContactService externalContactService;
+
 
     /**
-     * 同步外部客户
+     * 导购运营引导
+     *
+     * @param model
      * @param request
      * @return
      */
-    @RequestMapping("/syncContract")
-    public ResponseBo syncContract(HttpServletRequest request) {
-        try {
-            externalContactService.syncExternalContact();
-            return ResponseBo.ok();
-        } catch (Exception e) {
-            log.error("同步外部客户失败，原因为{}",e);
-            return ResponseBo.error();
-        }
-    }
-
-    /**
-     * 获取当前导购手机号维护不正确的用户列表
-     */
-    @RequestMapping("/selectRemarkInvalid")
-    @ResponseBody
-    public ResponseBo selectRemarkInvalid(HttpServletRequest httpServletRequest,
-                                          QueryRequest request)
-    {
-        QywxUser user=(QywxUser)httpServletRequest.getSession().getAttribute("user");
-        String corpId=qywxService.getCorpId();
-        String followUserId = user.getUserId();
-
-        int count=externalContactService.selectRemarkInvalidCount(corpId,followUserId);
-        List<ExternalContact> list=externalContactService.selectRemarkInvalid(request.getOffset(),request.getLimit(),corpId,followUserId);
-        return ResponseBo.okOverPaging(null,count,list);
+    @RequestMapping("/guidance")
+    public String guidance(Model model, HttpServletRequest request) {
+        return "qywx/guidance/list";
     }
 
     /**
@@ -94,9 +66,9 @@ public class ExternalContactController extends BaseController {
     public Map<String,Object> getAddTimeList(HttpServletRequest httpServletRequest,
                                              QueryRequest request,
                                              @RequestParam("addtime") String addtime){
-        QywxUser user=(QywxUser)httpServletRequest.getSession().getAttribute("user");
-        String corpId=user.getCorpId();
-        String followUserId = user.getUserId();
+        UserBo user=(UserBo)httpServletRequest.getSession().getAttribute("user");
+        String corpId=qywxService.getCorpId();
+        String followUserId = user.getUsername();
         return super.selectByPageNumSize(request, () -> externalContactService.getAddTimeList(corpId,followUserId,addtime));
     }
 }

@@ -5,11 +5,11 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.linksteady.common.service.impl.BaseService;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.qywx.constant.WxPathConsts;
 import com.linksteady.qywx.dao.ExternalContactMapper;
-import com.linksteady.qywx.domain.ExternalContact;
-import com.linksteady.qywx.domain.WxError;
+import com.linksteady.qywx.domain.*;
 import com.linksteady.qywx.exception.WxErrorException;
 import com.linksteady.qywx.service.ExternalContactService;
 import com.linksteady.qywx.service.FollowUserService;
@@ -20,14 +20,18 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tk.mybatis.mapper.entity.Example;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-public class ExternalContactServiceImpl implements ExternalContactService {
+public class ExternalContactServiceImpl extends BaseService<ExternalContact> implements ExternalContactService {
 
     @Autowired
     QywxService qywxService;
@@ -282,6 +286,116 @@ public class ExternalContactServiceImpl implements ExternalContactService {
             whereInfo.append(String.format("touch_interval='%s'",interval));
         }
         return externalContactMapper.getGuidanceCount(whereInfo.toString());
+    }
+
+    @Override
+    public int selectRemarkInvalidCount(String corpId, String followUserId) {
+        return externalContactMapper.selectRemarkInvalidCount(corpId,followUserId);
+    }
+
+    @Override
+    public List<ExternalContact> selectRemarkInvalid(int offset,int limit,String corpId, String followUserId) {
+        List<ExternalContact> result= externalContactMapper.selectRemarkInvalid(offset,limit,corpId,followUserId);
+        for (ExternalContact externalContact : result) {
+            //设置添加时间
+            externalContact.setCreateTimeStr(TimeStampUtils.timeStampToDateString(externalContact.getCreatetime()));
+        }
+        return result;
+    }
+
+
+    @Override
+    public List<ExternalContact> getAddTimeList(String corpId, String followUserId, String addtime) {
+        List<ExternalContact> result=Lists.newArrayList();
+        Example example = new Example(ExternalContact.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andCondition("corpid=", corpId);
+        criteria.andCondition("follow_user_id=", followUserId);
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        //查询结果集
+        List<ExternalContact> querydata = this.selectByExample(example);
+        //获取当前时间
+        LocalDateTime nowtime = LocalDateTime.now();
+        for (ExternalContact externalContact : querydata) {
+            String createTime=externalContact.getCreatetime();
+            if(StringUtils.isNotEmpty(createTime)){
+                LocalDateTime localDate = LocalDateTime.parse(TimeStampUtils.timeStampToDateString(createTime),dtf);
+                //获取创建时间和当前时间的差额
+                long  days= ChronoUnit.DAYS.between(localDate, nowtime);
+                //将创建时间格式化
+                externalContact.setCreateTimeStr(TimeStampUtils.timeStampToDateString(createTime));
+                if(days>0){
+                    if("onday".equals(addtime)){
+                        if(days<=1){
+                            result.add(externalContact);
+                        }
+                    }else if("onweek".equals(addtime)){
+                        if(days<=7){
+                            result.add(externalContact);
+                        }
+                    }else if("onmonth".equals(addtime)){
+                        if(days<=30){
+                            result.add(externalContact);
+                        }
+                    }else if("other".equals(addtime)){
+                        if(days>30){
+                            result.add(externalContact);
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+
+
+    @Override
+    public List<ExternalContact> getQywxGuidanceList(String corpId, String followUserId, String relation, String loss, String stagevalue, String interval) {
+        Example example = new Example(ExternalContact.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andCondition("corpid=", corpId);
+        criteria.andCondition("follow_user_id=", followUserId);
+
+        if(StringUtils.isNotEmpty(relation))
+        {
+            criteria.andCondition("relation=", relation);
+        }
+        if(StringUtils.isNotEmpty(loss))
+        {
+            criteria.andCondition("loss=", loss);
+        }
+        if(StringUtils.isNotEmpty(stagevalue))
+        {
+            criteria.andCondition("stage_value=", stagevalue);
+        }
+        if(StringUtils.isNotEmpty(interval))
+        {
+            criteria.andCondition("touch_interval=", interval);
+        }
+
+        List<ExternalContact> result = this.selectByExample(example);
+        for (ExternalContact externalContact : result) {
+            //设置添加时间
+            externalContact.setCreateTimeStr(TimeStampUtils.timeStampToDateString(externalContact.getCreatetime()));
+            //设置标签
+        }
+        return result;
+    }
+
+    @Override
+    public List<PhoneFixStatis> getPhoneFixStatis(String corpId) {
+        return externalContactMapper.getPhoneFixStatis(corpId);
+    }
+
+    @Override
+    public List<RepeatStatis> getRepeatStatis(String corpId) {
+        return externalContactMapper.getRepeatStatis(corpId);
+    }
+
+    @Override
+    public MappingStatis getMappingStatis(String corpId) {
+        return externalContactMapper.getMappingStatis(corpId);
     }
 
 }

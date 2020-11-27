@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <title>系统异常</title>
+    <link rel="shortcut icon" type="image/png" th:href="@{/static/images/favicon.ico}" />
+    <link rel="stylesheet" href="/weui/css/weui.css"/>
+    <link rel="stylesheet" href="/weui/css/weuix.css"/>
+</head>
+<body ontouchstart>
+<div class="page-hd">
+    <h1 class="page-hd-title">
+        系统异常
+    </h1>
+</div>
+
+<div class="weui-flex">
+    <div class="weui-flex__item">
+        <div style="text-align: center"><p>很抱歉，操作过程中出现了异常，原因：<span th:text="${msg}"></span></p></div>
+    </div>
+</div>
+</body>
+</html>
