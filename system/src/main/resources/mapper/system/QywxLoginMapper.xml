@@ -9,4 +9,8 @@
     <select id="getAgentId" resultType="string">
         select agent_id from uo_qywx_param
     </select>
+
+    <select id="getOauthFileContent" resultType="string">
+          select oauth_file from uo_qywx_param
+    </select>
 </mapper>

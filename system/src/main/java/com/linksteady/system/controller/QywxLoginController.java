@@ -22,6 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
@@ -333,6 +334,16 @@ public class QywxLoginController extends BaseController {
             model.addAttribute("msg", "授权失败!");
             return "error/udferror";
         }
+    }
+
+    /**
+     * 企业微信授权文件
+     */
+    @RequestMapping("/{authFileName}.txt")
+    @ResponseBody
+    public String qywxAuthFile(@PathVariable String authFileName) {
+        String oauthFileContent=qywxLoginService.getOauthFileContent();
+        return oauthFileContent;
     }
 
 }

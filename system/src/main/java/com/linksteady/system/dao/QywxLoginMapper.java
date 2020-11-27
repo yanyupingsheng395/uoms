@@ -5,4 +5,6 @@ public interface QywxLoginMapper {
     String getCorpId();
 
     String getAgentId();
+
+    String getOauthFileContent();
 }

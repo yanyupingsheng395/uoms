@@ -5,4 +5,6 @@ public interface QywxLoginService {
     String getCorpId();
 
     String getAgentId();
+
+    String getOauthFileContent();
 }

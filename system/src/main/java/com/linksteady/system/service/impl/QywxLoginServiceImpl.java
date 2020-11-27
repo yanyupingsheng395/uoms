@@ -20,4 +20,9 @@ public class QywxLoginServiceImpl implements QywxLoginService {
     public String getAgentId() {
         return qywxLoginMapper.getAgentId();
     }
+
+    @Override
+    public String getOauthFileContent() {
+        return qywxLoginMapper.getOauthFileContent();
+    }
 }

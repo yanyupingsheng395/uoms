@@ -108,6 +108,7 @@ public class ShiroConfig {
         for (String url : anonUrls) {
             filterChainDefinitionMap.put(url, "anon");
         }
+        filterChainDefinitionMap.put("/*.txt", "anon");
 
         // 配置退出过滤器，其中具体的退出代码 Shiro已经替我们实现了
         filterChainDefinitionMap.put(shiroProperties.getLogoutUrl(), "logout");
