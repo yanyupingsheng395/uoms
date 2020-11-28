@@ -163,6 +163,7 @@
                     //         }
                     //     }
                     // });
+                    getTableData();
                 });
             }else
             {
@@ -307,8 +308,8 @@
             singleSelect: true,
             queryParams: function (params) {
                 return {
-                    pageSize: params.limit,
-                    pageNum: (params.offset / params.limit) + 1,
+                    limit: params.limit,
+                    offset: (params.offset / params.limit),
                     relation: relation,
                     loss: loss,
                     stagevalue: stagevalue,

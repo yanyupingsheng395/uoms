@@ -61,7 +61,7 @@ public interface ExternalContactService {
     /**
      * 分页获取导购关系引导
      */
-    List<ExternalContact> getQywxGuidanceList(String corpId,String followUserId,String relation,String loss,String stagevalue,String interval);
+    List<ExternalContact> getQywxGuidanceList(String followUserId,String relation,String loss,String stagevalue,String interval, Integer offset, Integer limit);
 
     int getGuidanceCount(String followUserId,
                          String relation,
@@ -73,6 +73,9 @@ public interface ExternalContactService {
      *分页获取导购关系引导
      * 类型：未购买。根据添加时间筛选人员
      */
-    List<ExternalContact> getAddTimeList(String corpId, String followUserId, String addtime);
+    List<ExternalContact> getAddTimeList( String followUserId, String addtime,Integer offset, Integer limit);
 
+    int getQywxGuidanceCount(String followUserId, String relation, String loss, String stagevalue, String interval);
+
+    int getgetAddTimeCount(String followUserId);
 }

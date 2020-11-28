@@ -226,7 +226,6 @@ public class QywxLoginController extends BaseController {
             sbf.append("&scope=snsapi_base");
             sbf.append("&state=linksteady#wechat_redirect");
 
-            log.debug("oauth的链接为:{}", sbf.toString());
             return "redirect:" + sbf.toString();
         } catch (UnsupportedEncodingException e) {
             log.error("oauth回调链接加密错误，原因为{}", e);
@@ -269,7 +268,6 @@ public class QywxLoginController extends BaseController {
             StringBuffer getUserInfoUrl = new StringBuffer(QW_LOGIN_URL);
             getUserInfoUrl.append(accessToken);
             getUserInfoUrl.append("&code=").append(code);
-
             String userResult = OkHttpUtil.getRequest(getUserInfoUrl.toString());
             JSONObject object = JSONObject.parseObject(userResult);
             if (null == object || !"0".equals(object.getString("errcode"))) {
@@ -310,11 +308,11 @@ public class QywxLoginController extends BaseController {
                     userService.updateLoginTime(username);
                     //记录登录事件
                     userService.logLoginEvent(username, "企业微信客户端登录成功");
-
-                    String sourceUrl = (String) request.getSession().getAttribute("sourceUrl");
+                    log.info("客户端登录成功，request.session信息{}",request.getSession());
+                   String sourceUrl = (String) request.getSession().getAttribute("sourceUrl");
                     log.info("用户来源的地址为:{}",sourceUrl);
                     if (!StringUtils.isEmpty(sourceUrl)) {
-                        String s = sysInfoBo.getSysDomain()+"qwClient/index";
+                        String s = sysInfoBo.getSysDomain()+"/qwClient/index";
                         try {
                             s = java.net.URLDecoder.decode(sourceUrl, "utf-8");
                         } catch (UnsupportedEncodingException e) {
@@ -323,7 +321,7 @@ public class QywxLoginController extends BaseController {
                         request.getSession().setAttribute("sourceUrl", "");
                         return "redirect:" + sysInfoBo.getSysDomain()+s;
                     } else {
-                        return "redirect:"+sysInfoBo.getSysDomain()+"qwClient/index";
+                        return "redirect:"+sysInfoBo.getSysDomain()+"/qwClient/guidance";
                     }
                 }
             }

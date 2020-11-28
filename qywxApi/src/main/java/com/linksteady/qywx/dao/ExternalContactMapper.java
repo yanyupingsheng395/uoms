@@ -59,5 +59,11 @@ public interface ExternalContactMapper {
     void saveExternalUserId(String followerUserId, String externalUserId);
 
 
-    List<ExternalContact> selectByExample(String followUserId);
+    List<ExternalContact> selectByExample(String followUserId,Integer offset, Integer limit);
+
+    List<ExternalContact> getQywxGuidanceList(String followUserId, String relation, String loss, String stagevalue, String interval,Integer offset, Integer limit);
+
+    int getQywxGuidanceCount(String followUserId, String relation, String loss, String stagevalue, String interval);
+
+    int getgetAddTimeCount(String followUserId);
 }

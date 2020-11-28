@@ -2,31 +2,58 @@ package com.linksteady.qywx.controller;
 
 import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.controller.BaseController;
-import com.linksteady.common.domain.QueryRequest;
+import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.qywx.domain.ExternalContact;
 import com.linksteady.qywx.service.ExternalContactService;
 import com.linksteady.qywx.service.QywxService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
+import java.util.List;
 @Slf4j
 @Controller
 @RequestMapping("/qwClient")
-public class QywxClientController  extends BaseController {
+public class QywxClientController {
 
     @Autowired
     QywxService qywxService;
     @Autowired
     private ExternalContactService externalContactService;
 
+    private static final String SALT="linksteady";
 
+    /**
+     * 请求首页
+     *
+     * @return
+     */
+    @RequestMapping("/index")
+    public String index(Model model, HttpServletRequest request) {
+        UserBo userBo =(UserBo) SecurityUtils.getSubject().getPrincipal();
+        String isAdmin = "N";
+        if (userBo != null) {
+            isAdmin = StringUtils.isNotEmpty(isAdmin) ? isAdmin : "N";
+        }
+        model.addAttribute("isAdmin", isAdmin);
+        return "qywxClient/qywxindex";
+    }
+    /**
+     * 请求首页
+     *
+     * @return
+     */
+    @RequestMapping("/main")
+    public String main() {
+        return "qywxClient/main";
+    }
     /**
      * 导购运营引导
      *
@@ -42,17 +69,17 @@ public class QywxClientController  extends BaseController {
      */
     @RequestMapping("/getGuidanceList")
     @ResponseBody
-    public Map<String, Object> getGuidanceList(HttpServletRequest httpServletRequest,
-                                               QueryRequest request,
-                                               @RequestParam("relation") String relation,
-                                               @RequestParam("loss") String loss,
-                                               @RequestParam("stagevalue") String stagevalue,
-                                               @RequestParam("interval") String interval)
+    public ResponseBo getGuidanceList(@RequestParam("relation") String relation,
+                                      @RequestParam("loss") String loss,
+                                      @RequestParam("stagevalue") String stagevalue,
+                                      @RequestParam("interval") String interval,
+                                      Integer limit,Integer offset)
     {
-        UserBo user=(UserBo)httpServletRequest.getSession().getAttribute("user");
-        String corpId=qywxService.getCorpId();
-        String followUserId = user.getUsername();
-        return super.selectByPageNumSize(request, () -> externalContactService.getQywxGuidanceList(corpId,followUserId,relation,loss,stagevalue,interval));
+        UserBo userBo =(UserBo) SecurityUtils.getSubject().getPrincipal();
+        String followUserId=userBo.getUsername();
+        int count=externalContactService.getQywxGuidanceCount(followUserId, relation, loss, stagevalue, interval);
+        List<ExternalContact> list = externalContactService.getQywxGuidanceList(followUserId, relation, loss, stagevalue, interval,offset,limit);
+        return ResponseBo.okOverPaging(null, count, list);
     }
 
     /**
@@ -61,12 +88,11 @@ public class QywxClientController  extends BaseController {
      */
     @RequestMapping("/getAddTimeList")
     @ResponseBody
-    public Map<String,Object> getAddTimeList(HttpServletRequest httpServletRequest,
-                                             QueryRequest request,
-                                             @RequestParam("addtime") String addtime){
-        UserBo user=(UserBo)httpServletRequest.getSession().getAttribute("user");
-        String corpId=qywxService.getCorpId();
-        String followUserId = user.getUsername();
-        return super.selectByPageNumSize(request, () -> externalContactService.getAddTimeList(corpId,followUserId,addtime));
+    public ResponseBo getAddTimeList(@RequestParam("addtime") String addtime,Integer limit,Integer offset){
+        UserBo userBo =(UserBo) SecurityUtils.getSubject().getPrincipal();
+        String followUserId =userBo.getUsername();
+        int count=externalContactService.getgetAddTimeCount(followUserId);
+        List<ExternalContact> list = externalContactService.getAddTimeList(followUserId, addtime,offset,limit);
+        return ResponseBo.okOverPaging(null, count, list);
     }
 }

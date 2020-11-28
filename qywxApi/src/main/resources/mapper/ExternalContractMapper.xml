@@ -254,8 +254,48 @@
     </insert>
 
 
-    <select id="">
+    <select id="selectByExample" resultMap="externalUserMap">
          select external_userid,name,follow_user_id,remark,state,createtime from uo_qywx_external_user_list
-         where follow_user_id=#{followUserId}
+         where lower(follow_user_id)=#{followUserId}  limit #{limit} offset #{offset}
+    </select>
+
+    <select id="getQywxGuidanceList" resultMap="externalUserMap">
+        select external_userid,name,follow_user_id,remark,state,createtime from uo_qywx_external_user_list
+         where lower(follow_user_id)=#{followUserId}
+        <if test="relation!=null and relation !=''">
+            and relation=#{relation}
+        </if>
+        <if test="loss!=null and loss !=''">
+            and loss=#{loss}
+        </if>
+        <if test="stagevalue!=null and stagevalue !=''">
+            and stage_value=#{stagevalue}
+        </if>
+        <if test="interval!=null and interval !=''">
+            and touch_interval=#{interval}
+        </if>
+         limit #{limit} offset #{offset}
+    </select>
+
+    <select id="getgetAddTimeCount" resultType="int">
+          select count(*) from uo_qywx_external_user_list
+         where lower(follow_user_id)=#{followUserId}
+    </select>
+
+    <select id="getQywxGuidanceCount" resultType="int">
+        select count(*) from uo_qywx_external_user_list
+        where lower(follow_user_id)=#{followUserId}
+        <if test="relation!=null and relation !=''">
+            and relation=#{relation}
+        </if>
+        <if test="loss!=null and loss !=''">
+            and loss=#{loss}
+        </if>
+        <if test="stagevalue!=null and stagevalue !=''">
+            and stage_value=#{stagevalue}
+        </if>
+        <if test="interval!=null and interval !=''">
+            and touch_interval=#{interval}
+        </if>
     </select>
 </mapper>

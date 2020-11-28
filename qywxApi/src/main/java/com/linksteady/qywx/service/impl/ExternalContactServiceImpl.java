@@ -39,7 +39,7 @@ public class ExternalContactServiceImpl implements ExternalContactService {
     @Autowired
     FollowUserService followUserService;
 
-    @Autowired
+    @Autowired(required = false)
     ExternalContactMapper externalContactMapper;
 
     /**
@@ -266,15 +266,11 @@ public class ExternalContactServiceImpl implements ExternalContactService {
     }
 
     @Override
-    public List<ExternalContact> getAddTimeList(String corpId, String followUserId, String addtime) {
+    public List<ExternalContact> getAddTimeList( String followUserId, String addtime,Integer offset, Integer limit) {
         List<ExternalContact> result=Lists.newArrayList();
-        Example example = new Example(ExternalContact.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andCondition("corpid=", corpId);
-        criteria.andCondition("follow_user_id=", followUserId);
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         //查询结果集
-        List<ExternalContact> querydata = externalContactMapper.selectByExample(followUserId);
+        List<ExternalContact> querydata = externalContactMapper.selectByExample(followUserId,offset,limit);
         //获取当前时间
         LocalDateTime nowtime = LocalDateTime.now();
         for (ExternalContact externalContact : querydata) {
@@ -309,39 +305,25 @@ public class ExternalContactServiceImpl implements ExternalContactService {
         return result;
     }
 
-
-
     @Override
-    public List<ExternalContact> getQywxGuidanceList(String corpId, String followUserId, String relation, String loss, String stagevalue, String interval) {
-        Example example = new Example(ExternalContact.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andCondition("corpid=", corpId);
-        criteria.andCondition("follow_user_id=", followUserId);
-
-        if(StringUtils.isNotEmpty(relation))
-        {
-            criteria.andCondition("relation=", relation);
-        }
-        if(StringUtils.isNotEmpty(loss))
-        {
-            criteria.andCondition("loss=", loss);
-        }
-        if(StringUtils.isNotEmpty(stagevalue))
-        {
-            criteria.andCondition("stage_value=", stagevalue);
-        }
-        if(StringUtils.isNotEmpty(interval))
-        {
-            criteria.andCondition("touch_interval=", interval);
-        }
-
-        List<ExternalContact> result =  externalContactMapper.selectByExample(followUserId);
+    public List<ExternalContact> getQywxGuidanceList( String followUserId, String relation, String loss, String stagevalue, String interval,Integer offset, Integer limit) {
+        List<ExternalContact> result =  externalContactMapper.getQywxGuidanceList(followUserId,relation,loss,stagevalue,interval,offset,limit);
         for (ExternalContact externalContact : result) {
             //设置添加时间
             externalContact.setCreateTimeStr(TimeStampUtils.timeStampToDateString(externalContact.getCreatetime()));
             //设置标签
         }
         return result;
+    }
+
+    @Override
+    public int getQywxGuidanceCount(String followUserId, String relation, String loss, String stagevalue, String interval) {
+        return externalContactMapper.getQywxGuidanceCount(followUserId, relation, loss, stagevalue, interval);
+    }
+
+    @Override
+    public int getgetAddTimeCount(String followUserId) {
+        return externalContactMapper.getgetAddTimeCount(followUserId);
     }
 
 }
