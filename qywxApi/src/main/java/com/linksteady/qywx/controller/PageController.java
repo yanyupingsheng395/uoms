@@ -41,7 +41,6 @@ public class PageController  extends BaseController {
     @Autowired
     private AddUserTriggerService addUserTriggerService;
 
-    public static final String oAuthUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?";
 
     /**
      * 企业微信应用配置

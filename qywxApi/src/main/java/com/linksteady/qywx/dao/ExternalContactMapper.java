@@ -59,4 +59,5 @@ public interface ExternalContactMapper {
     void saveExternalUserId(String followerUserId, String externalUserId);
 
 
+    List<ExternalContact> selectByExample(String followUserId);
 }

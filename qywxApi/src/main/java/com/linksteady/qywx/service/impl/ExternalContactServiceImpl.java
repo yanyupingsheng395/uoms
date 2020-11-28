@@ -31,7 +31,7 @@ import java.util.Map;
 
 @Service
 @Slf4j
-public class ExternalContactServiceImpl extends BaseService<ExternalContact> implements ExternalContactService {
+public class ExternalContactServiceImpl implements ExternalContactService {
 
     @Autowired
     QywxService qywxService;
@@ -274,7 +274,7 @@ public class ExternalContactServiceImpl extends BaseService<ExternalContact> imp
         criteria.andCondition("follow_user_id=", followUserId);
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         //查询结果集
-        List<ExternalContact> querydata = this.selectByExample(example);
+        List<ExternalContact> querydata = externalContactMapper.selectByExample(followUserId);
         //获取当前时间
         LocalDateTime nowtime = LocalDateTime.now();
         for (ExternalContact externalContact : querydata) {
@@ -335,7 +335,7 @@ public class ExternalContactServiceImpl extends BaseService<ExternalContact> imp
             criteria.andCondition("touch_interval=", interval);
         }
 
-        List<ExternalContact> result = this.selectByExample(example);
+        List<ExternalContact> result =  externalContactMapper.selectByExample(followUserId);
         for (ExternalContact externalContact : result) {
             //设置添加时间
             externalContact.setCreateTimeStr(TimeStampUtils.timeStampToDateString(externalContact.getCreatetime()));

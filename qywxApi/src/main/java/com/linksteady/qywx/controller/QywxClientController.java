@@ -7,6 +7,7 @@ import com.linksteady.qywx.service.ExternalContactService;
 import com.linksteady.qywx.service.QywxService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 @Slf4j
-@RestController
+@Controller
 @RequestMapping("/qwClient")
 public class QywxClientController  extends BaseController {
 
@@ -29,13 +30,11 @@ public class QywxClientController  extends BaseController {
     /**
      * 导购运营引导
      *
-     * @param model
-     * @param request
      * @return
      */
     @RequestMapping("/guidance")
-    public String guidance(Model model, HttpServletRequest request) {
-        return "qywx/guidance/list";
+    public String guidance() {
+        return "qywxClient/guidance/list";
     }
 
     /**

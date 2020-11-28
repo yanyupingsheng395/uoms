@@ -13,28 +13,6 @@
         <result column="createtime" jdbcType="VARCHAR" property="createtime"/>
     </resultMap>
 
-    <resultMap id="phoneFixMap" type="com.linksteady.qywx.domain.PhoneFixStatis">
-        <result column="follow_user_id" jdbcType="VARCHAR" property="followerUserId"/>
-        <result column="user_cnt" jdbcType="DECIMAL" property="userCnt"/>
-        <result column="blankcnt" jdbcType="DECIMAL" property="blankCnt"/>
-        <result column="invalidcnt" jdbcType="DECIMAL" property="invalidCnt"/>
-    </resultMap>
-
-    <resultMap id="repeatStatisMap" type="com.linksteady.qywx.domain.RepeatStatis">
-        <result column="external_userid" jdbcType="VARCHAR" property="externalUserId"/>
-        <result column="name" jdbcType="VARCHAR" property="name"/>
-        <result column="cnt" jdbcType="DECIMAL" property="cnt"/>
-        <result column="follow_user" jdbcType="VARCHAR" property="followUser"/>
-    </resultMap>
-
-    <resultMap id="mappingStatisMap" type="com.linksteady.qywx.domain.MappingStatis">
-        <result column="all_cnt" jdbcType="DECIMAL" property="allCnt"/>
-        <result column="mapping_cnt" jdbcType="DECIMAL" property="mappingCnt"/>
-        <result column="unmapping_cnt" jdbcType="DECIMAL" property="unmappingCnt"/>
-        <result column="mapping_rate" jdbcType="DECIMAL" property="mappingRate"/>
-    </resultMap>
-
-
    <insert id="saveExternalUserList">
         insert into uo_qywx_external_user_list(
             follow_user_id,
@@ -275,4 +253,9 @@
         ON CONFLICT(external_userid,follow_user_id) DO UPDATE SET delete_flag=0
     </insert>
 
+
+    <select id="">
+         select external_userid,name,follow_user_id,remark,state,createtime from uo_qywx_external_user_list
+         where follow_user_id=#{followUserId}
+    </select>
 </mapper>
