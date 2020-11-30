@@ -213,4 +213,75 @@ public class QywxServiceImpl implements QywxService {
         return this.redisConfigStorage.getCorpId();
     }
 
+    @Override
+    public String getAgentId() {
+        String agentId=this.redisConfigStorage.getAgentId();
+
+        if(StringUtils.isEmpty(agentId))
+        {
+            QywxParam qywxParam=paramMapper.getQywxParam();
+            agentId=qywxParam==null?"":qywxParam.getAgentId();
+            if(!StringUtils.isEmpty(agentId)) {
+                this.redisConfigStorage.setAgentId(agentId);
+            }
+        }
+        return this.redisConfigStorage.getAgentId();
+    }
+
+    @Override
+    public String getJsapiTicket() throws WxErrorException{
+        String jsApiTicket=this.redisConfigStorage.getJsapiTicket();
+
+        if(StringUtils.isEmpty(jsApiTicket))
+        {
+            log.debug("开始获取jsApiTicket");
+            if(StringUtils.isEmpty(this.redisConfigStorage.getCorpId()))
+            {
+                throw new WxErrorException(WxError.builder().errorCode(-999).errorMsg("尚未配置企业微信公司ID").build());
+            }
+            String requestUrl= WxPathConsts.GET_JSAPI_TICKET+"?access_token="+this.getAccessToken();
+            String resultContent=OkHttpUtil.getRequest(redisConfigStorage.getApiUrl(requestUrl));
+
+            log.debug("获取jsApiTicket的返回结果为:{}",resultContent);
+            JSONObject jsonObject = JSON.parseObject(resultContent);
+            WxError error = WxError.fromJsonObject(jsonObject);
+            if (error.getErrorCode() != 0) {
+                throw new WxErrorException(error);
+            }
+
+            jsApiTicket = jsonObject.getString("ticket");
+            Integer expiresIn = jsonObject.getInteger("expires_in");
+            this.redisConfigStorage.setJsapiTicket(jsApiTicket, expiresIn);
+        }
+        return this.redisConfigStorage.getJsapiTicket();
+    }
+
+    @Override
+    public String getAgentJsapiTicket() throws WxErrorException{
+        String agentJsapiTicket=this.redisConfigStorage.getAgentJsapiTicket();
+
+        if(StringUtils.isEmpty(agentJsapiTicket))
+        {
+            log.debug("开始获取agentJsapiTicket");
+            if(StringUtils.isEmpty(this.redisConfigStorage.getCorpId()))
+            {
+                throw new WxErrorException(WxError.builder().errorCode(-999).errorMsg("尚未配置企业微信公司ID").build());
+            }
+            String requestUrl= WxPathConsts.GET_AGENT_CONFIG_TICKET+"&access_token="+this.getAccessToken();
+            String resultContent=OkHttpUtil.getRequest(redisConfigStorage.getApiUrl(requestUrl));
+
+            log.debug("获取jsApiTicket的返回结果为:{}",resultContent);
+            JSONObject jsonObject = JSON.parseObject(resultContent);
+            WxError error = WxError.fromJsonObject(jsonObject);
+            if (error.getErrorCode() != 0) {
+                throw new WxErrorException(error);
+            }
+
+            agentJsapiTicket = jsonObject.getString("ticket");
+            Integer expiresIn = jsonObject.getInteger("expires_in");
+            this.redisConfigStorage.setAgentJsapiTicket(agentJsapiTicket, expiresIn);
+        }
+        return this.redisConfigStorage.getAgentJsapiTicket();
+    }
+
 }

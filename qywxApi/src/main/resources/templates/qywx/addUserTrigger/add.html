@@ -135,12 +135,12 @@
 </div>
 <script>
     var opType = "[[${opType}]]";
-    var prodNameLen = [[${sourceConfig.prodNameLen}]];
-    var sourceNameLen = [[${sourceConfig.sourceNameLen}]];
-    var signatureLen = [[${sourceConfig.signatureLen}]];
-    var unsubscribeLen = [[${sourceConfig.unsubscribeLen}]];
-    var signature='[[${sourceConfig.signature}]]';
-    var unsubscribe='[[${sourceConfig.unsubscribe}]]';
+    var prodNameLen = [[${smsConfigVO.prodNameLen}]];
+    var sourceNameLen = [[${smsConfigVO.sourceNameLen}]];
+    var signatureLen = [[${smsConfigVO.signatureLen}]];
+    var unsubscribeLen = [[${smsConfigVO.unsubscribeLen}]];
+    var signature='[[${smsConfigVO.signature}]]';
+    var unsubscribe='[[${smsConfigVO.unsubscribe}]]';
 
     var clipboard1 = new ClipboardJS('.copy_btn', {
         container: document.getElementById('selectQrModal')

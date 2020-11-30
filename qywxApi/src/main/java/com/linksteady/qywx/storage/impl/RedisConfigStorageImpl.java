@@ -23,6 +23,10 @@ public class RedisConfigStorageImpl implements RedisConfigStorage {
     protected final static String  QYWX_ENABLED_WELCOME="qywx:ec:welcome";
     protected final static String  QYWX_MP_APP_ID="qywx:mpappid";
 
+    protected final static String QYWX_AGENT_ID="qywx:agentid";
+    protected final static String QYWX_JSAPI_TICKET="qywx:jsapi_ticket";
+    protected final static String QYWX_AGENT_JSAPI_TICKET="qywx:jsapi_agent_ticket";
+
     private JedisPool jedisPool;
 
     public RedisConfigStorageImpl(JedisPool jedisPool) {
@@ -164,6 +168,66 @@ public class RedisConfigStorageImpl implements RedisConfigStorage {
         try(Jedis jedis=jedisPool.getResource())
         {
             jedis.set(QYWX_MP_APP_ID,mpAppId);
+        }
+    }
+
+    @Override
+    public void setAgentId(String agentId) {
+        try(Jedis jedis=jedisPool.getResource())
+        {
+            jedis.set(QYWX_AGENT_ID,agentId);
+        }
+    }
+
+    @Override
+    public String getAgentId() {
+        try(Jedis jedis=jedisPool.getResource())
+        {
+            return jedis.get(QYWX_AGENT_ID);
+        }
+    }
+
+    @Override
+    public String getJsapiTicket() {
+        try(Jedis jedis=jedisPool.getResource())
+        {
+            return jedis.get(QYWX_JSAPI_TICKET);
+        }
+    }
+
+    @Override
+    public void setJsapiTicket(String jsApiTicket, long expireIn) {
+        try(Jedis jedis=jedisPool.getResource())
+        {
+            boolean keyExists=jedis.exists(QYWX_JSAPI_TICKET);
+            if(keyExists)
+            {
+                jedis.del(QYWX_JSAPI_TICKET);
+            }
+            // NX是不存在时才set， XX是存在时才set， EX是秒，PX是毫秒
+            jedis.set(QYWX_JSAPI_TICKET,jsApiTicket,"NX","EX",expireIn-200);
+        }
+    }
+
+    @Override
+    public String getAgentJsapiTicket() {
+        try(Jedis jedis=jedisPool.getResource())
+        {
+            return jedis.get(QYWX_AGENT_JSAPI_TICKET);
+        }
+    }
+
+    @Override
+    public void setAgentJsapiTicket(String agentJsApiTicket, long expireIn) {
+        try(Jedis jedis=jedisPool.getResource())
+        {
+            boolean keyExists=jedis.exists(QYWX_AGENT_JSAPI_TICKET);
+            if(keyExists)
+            {
+                jedis.del(QYWX_AGENT_JSAPI_TICKET);
+            }
+            // NX是不存在时才set， XX是存在时才set， EX是秒，PX是毫秒
+            jedis.set(QYWX_AGENT_JSAPI_TICKET,agentJsApiTicket,"NX","EX",expireIn-200);
         }
     }
 

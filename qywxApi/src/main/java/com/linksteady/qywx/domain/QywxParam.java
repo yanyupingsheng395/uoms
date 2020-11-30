@@ -75,4 +75,10 @@ public class QywxParam implements Serializable {
 
     private String enableWelcome;
 
+    private String agentId;
+
+    private String oauthFilename;
+
+    private String oauthFile;
+
 }

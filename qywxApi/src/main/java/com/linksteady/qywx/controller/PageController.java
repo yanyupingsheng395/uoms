@@ -2,7 +2,7 @@ package com.linksteady.qywx.controller;
 
 import com.linksteady.common.annotation.Log;
 import com.linksteady.common.controller.BaseController;
-import com.linksteady.qywx.config.PushConfig;
+import com.linksteady.common.service.ConfigService;
 import com.linksteady.qywx.domain.AddUserHead;
 import com.linksteady.qywx.domain.QywxParam;
 import com.linksteady.qywx.domain.QywxWelcome;
@@ -10,7 +10,7 @@ import com.linksteady.qywx.service.AddUserService;
 import com.linksteady.qywx.service.AddUserTriggerService;
 import com.linksteady.qywx.service.QywxParamService;
 import com.linksteady.qywx.service.WelcomeService;
-import com.linksteady.qywx.vo.SourceConfigVO;
+import com.linksteady.qywx.vo.SmsConfigVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,9 +29,6 @@ public class PageController  extends BaseController {
     WelcomeService welcomeService;
 
     @Autowired
-    PushConfig pushConfig;
-
-    @Autowired
     private AddUserService addUserService;
 
     @Autowired
@@ -40,6 +37,9 @@ public class PageController  extends BaseController {
 
     @Autowired
     private AddUserTriggerService addUserTriggerService;
+
+    @Autowired
+    ConfigService configService;
 
 
     /**
@@ -135,8 +135,8 @@ public class PageController  extends BaseController {
     public String addUserAdd(Model model) {
         QywxParam qywxParam = qywxParamService.getQywxParam();
         model.addAttribute("qywxParam", qywxParam);
-        SourceConfigVO sourceConfigVO = SourceConfigVO.getInstance(pushConfig);
-        model.addAttribute("sourceConfig", sourceConfigVO);
+        SmsConfigVO smsConfigVO = SmsConfigVO.getInstance(configService);
+        model.addAttribute("smsConfigVO", smsConfigVO);
         model.addAttribute("opType", "save");
         return "qywx/addUser/add";
     }
@@ -178,8 +178,8 @@ public class PageController  extends BaseController {
             model.addAttribute("msg", "已终止的任务不允许被编辑！");
             return "qywx/addUser/list";
         } else {
-            SourceConfigVO sourceConfigVO = SourceConfigVO.getInstance(pushConfig);
-            model.addAttribute("sourceConfig", sourceConfigVO);
+            SmsConfigVO smsConfigVO = SmsConfigVO.getInstance(configService);
+            model.addAttribute("smsConfigVO", smsConfigVO);
             model.addAttribute("addUserHead", addUserHead);
             return "qywx/addUser/add";
         }
@@ -200,8 +200,8 @@ public class PageController  extends BaseController {
     public String addUserTriggerAdd(Model model) {
         QywxParam qywxParam = qywxParamService.getQywxParam();
         model.addAttribute("qywxParam", qywxParam);
-        SourceConfigVO sourceConfigVO = SourceConfigVO.getInstance(pushConfig);
-        model.addAttribute("sourceConfig", sourceConfigVO);
+        SmsConfigVO smsConfigVO = SmsConfigVO.getInstance(configService);
+        model.addAttribute("smsConfigVO", smsConfigVO);
         model.addAttribute("opType", "save");
         return "qywx/addUserTrigger/add";
     }
@@ -245,8 +245,8 @@ public class PageController  extends BaseController {
             model.addAttribute("msg", "已终止的任务不允许被编辑！");
             return "qywx/addUserTrigger/list";
         } else {
-            SourceConfigVO sourceConfigVO = SourceConfigVO.getInstance(pushConfig);
-            model.addAttribute("sourceConfig", sourceConfigVO);
+            SmsConfigVO smsConfigVO = SmsConfigVO.getInstance(configService);
+            model.addAttribute("smsConfigVO", smsConfigVO);
             model.addAttribute("addUserHead", addUserHead);
             return "qywx/addUserTrigger/add";
         }

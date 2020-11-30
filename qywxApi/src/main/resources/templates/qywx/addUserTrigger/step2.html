@@ -76,13 +76,13 @@
                 <li class="smscomments">2.计费规则：文案字数<=70个字数，按照70个字数一条计算；文案字数>70个字数，即为长信息，按照67个字数记为一条；</li>
                 <li class="smscomments">3.当前系统支持在文案中使用的变量及其占用长度、签名长度、退订信息长度情况如下：</li>
                 <ul>
-                    <li class="smsvariable">&nbsp;&nbsp;变量：${渠道名称}：渠道名称，占<font color="red">[[${sourceConfig.sourceNameLen}]]</font>个字符；例如:[[${sourceConfig.sourceName}]]</li>
-                    <li class="smsvariable">&nbsp;&nbsp;变量：${商品名称}：商品短名称，占<font color="red">[[${sourceConfig.prodNameLen}]]</font>个字符；例如:[[${sourceConfig.prodName}]]</li>
-                    <li class="smsvariable">&nbsp;&nbsp;签名：[[${sourceConfig.signature}]]，占<font color="red">[[${sourceConfig.signatureLen}]]</font>个字符；</li>
-                    <li class="smsvariable">&nbsp;&nbsp;退订信息：[[${sourceConfig.unsubscribe}]]，占<font color="red">[[${sourceConfig.unsubscribeLen}]]</font>个字符；</li>
+                    <li class="smsvariable">&nbsp;&nbsp;变量：${渠道名称}：渠道名称，占<font color="red">[[${smsConfigVO.sourceNameLen}]]</font>个字符；例如:[[${smsConfigVO.sourceName}]]</li>
+                    <li class="smsvariable">&nbsp;&nbsp;变量：${商品名称}：商品短名称，占<font color="red">[[${smsConfigVO.prodNameLen}]]</font>个字符；例如:[[${smsConfigVO.prodName}]]</li>
+                    <li class="smsvariable">&nbsp;&nbsp;签名：[[${smsConfigVO.signature}]]，占<font color="red">[[${smsConfigVO.signatureLen}]]</font>个字符；</li>
+                    <li class="smsvariable">&nbsp;&nbsp;退订信息：[[${smsConfigVO.unsubscribe}]]，占<font color="red">[[${smsConfigVO.unsubscribeLen}]]</font>个字符；</li>
                 </ul>
-                <li  class="smscomments">4.编写文案时起始位置请<font color="red">不要包含</font>签名信息[[${sourceConfig.signature}]]</li>
-                <li  class="smscomments">5.编写文案时结束位置请<font color="red">不要包含</font>退订信息[[${sourceConfig.unsubscribe}]]</li>
+                <li  class="smscomments">4.编写文案时起始位置请<font color="red">不要包含</font>签名信息[[${smsConfigVO.signature}]]</li>
+                <li  class="smscomments">5.编写文案时结束位置请<font color="red">不要包含</font>退订信息[[${smsConfigVO.unsubscribe}]]</li>
             </ol>
         </div>
     </div>
@@ -207,13 +207,13 @@
 
                 <li class="smscomments">3.当前系统支持在文案中使用的变量及其占用长度、签名长度、退订信息长度情况如下：</li>
                 <ul>
-                    <li class="smsvariable">&nbsp;&nbsp;变量：${渠道名称}：渠道名称，占<font color="red">[[${sourceConfig.sourceNameLen}]]</font>个字符；例如:[[${sourceConfig.sourceName}]]</li>
-                    <li class="smsvariable">&nbsp;&nbsp;变量：${商品名称}：商品短名称，占<font color="red">[[${sourceConfig.prodNameLen}]]</font>个字符；例如:[[${sourceConfig.prodName}]]</li>
-                    <li class="smsvariable">&nbsp;&nbsp;签名：[[${sourceConfig.signature}]]，占<font color="red">[[${sourceConfig.signatureLen}]]</font>个字符；</li>
-                    <li class="smsvariable">&nbsp;&nbsp;退订信息：[[${sourceConfig.unsubscribe}]]，占<font color="red">[[${sourceConfig.unsubscribeLen}]]</font>个字符；</li>
+                    <li class="smsvariable">&nbsp;&nbsp;变量：${渠道名称}：渠道名称，占<font color="red">[[${smsConfigVO.sourceNameLen}]]</font>个字符；例如:[[${smsConfigVO.sourceName}]]</li>
+                    <li class="smsvariable">&nbsp;&nbsp;变量：${商品名称}：商品短名称，占<font color="red">[[${smsConfigVO.prodNameLen}]]</font>个字符；例如:[[${smsConfigVO.prodName}]]</li>
+                    <li class="smsvariable">&nbsp;&nbsp;签名：[[${smsConfigVO.signature}]]，占<font color="red">[[${smsConfigVO.signatureLen}]]</font>个字符；</li>
+                    <li class="smsvariable">&nbsp;&nbsp;退订信息：[[${smsConfigVO.unsubscribe}]]，占<font color="red">[[${smsConfigVO.unsubscribeLen}]]</font>个字符；</li>
                 </ul>
-                <li  class="smscomments">4.编写文案时起始位置请<font color="red">不要包含</font>签名信息[[${sourceConfig.signature}]]</li>
-                <li  class="smscomments">5.编写文案时结束位置请<font color="red">不要包含</font>退订信息[[${sourceConfig.unsubscribe}]]</li>
+                <li  class="smscomments">4.编写文案时起始位置请<font color="red">不要包含</font>签名信息[[${smsConfigVO.signature}]]</li>
+                <li  class="smscomments">5.编写文案时结束位置请<font color="red">不要包含</font>退订信息[[${smsConfigVO.unsubscribe}]]</li>
             </ol>
         </div>
     </div>

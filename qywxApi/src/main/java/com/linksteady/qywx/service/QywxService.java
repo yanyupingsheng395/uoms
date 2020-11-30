@@ -64,4 +64,20 @@ public interface QywxService {
     String getCorpId();
 
 
+    /**
+     * 读取agentId
+     */
+    String getAgentId();
+
+    /**
+     * 获取企业的jsapi_ticket
+     */
+    String getJsapiTicket() throws WxErrorException;
+
+    /**
+     *获取应用的jsapiTicket
+     */
+    String getAgentJsapiTicket() throws WxErrorException;
+
+
 }

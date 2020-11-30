@@ -5,17 +5,13 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.bo.UserBo;
-import com.linksteady.common.controller.BaseController;
-import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.common.util.crypto.SHA1;
 import com.linksteady.qywx.domain.*;
 import com.linksteady.qywx.service.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -33,9 +28,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @Controller
@@ -62,13 +57,7 @@ public class QywxClientController {
      * @return
      */
     @RequestMapping("/index")
-    public String index(Model model, HttpServletRequest request) {
-        UserBo userBo =(UserBo) SecurityUtils.getSubject().getPrincipal();
-        String isAdmin = "N";
-        if (userBo != null) {
-            isAdmin = StringUtils.isNotEmpty(isAdmin) ? isAdmin : "N";
-        }
-        model.addAttribute("isAdmin", isAdmin);
+    public String index() {
         return "qywxClient/qywxindex";
     }
 
@@ -96,9 +85,9 @@ public class QywxClientController {
      *
      * @return
      */
-    @RequestMapping("/userManager")
+    @RequestMapping("/guideResult")
     public String userManager() {
-        return "qywxClient/userManager/main";
+        return "qywxClient/guideResult/main";
     }
 
     /**
@@ -145,9 +134,9 @@ public class QywxClientController {
         return ResponseBo.okOverPaging(null, count, list);
     }
 
-    @GetMapping("/getResultData")
+    @GetMapping("/getGuideResultData")
     @ResponseBody
-    public ResponseBo getResultData(@RequestParam("during") String during, String startDt, String endDt) throws URISyntaxException {
+    public ResponseBo getGuideResultData(@RequestParam("during") String during, String startDt, String endDt) throws URISyntaxException {
         UserBo userBo =(UserBo) SecurityUtils.getSubject().getPrincipal();
         if (null != userBo) {
             Long userId = userBo.getUserId();
@@ -440,7 +429,51 @@ public class QywxClientController {
         {
             return ResponseBo.error(jsonObject.getString("msg"));
         }
+    }
 
+    /**
+     * 获取jsapi相关的配置信息
+     */
+    @RequestMapping("/jsapi/getJsapiInfo")
+    public ResponseBo getJsapiInfo(HttpServletRequest httpServletRequest)
+    {
+        Map<String,String> result= null;
+        try {
+            String corpId=qywxService.getCorpId();
+            //获取当前应用的agentId
+            String agentId=qywxService.getAgentId();
+            String jsapiTicket=qywxService.getJsapiTicket();
+
+            String timestamp = Long.toString(System.currentTimeMillis() / 1000);
+            String nonceStr=getNoncestr();
+            String url=httpServletRequest.getParameter("url");
+
+            String content="jsapi_ticket="+jsapiTicket+"&noncestr="+nonceStr+"&timestamp="+timestamp+"&url="+url;
+            String signature= SHA1.gen(content);
+
+            result = Maps.newHashMap();
+            result.put("nonceStr",nonceStr);
+            result.put("timestamp",timestamp);
+            result.put("corpId",corpId);
+            result.put("signature",signature);
+
+            //获取应用的ticket
+             String agentTicket=qywxService.getAgentJsapiTicket();
+            String agentContent="jsapi_ticket="+agentTicket+"&noncestr="+nonceStr+"&timestamp="+timestamp+"&url="+url;
+            String agentSignature=SHA1.gen(agentContent);
+
+            result.put("agentId",agentId);
+            result.put("agentSignature",agentSignature);
+
+            return ResponseBo.okWithData("",result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseBo.error();
+        }
+    }
+
+    private String getNoncestr() {
+        return UUID.randomUUID().toString();
     }
 
 }

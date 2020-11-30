@@ -17,6 +17,11 @@
         <result column="mp_appid" jdbcType="VARCHAR" property="mpAppId"/>
         <result column="ec_event_token" jdbcType="VARCHAR" property="ecEventToken"/>
         <result column="ec_event_aeskey" jdbcType="VARCHAR" property="ecEventAesKey"/>
+        <result column="agent_id" jdbcType="VARCHAR" property="agentId"/>
+        <result column="enable_welcome" jdbcType="VARCHAR" property="enableWelcome"/>
+
+        <result column="oauth_filename" jdbcType="VARCHAR" property="oauthFilename"/>
+        <result column="oauth_file" jdbcType="VARCHAR" property="oauthFile"/>
     </resultMap>
 
     <resultMap id="addUserHistoryMap" type="com.linksteady.qywx.domain.AddUserHistoryVO">

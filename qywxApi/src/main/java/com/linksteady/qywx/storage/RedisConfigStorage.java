@@ -66,4 +66,17 @@ public interface RedisConfigStorage {
      */
     void setMpAppId(String mpAppId);
 
+
+    void setAgentId(String agentId);
+
+    String getAgentId();
+
+    String getJsapiTicket();
+
+    void setJsapiTicket(String jsApiTicket,long expireIn);
+
+    String getAgentJsapiTicket();
+
+    void setAgentJsapiTicket(String agentJsApiTicket,long expireIn);
+
 }

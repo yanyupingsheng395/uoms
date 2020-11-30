@@ -287,7 +287,7 @@
 
 
     function getOperateResultData(during, startDt, endDt) {
-        $.get("/qwClient/getResultData", {during: during, startDt: startDt, endDt: endDt}, function(r){
+        $.get("/qwClient/getGuideResultData", {during: during, startDt: startDt, endDt: endDt}, function(r){
             if(r.code === 200) {
                 var data = r.data;
                 $("#userTotalCnt").text(data.userTotalCnt);
