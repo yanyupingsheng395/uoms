@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.QywxMessage;
-import com.linksteady.common.domain.enums.ConfigEnum;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.dao.QywxDailyDetailMapper;
 import com.linksteady.operate.dao.QywxDailyMapper;
@@ -309,8 +308,8 @@ public class QywxDailyServiceImpl implements QywxDailyService {
             taskDtDate = taskDtDate.plusDays(1);
         }
 
-        List<DailyStatis> dataList = Lists.newArrayList();
-        Map<String, DailyStatis> dailyStatisMap = dataList.stream().collect(Collectors.toMap(DailyStatis::getConversionDateStr, a -> a));
+        List<QywxDailyStatis> dataList = qywxDailyMapper.getQywxDailyStatisList(headId);
+        Map<String, QywxDailyStatis> dailyStatisMap = dataList.stream().collect(Collectors.toMap(QywxDailyStatis::getConversionDateStr, a -> a));
 
         //转化人数
         List<Long> convertNumList = Lists.newArrayList();
@@ -320,10 +319,10 @@ public class QywxDailyServiceImpl implements QywxDailyService {
 
         xdatas.forEach(x -> {
             //判断当前是否有数据
-            DailyStatis dailyStatis = dailyStatisMap.get(x.format(DateTimeFormatter.ofPattern(dateFormat)));
+            QywxDailyStatis qywxDailyStatis = dailyStatisMap.get(x.format(DateTimeFormatter.ofPattern(dateFormat)));
 
             //找不到转化数据
-            if (null == dailyStatis) {
+            if (null == qywxDailyStatis) {
                 if (x.isAfter(LocalDate.now()) || x.isEqual(LocalDate.now())) {
                     //填充空值
                     convertNumList.add(null);
@@ -338,10 +337,10 @@ public class QywxDailyServiceImpl implements QywxDailyService {
                     convertSpuRateList.add(0D);
                 }
             } else {
-                convertNumList.add(dailyStatis.getConvertNum());
-                convertRateList.add(dailyStatis.getConvertRate());
-                convertSpuNumList.add(dailyStatis.getConvertSpuNum());
-                convertSpuRateList.add(dailyStatis.getConvertSpuRate());
+                convertNumList.add(qywxDailyStatis.getConvertNum());
+                convertRateList.add(qywxDailyStatis.getConvertRate());
+                convertSpuNumList.add(qywxDailyStatis.getConvertSpuNum());
+                convertSpuRateList.add(qywxDailyStatis.getConvertSpuRate());
             }
         });
 
@@ -469,6 +468,16 @@ public class QywxDailyServiceImpl implements QywxDailyService {
         });
 
         return "success";
+    }
+
+    @Override
+    public List<QywxDailyPersonal> getConvertDetailData(int limit, int offset, long headId) {
+        return qywxDailyMapper.getConvertDetailData(limit,offset,headId);
+    }
+
+    @Override
+    public int getConvertDetailCount(long headId) {
+        return qywxDailyMapper.getConvertDetailCount(headId);
     }
 
 

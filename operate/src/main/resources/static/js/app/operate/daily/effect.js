@@ -1,14 +1,26 @@
 $(function () {
-    getTaskDt();
+    getOverAllInfo();
     makePushChart();
     getEffectPersonalPage();
 });
 
-// 获取页面头的当前日期和任务日期
-function getTaskDt() {
-    $.get("/daily/getCurrentAndTaskDate", {headId: headId}, function (r) {
+//获取概览信息
+function getOverAllInfo() {
+    $.get("/daily/getOverAllInfo", {headId: headId}, function (r) {
         let data = r.data;
         $("#taskDt").html('').append('<i class="mdi mdi-alert-circle-outline"></i>任务日期：' + data["touchDtStr"] + '，成功触达：'+data['successNum']+'人，效果累计天数：'+data['effectDays']);
+
+         //更新其它数据
+        $("#totalNum").text(totalNum);
+        $("#successNum").text(successNum);
+        $("#convertNum").text(convertNum);
+        $("#convertSpuNum").text(convertSpuNum);
+
+        $("#convertRate").text(convertRate);
+        $("#convertSpuRate").text(convertSpuRate);
+
+        $("#convertAmount").text(convertAmount);
+        $("#convertSpuAmount").text(convertSpuAmount);
     });
 }
 

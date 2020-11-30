@@ -7,13 +7,12 @@ import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.enums.ConfigEnum;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.config.PushConfig;
-import com.linksteady.operate.domain.QywxDailyDetail;
-import com.linksteady.operate.domain.QywxDailyHeader;
-import com.linksteady.operate.domain.QywxDailyStaffEffect;
+import com.linksteady.operate.domain.*;
 import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.exception.PushQywxMessageException;
 import com.linksteady.operate.exception.SendCouponException;
 import com.linksteady.operate.service.*;
+import com.linksteady.operate.vo.DailyPersonalVO;
 import com.linksteady.operate.vo.FollowUserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -232,19 +231,15 @@ public class QywxDailyController {
     }
 
     /**
-     * 获取当前日期和任务日期、任务天数
+     * 获取任务的详细信息
      *
      * @param headId
      * @return
      */
-    @GetMapping("/getTaskInfo")
-    public ResponseBo getTaskInfo(@RequestParam Long headId) {
+    @GetMapping("/getOverAllInfo")
+    public ResponseBo getOverAllInfo(@RequestParam Long headId) {
         QywxDailyHeader qywxDailyHeader = qywxDailyService.getHeadInfo(headId);
-        Map<String, String> result = Maps.newHashMap();
-        result.put("taskDateStr", qywxDailyHeader.getTaskDateStr());
-        result.put("successNum", qywxDailyHeader.getSuccessNum() == null ? "0" : String.valueOf(qywxDailyHeader.getSuccessNum()));
-        result.put("effectDays", qywxDailyHeader.getEffectDays() == null ? "0" : String.valueOf(qywxDailyHeader.getEffectDays()));
-        return ResponseBo.okWithData(null, result);
+        return ResponseBo.okWithData(null, qywxDailyHeader);
     }
 
     /**
@@ -280,7 +275,7 @@ public class QywxDailyController {
      */
     @GetMapping("/getFollowUserList")
     public ResponseBo getFollowUserList(Long headId) {
-        List<FollowUserVO> dataList = qywxDailyDetailService.getFollowUserList(headId);
+        List<FollowUserVO> dataList = qywxDailyDetailService.getAllFollowUserList(headId);
         return ResponseBo.okWithData(null, dataList);
     }
 
@@ -382,5 +377,21 @@ public class QywxDailyController {
     @GetMapping("/manualSubmitMessage")
     public ResponseBo manualSubmitMessage(Long headId) {
         return ResponseBo.ok(qywxDailyService.manualSubmitMessage(headId));
+    }
+
+    /**
+     * 获取转化的明细数据
+     * @param
+     * @return
+     */
+    @GetMapping("/getConvertDetailData")
+    public ResponseBo getConvertDetailData(QueryRequest request) {
+        int limit = request.getLimit();
+        int offset = request.getOffset();
+        Long headId = Long.parseLong(request.getParam().get("headId"));
+
+        List<QywxDailyPersonal> qywxDailyPersonalList = qywxDailyService.getConvertDetailData(limit, offset, headId);
+        int count = qywxDailyService.getConvertDetailCount(headId);
+        return ResponseBo.okOverPaging(null, count, qywxDailyPersonalList);
     }
 }

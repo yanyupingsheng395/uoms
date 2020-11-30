@@ -1,7 +1,6 @@
 package com.linksteady.operate.dao;
 
-import com.linksteady.operate.domain.QywxDailyHeader;
-import com.linksteady.operate.domain.QywxPushList;
+import com.linksteady.operate.domain.*;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -46,6 +45,18 @@ public interface QywxDailyMapper {
     void updateStatusToDonePushError(long headId);
 
     void updateSendCouponFlag(long headId);
+
+    /**
+     * 获取推送结果数据图
+     * @param headId
+     * @return
+     */
+    List<QywxDailyStatis> getQywxDailyStatisList(Long headId);
+
+
+    List<QywxDailyPersonal> getConvertDetailData(int limit, int offset, long headId);
+
+    int getConvertDetailCount(long headId);
 
 
 }

@@ -45,6 +45,7 @@
                     <div class="col-md-12 select-table table-striped">
                         <ul id="effectTabs" class="nav nav-tabs" role="tablist">
                             <li class="active"><a href="#effect-all-div" id="effect-all" role="tab" data-toggle="tab">整体结果</a></li>
+                            <li><a href="#effect-follower-div" role="tab" id="effect-follower" data-toggle="tab">成员结果</a></li>
                             <li><a href="#effect-personal-div" role="tab" id="effect-personal" data-toggle="tab">个体结果</a></li>
                         </ul>
                         <div id="myTabContent" class="tab-content">
@@ -65,38 +66,38 @@
                                             <tbody>
                                             <tr>
                                                 <td>建议推送用户数（人）</td>
-                                                <td data-th-text="${qywxDailyHeader.totalNum}"></td>
+                                                <td id="totalNum"></td>
                                                 <td></td>
                                                 <td></td>
                                             </tr>
                                             <tr>
                                                 <td>推送成功用户数（人）</td>
-                                                <td data-th-text="${qywxDailyHeader.totalNum}"></td>
+                                                <td id="successNum"></td>
                                                 <td>推送成功率（%）</td>
-                                                <td data-th-text="${qywxDailyHeader.pushSuccessRate}"></td>
+                                                <td id="pushSuccessRate"></td>
                                             </tr>
                                             <tr>
                                                 <td>推送转化用户数（人）</td>
-                                                <td data-th-text="${qywxDailyHeader.convertNum}"></td>
+                                                <td id="convertNum"></td>
                                                 <td>推送转化率（%）</td>
-                                                <td data-th-text="${qywxDailyHeader.convertRate}"></td>
+                                                <td id="convertRate"></td>
                                             </tr>
                                             <tr>
                                                 <td>推送转化金额（元）</td>
-                                                <td data-th-text="${qywxDailyHeader.convertAmount}"></td>
+                                                <td id="convertAmount"></td>
                                                 <td></td>
                                                 <td></td>
                                             </tr>
 
                                             <tr>
                                                 <td>推送并购买推荐SPU用户数（人）</td>
-                                                <td data-th-text="${qywxDailyHeader.convertAmount}"></td>
+                                                <td id="convertSpuNum"></td>
                                                 <td>推送且购买推荐SPU转化率（%）</td>
-                                                <td data-th-text="${qywxDailyHeader.convertSpuRate}"></td>
+                                                <td id="convertSpuRate"></td>
                                             </tr>
                                             <tr>
                                                 <td>推送并购买转化金额（元）</td>
-                                                <td data-th-text="${qywxDailyHeader.convertSpuAmount}"></td>
+                                                <td id="convertSpuAmount"></td>
                                                 <td></td>
                                                 <td></td>
                                             </tr>
@@ -121,9 +122,8 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!--个体效果-->
-                            <div class="tab-pane fade" id="effect-personal-div">
+                            <!--导购结果 -->
+                            <div class="tab-pane fade" id="effect-follower-div">
                                 <!--任务效果-->
                                 <div class="row" style="margin-top: 20px;">
                                     <div class="col-md-12">
@@ -204,25 +204,41 @@
                                                 <td></td>
                                                 <td></td>
                                                 <td>推送并转化用户数（个）</td>
-                                                <td id="convertNum"></td>
+                                                <td id="convertNum1"></td>
                                                 <td>推送转化金额</td>
-                                                <td id="convertAmount"></td>
+                                                <td id="convertAmount1"></td>
                                                 <td>推送转化率</td>
-                                                <td id="convertRate"></td>
+                                                <td id="convertRate1"></td>
                                             </tr>
                                             <tr>
                                                 <td></td>
                                                 <td></td>
                                                 <td>推送并购买SPU用户数（人）</td>
-                                                <td id="convertSpuNum"></td>
+                                                <td id="convertSpuNum1"></td>
                                                 <td>推送并购买SPU转化金额（元）</td>
-                                                <td id="convertSpuAmount"></td>
+                                                <td id="convertSpuAmount1"></td>
                                                 <td>推送并购买SPU转化率（%）</td>
-                                                <td id="convertSpuRate"></td>
+                                                <td id="convertSpuRate1"></td>
                                             </tr>
                                             </tbody>
                                         </table>
                                         <small class="help-block"></small>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--个体效果-->
+                            <div class="tab-pane fade" id="effect-personal-div">
+                                <!--任务效果-->
+                                <div class="row" style="margin-top: 20px;">
+                                    <div class="col-md-12">
+                                        <h5>个体转化结果</h5>
+                                        <hr class="hr m-t-0 m-b-5"/>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-8 col-md-offset-2">
+                                        <table id="qywxDailyConvertTable" class="table table-striped table-responsive text-nowrap table-bordered"></table>
                                     </div>
                                 </div>
                             </div>

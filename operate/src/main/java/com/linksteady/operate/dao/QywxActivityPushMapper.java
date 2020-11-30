@@ -1,9 +1,8 @@
 package com.linksteady.operate.dao;
 
-import com.linksteady.operate.domain.ActivityDetail;
 import com.linksteady.operate.domain.QywxActivityDetail;
 import com.linksteady.operate.domain.QywxPushList;
-import com.linksteady.operate.vo.ActivityContentVO;
+import com.linksteady.operate.vo.FollowUserVO;
 import com.linksteady.operate.vo.QywxActivityContentTmp;
 import io.lettuce.core.dynamic.annotation.Param;
 
@@ -99,4 +98,6 @@ public interface QywxActivityPushMapper {
      * 回写uo_qywx_activity_detail的push_id
      */
     void updatePushId(long minQywxDetailId, long maxQywxDetailId, long pushId,String msgId,String status);
+
+    List<FollowUserVO> getFollowUserList(Long planId);
 }

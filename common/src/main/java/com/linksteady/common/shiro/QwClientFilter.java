@@ -1,7 +1,5 @@
 package com.linksteady.common.shiro;
 
-import com.linksteady.common.bo.UserBo;
-import com.linksteady.common.config.ShiroProperties;
 import com.linksteady.common.constant.CommonConstant;
 import com.linksteady.common.domain.SysInfoBo;
 import com.linksteady.common.service.CommonFunService;

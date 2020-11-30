@@ -83,7 +83,21 @@ public interface QywxDailyDetailMapper {
                                             @Param("offset") int offset,
                                             @Param("followUserId") String followUserId);
 
+    /**
+     * 只查询 未推送状态下导购的列表
+     * @param headId
+     * @return
+     */
     List<FollowUserVO> getFollowUserList(Long headId);
+
+
+    /**
+     * 不区分状态
+     * @param headId
+     * @return
+     */
+    List<FollowUserVO> getAllFollowUserList(Long headId);
+
 
     /**
      * 获取当前导购下唯一消息的列表

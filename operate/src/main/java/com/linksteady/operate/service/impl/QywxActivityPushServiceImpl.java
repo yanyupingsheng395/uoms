@@ -59,9 +59,6 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
     @Autowired(required = false)
     private QywxActivityPushMapper qywxActivityPushMapper;
 
-    @Autowired(required = false)
-    private QywxDailyDetailMapper qywxDailyDetailMapper;
-
     @Autowired
     ConfigService configService;
 
@@ -79,9 +76,6 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
 
     @Autowired(required = false)
     QywxActivityProductMapper activityProductMapper;
-
-    @Autowired
-    private PushConfig pushConfig;
 
     @Autowired
     private QywxMessageService qywxMessageService;
@@ -256,35 +250,6 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
             //替换利益点
             smsContent = smsContent.replace("${商品利益点}", getActivityProfilt(activityDetail.getActivityProfit(),activityDetail.getGroupId()));
 
-            //判断是否需要加上签名及退订方式
-            //获取签名
-            String signature=pushConfig.getSignature();
-            //实际推送时是否需要签名
-            String signatureFlag=pushConfig.getSendSignatureFlag();
-
-            String unsubscribe=pushConfig.getUnsubscribe();
-            //实际推送时是否需要退订信息
-            String unsubscribeFlag=pushConfig.getSendUnsubscribeFlag();
-
-            //计算文案计费条数
-            int smsLength= (StringUtils.isEmpty(smsContent)?0:smsContent.length())+
-                    (StringUtils.isEmpty(signature)?0:signature.length())+
-                    (StringUtils.isEmpty(unsubscribe)?0:unsubscribe.length());
-
-            int billCount=smsLength<=70?1:(smsLength/67+1);
-
-            //需要加上签名
-            if(null!=signatureFlag&&"Y".equals(signatureFlag))
-            {
-                smsContent =signature+smsContent;
-            }
-
-            //需要加上退订方式
-            if(null!=unsubscribeFlag&&"Y".equals(unsubscribeFlag))
-            {
-                smsContent=smsContent+unsubscribe;
-            }
-
             //构造对象
             activityContentVO=new QywxActivityContentTmp();
             activityContentVO.setTextContent(smsContent);
@@ -334,7 +299,7 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
             Long headId = activityPlan.getHeadId();
             String appId = qywxMessageService.getMpAppId();
             //按导购分组
-            List<FollowUserVO> followUserIdList =qywxDailyDetailMapper.getFollowUserList(headId);
+            List<FollowUserVO> followUserIdList =qywxActivityPushMapper.getFollowUserList(activityPlan.getPlanId());
             followUserIdList.forEach(x -> {
                 String followUserId = x.getFollowUserId();
                 // 推送消息(按消息分组)

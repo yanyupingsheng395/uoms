@@ -47,6 +47,35 @@
         <result property="couponIdentity" jdbcType="VARCHAR" column="coupon_identity"></result>
     </resultMap>
 
+    <resultMap id="qywxStatisResult" type="com.linksteady.operate.domain.QywxDailyStatis">
+        <result column="HEAD_ID" jdbcType="DECIMAL" property="headId"></result>
+        <result column="CONVERT_SPU_RATE" jdbcType="DECIMAL" property="convertSpuRate"></result>
+        <result column="CONVERT_RATE" jdbcType="DECIMAL" property="convertRate"></result>
+        <result column="CONVERT_SPU_NUM" jdbcType="DECIMAL" property="convertSpuNum"></result>
+        <result column="CONVERT_NUM" jdbcType="DECIMAL" property="convertNum"></result>
+        <result column="TOUCH_DATE" jdbcType="DECIMAL" property="touchDate"></result>
+        <result column="CONVERSION_DATE" jdbcType="DATE" property="conversionDate"></result>
+        <result column="CONVERSION_DATE_STR" jdbcType="VARCHAR" property="conversionDateStr"></result>
+    </resultMap>
+
+    <resultMap id="convertDetailMap" type="com.linksteady.operate.domain.QywxDailyPersonal">
+        <result property="userId" jdbcType="VARCHAR" column="USER_ID"></result>
+        <result property="isConvert" jdbcType="VARCHAR" column="IS_CONVERT"></result>
+        <result property="convertInterval" jdbcType="VARCHAR" column="CONVERT_INTERVAL"></result>
+        <result property="pushSpu" jdbcType="VARCHAR" column="PUSH_SPU"></result>
+        <result property="convertSpu" jdbcType="VARCHAR" column="CONVERT_SPU"></result>
+        <result property="spuIsConvert" jdbcType="VARCHAR" column="SPU_IS_CONVERT"></result>
+        <result property="userValue" jdbcType="VARCHAR" column="USER_VALUE"></result>
+        <result property="pathActive" jdbcType="VARCHAR" column="PATH_ACTIVE"></result>
+        <result property="pushDate" jdbcType="VARCHAR" column="PUSH_DATE"></result>
+        <result property="convertDate" jdbcType="VARCHAR" column="CONVERT_DATE"></result>
+
+        <result property="followUserId" jdbcType="VARCHAR" column="follow_user_id"></result>
+        <result property="followUserName" jdbcType="VARCHAR" column="follow_user_name"></result>
+        <result property="qywxContractId" jdbcType="VARCHAR" column="qywx_contract_id"></result>
+        <result property="qywxContactName" jdbcType="VARCHAR" column="qywx_contact_name"></result>
+    </resultMap>
+
     <select id="getHeadList" resultMap="baseResult">
         SELECT HEAD_ID,to_char(TASK_DATE,'YYYYMMDD') TASK_DATE_STR,TASK_DATE, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT,
         STATUS,EFFECT_DAYS,QYWX_MESSAGE_COUNT, staff_cnt, execute_staff_cnt, execute_rate
@@ -151,5 +180,54 @@
     <update id="updateSendCouponFlag">
         update uo_qywx_daily_header set coupon_send_flag='Y' where head_id=#{headId}
     </update>
+
+    <select id="getQywxDailyStatisList" resultMap="qywxStatisResult">
+        select CONVERT_SPU_RATE,
+               CONVERT_RATE,
+               CONVERT_SPU_NUM,
+               CONVERT_NUM,
+               to_char(CONVERSION_DATE, 'yyyymmdd') CONVERSION_DATE_STR
+        from UO_QYWX_DAILY_STATIS
+        where HEAD_ID = #{headId} order by CONVERSION_DATE asc
+    </select>
+
+    <select id="getConvertDetailData" resultMap="convertDetailMap">
+       select
+        t.user_id, --用户ID
+        t.follow_user_id,
+        t.qywx_contract_id,
+        t2.follow_user_name,
+        t2.qywx_contact_name,
+        t.path_active, --活跃度
+        t.user_value, --用户价值
+        t.push_date, --推送日期
+        t.conversion_date convert_date, --转化日期
+        round((extract(day from t.conversion_date::timestamp-t.push_date::timestamp) * 24 + extract(hour from
+        t.conversion_date::timestamp-t.push_date::timestamp))::numeric/24::numeric, 1)::varchar CONVERT_INTERVAL, --转换间隔
+        t.spu_consistent, --推荐SPU与购买SPU是否一致 Y表示是 N表示否
+        t.rec_spu_name PUSH_SPU, --推荐SPU名称
+        t.IS_CONVERSION IS_CONVERT,
+        t.SPU_CONSISTENT SPU_IS_CONVERT
+        --转化的SPU名称
+        from UO_QYWX_DAILY_CONVERT_DETAIL t left join
+              (
+                    select  uo_qywx_external_user_list.follow_user_id,
+                            uo_qywx_external_user_list.external_userid,
+                            uo_qywx_follower_user_list.name follow_user_name,
+                            uo_qywx_external_user_list.name qywx_contact_name
+                    from uo_qywx_external_user_list join uo_qywx_follower_user_list
+                    on uo_qywx_external_user_list.follow_user_id=uo_qywx_follower_user_list.user_id
+              ) t2 on t.follow_user_id= t2.follow_user_id
+                and t.qywx_contract_id=t2.external_userid
+        where  t.daily_header_id=#{headId} and t.IS_CONVERSION = '1' order by t.daily_detail_id asc
+        limit #{limit} offset #{offset}
+    </select>
+
+    <select id="getConvertDetailCount" resultType="int">
+         select
+                   count(1)
+                from UO_QYWX_DAILY_CONVERT_DETAIL t
+                where  t.daily_header_id=#{headId} and t.IS_CONVERSION = '1'
+    </select>
 
 </mapper>

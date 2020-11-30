@@ -73,6 +73,11 @@
         <result column="FOLLOW_USER_ID" jdbcType="VARCHAR" property="followUserId"/>
     </resultMap>
 
+    <resultMap id="followUserResult" type="com.linksteady.operate.vo.FollowUserVO">
+        <result column="FOLLOW_USER_ID" jdbcType="VARCHAR" property="followUserId"></result>
+        <result column="FOLLOW_USER_NAME" jdbcType="VARCHAR" property="followUserName"></result>
+    </resultMap>
+
     <delete id="deleteContentTmp">
         DELETE FROM UO_QYWX_ACTIVITY_CONTENT_TMP WHERE PLAN_ID=#{planId}::int4
     </delete>
@@ -250,5 +255,12 @@
         set push_id=#{pushId},msg_id=#{msgId},push_status=#{status}
         where qywx_detail_id &gt;=#{minDetailId} and qywx_detail_id &lt;=#{maxDetailId}
     </update>
+
+    <select id="getFollowUserList" resultMap="followUserResult">
+        select follow_user_id,coalesce(name,'未知') follow_user_name from
+            (select distinct follow_user_id from uo_qywx_activity_detail where plan_id=#{planId} and push_status='X') t1 left join
+            uo_qywx_follower_user_list on t1.follow_user_id=uo_qywx_follower_user_list.user_id
+            order by follow_user_id asc
+    </select>
 
 </mapper>

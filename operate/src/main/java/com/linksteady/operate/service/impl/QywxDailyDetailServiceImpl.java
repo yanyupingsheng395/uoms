@@ -148,8 +148,8 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
     }
 
     @Override
-    public List<FollowUserVO> getFollowUserList(Long headId) {
-        return qywxDailyDetailMapper.getFollowUserList(headId);
+    public List<FollowUserVO> getAllFollowUserList(Long headId) {
+        return qywxDailyDetailMapper.getAllFollowUserList(headId);
     }
 
 

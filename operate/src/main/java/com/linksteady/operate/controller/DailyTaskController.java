@@ -257,13 +257,13 @@ public class DailyTaskController {
     }
 
     /**
-     * 获取当前日期和任务日期、任务天数
+     * 获取任务的详细信息
      *
      * @param headId
      * @return
      */
-    @GetMapping("/getCurrentAndTaskDate")
-    public ResponseBo getCurrentAndTaskDate(@RequestParam Long headId) {
+    @GetMapping("/getOverAllInfo")
+    public ResponseBo getOverAllInfo(@RequestParam Long headId) {
         return ResponseBo.okWithData(null, dailyService.getDailyHeadById(headId));
     }
 

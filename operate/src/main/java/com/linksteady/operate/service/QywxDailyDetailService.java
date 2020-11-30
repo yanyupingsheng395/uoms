@@ -55,6 +55,6 @@ public interface QywxDailyDetailService {
     /**
      * 获取微信企业成员列表
      */
-    List<FollowUserVO> getFollowUserList(Long headId);
+    List<FollowUserVO> getAllFollowUserList(Long headId);
 
 }
