@@ -434,7 +434,8 @@ public class QywxClientController {
     /**
      * 获取jsapi相关的配置信息
      */
-    @RequestMapping("/jsapi/getJsapiInfo")
+    @RequestMapping("/getJsapiInfo")
+    @ResponseBody
     public ResponseBo getJsapiInfo(HttpServletRequest httpServletRequest)
     {
         Map<String,String> result= null;
@@ -459,12 +460,12 @@ public class QywxClientController {
 
             //获取应用的ticket
              String agentTicket=qywxService.getAgentJsapiTicket();
+
             String agentContent="jsapi_ticket="+agentTicket+"&noncestr="+nonceStr+"&timestamp="+timestamp+"&url="+url;
             String agentSignature=SHA1.gen(agentContent);
 
             result.put("agentId",agentId);
             result.put("agentSignature",agentSignature);
-
             return ResponseBo.okWithData("",result);
         } catch (Exception e) {
             e.printStackTrace();

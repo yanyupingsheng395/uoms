@@ -55,7 +55,7 @@ function getMediaId(){
 
 
 function sendImg(mediaid){
-    $.get( "/jsapi/getJsapiInfo", {url: location.href.split( '#' )[0]}, function (r) {
+    $.get( "/qwClient/getJsapiInfo", {url: location.href.split( '#' )[0]}, function (r) {
         if (r.code == 200) {
             var data = r.data;
             appId = data['corpId'];
@@ -74,34 +74,6 @@ function sendImg(mediaid){
                 jsApiList: ['getCurExternalChat', 'sendChatMessage', 'getContext'] // 必填，需要使用的JS接口列表，凡是要调用的接口都需要传进来
             } );
             wx.ready( function () {
-                // config信息验证后会执行ready方法，所有接口调用都必须在config接口获得结果之后，config是一个客户端的异步操作，所以如果需要在页面加载时就调用相关接口，则须把相关接口放在ready函数中调用来确保正确执行。对于用户触发时才调用的接口，则可以直接调用，不需要放在ready函数中。
-              /*  wx.agentConfig( {
-                    corpid: appId, // 必填，企业微信的corpid，必须与当前登录的企业一致
-                    agentid: agentId, // 必填，企业微信的应用id （e.g. 1000247）
-                    timestamp: timestamp, // 必填，生成签名的时间戳
-                    nonceStr: nonceStr, // 必填，生成签名的随机串
-                    signature: agentSignature,// 必填，签名，见附录-JS-SDK使用权限签名算法
-                    jsApiList: ['sendChatMessage', 'getCurExternalContact', 'getContext'], //必填
-                    success: function (res) {
-                        wx.invoke('sendChatMessage', {
-                            msgtype:"image", //消息类型，必填
-                            image:
-                                {
-                                    mediaid: mediaid, //图片的素材id
-                                }
-                        }, function(res) {
-                            if (res.err_msg == 'sendChatMessage:ok') {
-                                $.toast("<font style='font-size: 14px;'><span class='icon icon-71'></span>&nbsp;发送成功！</font>", "text");
-                            }
-                        })
-                    },
-                    fail: function (res) {
-                        document.write( JSON.stringify( res ) );
-                        if (res.errMsg.indexOf( 'function not exist' ) > -1) {
-                            alert( '版本过低请升级' )
-                        }
-                    }
-                } );*/
                 wx.invoke('sendChatMessage', {
                     msgtype:"image", //消息类型，必填
                     image:
