@@ -31,9 +31,7 @@ public class QwClientFilter extends AccessControlFilter {
         Subject subject = getSubject(servletRequest, servletResponse);
         //企业微信进行oauth认证的地址
         CommonFunService commonFunService= (CommonFunService) SpringContextUtils.getBean("commonFunServiceImpl");
-        log.info("企业微信进行oauth认证的地址",commonFunService.toString());
         SysInfoBo sysInfoBo=commonFunService.getSysInfoByCode(CommonConstant.SYS_CODE);
-        log.info("获取sysInfoBo{}",sysInfoBo.toString());
         if(null==sysInfoBo|| StringUtils.isEmpty(sysInfoBo.getSysDomain()))
         {
             WebUtils.issueRedirect(servletRequest, servletResponse,"error/403");
@@ -48,7 +46,7 @@ public class QwClientFilter extends AccessControlFilter {
             String sourceUrl=java.net.URLEncoder.encode(httpRequest.getServletPath(),"utf-8");
             log.info("QwClientFilter sourceUrl={}",sourceUrl);
             httpRequest.getSession().setAttribute("sourceUrl",sourceUrl);
-
+            log.info("拦截器sessionid{}",httpRequest.getSession().getId());
             //重定向到企业微信的oauth接口
             WebUtils.issueRedirect(servletRequest, servletResponse,sysInfoBo.getSysDomain()+"/qw/oauth");
             return false;

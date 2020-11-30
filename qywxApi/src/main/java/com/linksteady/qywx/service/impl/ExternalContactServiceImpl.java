@@ -326,4 +326,9 @@ public class ExternalContactServiceImpl implements ExternalContactService {
         return externalContactMapper.getgetAddTimeCount(followUserId);
     }
 
+    @Override
+    public ExternalContact getUserInfo(String followUserId, String externalUserId) {
+        return  externalContactMapper.getUserInfo(followUserId,externalUserId);
+    }
+
 }

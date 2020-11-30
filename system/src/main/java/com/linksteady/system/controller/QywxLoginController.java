@@ -8,7 +8,6 @@ import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.SysInfoBo;
 import com.linksteady.common.domain.User;
 import com.linksteady.common.service.CommonFunService;
-import com.linksteady.common.service.ConfigService;
 import com.linksteady.common.shiro.UoShiroRealm;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.system.exception.QywxLoginException;
@@ -25,10 +24,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -225,7 +223,6 @@ public class QywxLoginController extends BaseController {
             sbf.append("&response_type=code");
             sbf.append("&scope=snsapi_base");
             sbf.append("&state=linksteady#wechat_redirect");
-
             return "redirect:" + sbf.toString();
         } catch (UnsupportedEncodingException e) {
             log.error("oauth回调链接加密错误，原因为{}", e);
@@ -308,8 +305,8 @@ public class QywxLoginController extends BaseController {
                     userService.updateLoginTime(username);
                     //记录登录事件
                     userService.logLoginEvent(username, "企业微信客户端登录成功");
-                    log.info("客户端登录成功，request.session信息{}",request.getSession());
-                   String sourceUrl = (String) request.getSession().getAttribute("sourceUrl");
+                    log.info("微信回调后sessionid{}",request.getSession().getId());
+                   String sourceUrl = (String) getSubject().getSession().getAttribute("sourceUrl");
                     log.info("用户来源的地址为:{}",sourceUrl);
                     if (!StringUtils.isEmpty(sourceUrl)) {
                         String s = sysInfoBo.getSysDomain()+"/qwClient/index";
@@ -321,7 +318,7 @@ public class QywxLoginController extends BaseController {
                         request.getSession().setAttribute("sourceUrl", "");
                         return "redirect:" + sysInfoBo.getSysDomain()+s;
                     } else {
-                        return "redirect:"+sysInfoBo.getSysDomain()+"/qwClient/guidance";
+                        return "redirect:"+sysInfoBo.getSysDomain()+"/qwClient/index";
                     }
                 }
             }

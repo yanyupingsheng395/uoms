@@ -66,4 +66,6 @@ public interface ExternalContactMapper {
     int getQywxGuidanceCount(String followUserId, String relation, String loss, String stagevalue, String interval);
 
     int getgetAddTimeCount(String followUserId);
+
+    ExternalContact getUserInfo(String followUserId, String externalUserId);
 }

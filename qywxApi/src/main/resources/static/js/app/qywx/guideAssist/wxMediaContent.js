@@ -1,7 +1,7 @@
-let appId, timestamp, nonceStr, signature, agentId, agentSignature;
+var appId, timestamp, nonceStr, signature, agentId, agentSignature;
 
-let CURR_EXTERNAL_USER_ID;
-let CURRENT_USER;
+var CURR_EXTERNAL_USER_ID;
+var CURRENT_USER;
 $( function () {
     if(!isWeiXin())
     {
@@ -40,7 +40,7 @@ function getMediaId(){
         identityType="COUPON";
     }
 
-    $.get( "/wxMedia/getMediaId", {identityId: identityId, identityType: identityType}, function (r) {
+    $.get( "/qwClient/getMediaId", {identityId: identityId, identityType: identityType}, function (r) {
         if (r.code === 200) {
             console.log(r);
             if(r.data!=null){
@@ -57,7 +57,7 @@ function getMediaId(){
 function sendImg(mediaid){
     $.get( "/jsapi/getJsapiInfo", {url: location.href.split( '#' )[0]}, function (r) {
         if (r.code == 200) {
-            let data = r.data;
+            var data = r.data;
             appId = data['corpId'];
             timestamp = data['timestamp'];
             nonceStr = data['nonceStr'];
@@ -75,7 +75,7 @@ function sendImg(mediaid){
             } );
             wx.ready( function () {
                 // config信息验证后会执行ready方法，所有接口调用都必须在config接口获得结果之后，config是一个客户端的异步操作，所以如果需要在页面加载时就调用相关接口，则须把相关接口放在ready函数中调用来确保正确执行。对于用户触发时才调用的接口，则可以直接调用，不需要放在ready函数中。
-                wx.agentConfig( {
+              /*  wx.agentConfig( {
                     corpid: appId, // 必填，企业微信的corpid，必须与当前登录的企业一致
                     agentid: agentId, // 必填，企业微信的应用id （e.g. 1000247）
                     timestamp: timestamp, // 必填，生成签名的时间戳
@@ -101,7 +101,18 @@ function sendImg(mediaid){
                             alert( '版本过低请升级' )
                         }
                     }
-                } );
+                } );*/
+                wx.invoke('sendChatMessage', {
+                    msgtype:"image", //消息类型，必填
+                    image:
+                        {
+                            mediaid: mediaid, //图片的素材id
+                        }
+                }, function(res) {
+                    if (res.err_msg == 'sendChatMessage:ok') {
+                        $.toast("<font style='font-size: 14px;'><span class='icon icon-71'></span>&nbsp;发送成功！</font>", "text");
+                    }
+                })
             } );
         }
         else
@@ -113,7 +124,7 @@ function sendImg(mediaid){
 }
 
 function isWeiXin(){
-    let ua = window.navigator.userAgent.toLowerCase();
+    var ua = window.navigator.userAgent.toLowerCase();
     if(ua.match(/MicroMessenger/i) == 'micromessenger'){
         return true;
     }else{

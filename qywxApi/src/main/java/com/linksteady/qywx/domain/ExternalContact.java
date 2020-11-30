@@ -11,7 +11,6 @@ import javax.persistence.Column;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 外部联系人
@@ -101,6 +100,12 @@ public class ExternalContact implements Serializable {
 
     @Column(name="mobile")
     private String mobile;
+
+    @Column(name="operate_user_id")
+    private String operateUserId;
+
+    @Column(name="mapping_flag")
+    private String mappingFlag;
 
 
     /**

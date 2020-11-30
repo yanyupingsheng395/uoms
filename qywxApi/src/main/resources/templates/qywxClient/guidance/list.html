@@ -71,6 +71,7 @@
                                     <li class="pull-right">
                                         <a class="btn btn-primary btn-rounded btn-sm" onclick="searchData()"><i class="fa fa-search"></i>&nbsp;搜索</a>
                                         <a class="btn btn-warning btn-rounded btn-sm" onclick="refreshData()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                        <a class="btn btn-warning btn-rounded btn-sm" onclick="goindex()"><i class="fa fa-refresh"></i>&nbsp;进首页</a>
                                     </li>
                                 </ul>
                             </div>
@@ -90,6 +91,10 @@
     </div>
 </body>
 <script>
+
+    function goindex() {
+        window.location.href="/qwClient/index";
+    }
     //页面进入时，默认选择已购买（type=0）。
     var chooseFlag=0;
     $(function(){

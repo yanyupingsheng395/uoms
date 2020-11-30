@@ -23,7 +23,7 @@ public interface ExternalContactService {
     /**
      * 获取每个客户的详细信息
      */
-    ExternalContact getExternalContractDetail(String followerUserId,String externalUserid) throws WxErrorException;
+    ExternalContact getExternalContractDetail(String followerUserId, String externalUserid) throws WxErrorException;
 
 
     Map<String,Object> getExternalContractDetailBatch(String cursor, String followerUserId, List<String> externalUserList) throws WxErrorException;
@@ -78,4 +78,6 @@ public interface ExternalContactService {
     int getQywxGuidanceCount(String followUserId, String relation, String loss, String stagevalue, String interval);
 
     int getgetAddTimeCount(String followUserId);
+
+    ExternalContact getUserInfo(String followUserId, String externalUserId);
 }

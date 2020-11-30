@@ -144,7 +144,7 @@
     function loadFriendTable()
     {
         let settings = {
-            url: "/friend/guideList",
+            url: "/qwClient/guideList",
             pagination: true,
             sidePagination: "server",
             pageNumber: 1,
@@ -153,8 +153,8 @@
             singleSelect: true,
             queryParams: function (params) {
                 return {
-                    pageSize: params.limit,
-                    pageNum: (params.offset / params.limit) + 1
+                    limit: params.limit,
+                    offset: (params.offset / params.limit)
                 };
             },
             columns: [

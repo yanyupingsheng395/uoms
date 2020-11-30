@@ -11,6 +11,8 @@
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="state" jdbcType="VARCHAR" property="state"/>
         <result column="createtime" jdbcType="VARCHAR" property="createtime"/>
+        <result column="operate_user_id" jdbcType="VARCHAR" property="operateUserId"/>
+        <result column="mapping_flag" jdbcType="VARCHAR" property="mappingFlag"/>
     </resultMap>
 
    <insert id="saveExternalUserList">
@@ -297,5 +299,9 @@
         <if test="interval!=null and interval !=''">
             and touch_interval=#{interval}
         </if>
+    </select>
+
+    <select id="getUserInfo" resultMap="externalUserMap">
+        select operate_user_id,name,mapping_flag from uo_qywx_external_user_list where follow_user_id=
     </select>
 </mapper>
