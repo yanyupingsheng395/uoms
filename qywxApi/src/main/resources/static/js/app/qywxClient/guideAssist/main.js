@@ -73,13 +73,13 @@ function getExternalUserId() {
             $.get( "/qwClient/getExternalUserInfo", {externalUserId: CURR_EXTERNAL_USER_ID}, function (r) {
                 if (r.code === 200) {
                     let operateUserId=r.data['operateUserId'];
-                    if(null!=operateUserId&&operateUserId!=-999)
-                    {
+                    if(null!=operateUserId&&operateUserId!=-999){
                         OPERATE_USER_ID=operateUserId;
                         tabChange(operateUserId);
                         recProductList(operateUserId);
-                    }
+                    }else{
 
+                    }
                     //企业微信外部客户的名称
                     let userName = r.data['name'];
                     CURRENT_USER = userName;
@@ -114,13 +114,13 @@ function getUserInitData(spuId) {
         if (r.code === 200) {
             let data = r.data;
             // 获取购买历史数据
-            let userBuyHistoryList = data['userBuyHistoryList'];
+            let userBuyHistoryList = data.userBuyHistoryList;
             buildUserBuyHistory(userBuyHistoryList);
-            let spuList = data['spuList'];
+            let spuList = data.spuList;
             buildSpuList(spuList, spuId);
-            let userStats = data['userStats'];
+            let userStats = data.userStats;
             buildUserStats(userStats);
-            let userDesc = r['userDesc'];
+            let userDesc = r.userDesc;
             $("#userDesc").html('').append(userDesc);
         }
     } );
@@ -290,9 +290,9 @@ function tabChange(operateUserId) {
 function getUserGuideInfo(operateUserId, productId) {
     $.get( "/qwClient/getUserGuideInfo", {operateUserId: operateUserId, productId: productId}, function (r) {
         if (r.code === 200) {
-            guidePurchTimes( r.data['userTodayStatus'] );
-            guidePurchWeek( r.data['userTimeList'] );
-            guideCoupon( r.data['couponList'] );
+            guidePurchTimes( r.userTodayStatus );
+            guidePurchWeek( r.userTimeList );
+            guideCoupon( r.couponList );
         }
     } );
 }
@@ -490,7 +490,7 @@ function guidePurchWeek(data) {
             }
         ]
     };
-    $( "#guidePurchWeekTable" ).bootstrapTable( settings ).bootstrapTable( 'load', data );
+    $( "#guidePurchWeek" ).bootstrapTable( settings ).bootstrapTable( 'load', data );
 }
 
 /**
