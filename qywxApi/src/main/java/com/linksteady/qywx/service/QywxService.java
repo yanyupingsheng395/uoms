@@ -16,7 +16,7 @@ public interface QywxService {
     /**
      * 更新corpId和应用secret
      */
-    void updateCorpInfo(String corpId,String secret);
+    void updateCorpInfo(String corpId,String secret,String agentId);
 
     /**
      * 获取外部联系人事件的token
@@ -80,4 +80,5 @@ public interface QywxService {
     String getAgentJsapiTicket() throws WxErrorException;
 
 
+    void saveFile(String title, String content);
 }

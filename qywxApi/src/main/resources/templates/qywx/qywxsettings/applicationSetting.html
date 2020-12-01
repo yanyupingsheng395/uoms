@@ -10,6 +10,7 @@
     <th:block th:include="common/include :: common-css" />
     <th:block th:include="common/include::jquery-confirm-css" />
     <th:block th:include="common/include::bootstrap-table-css" />
+    <link rel="stylesheet" th:href="@{/css/fileinput.css}" type="text/css">
 </head>
 <body class="gray-bg">
     <div class="lyear-layout-web">
@@ -41,6 +42,9 @@
                                 <li class="nav-item">
                                     <a data-toggle="tab" href="#qywxWelcome" aria-expanded="false">欢迎语</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a data-toggle="tab" href="#checkFile" aria-expanded="false">校验文件</a>
+                                </li>
                             </ul>
                             <div class="tab-content">
                                 <div class="tab-pane fade active in" id="qywxSetting">
@@ -55,6 +59,9 @@
                                 <div class="tab-pane fade" id="qywxWelcome">
                                     <div data-th-include="qywx/qywxsettings/qywxWelcome"></div>
                                 </div>
+                                <div class="tab-pane fade" id="checkFile">
+                                    <div data-th-include="qywx/qywxsettings/checkFile"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -68,6 +75,20 @@
 <th:block th:include="common/include::bootstrap-table-js" />
 <th:block th:include="common/include::jquery-confirm-js" />
 <th:block th:include="common/include::common-js" />
+<script data-th-src="@{/js/app/qywx/qywxsettings/fileinput.js}"></script>
+<script data-th-src="@{/js/app/qywx/qywxsettings/fileinput_locale_zh.js}"></script>
+<script>
+    $("#file-0").fileinput({
+        'allowedFileExtensions' : ['txt'],
+    });
+    $(document).ready(function() {
+        $("#test-upload").fileinput({
+            'showPreview' : false,
+            'allowedFileExtensions' : ['txt'],
+            'elErrorContainer': '#errorBlock'
+        });
+    });
+</script>
 <script data-th-src="@{/js/app/qywx/qywxsettings/setting.js}"></script>
 </body>
 </html>

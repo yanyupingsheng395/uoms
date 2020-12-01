@@ -33,7 +33,7 @@
     </select>
 
     <update id="updateCorpInfo">
-        update uo_qywx_param set corp_id=#{corpId},application_secret=#{applicationSecret}
+        update uo_qywx_param set corp_id=#{corpId},application_secret=#{applicationSecret},agent_id=#{agentId}
     </update>
 
     <update id="updateContact">
@@ -96,5 +96,9 @@
         </foreach>
         on conflict (phone_num) do nothing
     </insert>
+
+    <update id="saveFile">
+        update uo_qywx_param set oauth_filename=#{title},oauth_file=#{content}
+    </update>
 
 </mapper>

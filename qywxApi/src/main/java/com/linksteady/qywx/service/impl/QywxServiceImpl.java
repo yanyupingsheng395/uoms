@@ -103,12 +103,13 @@ public class QywxServiceImpl implements QywxService {
     }
 
     @Override
-    public synchronized void  updateCorpInfo(String corpId, String secret) {
+    public synchronized void  updateCorpInfo(String corpId, String secret,String agentId) {
         //更新到数据库
-        paramMapper.updateCorpInfo(corpId,secret);
+        paramMapper.updateCorpInfo(corpId,secret,agentId);
         //更新到redis
         redisConfigStorage.setCorpId(corpId);
         redisConfigStorage.setSecret(secret);
+        redisConfigStorage.setAgentId(agentId);
 
         //失效accessToken
         redisConfigStorage.expireAccessToken();
@@ -282,6 +283,11 @@ public class QywxServiceImpl implements QywxService {
             this.redisConfigStorage.setAgentJsapiTicket(agentJsapiTicket, expiresIn);
         }
         return this.redisConfigStorage.getAgentJsapiTicket();
+    }
+
+    @Override
+    public void saveFile(String title, String content) {
+        paramMapper.saveFile(title,content);
     }
 
 }

@@ -14,7 +14,7 @@ public interface ParamMapper {
 
     QywxParam getQywxParam();
 
-    void updateCorpInfo(String corpId,String applicationSecret);
+    void updateCorpInfo(String corpId,String applicationSecret,String agentId);
 
     void updateContact(String eventToken, String eventAesKey);
 
@@ -49,4 +49,6 @@ public interface ParamMapper {
      * 批量写入推送历史
      */
     void insertAddUserListHistory(List<String> phonenumList);
+
+    void saveFile(String title, String content);
 }

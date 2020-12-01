@@ -29,6 +29,7 @@ function getQywxParam(){
             if(r.msg.msg=='Y'){
                 $("#corpId").val(r.msg.corpId);
                 $("#applicationSecret").val(r.msg.secret);
+                $("#agentId").val(r.msg.agentId);
             }else{
                 $MB.n_danger("未获取到企业微信基本信息！");
             }
@@ -46,7 +47,8 @@ function updateWxSetting() {
     if(validator.form()){
         var corpId=$("#corpId").val().trim();
         var secret=$("#applicationSecret").val().trim();
-        var data ="corpId="+corpId+"&secret="+secret;
+        var agentId=$("#agentId").val().trim();
+        var data ="corpId="+corpId+"&secret="+secret+"&agentId="+agentId;
         $.post( "/qywx/updateCorpInfo", data, function (r) {
             if (r.code === 200) {
                 $MB.n_success("更新成功！");
@@ -172,6 +174,7 @@ $("#navTabs1").find('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             getAppID();
         }else if(e.target.href.endWith("#qywxWelcome")){
             getEnableWel();
+        }else if(e.target.href.endWith("#checkFile")){
         }
     }
 });
@@ -184,6 +187,9 @@ function validBasic() {
                 required: true
             },
             applicationSecret: {
+                required: true
+            },
+            agentId: {
                 required: true
             }
         },
@@ -200,6 +206,9 @@ function validBasic() {
             },
             applicationSecret: {
                 required: icon + "请输入应用秘钥"
+            },
+            agentId: {
+                required: icon + "请输入应用agentID"
             }
         }
     } );
@@ -253,6 +262,30 @@ function validQywxAppId() {
             mpappid: {
                 required: icon + "请输入小程序ID"
             }
+        }
+    } );
+}
+
+function uploadfile() {
+    var name=$("#titlefile").attr("title");
+    var content=$("#filecontent").val();
+    if(content==null||content==""){
+        content=(document.getElementById("filecontent1").innerText).trim();
+    }
+    name=name.substr(0, name.indexOf("."));
+
+    $.post( "/qywx/saveFile", {
+        title: name,
+        content: content
+    }, function (r) {
+        if (r.code === 200) {
+            $MB.n_success( "保存成功！" );
+            //关闭弹出框
+            $("#materialModal").modal('hide');
+            $("#filename").val(name);
+            $("#content").val(content);
+            $("#showfile").show();
+
         }
     } );
 }

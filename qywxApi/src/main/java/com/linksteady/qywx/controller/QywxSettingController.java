@@ -35,10 +35,12 @@ public class QywxSettingController {
         RedisConfigStorageImpl storage = qywxService.getRedisConfigStorage();
         String corpId = storage.getCorpId();
         String secret = storage.getSecret();
+        String agentId=qywxService.getAgentId();
         Map<String,Object> result= Maps.newHashMap();
         if(StringUtils.isNotEmpty(corpId)&&StringUtils.isNotEmpty(secret)){
             result.put("corpId",corpId);
             result.put("secret",secret);
+            result.put("agentId",agentId);
             result.put("msg","Y");
         }else {
             result.put("msg","N");
@@ -53,9 +55,9 @@ public class QywxSettingController {
      * @return
      */
     @PostMapping("/updateCorpInfo")
-    public ResponseBo updateCorpInfo(String corpId,String secret){
+    public ResponseBo updateCorpInfo(String corpId,String secret,String agentId){
         try {
-            qywxService.updateCorpInfo(corpId, secret);
+            qywxService.updateCorpInfo(corpId, secret,agentId);
             return ResponseBo.ok();
         } catch (Exception e) {
             return ResponseBo.error();
@@ -147,4 +149,13 @@ public class QywxSettingController {
         }
     }
 
+    @PostMapping("/saveFile")
+    public ResponseBo saveFile(String title,String content){
+        try {
+            qywxService.saveFile(title,content);
+            return ResponseBo.ok();
+        }catch (Exception e){
+            return ResponseBo.error();
+        }
+    }
 }
