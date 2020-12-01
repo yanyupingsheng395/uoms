@@ -59,7 +59,7 @@ function getExternalUserId() {
                 }
             } );
         } else {
-            alert( "发送失败！" );
+            alert( "企业微信授权失败！详情:"+res.err_msg );
         }
     } );
 }
