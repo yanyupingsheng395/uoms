@@ -274,7 +274,13 @@ public class ExternalContactServiceImpl implements ExternalContactService {
      */
     @Override
     public List<ExternalContact> getAddTimeList(String followUserId, String addtime,Integer offset, Integer limit) {
-        return  externalContactMapper.selectExternalUserList(followUserId,addtime,offset,limit);
+        List<ExternalContact> result = externalContactMapper.selectExternalUserList(followUserId,addtime,offset,limit);
+        for (ExternalContact externalContact : result) {
+            //设置添加时间
+            externalContact.setCreateTimeStr(TimeStampUtils.timeStampToDateString(externalContact.getCreatetime()));
+            //设置标签
+        }
+        return result;
     }
 
     @Override

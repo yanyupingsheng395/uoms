@@ -173,7 +173,6 @@ public class QywxClientController {
             }
             GuideResult resultData = guideResultService.getResultData(followUserId, startDt, endDt);
             resultData.getUserTotalCnt();
-            log.info("获取到的结果：" + resultData);
             return ResponseBo.okWithData(null,resultData);
         } else {
             throw new IllegalArgumentException("未获取到登录会话！");
@@ -209,6 +208,7 @@ public class QywxClientController {
      * @return
      */
     @RequestMapping("/getUserBuyHistory")
+    @ResponseBody
     public ResponseBo getUserBuyHistory(@RequestParam String externalUserId, @RequestParam Long spuId) {
         try {
             UserBo userBo =(UserBo) SecurityUtils.getSubject().getPrincipal();
@@ -327,11 +327,14 @@ public class QywxClientController {
      * @throws URISyntaxException
      */
     @RequestMapping("/getUserGuideInfo")
+    @ResponseBody
     public Map<String, Object> getUserGuideInfo(@RequestParam String operateUserId, @RequestParam String productId) throws URISyntaxException {
         UserBo userBo =(UserBo) SecurityUtils.getSubject().getPrincipal();
         if (StringUtils.isNotEmpty(operateUserId) && StringUtils.isNotEmpty(productId)) {
             if (null != userBo) {
-                return userTaskService.getUserGuideInfo(operateUserId, productId);
+                Map<String, Object> info = userTaskService.getUserGuideInfo(operateUserId, productId);
+                info.put("code",200);
+                return info;
             } else {
                 throw new IllegalArgumentException("未获取到登录会话！");
             }
@@ -346,11 +349,13 @@ public class QywxClientController {
      * @return
      */
     @RequestMapping("/getRecProductList")
+    @ResponseBody
     public Map<String, Object> getRecProductList(@RequestParam String operateUserId) {
         UserBo userBo =(UserBo) SecurityUtils.getSubject().getPrincipal();
         if (StringUtils.isNotEmpty(operateUserId)) {
             if (null != userBo) {
-                return ResponseBo.okWithData(null, userTaskService.getRecProductList(operateUserId));
+                List<Map<String, Object>> list = userTaskService.getRecProductList(operateUserId);
+                return ResponseBo.okWithData(null, list);
             } else {
                 throw new IllegalArgumentException("未获取到登录会话！");
             }
