@@ -257,7 +257,22 @@
 
     <select id="selectExternalUserList" resultMap="externalUserMap">
          select external_userid,name,follow_user_id,remark,state,createtime from uo_qywx_external_user_list
-         where lower(follow_user_id)=#{followUserId}  limit #{limit} offset #{offset}
+         where lower(follow_user_id)=#{followUserId}
+         <choose>
+             <when test="addtime!=null and addtime!='' and addtime=='onday'">
+                 and current_date=insert_dt::date
+             </when>
+             <when test="addtime!=null and addtime!='' and addtime=='onweek'">
+                 and current_date-7 &lt;= insert_dt::date
+             </when>
+             <when test="addtime!=null and addtime!='' and addtime=='onmonth'">
+                 and current_date-30 &lt;= insert_dt::date
+             </when>
+             <otherwise>
+                 and current_date-30 &gt; insert_dt::date
+             </otherwise>
+         </choose>
+          limit #{limit} offset #{offset}
     </select>
 
     <select id="getQywxGuidanceList" resultMap="externalUserMap">

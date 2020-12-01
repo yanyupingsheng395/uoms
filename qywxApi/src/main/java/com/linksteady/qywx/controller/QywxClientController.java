@@ -81,6 +81,16 @@ public class QywxClientController {
     }
 
     /**
+     * 聊天工具栏页
+     *
+     * @return
+     */
+    @RequestMapping("/guideAssist/main")
+    public String guideAssist() {
+        return "qywxClient/guideAssist/main";
+    }
+
+    /**
      * 导购结果
      *
      * @return

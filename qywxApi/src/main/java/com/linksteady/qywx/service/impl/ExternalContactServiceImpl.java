@@ -266,7 +266,6 @@ public class ExternalContactServiceImpl implements ExternalContactService {
     }
 
     /**
-     * todo 此方法有性能问题，优化；
      * @param followUserId
      * @param addtime
      * @param offset
@@ -275,42 +274,7 @@ public class ExternalContactServiceImpl implements ExternalContactService {
      */
     @Override
     public List<ExternalContact> getAddTimeList(String followUserId, String addtime,Integer offset, Integer limit) {
-        List<ExternalContact> result=Lists.newArrayList();
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        //查询结果集
-        List<ExternalContact> querydata = externalContactMapper.selectExternalUserList(followUserId,offset,limit);
-        //获取当前时间
-        LocalDateTime nowtime = LocalDateTime.now();
-        for (ExternalContact externalContact : querydata) {
-            String createTime=externalContact.getCreatetime();
-            if(StringUtils.isNotEmpty(createTime)){
-                LocalDateTime localDate = LocalDateTime.parse(TimeStampUtils.timeStampToDateString(createTime),dtf);
-                //获取创建时间和当前时间的差额
-                long  days= ChronoUnit.DAYS.between(localDate, nowtime);
-                //将创建时间格式化
-                externalContact.setCreateTimeStr(TimeStampUtils.timeStampToDateString(createTime));
-                if(days>0){
-                    if("onday".equals(addtime)){
-                        if(days<=1){
-                            result.add(externalContact);
-                        }
-                    }else if("onweek".equals(addtime)){
-                        if(days<=7){
-                            result.add(externalContact);
-                        }
-                    }else if("onmonth".equals(addtime)){
-                        if(days<=30){
-                            result.add(externalContact);
-                        }
-                    }else if("other".equals(addtime)){
-                        if(days>30){
-                            result.add(externalContact);
-                        }
-                    }
-                }
-            }
-        }
-        return result;
+        return  externalContactMapper.selectExternalUserList(followUserId,addtime,offset,limit);
     }
 
     @Override
@@ -339,5 +303,4 @@ public class ExternalContactServiceImpl implements ExternalContactService {
     public ExternalContact selectExternalUser(String followUserId, String externalUserId) {
         return externalContactMapper.selectExternalUser(followUserId,externalUserId);
     }
-
 }

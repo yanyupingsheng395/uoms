@@ -59,7 +59,7 @@ public interface ExternalContactMapper {
     void saveExternalUserId(String followerUserId, String externalUserId);
 
 
-    List<ExternalContact> selectExternalUserList(String followUserId,Integer offset, Integer limit);
+    List<ExternalContact> selectExternalUserList(String followUserId,String addtime,Integer offset, Integer limit);
 
     /**
      * 获取导购关系指引列表
