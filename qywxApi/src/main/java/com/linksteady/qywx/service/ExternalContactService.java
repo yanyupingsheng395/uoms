@@ -79,5 +79,6 @@ public interface ExternalContactService {
 
     int getgetAddTimeCount(String followUserId);
 
-    ExternalContact getUserInfo(String followUserId, String externalUserId);
+    ExternalContact selectExternalUser(String followUserId,String externalUserId);
+
 }

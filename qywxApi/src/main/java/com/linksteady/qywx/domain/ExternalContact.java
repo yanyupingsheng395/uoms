@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.persistence.Column;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.Serializable;
@@ -101,18 +102,9 @@ public class ExternalContact implements Serializable {
     @Column(name="mobile")
     private String mobile;
 
-    @Column(name="operate_user_id")
-    private String operateUserId;
-
-    @Column(name="mapping_flag")
-    private String mappingFlag;
-
-
-    /**
-     * 手机号是否维护的标记
-     */
     @Transient
-    private String fixFlag;
+    private Long operateUserId;
+
 
     /**
      * 获取批量用户的详细信息使用此接口构造

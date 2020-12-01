@@ -11,8 +11,7 @@
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <result column="state" jdbcType="VARCHAR" property="state"/>
         <result column="createtime" jdbcType="VARCHAR" property="createtime"/>
-        <result column="operate_user_id" jdbcType="VARCHAR" property="operateUserId"/>
-        <result column="mapping_flag" jdbcType="VARCHAR" property="mappingFlag"/>
+        <result column="operate_user_id" jdbcType="DECIMAL" property="operateUserId"/>
     </resultMap>
 
    <insert id="saveExternalUserList">
@@ -256,7 +255,7 @@
     </insert>
 
 
-    <select id="selectByExample" resultMap="externalUserMap">
+    <select id="selectExternalUserList" resultMap="externalUserMap">
          select external_userid,name,follow_user_id,remark,state,createtime from uo_qywx_external_user_list
          where lower(follow_user_id)=#{followUserId}  limit #{limit} offset #{offset}
     </select>
@@ -301,7 +300,18 @@
         </if>
     </select>
 
-    <select id="getUserInfo" resultMap="externalUserMap">
-        select operate_user_id,name,mapping_flag from uo_qywx_external_user_list where follow_user_id=
+    <select id="selectExternalUser" resultMap="externalUserMap">
+           select uo_qywx_external_user_list.external_userid,
+                 uo_qywx_external_user_list.name,
+                 uo_qywx_external_user_list.follow_user_id,
+                 uo_qywx_external_user_list.remark,
+                 uo_qywx_external_user_list.state,
+                 uo_qywx_external_user_list.createtime,
+                 w_users.id operate_user_id
+            from uo_qywx_external_user_list left join w_users
+                 on uo_qywx_external_user_list.follow_user_id=w_users.qywx_follow_user_id
+                  and uo_qywx_external_user_list.external_userid=w_users.qywx_user_id
+            where lower(follow_user_id)=#{followUserId}  and external_userid=#{externalUserId}
     </select>
+
 </mapper>

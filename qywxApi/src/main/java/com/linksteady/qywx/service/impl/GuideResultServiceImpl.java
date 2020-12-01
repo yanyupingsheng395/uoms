@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 public class GuideResultServiceImpl implements GuideResultService {
 
     @Override
-    public GuideResult getResultData(String userId, String startDt, String endDt) {
+    public GuideResult getResultData(String followUserId, String startDt, String endDt) {
         GuideResult guideResult = new GuideResult();
         return guideResult;
     }

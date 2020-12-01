@@ -3,7 +3,6 @@ package com.linksteady.wxofficial.shiro;
 import at.pollux.thymeleaf.shiro.dialect.ShiroDialect;
 import com.linksteady.common.config.ShiroProperties;
 import com.linksteady.common.listener.ShiroSessionListener;
-import com.linksteady.common.shiro.ChangePasswordFilter;
 import com.linksteady.common.shiro.CustomUserFilter;
 import com.linksteady.common.shiro.ShiroSessionManger;
 import com.linksteady.common.shiro.UoShiroRealm;
@@ -23,7 +22,6 @@ import org.crazycake.shiro.RedisManager;
 import org.crazycake.shiro.RedisSessionDAO;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -89,7 +87,6 @@ public class ShiroConfig {
         //获取filters
         Map<String, Filter> filters = shiroFilterFactoryBean.getFilters();
         filters.put("user",new CustomUserFilter());
-        filters.put("resetpass",new ChangePasswordFilter());
 
         // 设置 securityManager
         shiroFilterFactoryBean.setSecurityManager(securityManager);
@@ -112,7 +109,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put(shiroProperties.getResetPasswordUrl(), "user");
 
         // 除上以外所有 url都必须认证通过才可以访问，未通过认证自动访问 LoginUrl
-        filterChainDefinitionMap.put("/**", "user,resetpass");
+        filterChainDefinitionMap.put("/**", "user");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 

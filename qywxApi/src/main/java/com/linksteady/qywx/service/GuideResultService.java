@@ -7,5 +7,5 @@ import com.linksteady.qywx.domain.GuideResult;
  */
 public interface GuideResultService {
 
-    GuideResult getResultData(String userId, String startDt, String endDt);
+    GuideResult getResultData(String followUserId, String startDt, String endDt);
 }

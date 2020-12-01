@@ -265,12 +265,20 @@ public class ExternalContactServiceImpl implements ExternalContactService {
         return externalContactMapper.getGuidanceCount(whereInfo.toString());
     }
 
+    /**
+     * todo 此方法有性能问题，优化；
+     * @param followUserId
+     * @param addtime
+     * @param offset
+     * @param limit
+     * @return
+     */
     @Override
-    public List<ExternalContact> getAddTimeList( String followUserId, String addtime,Integer offset, Integer limit) {
+    public List<ExternalContact> getAddTimeList(String followUserId, String addtime,Integer offset, Integer limit) {
         List<ExternalContact> result=Lists.newArrayList();
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         //查询结果集
-        List<ExternalContact> querydata = externalContactMapper.selectByExample(followUserId,offset,limit);
+        List<ExternalContact> querydata = externalContactMapper.selectExternalUserList(followUserId,offset,limit);
         //获取当前时间
         LocalDateTime nowtime = LocalDateTime.now();
         for (ExternalContact externalContact : querydata) {
@@ -327,8 +335,8 @@ public class ExternalContactServiceImpl implements ExternalContactService {
     }
 
     @Override
-    public ExternalContact getUserInfo(String followUserId, String externalUserId) {
-        return  externalContactMapper.getUserInfo(followUserId,externalUserId);
+    public ExternalContact selectExternalUser(String followUserId, String externalUserId) {
+        return externalContactMapper.selectExternalUser(followUserId,externalUserId);
     }
 
 }

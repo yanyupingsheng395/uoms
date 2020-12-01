@@ -59,13 +59,34 @@ public interface ExternalContactMapper {
     void saveExternalUserId(String followerUserId, String externalUserId);
 
 
-    List<ExternalContact> selectByExample(String followUserId,Integer offset, Integer limit);
+    List<ExternalContact> selectExternalUserList(String followUserId,Integer offset, Integer limit);
 
+    /**
+     * 获取导购关系指引列表
+     * @param followUserId
+     * @param relation
+     * @param loss
+     * @param stagevalue
+     * @param interval
+     * @param offset
+     * @param limit
+     * @return
+     */
     List<ExternalContact> getQywxGuidanceList(String followUserId, String relation, String loss, String stagevalue, String interval,Integer offset, Integer limit);
 
+    /**
+     * 获取导购关系指引记录数
+     * @param followUserId
+     * @param relation
+     * @param loss
+     * @param stagevalue
+     * @param interval
+     * @return
+     */
     int getQywxGuidanceCount(String followUserId, String relation, String loss, String stagevalue, String interval);
 
     int getgetAddTimeCount(String followUserId);
 
-    ExternalContact getUserInfo(String followUserId, String externalUserId);
+    ExternalContact selectExternalUser(String followUserId,String externalUserId);
+
 }

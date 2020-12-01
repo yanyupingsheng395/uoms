@@ -17,29 +17,29 @@ public interface UserTaskMapper {
      * 获取用户今日所处的状态
      * @return
      */
-    List<Map<String, Object>> getUserTodayStatus(String userId, String productId);
+    List<Map<String, Object>> getUserTodayStatus(String operateUserId, String productId);
 
-    String getUserLastBuyDt(String productId, String userId);
+    String getUserLastBuyDt(String productId, String operateUserId);
 
-    List<Map<String, String>> getUserTimes(String userId);
+    List<Map<String, String>> getUserTimes(String operateUserId);
 
-    List<Map<String, String>> getCouponListOfProduct(String userId, String productId);
+    List<Map<String, String>> getCouponListOfProduct(String operateUserId, String productId);
 
-    List<Map<String, Object>> getProductData(String userId);
+    List<Map<String, Object>> getRecProductList(String operateUserId);
 
-    List<UserBuyHistory> getUserBuyHistory(String userId,long spuId);
+    List<UserBuyHistory> getUserBuyHistory(Long userId,long spuId);
 
-    List<SpuInfo> getSpuList(String userId);
+    List<SpuInfo> getSpuList(Long userId);
 
-    UserPurchStatsVO getPurchStats(String userId);
+    UserPurchStatsVO getPurchStats(Long userId);
 
-    UserPurchSpuStatsVO getPurchSpuStats(String userId, long spuId);
+    UserPurchSpuStatsVO getPurchSpuStats(Long userId, long spuId);
 
     String getSpuName(long spuId);
 
-    String getFirstBuyDate(String userId);
+    String getFirstBuyDate(Long userId);
 
-    String getUserValue(String userId,long spuId);
+    String getUserValue(Long userId,long spuId);
 
-    String getLifeCycle(String userId,long spuId);
+    String getLifeCycle(Long userId,long spuId);
 }

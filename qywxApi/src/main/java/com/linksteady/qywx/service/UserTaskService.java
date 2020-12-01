@@ -13,26 +13,26 @@ import java.util.Map;
  */
 public interface UserTaskService {
 
-    Map<String, Object> getUserData(String userId, String productId);
+    Map<String, Object> getUserGuideInfo(String operateUserId, String productId);
 
-    List<Map<String, Object>> getProductData(String userId);
+    List<Map<String, Object>> getRecProductList(String operateUserId);
 
-    List<UserBuyHistory> getUserBuyHistory(String userId,long spuId);
+    List<UserBuyHistory> getUserBuyHistory(Long userId,long spuId);
 
     /**
      * 获取当前用户涉及的spu列表
      */
-    List<SpuInfo> getSpuList(String userId);
+    List<SpuInfo> getSpuList(Long userId);
 
     /**
      * 获取用户在类目上的购买统计数据
      */
-    Map<String, String> getUserStatis(String userId);
+    Map<String, String> getUserStatis(Long userId);
 
     /**
      * 获取用户在类目上的购买统计数据
      */
-    Map<String, String> getUserStatis(String userId,long spuId,String spuName);
+    Map<String, String> getUserStatis(Long userId,long spuId,String spuName);
 
     /**
      * 获取类目的名称
@@ -42,15 +42,15 @@ public interface UserTaskService {
     /**
      * 获取用户的首购日期
      */
-    String getFirstBuyDate(String userId);
+    String getFirstBuyDate(Long userId);
 
     /**
      * 获取用户在类目上的价值
      */
-    String getUserValue(String userId,long spuId);
+    String getUserValue(Long userId,long spuId);
 
     /**
      * 获取用户在类目上的生命周期阶段
      */
-    String getLifeCycle(String userId,long spuId);
+    String getLifeCycle(Long userId,long spuId);
 }

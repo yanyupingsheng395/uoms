@@ -134,12 +134,20 @@ public class QywxClientController {
         return ResponseBo.okOverPaging(null, count, list);
     }
 
+    /**
+     * 获取导购运营结果
+     * @param during
+     * @param startDt
+     * @param endDt
+     * @return
+     * @throws URISyntaxException
+     */
     @GetMapping("/getGuideResultData")
     @ResponseBody
     public ResponseBo getGuideResultData(@RequestParam("during") String during, String startDt, String endDt) throws URISyntaxException {
         UserBo userBo =(UserBo) SecurityUtils.getSubject().getPrincipal();
         if (null != userBo) {
-            Long userId = userBo.getUserId();
+            String followUserId = userBo.getUsername();
             if(during.equalsIgnoreCase("0")) {
                 LocalDate now = LocalDate.now();
                 LocalDate start = now.plusDays(-1);
@@ -153,7 +161,7 @@ public class QywxClientController {
                 startDt = start.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
                 endDt = end.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
             }
-            GuideResult resultData = guideResultService.getResultData(userId + "", startDt, endDt);
+            GuideResult resultData = guideResultService.getResultData(followUserId, startDt, endDt);
             resultData.getUserTotalCnt();
             log.info("获取到的结果：" + resultData);
             return ResponseBo.okWithData(null,resultData);
@@ -163,22 +171,28 @@ public class QywxClientController {
     }
 
     /**
-     * 获取外部联系人的名称和其在用户成长系统的用户ID
+     * 获取外部联系人的信息
      * @param externalUserId
      * @return
      */
-    @RequestMapping("/getUserInfo")
+    @RequestMapping("/getExternalUserInfo")
     @ResponseBody
-    public ResponseBo getUserInfo( @RequestParam("externalUserId") String externalUserId)
+    public ResponseBo getExternalUserInfo( @RequestParam("externalUserId") String externalUserId)
     {
-        Map<String, String> result = Maps.newHashMap();
         UserBo userBo =(UserBo) SecurityUtils.getSubject().getPrincipal();
         String followUserId = userBo.getUsername();
-        ExternalContact userInfo = externalContactService.getUserInfo(followUserId, externalUserId);
-        result.put("userId", userInfo.getOperateUserId());
-        result.put("userName", userInfo.getName());
-        return ResponseBo.okWithData(null, result);
+        ExternalContact userInfo = externalContactService.selectExternalUser(followUserId, externalUserId);
+
+        if(userInfo!=null)
+        {
+            if(null==userInfo.getOperateUserId())
+            {
+                userInfo.setOperateUserId(-999L);
+            }
+        }
+        return ResponseBo.okWithData(null, userInfo);
     }
+
 
     /**
      * 获取用户购买历史数据
@@ -190,14 +204,12 @@ public class QywxClientController {
             UserBo userBo =(UserBo) SecurityUtils.getSubject().getPrincipal();
             //判断当前用户是否已经匹配到商城
             String followUserId = userBo.getUsername();
-            ExternalContact externalContact = externalContactService.getUserInfo(followUserId, externalUserId);
-            if(externalContact==null){
-                return null;
+            ExternalContact externalContact = externalContactService.selectExternalUser(followUserId, externalUserId);
+            if(externalContact==null||null==externalContact.getOperateUserId()){
+                return ResponseBo.okWithData("N",null);
             }
-            if(!"Y".equals(externalContact.getMappingFlag())){
-                return null;
-            }
-            String userId=externalContact.getOperateUserId();
+
+            Long userId=externalContact.getOperateUserId();
             Map<String,Object> result= Maps.newHashMap();
 
             //用户的购买统计数据
@@ -229,7 +241,8 @@ public class QywxClientController {
             result.put("userStats",userStats);
             result.put("userBuyHistoryList",userBuyHistoryList);
 
-            ResponseBo responseBo=ResponseBo.okWithData(null, result);
+            //msg用来标记是否匹配到商城
+            ResponseBo responseBo=ResponseBo.okWithData("Y", result);
             //用户在商城的首购时间
             responseBo.put("firstBuyDate",userTaskService.getFirstBuyDate(userId));
             responseBo.put("spuName",spuName);
@@ -248,6 +261,16 @@ public class QywxClientController {
         }
     }
 
+    /**
+     * 构造用户的描述信息
+     * @param externalContact
+     * @param spuId
+     * @param firstBuyDate
+     * @param spuName
+     * @param userValue
+     * @param lifecycle
+     * @return
+     */
     private String getDescInfo(ExternalContact externalContact,Long spuId,String firstBuyDate,String spuName,String userValue,String lifecycle)
     {
         SimpleDateFormat sdf=new SimpleDateFormat("yyyy年MM月dd日");
@@ -256,7 +279,7 @@ public class QywxClientController {
         if(null==spuId||spuId==-1)
         {
             //用户X于X年X月X日添加为企业微信好友；于X年X月X日在商城首次购买；截止到X年X月X日；
-            desc.append("用户%user%于");
+            desc.append("用户").append(externalContact.getName()).append("于");
             desc.append(sdf.format(new Date(Long.parseLong(externalContact.getCreatetime())*1000)));
             desc.append("添加为企业微信好友;于");
             desc.append(firstBuyDate);
@@ -286,12 +309,19 @@ public class QywxClientController {
     }
 
 
-    @RequestMapping("/getUserData")
-    public Map<String, Object> getUserData(@RequestParam String userId, @RequestParam String productId) throws URISyntaxException {
+    /**
+     * 获取用户更详细的指引信息
+     * @param operateUserId
+     * @param productId
+     * @return
+     * @throws URISyntaxException
+     */
+    @RequestMapping("/getUserGuideInfo")
+    public Map<String, Object> getUserGuideInfo(@RequestParam String operateUserId, @RequestParam String productId) throws URISyntaxException {
         UserBo userBo =(UserBo) SecurityUtils.getSubject().getPrincipal();
-        if (StringUtils.isNotEmpty(userId) && StringUtils.isNotEmpty(productId)) {
+        if (StringUtils.isNotEmpty(operateUserId) && StringUtils.isNotEmpty(productId)) {
             if (null != userBo) {
-                return userTaskService.getUserData(userId, productId);
+                return userTaskService.getUserGuideInfo(operateUserId, productId);
             } else {
                 throw new IllegalArgumentException("未获取到登录会话！");
             }
@@ -300,12 +330,17 @@ public class QywxClientController {
         }
     }
 
-    @RequestMapping("/getProductData")
-    public Map<String, Object> getProductData(@RequestParam String userId) {
+    /**
+     * 获取引导用户购买的商品列表
+     * @param operateUserId
+     * @return
+     */
+    @RequestMapping("/getRecProductList")
+    public Map<String, Object> getRecProductList(@RequestParam String operateUserId) {
         UserBo userBo =(UserBo) SecurityUtils.getSubject().getPrincipal();
-        if (StringUtils.isNotEmpty(userId)) {
+        if (StringUtils.isNotEmpty(operateUserId)) {
             if (null != userBo) {
-                return ResponseBo.okWithData(null, userTaskService.getProductData(userId));
+                return ResponseBo.okWithData(null, userTaskService.getRecProductList(operateUserId));
             } else {
                 throw new IllegalArgumentException("未获取到登录会话！");
             }

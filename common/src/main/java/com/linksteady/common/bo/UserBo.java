@@ -35,5 +35,6 @@ public class UserBo implements Serializable {
         this.mobile=user.getMobile();
         this.userMenuTree=user.getUserMenuTree();
         this.firstLogin=getFirstLogin();
+        this.firstLogin=user.getFirstLogin();
     }
 }

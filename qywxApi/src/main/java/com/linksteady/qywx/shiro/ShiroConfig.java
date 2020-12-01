@@ -87,7 +87,6 @@ public class ShiroConfig {
         //获取filters
         Map<String, Filter> filters = shiroFilterFactoryBean.getFilters();
         filters.put("user",new CustomUserFilter());
-        filters.put("resetpass",new ChangePasswordFilter());
         filters.put("qwclient",new QwClientFilter());
 
         // 设置 securityManager
@@ -114,7 +113,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/qwClient/**","qwclient");
 
         // 除上以外所有 url都必须认证通过才可以访问，未通过认证自动访问 LoginUrl
-        filterChainDefinitionMap.put("/**", "user,resetpass");
+        filterChainDefinitionMap.put("/**", "user");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 

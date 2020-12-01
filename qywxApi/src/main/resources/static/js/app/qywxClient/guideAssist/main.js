@@ -1,7 +1,6 @@
 let appId, timestamp, nonceStr, signature, agentId, agentSignature;
-
 let CURR_EXTERNAL_USER_ID;
-let CURRENT_USER;
+let OPERATE_USER_ID;
 $( function () {
     if(!isWeiXin())
     {
@@ -43,7 +42,22 @@ function getExternalUserId() {
     wx.invoke( 'getCurExternalContact', {}, function (res) {
         if (res.err_msg == "getCurExternalContact:ok") {
             CURR_EXTERNAL_USER_ID = res.userId; //返回当前外部联系人userId
-            getData( CURR_EXTERNAL_USER_ID );
+            $.get( "/qwClient/getExternalUserInfo", {externalUserId: CURR_EXTERNAL_USER_ID}, function (r) {
+                if (r.code === 200) {
+                    let operateUserId=r.data['operateUserId'];
+                    if(null!=operateUserId&&operateUserId!=-999)
+                    {
+                        OPERATE_USER_ID=operateUserId;
+                        tabChange(operateUserId);
+                        recProductList(operateUserId);
+                    }
+
+                    //企业微信外部客户的名称
+                    let userName = r.data['name'];
+                    CURRENT_USER = userName;
+                    $( ".user_name" ).html( '' ).append( '&nbsp;' + userName + '&nbsp;' );
+                }
+            } );
         } else {
             alert( "发送失败！" );
         }
@@ -61,20 +75,6 @@ function sendMsgToUser(content) {
     } );
 }
 
-function getData(externalUserId) {
-    $.get( "/qwClient/getUserInfo", {externalUserId: externalUserId}, function (r) {
-        if (r.code === 200) {
-            //用户成长系统的userId
-            let userId = (r.data['userId'] == null || r.data['userId'] == 'null' || r.data['userId'] == undefined) ? '' : r.data['userId'];
-            tabChange( userId);
-            table1( userId );
-            //企业微信外部客户的名称
-            let userName = r.data['userName'];
-            CURRENT_USER = userName;
-            $( ".user_name" ).html( '' ).append( '&nbsp;' + userName + '&nbsp;' );
-        }
-    } );
-}
 
 /**
  *
@@ -84,22 +84,21 @@ function getData(externalUserId) {
 function getUserInitData(spuId) {
     $.get( "/qwClient/getUserBuyHistory", {externalUserId: CURR_EXTERNAL_USER_ID, spuId: spuId}, function (r) {
         if (r.code === 200) {
-            var data = r.data;
+            let data = r.data;
             // 获取购买历史数据
-            var userBuyHistoryList = data['userBuyHistoryList'];
-            getUserBuyHistory(userBuyHistoryList);
-            var spuList = data['spuList'];
-            getSpuList(spuList, spuId);
-            var userStats = data['userStats'];
-            getUserStats(userStats);
-            var userDesc = r['userDesc'];
-            userDesc = userDesc.replace('%user%', CURRENT_USER);
+            let userBuyHistoryList = data['userBuyHistoryList'];
+            buildUserBuyHistory(userBuyHistoryList);
+            let spuList = data['spuList'];
+            buildSpuList(spuList, spuId);
+            let userStats = data['userStats'];
+            buildUserStats(userStats);
+            let userDesc = r['userDesc'];
             $("#userDesc").html('').append(userDesc);
         }
     } );
 }
 
-function getUserStats(userStats) {
+function buildUserStats(userStats) {
     if(userStats='{}')
     {
         $("#userStats").html('').append("<tr><td>无购买统计数据!</td></tr>");
@@ -112,8 +111,8 @@ function getUserStats(userStats) {
     }
 }
 
-//获取类目数据
-function getSpuList(spuList, spuId) {
+//构造类目的页面显示
+function buildSpuList(spuList, spuId) {
     var code = "<ul class=\"weui-payselect-ul\" style='margin-top: 5px;'>";
     if(spuId == -1) {
         code += "<li class=\"weui-payselect-li\">\n" +
@@ -147,7 +146,7 @@ function getSpuList(spuList, spuId) {
 }
 
 //获取购买历史数据
-function getUserBuyHistory(userBuyHistoryList) {
+function buildUserBuyHistory(userBuyHistoryList) {
     var htmlCode = '';
     $.each(userBuyHistoryList, function (k, v) {
         if (v['intervalDays'] === null || v['intervalDays'] === 'null') {
@@ -233,7 +232,7 @@ function getUserBuyHistory(userBuyHistoryList) {
     $( "#buyHistory" ).html( htmlCode );
 }
 
-function tabChange(userId) {
+function tabChange(operateUserId) {
     $( '.weui-tab' ).tab( {
         defaultIndex: 0,
         activeClass: 'weui-bar__item_on',
@@ -242,7 +241,7 @@ function tabChange(userId) {
                 $( "#tab1" ).attr( "style", "display:block;" );
                 $( "#tab2" ).attr( "style", "display:none;" );
             } else if (index == 1) {
-                if (userId === '') {
+                if (operateUserId === '') {
                     $( "#buyHistory" ).html( "<h1 class=\"weui-pay-title\">当前用户暂无购买记录！</h1>" );
                     $( "#tab1" ).attr( "style", "display:none;" );
                     $( "#tab2" ).attr( "style", "display:block;" );
@@ -259,19 +258,23 @@ function tabChange(userId) {
     } );
 }
 
-// 选中某个商品ID动态获取表2表3表4的数据
-function getUserData(userId, productId) {
-    $.get( "/qwClient/getUserData", {userId: userId, productId: productId}, function (r) {
+// 选中某个商品ID动态获取更多的详细信息
+function getUserGuideInfo(operateUserId, productId) {
+    $.get( "/qwClient/getUserGuideInfo", {operateUserId: operateUserId, productId: productId}, function (r) {
         if (r.code === 200) {
-            table2( r.data['userTodayStatus'] );
-            table3( r.data['userTimeList'] );
-            table4( r.data['couponList'] );
+            guidePurchTimes( r.data['userTodayStatus'] );
+            guidePurchWeek( r.data['userTimeList'] );
+            guideCoupon( r.data['couponList'] );
         }
     } );
 }
 
-function table1(userId) {
-    if (userId === '') {
+/**
+ * 引导用户购买商品的表
+ * @param userId
+ */
+function recProductList(operateUserId) {
+    if (operateUserId === '') {
         let settings = {
             columns: [
                 {
@@ -297,14 +300,14 @@ function table1(userId) {
                 }
             ]
         };
-        $( "#table1" ).bootstrapTable( settings ).bootstrapTable( 'load', [] );
+        $( "#recProductTable" ).bootstrapTable( settings ).bootstrapTable( 'load', [] );
         $( ".product_name1" ).html( '' ).append( '&nbsp;--&nbsp;' );
-        table2( [] );
-        table3( [] );
-        table4( [] );
+        guidePurchTimes( [] );
+        guidePurchWeek( [] );
+        guideCoupon( [] );
     } else {
         let settings = {
-            url: "/qwClient/getProductData?userId=" + userId,
+            url: "/qwClient/getRecProductList?operateUserId=" + operateUserId,
             pagination: false,
             columns: [
                 {
@@ -339,19 +342,23 @@ function table1(userId) {
                     $( $element ).addClass( 'changeColor' );
                     $( $element ).siblings().removeClass( 'changeColor' );
                 }
-                getUserData( userId, row['epb_product_id'] );
+                getUserGuideInfo( operateUserId, row['epb_product_id'] );
                 $( ".product_name1" ).html( '' ).append( '&nbsp;' + row['epb_product_name'] + '&nbsp;' );
             },
             onLoadSuccess: function (data) {
-                getUserData( userId, data.data[0]['epb_product_id'] );
+                getUserGuideInfo( operateUserId, data.data[0]['epb_product_id'] );
                 $( ".product_name1" ).html( '' ).append( '&nbsp;' + data.data[0]['epb_product_name'] + '&nbsp;' );
             }
         };
-        $( "#table1" ).bootstrapTable( settings );
+        $( "#recProductTable" ).bootstrapTable( settings );
     }
 }
 
-function table2(data) {
+/**
+ * 引导用户购买时机的表
+ * @param data
+ */
+function guidePurchTimes(data) {
     if (data === undefined) {
         data = [];
     }
@@ -389,9 +396,9 @@ function table2(data) {
             }
         }
     };
-    $( "#table2" ).bootstrapTable( settings ).bootstrapTable( 'load', data );
-    $( "#table2" ).find( "tr td:eq(0)" ).attr( "style", "background-color:#fff" );
-    mergeCells( data, 'rn', 1, $( '#table2' ) );
+    $( "#guidePurchTimesTable" ).bootstrapTable( settings ).bootstrapTable( 'load', data );
+    $( "#guidePurchTimesTable" ).find( "tr td:eq(0)" ).attr( "style", "background-color:#fff" );
+    mergeCells( data, 'rn', 1, $( '#guidePurchTimesTable' ) );
 }
 
 function rowStyle(row, index) {
@@ -430,7 +437,11 @@ function mergeCells(data, fieldName, colspan, target) {
     }
 }
 
-function table3(data) {
+/**
+ * 引导用户购买的时间点
+ * @param data
+ */
+function guidePurchWeek(data) {
     if (data === undefined) {
         data = [];
     }
@@ -451,10 +462,14 @@ function table3(data) {
             }
         ]
     };
-    $( "#table3" ).bootstrapTable( settings ).bootstrapTable( 'load', data );
+    $( "#guidePurchWeekTable" ).bootstrapTable( settings ).bootstrapTable( 'load', data );
 }
 
-function table4(data) {
+/**
+ * 推荐的优惠券
+ * @param data
+ */
+function guideCoupon(data) {
     if (data === undefined) {
         data = [];
     }
@@ -481,7 +496,7 @@ function table4(data) {
             }
         ]
     };
-    $( "#table4" ).bootstrapTable( settings ).bootstrapTable( 'load', data );
+    $( "#guideCouponTable" ).bootstrapTable( settings ).bootstrapTable( 'load', data );
 }
 
 function isWeiXin(){

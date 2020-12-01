@@ -30,13 +30,13 @@ public class UserTaskServiceImpl implements UserTaskService {
     private UserTaskMapper userTaskMapper;
 
     @Override
-    public Map<String, Object> getUserData(String userId, String productId) {
+    public Map<String, Object> getUserGuideInfo(String operateUserId, String productId) {
         Map<String, Object> result = Maps.newHashMap();
 
         // 用户今日所处的活跃状态 userTodayStatus
-        List<Map<String, Object>> userTodayStatusList = userTaskMapper.getUserTodayStatus(userId, productId);
+        List<Map<String, Object>> userTodayStatusList = userTaskMapper.getUserTodayStatus(operateUserId, productId);
         String dateFormat = "yyyyMMdd";
-        String lastBuyDt = userTaskMapper.getUserLastBuyDt(productId, userId);
+        String lastBuyDt = userTaskMapper.getUserLastBuyDt(productId, operateUserId);
 
         if(StringUtils.isNotEmpty(lastBuyDt)) {
             LocalDate lastDt = LocalDate.parse(lastBuyDt, DateTimeFormatter.ofPattern(dateFormat));
@@ -79,8 +79,8 @@ public class UserTaskServiceImpl implements UserTaskService {
             }
         }
         // 用户沟通的时间点
-        List<Map<String, String>> userTimeList = userTaskMapper.getUserTimes(userId);
-        List<Map<String, String>> couponList = userTaskMapper.getCouponListOfProduct(userId, productId);
+        List<Map<String, String>> userTimeList = userTaskMapper.getUserTimes(operateUserId);
+        List<Map<String, String>> couponList = userTaskMapper.getCouponListOfProduct(operateUserId, productId);
         result.put("userTodayStatus", userTodayStatusList);
         result.put("userTimeList", userTimeList);
         result.put("couponList", couponList);
@@ -88,22 +88,22 @@ public class UserTaskServiceImpl implements UserTaskService {
     }
 
     @Override
-    public List<Map<String, Object>> getProductData(String userId) {
-        return userTaskMapper.getProductData(userId);
+    public List<Map<String, Object>> getRecProductList(String operateUserId) {
+        return userTaskMapper.getRecProductList(operateUserId);
     }
 
     @Override
-    public List<UserBuyHistory> getUserBuyHistory(String userId,long spuId) {
+    public List<UserBuyHistory> getUserBuyHistory(Long userId,long spuId) {
         return userTaskMapper.getUserBuyHistory(userId,spuId);
     }
 
     @Override
-    public List<SpuInfo> getSpuList(String userId) {
+    public List<SpuInfo> getSpuList(Long userId) {
         return userTaskMapper.getSpuList(userId);
     }
 
     @Override
-    public Map<String, String> getUserStatis(String userId) {
+    public Map<String, String> getUserStatis(Long userId) {
         Map<String,String> result=Maps.newHashMap();
         //获取统计数据
         UserPurchStatsVO userPurchStatsVO=userTaskMapper.getPurchStats(userId);
@@ -133,7 +133,7 @@ public class UserTaskServiceImpl implements UserTaskService {
     }
 
     @Override
-    public Map<String, String> getUserStatis(String userId, long spuId, String spuName) {
+    public Map<String, String> getUserStatis(Long userId, long spuId, String spuName) {
         Map<String,String> result=Maps.newHashMap();
         //获取统计数据
         UserPurchSpuStatsVO userPurchSpuStatsVO=userTaskMapper.getPurchSpuStats(userId,spuId);
@@ -168,17 +168,17 @@ public class UserTaskServiceImpl implements UserTaskService {
     }
 
     @Override
-    public String getFirstBuyDate(String userId) {
+    public String getFirstBuyDate(Long userId) {
         return userTaskMapper.getFirstBuyDate(userId);
     }
 
     @Override
-    public String getUserValue(String userId, long spuId) {
+    public String getUserValue(Long userId, long spuId) {
         return userTaskMapper.getUserValue(userId,spuId);
     }
 
     @Override
-    public String getLifeCycle(String userId, long spuId) {
+    public String getLifeCycle(Long userId, long spuId) {
         return userTaskMapper.getLifeCycle(userId,spuId);
     }
 }
