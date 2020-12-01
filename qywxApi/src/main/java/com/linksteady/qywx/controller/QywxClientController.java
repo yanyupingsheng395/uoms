@@ -514,6 +514,7 @@ public class QywxClientController {
             return ResponseBo.okWithData("",result);
         } catch (Exception e) {
             e.printStackTrace();
+            log.error("获取jsapi_ticket异常，原因为{}",e);
             return ResponseBo.error();
         }
     }

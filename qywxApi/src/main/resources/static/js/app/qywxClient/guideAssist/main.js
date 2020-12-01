@@ -27,7 +27,35 @@ $( function () {
                 jsApiList: ['getCurExternalChat', 'sendChatMessage', 'getContext'] // 必填，需要使用的JS接口列表，凡是要调用的接口都需要传进来
             } );
             wx.ready( function () {
-                getExternalUserId();
+                // config信息验证后会执行ready方法，所有接口调用都必须在config接口获得结果之后，config是一个客户端的异步操作，所以如果需要在页面加载时就调用相关接口，则须把相关接口放在ready函数中调用来确保正确执行。对于用户触发时才调用的接口，则可以直接调用，不需要放在ready函数中。
+                wx.agentConfig( {
+                    corpid: appId, // 必填，企业微信的corpid，必须与当前登录的企业一致
+                    agentid: agentId, // 必填，企业微信的应用id （e.g. 1000247）
+                    timestamp: timestamp, // 必填，生成签名的时间戳
+                    nonceStr: nonceStr, // 必填，生成签名的随机串
+                    signature: agentSignature,// 必填，签名，见附录-JS-SDK使用权限签名算法
+                    jsApiList: ['sendChatMessage', 'getCurExternalContact', 'getContext'], //必填
+                    success: function (res) {
+                        wx.invoke( 'getContext', {}, function (res) {
+                            if (res.err_msg == "getContext:ok") {
+                                var entry = res.entry; //返回进入H5页面的入口类型，目前有normal、contact_profile、single_chat_tools、group_chat_tools
+                                if ('single_chat_tools' === entry) {
+                                    getExternalUserId();
+                                } else if ('group_chat_tools' === entry) {
+                                    document.write( "群聊助手正在开发中..." );
+                                }
+                            } else {
+                                //错误处理
+                            }
+                        } );
+                    },
+                    fail: function (res) {
+                        document.write( JSON.stringify( res ) );
+                        if (res.errMsg.indexOf( 'function not exist' ) > -1) {
+                            alert( '版本过低请升级' )
+                        }
+                    }
+                } );
             } );
         }
         else
