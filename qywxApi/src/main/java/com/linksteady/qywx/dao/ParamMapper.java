@@ -50,5 +50,14 @@ public interface ParamMapper {
      */
     void insertAddUserListHistory(List<String> phonenumList);
 
+    /**
+     *保存文件内容和名称
+     */
     void saveFile(String title, String content);
+
+    /**
+     * 获取文件内容和名称
+     */
+    QywxParam getFileMessage();
+
 }

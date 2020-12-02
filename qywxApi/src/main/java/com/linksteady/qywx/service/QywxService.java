@@ -1,5 +1,6 @@
 package com.linksteady.qywx.service;
 
+import com.linksteady.qywx.domain.QywxParam;
 import com.linksteady.qywx.exception.WxErrorException;
 import com.linksteady.qywx.storage.impl.RedisConfigStorageImpl;
 
@@ -81,4 +82,6 @@ public interface QywxService {
 
 
     void saveFile(String title, String content);
+
+    QywxParam getFileMessage();
 }

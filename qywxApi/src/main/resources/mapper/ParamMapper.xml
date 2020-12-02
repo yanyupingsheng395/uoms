@@ -101,4 +101,9 @@
         update uo_qywx_param set oauth_filename=#{title},oauth_file=#{content}
     </update>
 
+    <select id="getFileMessage" resultMap="paramMap">
+        select oauth_filename,oauth_file from uo_qywx_param
+    </select>
+
+
 </mapper>
