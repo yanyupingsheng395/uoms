@@ -259,9 +259,6 @@
                select t3.EPB_PRODUCT_ID, count(t4.goods_id) cnt
                from UO_OP_ACTIVITY_PRODUCT t3
                         left join v1 on t3.EPB_PRODUCT_ID = v1.EPB_PRODUCT_ID::varchar
-                        left join (SELECT goods_id FROM o_dapu_product_onsale WHERE INSERT_DT::date &gt;= (
-                   select max(insert_dt::date) from o_dapu_product_onsale
-               )) t4 on t3.epb_product_id = t4.goods_id::varchar
                where t3.HEAD_ID = #{headId}::int4
                  and activity_stage = #{stage}
                  and v1.EPB_PRODUCT_ID is null

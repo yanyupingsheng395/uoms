@@ -745,7 +745,7 @@ public class QywxActivityProductServiceImpl implements QywxActivityProductServic
     public void validProductInfo(String headId) {
         activityProductMapper.updateAllValidInfo(headId);
         activityProductMapper.updateValidInfo(headId);
-        activityProductMapper.updateValidRepeatSkuInfo(headId);
+      //  activityProductMapper.updateValidRepeatSkuInfo(headId);
     }
 
     @Override

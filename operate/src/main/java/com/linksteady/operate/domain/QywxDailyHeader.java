@@ -23,38 +23,38 @@ public class QywxDailyHeader {
 
     private String status;
 
-    private Long successNum;
+    private long successNum;
 
     /**
      * 转化人数
      */
-    private Long convertNum;
+    private long convertNum;
 
     /**
      * 转化金额
      */
-    private Double convertAmount;
+    private double convertAmount;
 
     /**
      * 转化率
      */
-    private String convertRate;
+    private double convertRate;
 
 
     /**
      * 推荐SPU转化人数
      */
-    private Long convertSpuNum;
+    private long convertSpuNum;
 
     /**
      * 推荐SPU转化金额
      */
-    private Double convertSpuAmount;
+    private double convertSpuAmount;
 
     /**
      * 推荐SPU转化率
      */
-    private Double convertSpuRate;
+    private double convertSpuRate;
 
     /**
      * 最后计算日期
@@ -69,7 +69,7 @@ public class QywxDailyHeader {
     /**
      * 效果统计天数
      */
-    private Long effectDays;
+    private long effectDays;
 
     private int version;
 
@@ -77,18 +77,18 @@ public class QywxDailyHeader {
 
     private Date updateDt;
 
-    private Integer qywxMessageCount;
+    private int qywxMessageCount;
 
-    private Integer staffCnt;
+    private int staffCnt;
 
     /**
      * 校验结果描述
      */
     private String checkDesc;
 
-    private String pushSuccessRate;
+    private double pushSuccessRate;
 
-    private Integer executeStaffCnt;
+    private int executeStaffCnt;
 
     private String executeRate;
 

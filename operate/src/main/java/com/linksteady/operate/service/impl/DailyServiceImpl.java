@@ -84,7 +84,7 @@ public class DailyServiceImpl implements DailyService {
         String taskDt = dailyHead.getTouchDtStr();
 
         //获取任务观察的天数
-        int effectDays = dailyHead.getEffectDays().intValue();
+        long effectDays = dailyHead.getEffectDays();
 
         //任务提交的日期
         LocalDate taskDtDate = LocalDate.parse(taskDt, DateTimeFormatter.ofPattern(dateFormat));

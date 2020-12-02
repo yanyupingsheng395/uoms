@@ -647,7 +647,7 @@ public class ActivityProductServiceImpl implements ActivityProductService {
     public void validProductInfo(String headId, String stage) {
         activityProductMapper.updateAllValidInfo(headId, stage);
         activityProductMapper.updateValidInfo(headId, stage);
-        activityProductMapper.updateValidRepeatSkuInfo(headId, stage);
+        //activityProductMapper.updateValidRepeatSkuInfo(headId, stage);
     }
 
     @Override

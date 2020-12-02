@@ -27,37 +27,37 @@ public class DailyHead {
 
     private String status;
 
-    private Long successNum;
+    private long successNum;
 
     /**
      * 转化人数
      */
-    private Long convertNum;
+    private long convertNum;
 
     /**
      * 转化金额
      */
-    private Double convertAmount;
+    private double convertAmount;
 
     /**
      * 推荐SPU转化人数
      */
-    private Long convertSpuNum;
+    private long convertSpuNum;
 
     /**
      * 推荐SPU转化金额
      */
-    private Double convertSpuAmount;
+    private double convertSpuAmount;
 
     /**
      * 转化率
      */
-    private Double convertRate;
+    private double convertRate;
 
     /**
      * 推荐SPU转化率
      */
-    private Double convertSpuRate;
+    private double convertSpuRate;
 
     /**
      * 最后计算日期
@@ -72,7 +72,7 @@ public class DailyHead {
     /**
      * 效果统计天数
      */
-    private Long effectDays;
+    private long effectDays;
 
     private int version;
 }

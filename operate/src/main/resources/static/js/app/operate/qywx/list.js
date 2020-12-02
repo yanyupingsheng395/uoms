@@ -48,7 +48,7 @@ function initTable() {
             field: 'staffCnt',
             title: '需要推送消息的成员数（人）'
         }, {
-            field: 'convertNum',
+            field: 'successNum',
             title: '消息实际推送到达用户数（人）'
         }, {
             field: 'convertAmount',

@@ -51,9 +51,19 @@ function getOverAllInfo() {
 
 function getAllFollowUserList() {
     $.get("/qywxDaily/getFollowUserList", {headId: headId}, function (r) {
+        let followUserId="";
         $.each(r.data,function (index,value) {
-            $("#followUserIdSelect").append("<option id="+value.followUserId+">"+value.followUserName+"</option>");
+            if(index===0)
+            {
+                followUserId=value.followUserId;
+                $("#followUserIdSelect").append("<option selected ='selected' value="+value.followUserId+">"+value.followUserName+"</option>");
+            }else
+            {
+                $("#followUserIdSelect").append("<option value="+value.followUserId+">"+value.followUserName+"</option>");
+            }
         })
+        //加载一次数据
+        getUserStatics(followUserId);
     });
 }
 

@@ -18,10 +18,10 @@ public class QywxDailyStaffEffect {
     private long coverNum;
     private long executeCoverNum;
     private long convertNum;
-    private String convertAmount;
-    private String convertRate;
+    private long convertAmount;
+    private double convertRate;
     private long convertSpuNum;
-    private String convertSpuAmount;
-    private String convertSpuRate;
+    private long convertSpuAmount;
+    private double convertSpuRate;
     private Date statDate;
 }
