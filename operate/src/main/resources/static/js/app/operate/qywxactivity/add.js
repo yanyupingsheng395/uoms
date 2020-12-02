@@ -13,6 +13,8 @@ $( function () {
     initDt();
     validBasic();
     validateProductRule();
+    $("#activitySource").css('pointer-events', 'none');
+    $("#activityflag").css('pointer-events', 'none');
 });
 
 // 步骤条初始化

@@ -13,6 +13,7 @@ import com.linksteady.operate.service.ActivityProductService;
 import com.linksteady.operate.service.QywxActivityProductService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.hssf.record.PageBreakRecord;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -707,12 +708,15 @@ public class QywxActivityProductServiceImpl implements QywxActivityProductServic
                         activityProduct.setSpCouponFlag("0");
                     }
                     activityProduct = calculateProductMinPrice(activityProduct);
+                    //如果错误集合中有数据，就不会往真正的数据集合存，而是直接遍历数据，分析以后有可能出现的错误数据格式
+                    if(errorList.size()>0){
+                        continue;
+                    }
                     productList.add(activityProduct);
                 }
-                if (productList.size() != 0) {
+                //只有数据集合中有数据，并且错误集合中没数据，才能进行数据保存
+                if (productList.size() != 0&&errorList.size()<=0) {
                     saveUploadProductData(headId, productList, uploadMethod, repeatProduct,activityType);
-                } else {
-                    errorList.add(new ActivityProductUploadError("校验通过的记录条数为0"));
                 }
             }
         } catch (IOException e) {

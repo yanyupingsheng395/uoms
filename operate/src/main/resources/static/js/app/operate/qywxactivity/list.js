@@ -32,6 +32,18 @@ $( function () {
                 field: 'activitySource',
                 title: '活动渠道',
                 align: "center",
+                formatter: function (value, row, index) {
+                    let res = "-";
+                    switch (value) {
+                        case "0":
+                            res = "第三方小程序商城";
+                            break;
+                        case "1":
+                            res = "自有小程序";
+                            break;
+                    }
+                    return res;
+                }
             }, {
                 field: 'formalNotifyDt',
                 align: "center",
