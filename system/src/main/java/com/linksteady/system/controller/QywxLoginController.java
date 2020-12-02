@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
@@ -235,7 +236,7 @@ public class QywxLoginController extends BaseController {
      * OAuth完成授权的回调请求
      */
     @RequestMapping("/qw/oauthRedirect")
-    public String oauthRedirect(Model model, HttpServletRequest request) {
+    public String oauthRedirect(Model model, HttpServletRequest request, HttpServletResponse response) {
         //授权码
         String code = request.getParameter("code");
         //验证码
@@ -305,8 +306,8 @@ public class QywxLoginController extends BaseController {
                     userService.updateLoginTime(username);
                     //记录登录事件
                     userService.logLoginEvent(username, "企业微信客户端登录成功");
-                    log.info("微信回调后sessionid{}",request.getSession().getId());
-                   String sourceUrl = (String) getSubject().getSession().getAttribute("sourceUrl");
+                    log.info("微信回调后sessionid{}",getSession().getId());
+                   String sourceUrl = (String) getSession().getAttribute("sourceUrl");
                     log.info("用户来源的地址为:{}",sourceUrl);
                     if (!StringUtils.isEmpty(sourceUrl)) {
                         String s = sysInfoBo.getSysDomain()+"/qwClient/index";
@@ -336,7 +337,12 @@ public class QywxLoginController extends BaseController {
      */
     @RequestMapping("/{authFileName}.txt")
     @ResponseBody
-    public String qywxAuthFile(@PathVariable String authFileName) {
+    public String qywxAuthFile(@PathVariable String authFileName) throws Exception {
+        //判断该文件是否存在
+        int count = qywxLoginService.queryAuthFile(authFileName);
+        if(count<=0){
+            throw new Exception("校验文件不存在！");
+        }
         String oauthFileContent=qywxLoginService.getOauthFileContent();
         return oauthFileContent;
     }

@@ -7,4 +7,6 @@ public interface QywxLoginMapper {
     String getAgentId();
 
     String getOauthFileContent();
+
+    int queryAuthFile(String authFileName);
 }

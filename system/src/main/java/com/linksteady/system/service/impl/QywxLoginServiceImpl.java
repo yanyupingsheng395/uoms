@@ -25,4 +25,9 @@ public class QywxLoginServiceImpl implements QywxLoginService {
     public String getOauthFileContent() {
         return qywxLoginMapper.getOauthFileContent();
     }
+
+    @Override
+    public int queryAuthFile(String authFileName) {
+       return qywxLoginMapper.queryAuthFile(authFileName);
+    }
 }
