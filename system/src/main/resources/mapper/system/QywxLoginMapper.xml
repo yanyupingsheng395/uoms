@@ -13,7 +13,7 @@
     <select id="getOauthFileContent" resultType="string">
           select oauth_file from uo_qywx_param
     </select>
-    <select id="getOauthFileContent" resultType="int">
+    <select id="queryAuthFile" resultType="int">
           select count(1) from uo_qywx_param where oauth_filename=#{authFileName}
     </select>
 </mapper>
