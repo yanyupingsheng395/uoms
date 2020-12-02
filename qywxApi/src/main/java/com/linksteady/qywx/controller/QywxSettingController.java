@@ -5,6 +5,7 @@ import com.linksteady.common.constant.CommonConstant;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.SysInfoBo;
 import com.linksteady.common.service.CommonFunService;
+import com.linksteady.qywx.domain.QywxParam;
 import com.linksteady.qywx.service.QywxService;
 import com.linksteady.qywx.storage.impl.RedisConfigStorageImpl;
 import org.apache.commons.lang3.StringUtils;
@@ -149,6 +150,9 @@ public class QywxSettingController {
         }
     }
 
+    /**
+     *存储校验文件内容和名称
+     */
     @PostMapping("/saveFile")
     public ResponseBo saveFile(String title,String content){
         try {
@@ -157,5 +161,14 @@ public class QywxSettingController {
         }catch (Exception e){
             return ResponseBo.error();
         }
+    }
+
+    /**
+     * 获取校验文件内容和名称
+     */
+    @GetMapping("/getFileMessage")
+    public ResponseBo getFileMessage(){
+        QywxParam qywxParam=qywxService.getFileMessage();
+        return ResponseBo.okWithData(null,qywxParam);
     }
 }

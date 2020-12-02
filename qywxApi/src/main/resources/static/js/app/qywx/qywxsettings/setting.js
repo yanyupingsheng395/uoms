@@ -158,9 +158,9 @@ function setEnableWelcome(){
     } );
 }
 
-
-
-
+/**
+ *切换table栏，更换数据
+ */
 $("#navTabs1").find('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
     var startDt = $("#startDt").val();
     if (startDt == "") {
@@ -175,10 +175,14 @@ $("#navTabs1").find('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
         }else if(e.target.href.endWith("#qywxWelcome")){
             getEnableWel();
         }else if(e.target.href.endWith("#checkFile")){
+            getFileMessage();
         }
     }
 });
 
+/**
+ * 判断企业微信应用配置栏中，内容是否未填全
+ */
 function validBasic() {
     var icon = "<i class='fa fa-close'></i> ";
     qywx_contact_validator = $qywxsetting.validate( {
@@ -214,6 +218,9 @@ function validBasic() {
     } );
 }
 
+/**
+ * 校验外部联系人内容
+ */
 function validQywxContact() {
     var icon = "<i class='fa fa-close'></i> ";
     qywx_validator = $qywxcontact.validate( {
@@ -243,6 +250,9 @@ function validQywxContact() {
     } );
 }
 
+/**
+ *小程序ID是否有空填
+ */
 function validQywxAppId() {
     var icon = "<i class='fa fa-close'></i> ";
     qywx_mp_appid = $qywxappid.validate( {
@@ -266,6 +276,26 @@ function validQywxAppId() {
     } );
 }
 
+/**
+ * 获取校验文件内容和文件名称
+ */
+function getFileMessage() {
+    $.get("/qywx/getFileMessage",function (r) {
+        if(r.code === 200) {
+            var data=r.data;
+            $("#filename").val(data.oauthFilename);
+            $('#content').val(data.oauthFile);
+            $("#showfile").show();
+        }else {
+            $MB.n_danger("获取数据异常！");
+        }
+    });
+
+}
+
+/**
+ * 保存校验文件内容
+ */
 function uploadfile() {
     var name=$("#titlefile").attr("title");
     var content=$("#filecontent").val();
@@ -285,7 +315,6 @@ function uploadfile() {
             $("#filename").val(name);
             $("#content").val(content);
             $("#showfile").show();
-
         }
     } );
 }

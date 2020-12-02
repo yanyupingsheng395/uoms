@@ -290,4 +290,9 @@ public class QywxServiceImpl implements QywxService {
         paramMapper.saveFile(title,content);
     }
 
+    @Override
+    public QywxParam getFileMessage() {
+        return paramMapper.getFileMessage();
+    }
+
 }
