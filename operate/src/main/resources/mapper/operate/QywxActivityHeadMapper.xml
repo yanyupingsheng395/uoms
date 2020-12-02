@@ -97,9 +97,10 @@
         formal_notify_dt,
         formal_notify_status,
         activityflag,
-        activity_source)
+        activity_source,
+        shop_discount)
         values (#{headId}, #{activityName}, #{formalStatus}, to_date(#{formalStartDt}, 'yyyy-mm-dd'), to_date(#{formalEndDt}, 'yyyy-mm-dd'),
-        #{insertDt}, #{insertBy}, to_date(#{formalNotifyDt}, 'yyyy-mm-dd'), #{formalNotifyStatus}, #{activityflag}, #{activitySource})
+        #{insertDt}, #{insertBy}, to_date(#{formalNotifyDt}, 'yyyy-mm-dd'), #{formalNotifyStatus}, #{activityflag}, #{activitySource},#{shopDiscount})
     </insert>
 
     <update id="updateActiveHead">

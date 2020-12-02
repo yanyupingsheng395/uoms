@@ -122,21 +122,23 @@ public class QywxActivityProductServiceImpl implements QywxActivityProductServic
 
             //b.店铺券下的满减金额（针对所有商品）
             List<ActivityCoupon> shopCouponList = couponList.stream().filter(x -> x.getCouponType().equalsIgnoreCase("S")).collect(Collectors.toList());//获取活动设置的优惠券信息
-            ActivityCoupon tmp = shopCouponList.get(0);
-            double couponDenom = Double.parseDouble(tmp.getCouponDenom());//最低优惠券券的免减金额
-            double couponThreshold =  Double.parseDouble(tmp.getCouponThreshold());//最低店铺优惠券门槛
-            if(activityPrice<couponThreshold){
-                //免减金额=商品活动价*（门槛最低的券的免减金额/门槛最低的券门槛）
-                shopExemptionAmount=activityPrice*(couponDenom/couponThreshold);
-            }else{
-                //商品活动价大于最低门槛时，找距离商品活动价最近的且小于商品活动价的店铺券门槛，
-                for (int i = shopCouponList.size()-1; i >-1; i--) {
-                    if(Double.parseDouble(shopCouponList.get(i).getCouponThreshold())<activityPrice){
-                        couponDenom=Double.parseDouble(shopCouponList.get(i).getCouponDenom());
-                        break;
+            if(shopCouponList.size()>0){
+                ActivityCoupon tmp = shopCouponList.get(0);
+                double couponDenom = Double.parseDouble(tmp.getCouponDenom());//最低优惠券券的免减金额
+                double couponThreshold =  Double.parseDouble(tmp.getCouponThreshold());//最低店铺优惠券门槛
+                if(activityPrice<couponThreshold){
+                    //免减金额=商品活动价*（门槛最低的券的免减金额/门槛最低的券门槛）
+                    shopExemptionAmount=activityPrice*(couponDenom/couponThreshold);
+                }else{
+                    //商品活动价大于最低门槛时，找距离商品活动价最近的且小于商品活动价的店铺券门槛，
+                    for (int i = shopCouponList.size()-1; i >-1; i--) {
+                        if(Double.parseDouble(shopCouponList.get(i).getCouponThreshold())<activityPrice){
+                            couponDenom=Double.parseDouble(shopCouponList.get(i).getCouponDenom());
+                            break;
+                        }
                     }
+                    shopExemptionAmount=couponDenom;
                 }
-                shopExemptionAmount=couponDenom;
             }
         }
 
