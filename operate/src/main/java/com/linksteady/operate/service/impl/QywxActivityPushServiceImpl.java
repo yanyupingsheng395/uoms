@@ -306,7 +306,7 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
                             String mediaId= null;
                             try {
                                 //调用微信接口，获取商品的mediaId
-                                mediaId = qywxMdiaService.getMpMediaId(qywxActivityDetailList.get(0).getRecProdId());
+                                mediaId = qywxMdiaService.getMpMediaId(qywxActivityDetailList.get(0).getEpbProductId());
                             } catch (Exception e) {
                                 throw new RuntimeException(e.getMessage());
                             }
