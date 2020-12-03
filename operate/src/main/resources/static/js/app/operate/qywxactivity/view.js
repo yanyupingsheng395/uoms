@@ -11,6 +11,8 @@ $( function () {
         center: true,
         dataOrder: ["title", "line", "description"]
     });
+    $("#activitySource").css('pointer-events', 'none');
+    $("#activityflag").css('pointer-events', 'none');
 });
 
 // 根据索引跳转到相应的页面
@@ -23,7 +25,8 @@ function stepBreak(index) {
     }
     if(index == 1) {
         create_step.setActive(1);
-        getProductInfo();
+        getProductInfo('NOTIFY', 'activityProductTable1');
+        getProductInfo('DURING', 'activityProductTable');
         $("#step1").attr("style", "display:none;");
         $("#step2").attr("style", "display:block;");
         $("#step3").attr("style", "display:none;");
@@ -38,7 +41,14 @@ function stepBreak(index) {
 }
 
 // step2:商品信息表
-function getProductInfo() {
+function getProductInfo(type, tableId) {
+    var title = '活动通知';
+    if(type === 'NOTIFY') {
+        title = '活动通知';
+    }
+    if(type === 'DURING') {
+        title = '活动期间';
+    }
     var settings = {
         url: '/qywxActivity/getActivityProductPage',
         pagination: true,
@@ -53,14 +63,27 @@ function getProductInfo() {
                 offset: params.offset,
                 headId: $( "#headId" ).val(),
                 productId: function() {
-                    return $("#productId").val();
+                    if(tableId === 'activityProductTable1') {
+                        return $( "#productId1" ).val();
+                    }else if(tableId === 'activityProductTable') {
+                        return $( "#productId" ).val();
+                    }
                 },
                 productName:function() {
-                    return $("#productName").val();
+                    if(tableId === 'activityProductTable1') {
+                        return $( "#productName1" ).val();
+                    }else if(tableId === 'activityProductTable') {
+                        return $( "#productName" ).val();
+                    }
                 },
                 groupId: function() {
-                    return $("#groupId").find("option:selected").val();
-                }
+                    if(tableId === 'activityProductTable1') {
+                        return $("#groupId1").find("option:selected").val();
+                    }else if(tableId === 'activityProductTable') {
+                        return $("#groupId").find("option:selected").val();
+                    }
+                },
+                activityType: type
             };
         },
         columns: [
@@ -128,7 +151,7 @@ function getProductInfo() {
                 align: 'center'
             }]
     };
-    $( "#activityProductTable" ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
+    $( "#" + tableId  ).bootstrapTable( 'destroy' ).bootstrapTable( settings );
 }
 // step2:下载商品数据
 $( "#btn_download" ).click( function () {
@@ -213,8 +236,8 @@ function searchActivityProduct1() {
     $MB.refreshTable( 'activityProductTable1' );
 }
 
-function searchActivityProduct2() {
-    $MB.refreshTable( 'activityProductTable2' );
+function searchActivityProduct() {
+    $MB.refreshTable( 'activityProductTable' );
 }
 
 // 重置查询条件
@@ -225,9 +248,44 @@ function resetActivityProduct1() {
     $MB.refreshTable( 'activityProductTable1' );
 }
 
-function resetActivityProduct2() {
-    $( "#productId2" ).val( "" );
-    $( "#productName2" ).val( "" );
-    $( "#groupId2" ).find( "option:selected" ).removeAttr( "selected" );
-    $MB.refreshTable( 'activityProductTable2' );
+function resetActivityProduct() {
+    $( "#productId" ).val( "" );
+    $( "#productName" ).val( "" );
+    $( "#groupId" ).find( "option:selected" ).removeAttr( "selected" );
+    $MB.refreshTable( 'activityProductTable' );
 }
+
+// 活动商品数据下载
+$("#btn_download_data1").click(function () {
+    $MB.confirm({
+        title: "<i class='mdi mdi-alert-outline'></i>提示：",
+        content: "确定下载商品数据?"
+    }, function () {
+        $("#btn_download_data1").text("下载中...").attr("disabled", true);
+        $.post("/qywxActivity/downloadExcel", {headId: $("#headId").val(), activityType: 'NOTIFY'}, function (r) {
+            if (r.code === 200) {
+                window.location.href = "/common/download?fileName=" + r.msg + "&delete=" + true;
+            } else {
+                $MB.n_warning(r.msg);
+            }
+            $("#btn_download_data1").html("").append("<i class=\"fa fa-download\"></i> 下载数据").removeAttr("disabled");
+        });
+    });
+});
+
+$("#btn_download_data").click(function () {
+    $MB.confirm({
+        title: "<i class='mdi mdi-alert-outline'></i>提示：",
+        content: "确定下载商品数据?"
+    }, function () {
+        $("#btn_download_data").text("下载中...").attr("disabled", true);
+        $.post("/qywxActivity/downloadExcel", {headId: $("#headId").val(), activityType: 'DURING'}, function (r) {
+            if (r.code === 200) {
+                window.location.href = "/common/download?fileName=" + r.msg + "&delete=" + true;
+            } else {
+                $MB.n_warning(r.msg);
+            }
+            $("#btn_download_data").html("").append("<i class=\"fa fa-download\"></i> 下载数据").removeAttr("disabled");
+        });
+    });
+});

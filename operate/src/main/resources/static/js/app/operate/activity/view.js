@@ -319,3 +319,41 @@ function resetActivityProduct2() {
     $( "#groupId2" ).find( "option:selected" ).removeAttr( "selected" );
     $MB.refreshTable( 'activityProductTable2' );
 }
+
+// 活动通知商品数据下载
+$("#btn_download_data1").click(function () {
+    $MB.confirm({
+        title: "<i class='mdi mdi-alert-outline'></i>提示：",
+        content: "确定下载商品数据?"
+    }, function () {
+        $("#btn_download_data1").text("下载中...").attr("disabled", true);
+        $.post("/activity/downloadExcel", {headId: $("#headId").val(), activityStage: CURRENT_ACTIVITY_STAGE
+            , activityType: 'NOTIFY'}, function (r) {
+            if (r.code === 200) {
+                window.location.href = "/common/download?fileName=" + r.msg + "&delete=" + true;
+            } else {
+                $MB.n_warning(r.msg);
+            }
+            $("#btn_download_data1").html("").append("<i class=\"fa fa-download\"></i> 下载数据").removeAttr("disabled");
+        });
+    });
+});
+
+// 活动期间商品数据下载
+$("#btn_download_data2").click(function () {
+    $MB.confirm({
+        title: "<i class='mdi mdi-alert-outline'></i>提示：",
+        content: "确定下载商品数据?"
+    }, function () {
+        $("#btn_download_data2").text("下载中...").attr("disabled", true);
+        $.post("/activity/downloadExcel", {headId: $("#headId").val(), activityStage: CURRENT_ACTIVITY_STAGE
+            , activityType: 'DURING'}, function (r) {
+            if (r.code === 200) {
+                window.location.href = "/common/download?fileName=" + r.msg + "&delete=" + true;
+            } else {
+                $MB.n_warning(r.msg);
+            }
+            $("#btn_download_data2").html("").append("<i class=\"fa fa-download\"></i> 下载数据").removeAttr("disabled");
+        });
+    });
+});
