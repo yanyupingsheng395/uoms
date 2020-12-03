@@ -70,13 +70,11 @@
         <result column="PUSH_ID" jdbcType="NUMERIC" property="pushId"/>
         <result column="QYWX_CONTRACT_ID" jdbcType="VARCHAR" property="qywxContractId"/>
         <result column="FOLLOW_USER_ID" jdbcType="VARCHAR" property="followUserId"/>
+
+        <result column="FOLLOW_USER_NAME" jdbcType="VARCHAR" property="followUserName"/>
+        <result column="QYWX_CONTACT_NAME" jdbcType="VARCHAR" property="qywxContactName"/>
     </resultMap>
 
-<!--      select count(1) from UO_QYWX_ACTIVITY_DETAIL,UO_QYWX_ACTIVITY_GROUP,UO_QYWX_ACTIVITY_PLAN-->
-<!--         where-->
-<!--              UO_QYWX_ACTIVITY_DETAIL.HEAD_ID=UO_QYWX_ACTIVITY_GROUP.HEAD_ID-->
-<!--          AND  UO_QYWX_ACTIVITY_DETAIL.HEAD_ID=UO_QYWX_ACTIVITY_PLAN.HEAD_ID-->
-<!--         AND  UO_QYWX_ACTIVITY_PLAN.PLAN_ID = #{planId}-->
     <select id="getDataCount" resultType="int">
         select count(1) from UO_QYWX_ACTIVITY_DETAIL where PLAN_ID =#{planId}
     </select>
@@ -86,8 +84,10 @@
           qywx_detail_id,
           sms_content,
           t2.follow_user_id,
-           uo_qywx_activity_detail.qywx_contract_id,
-           rec_prod_name
+          uo_qywx_activity_detail.qywx_contract_id,
+          t2.follow_user_name,
+          t2.qywx_contact_name,
+          rec_prod_name
         from uo_qywx_activity_detail
         left join
              (

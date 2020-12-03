@@ -50,13 +50,6 @@ public interface QywxActivityPushMapper {
      */
     int updateStatus(Long planId, String status, int version);
 
-
-    /**
-     * 将活动的推送数据写入到推送通道表中
-     * @param planId
-     */
-    void insertToPushListLarge(Long planId);
-
     /**
      * 判断活动是否配置了文案
      */
@@ -97,7 +90,7 @@ public interface QywxActivityPushMapper {
     /**
      * 回写uo_qywx_activity_detail的push_id
      */
-    void updatePushId(long minQywxDetailId, long maxQywxDetailId, long pushId,String msgId,String status);
+    void updatePushId(List<Long> detailIdList, long pushId,String msgId,String status);
 
     List<FollowUserVO> getFollowUserList(Long planId);
 }
