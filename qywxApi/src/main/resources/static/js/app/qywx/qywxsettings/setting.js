@@ -293,28 +293,45 @@ function getFileMessage() {
 
 }
 
+var filename;
+var filetype;
+// 文件上传按钮选择事件
+$( "#uploadFile" ).change( function () {
+    filename=$(this)[0].files[0].name;
+    if(filename!=null&&filename!=""){
+        filename=filename.substr(0, filename.indexOf("."));
+    }
+    $( '#filename1' ).text( "文件名:" + $(this)[0].files[0].name).attr( "style", "display:inline-block;" );
+    $( "#btn_upload1" ).attr( "style", "display:inline-block;" );
+} );
+
 /**
  * 保存校验文件内容
  */
 function uploadfile() {
-    var name=$("#titlefile").attr("title");
-    var content=$("#filecontent").val();
-    if(content==null||content==""){
-        content=(document.getElementById("filecontent1").innerText).trim();
-    }
-    name=name.substr(0, name.indexOf("."));
-
-    $.post( "/qywx/saveFile", {
-        title: name,
-        content: content
-    }, function (r) {
-        if (r.code === 200) {
-            $MB.n_success( "保存成功！" );
-            //关闭弹出框
-            $("#materialModal").modal('hide');
-            $("#filename").val(name);
-            $("#content").val(content);
-            $("#showfile").show();
+    let file = $("#uploadFile")[0].files[0];
+    let formData = new FormData();
+    formData.append("file", file);
+    formData.append("title", filename);
+    $.ajax({
+        url: "/qywx/saveFile",
+        type: "post",
+        data: formData,
+        cache: false,
+        processData: false,
+        contentType: false,
+        success: function (res) {
+            if(res.code === 200) {
+                $MB.n_success( "保存成功！" );
+                //关闭弹出框
+                $("#materialModal").modal('hide');
+                getFileMessage();
+            }else{
+                $MB.n_danger(res.msg);
+            }
+        },
+        error: function (err) {
+            $MB.n_danger("解析文件失败！");
         }
-    } );
+    });
 }

@@ -29,21 +29,35 @@
 
 
 <div class="modal fade" id="materialModal" data-keyboard="false" data-backdrop="static" tabindex="-1">
-    <div class="modal-dialog" style="width: 75%;">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">×</span></button>
-                <h5 class="modal-title pull-left">上传文件</h5>
+                <h5 class="modal-title pull-left">活动商品上传</h5>
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="container kv-main">
-                        <form enctype="multipart/form-data">
-                            <input id="file-0" class="file" type="file" multiple data-min-file-count="1">
+                    <div class="col-md-12 table-striped">
+                        <form class="form-horizontal"method="post" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label class="col-md-4 control-label">上传文件</label>
+                                <div class="col-md-7">
+                                    <button class="btn btn-primary btn-sm" type="button"
+                                            onclick="$('#uploadFile').click()">
+                                        <i class="fa fa-file-excel-o"></i> 选择文件
+                                    </button>
+                                    <input id="uploadFile" type="file" style="display:none"/>
+                                    <span id="filename1" style="color: #8a6d3b" class="h6"></span>
+                                </div>
+                            </div>
                         </form>
                     </div>
                 </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-save btn-sm" onclick="uploadfile()" name="save">确定</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
             </div>
         </div>
     </div>
