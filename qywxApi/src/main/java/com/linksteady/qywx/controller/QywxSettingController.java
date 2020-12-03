@@ -10,11 +10,10 @@ import com.linksteady.qywx.service.QywxService;
 import com.linksteady.qywx.storage.impl.RedisConfigStorageImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.*;
 import java.util.Map;
 
 @RestController
@@ -154,14 +153,76 @@ public class QywxSettingController {
      *存储校验文件内容和名称
      */
     @PostMapping("/saveFile")
-    public ResponseBo saveFile(String title,String content){
+    public ResponseBo saveFile(String title,@RequestParam("file")  MultipartFile file){
         try {
-            qywxService.saveFile(title,content);
-            return ResponseBo.ok();
+            String originalFilename = file.getOriginalFilename();
+            String fileType = originalFilename.substring(originalFilename.lastIndexOf("."));
+            if(".txt".equals(fileType)){
+                String filecount=analyseFile(multipartFileToFile(file));
+                qywxService.saveFile(title,filecount);
+                return ResponseBo.ok();
+            }else{
+                return ResponseBo.error("请上传txt文件！");
+            }
         }catch (Exception e){
             return ResponseBo.error();
         }
     }
+
+    /**
+     *读取txt文件内容
+     */
+    private String analyseFile(File file){
+        StringBuilder stringBuilder=new StringBuilder();
+        try{
+            BufferedReader br = new BufferedReader(new FileReader(file));//构造一个BufferedReader类来读取文件
+            String s = null;
+            while((s = br.readLine())!=null){//使用readLine方法，一次读一行
+               stringBuilder.append(s);
+            }
+            br.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        return stringBuilder.toString();
+    }
+
+    /**
+     * 将MultipartFile转成file格式
+     */
+    public static File multipartFileToFile(MultipartFile file) throws Exception {
+        File toFile = null;
+        if (file.equals("") || file.getSize() <= 0) {
+            file = null;
+        } else {
+            InputStream ins = null;
+            ins = file.getInputStream();
+            toFile = new File(file.getOriginalFilename());
+            inputStreamToFile(ins, toFile);
+            ins.close();
+        }
+        return toFile;
+    }
+
+    /**
+     * 获取流文件
+     */
+    private static void inputStreamToFile(InputStream ins, File file) {
+        try {
+            OutputStream os = new FileOutputStream(file);
+            int bytesRead = 0;
+            byte[] buffer = new byte[8192];
+            while ((bytesRead = ins.read(buffer, 0, 8192)) != -1) {
+                os.write(buffer, 0, bytesRead);
+            }
+            os.close();
+            ins.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
     /**
      * 获取校验文件内容和名称
