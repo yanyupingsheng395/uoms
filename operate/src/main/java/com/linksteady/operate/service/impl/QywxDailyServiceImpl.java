@@ -256,9 +256,12 @@ public class QywxDailyServiceImpl implements QywxDailyService {
             String status="S";
             String msgId ="";
             String failList="";
+            String remark="推送成功";
+
             if(StringUtils.isEmpty(result))
             {
                  status="F";
+                remark="调用企业微信接口返回空";
             }else
             {
                 JSONObject jsonObject = JSON.parseObject(result);
@@ -269,11 +272,12 @@ public class QywxDailyServiceImpl implements QywxDailyService {
                 if(errcode!=0)
                 {
                     status="F";
+                    remark="调用企业微信接口失败";
                 }
             }
-            qywxDailyMapper.updatePushList(qywxPushList.getPushId(),status,msgId,failList,"推送成功");
+            qywxDailyMapper.updatePushList(qywxPushList.getPushId(),status,msgId,failList,remark);
 
-            //更新uo_qywx_daily_detail表上的push_id (这种更新要确保取数的时候是按detail_id进行了排序)
+            //更新uo_qywx_daily_detail表上的push_id
             List<Long> detailIdList=qywxDailyDetailList.stream().map(QywxDailyDetail::getDetailId).collect(Collectors.toList());
             log.info("更新pushidpushid:{}",qywxPushList.getPushId());
             if(detailIdList.size()>0)

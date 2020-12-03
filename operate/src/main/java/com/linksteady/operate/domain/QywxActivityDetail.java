@@ -282,4 +282,14 @@ public class QywxActivityDetail implements Serializable {
      */
     private String followUserId;
 
+    /**
+     * 对应企业微信成员名称
+     */
+    private String followUserName;
+
+    /**
+     * 外部客户名称
+     */
+    private String qywxContactName;
+
 }

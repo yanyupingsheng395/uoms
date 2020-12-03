@@ -27,13 +27,13 @@ import com.linksteady.operate.vo.FollowUserVO;
 import com.linksteady.operate.vo.QywxActivityContentTmp;
 import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -235,18 +235,6 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
             //判断文案中是否含有价格变量
             smsContent = smsContent.replace("${商品最低单价}",decimalFormat.format(activityDetail.getActivityPrice())+"元");
 
-            //判断是否含有商品链接变量
-            if(smsContent.indexOf("${商品详情页短链}")!=-1)
-            {
-                //获取商品的短链
-                String prodLongUrl=shortUrlService.genProdShortUrlByProdId(activityDetail.getEpbProductId(),"S");
-                //如果短链生成错误，则不再进行替换
-                if(!"error".equals(prodLongUrl))
-                {
-                    smsContent = smsContent.replace("${商品详情页短链}"," "+prodLongUrl+" ");
-                }
-            }
-
             //替换利益点
             smsContent = smsContent.replace("${商品利益点}", getActivityProfilt(activityDetail.getActivityProfit(),activityDetail.getGroupId()));
 
@@ -426,25 +414,37 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
             //调用企业微信接口，发送信息
             String result = qywxMessageService.pushQywxMessage(qywxMessage, qywxPushList.getFollowUserId(), contactIdList);
             log.info("日运营企微：推送结果【{}】", result);
-            //解析微信返回过来的信息
-            JSONObject jsonObject = JSON.parseObject(result);
-            String msgId = jsonObject.getString("msg");
-            String code = jsonObject.getString("code");
-            String failList = jsonObject.getString("data");
 
             String status="S";
-            if(org.apache.commons.lang3.StringUtils.isNotEmpty(code)&&code.equalsIgnoreCase("200"))
-            {
-                qywxActivityPushMapper.updatePushList(qywxPushList.getPushId(),status,msgId,failList,"推送成功");
-            }else
+            String msgId ="";
+            String failList="";
+            String remark="推送成功";
+
+            if(StringUtils.isEmpty(result))
             {
                 status="F";
-                qywxActivityPushMapper.updatePushList(qywxPushList.getPushId(),status,"","","调用企业微信接口失败");
+                remark="调用企业微信接口返回空";
+            }else
+            {
+                JSONObject jsonObject = JSON.parseObject(result);
+                msgId = jsonObject.getString("msgid");
+                int errcode = jsonObject.getIntValue("errcode");
+                failList = jsonObject.getString("fail_list");
+
+                if(errcode!=0)
+                {
+                    status="F";
+                    remark="调用企业微信接口失败";
+                }
             }
-            //将push_id更新到uo_qywx_activity_detail.push_id(这种更新要确保取数的时候是按detail_id进行了排序)
-            long minQywxDetailId=qywxActivityDetailList.stream().mapToLong(QywxActivityDetail::getQywxDetailId).min().getAsLong();
-            long maxQywxDetailId=qywxActivityDetailList.stream().mapToLong(QywxActivityDetail::getQywxDetailId).max().getAsLong();
-            qywxActivityPushMapper.updatePushId(minQywxDetailId,maxQywxDetailId,qywxPushList.getPushId(),msgId,status);
+            qywxActivityPushMapper.updatePushList(qywxPushList.getPushId(),status,msgId,failList,remark);
+
+            List<Long> detailIdList=qywxActivityDetailList.stream().map(QywxActivityDetail::getQywxDetailId).collect(Collectors.toList());
+            log.info("更新pushidpushid:{}",qywxPushList.getPushId());
+            if(detailIdList.size()>0)
+            {
+                qywxActivityPushMapper.updatePushId(detailIdList,qywxPushList.getPushId(),msgId,status);
+            }
         }
     }
 

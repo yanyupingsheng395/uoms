@@ -245,13 +245,13 @@ function getUserDetail(){
                 }
             },
             {
-                field: 'followUserId',
+                field: 'followUserName',
                 title: '推送消息的成员',
                 align: "center",
             },
             {
-                field: 'qywxContactId',
-                title: '成员推送消息的用户',
+                field: 'qywxContactName',
+                title: '接收消息的用户',
                 align: "center",
             },{
                 field: 'recProdName',

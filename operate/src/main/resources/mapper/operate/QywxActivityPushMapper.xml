@@ -23,7 +23,6 @@
         <result column="REC_CROSS_ID" jdbcType="VARCHAR" property="recCrossId"/>
         <result column="REC_CROSS_NAME" jdbcType="VARCHAR" property="recCrossName"/>
         <result column="REC_TYPE" jdbcType="VARCHAR" property="recType"/>
-        <result column="IS_PUSH" jdbcType="VARCHAR" property="isPush"/>
         <result column="IS_CONVERSION" jdbcType="VARCHAR" property="isConversion"/>
         <result column="PUSH_STATUS" jdbcType="VARCHAR" property="pushStatus"/>
         <result column="SMS_CONTENT" jdbcType="VARCHAR" property="smsContent"/>
@@ -107,7 +106,7 @@
     </select>
 
     <select id="getPushList" resultMap="activityDetailResult">
-        select UO_QYWX_ACTIVITY_DETAIL.IS_PUSH,
+        select
            to_char(UO_QYWX_ACTIVITY_DETAIL.PUSH_DATE, 'yyyy-mm-dd hh24:mi') PUSH_DATE_STR,
            UO_QYWX_ACTIVITY_DETAIL.PUSH_STATUS,
            UO_QYWX_ACTIVITY_DETAIL.EPB_PRODUCT_NAME,
@@ -161,33 +160,6 @@
         where PLAN_ID = #{planId}::int4  AND VERSION=#{version}::int4
     </update>
 
-    <insert id="insertToPushListLarge">
-        INSERT INTO uo_op_push_list_large(
-            PUSH_CONTENT,
-            PUSH_STATUS,
-            SOURCE_CODE,
-            SOURCE_ID,
-            USER_PHONE,
-            IS_PUSH,
-            PUSH_SCHEDULING_DATE
-        )
-        SELECT UO_OP_ACTIVITY_DETAIL.SMS_CONTENT,
-               'P',
-               'ACTIVITY',
-               UO_OP_ACTIVITY_DETAIL.ACTIVITY_DETAIL_ID,
-               UO_OP_ACTIVITY_DETAIL.USER_PHONE,
-               '0',
-               UO_OP_ACTIVITY_DETAIL.PUSH_SCHEDULING_DATE
-        FROM UO_OP_ACTIVITY_DETAIL,UO_OP_ACTIVITY_GROUP,UO_OP_ACTIVITY_PLAN
-       where
-             UO_OP_ACTIVITY_DETAIL.HEAD_ID=UO_OP_ACTIVITY_GROUP.HEAD_ID
-        AND  UO_OP_ACTIVITY_DETAIL.GROUP_ID= UO_OP_ACTIVITY_GROUP.GROUP_ID
-        AND  UO_OP_ACTIVITY_PLAN.PLAN_TYPE=UO_OP_ACTIVITY_GROUP.ACTIVITY_TYPE
-        AND  UO_OP_ACTIVITY_PLAN.ACTIVITY_STAGE=UO_OP_ACTIVITY_GROUP.ACTIVITY_STAGE
-        AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = UO_OP_ACTIVITY_PLAN.PLAN_ID
-        AND  UO_OP_ACTIVITY_DETAIL.PLAN_ID = #{planId}
-    </insert>
-
     <select id="validateSmsConfig" resultType="int">
         select count(*) from UO_qywx_ACTIVITY_GROUP
           where head_id=#{headId}
@@ -205,12 +177,12 @@
     </select>
 
     <select id="getWaitQywxUserListCount" resultType="int">
-         select count(*) from UO_QYWX_ACTIVITY_DETAIL where head_id = #{headId} and follow_user_id=#{followUserId} and qywx_msg_sign=#{msgSign}
+         select count(*) from UO_QYWX_ACTIVITY_DETAIL where head_id = #{headId} and follow_user_id=#{followUserId} and qywx_msg_sign=#{qywxMsgSign}
     </select>
 
     <select id="getQywxUserList" resultMap="activityDetailResult">
         select * from UO_QYWX_ACTIVITY_DETAIL where
-          head_id = #{headId} and follow_user_id=#{followUserId} and qywx_msg_sign=#{msgSign} order by qywx_detail_id asc limit #{limit} offset #{offset}
+          head_id = #{headId} and follow_user_id=#{followUserId} and qywx_msg_sign=#{qywxMsgSign} order by qywx_detail_id asc limit #{limit} offset #{offset}
     </select>
 
     <insert id="insertPushList" useGeneratedKeys="true" keyProperty="pushId" keyColumn="push_id">
@@ -251,9 +223,11 @@
     </update>
 
     <update id="updatePushId">
-        update UO_QYWX_ACTIVITY_DETAIL
-        set push_id=#{pushId},msg_id=#{msgId},push_status=#{status}
-        where qywx_detail_id &gt;=#{minDetailId} and qywx_detail_id &lt;=#{maxDetailId}
+        update UO_QYWX_ACTIVITY_DETAIL set push_id=#{pushId},msg_id=#{msgId},push_status=#{status}
+        where qywx_detail_id in
+        <foreach collection="detailIdList" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
     </update>
 
     <select id="getFollowUserList" resultMap="followUserResult">
