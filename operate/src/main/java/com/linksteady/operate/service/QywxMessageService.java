@@ -12,7 +12,7 @@ public interface QywxMessageService {
      * @param sender
      * @param externalUserList
      */
-    String pushQywxMessage(QywxMessage message, String sender, List<String> externalUserList)throws Exception;
+    String pushQywxMessage(QywxMessage message, String sender, List<String> externalUserList);
 
     /**
      * 获取corpID

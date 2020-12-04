@@ -54,17 +54,15 @@ public class QywxGropMsgServiceImpl implements QywxGropMsgService {
     }
 
     @Override
-    public String addMsgTemplate(JSONObject param) throws WxErrorException{
+    public String addMsgTemplate(JSONObject param) {
         String result="";
-        String token=qywxService.getAccessToken();
-        StringBuffer url=new StringBuffer(qywxService.getRedisConfigStorage().getApiUrl(WxPathConsts.ExternalContacts.ADD_MSG_TEMPLATE));
-        url.append(token);
-        log.info("addMsgTemplate--->"+url+"-->"+param);
-        result=OkHttpUtil.postRequestByJson(url.toString(),param.toJSONString());
-        JSONObject object = JSONObject.parseObject(result);
-        if(null==object||!"0".equals(object.getString("errcode"))){
-            log.error("推送企业微信消息失败，接口返回结果为{}",result);
-            return "";
+        try {
+            String token=qywxService.getAccessToken();
+            StringBuffer url=new StringBuffer(qywxService.getRedisConfigStorage().getApiUrl(WxPathConsts.ExternalContacts.ADD_MSG_TEMPLATE));
+            url.append(token);
+            result=OkHttpUtil.postRequestByJson(url.toString(),param.toJSONString());
+        }catch (Exception e){
+            log.error("获取token失败{}",e);
         }
         return result;
     }

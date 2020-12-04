@@ -36,12 +36,7 @@ public class ApiController {
 
     @RequestMapping("/addMsgTemplate")
     public String addMsgTemplate(@RequestBody String data) {
-        try {
-            log.info("addMsgTemplate--->"+data);
-            return qywxGropMsgService.addMsgTemplate( JSONObject.parseObject(data));
-        } catch (WxErrorException e) {
-            return "";
-        }
+        return qywxGropMsgService.addMsgTemplate( JSONObject.parseObject(data));
     }
 
     /**

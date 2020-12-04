@@ -39,87 +39,84 @@ public class QywxMessageServiceImpl implements QywxMessageService {
      * @param externalUserList
      */
     @Override
-    public String pushQywxMessage(QywxMessage message, String sender, List<String> externalUserList)throws Exception {
+    public String pushQywxMessage(QywxMessage message, String sender, List<String> externalUserList){
         int retryTimes=0;
+        //返回结果值
+        String result="";
         do{
-            try{
-                //构造推送参数
-                JSONObject param=new JSONObject();
-                param.put("chat_type","single");
-                param.put("external_userid",JSONArray.parseArray(JSON.toJSONString(externalUserList)));
-                param.put("sender",sender);
+            //构造推送参数
+            JSONObject param=new JSONObject();
+            param.put("chat_type","single");
+            param.put("external_userid",JSONArray.parseArray(JSON.toJSONString(externalUserList)));
+            param.put("sender",sender);
 
-                JSONObject tempContent=null;
-                //文本
-                if(StringUtils.isNotEmpty(message.getText())){
-                    tempContent=new JSONObject();
-                    tempContent.put("content",message.getText());
-                    param.put("text",tempContent);
-                }
+            JSONObject tempContent=null;
+            //文本
+            if(StringUtils.isNotEmpty(message.getText())){
+                tempContent=new JSONObject();
+                tempContent.put("content",message.getText());
+                param.put("text",tempContent);
+            }
 
-                //图片
-                if(StringUtils.isNotEmpty(message.getImgMediaId())||StringUtils.isNotEmpty(message.getImgPicUrl())){
-                    tempContent=new JSONObject();
-                    if(StringUtils.isNotEmpty(message.getImgMediaId()))
-                    {
-                        tempContent.put("media_id",message.getImgMediaId());
-                    }
-                    if(StringUtils.isNotEmpty(message.getImgPicUrl()))
-                    {
-                        tempContent.put("pic_url",message.getImgPicUrl());
-                    }
-                    param.put("image",tempContent);
-                }
-                //链接
-                if(StringUtils.isNotEmpty(message.getLinkTitle())) {
-                    tempContent=new JSONObject();
-                    tempContent.put("title",message.getLinkTitle());
-
-                    if(StringUtils.isNotEmpty(message.getLinkPicUrl())){
-                        tempContent.put("picurl",message.getLinkPicUrl());
-                    }
-
-                    if(StringUtils.isNotEmpty(message.getLinkDesc())){
-                        tempContent.put("desc",message.getLinkDesc());
-                    }
-
-                    if(StringUtils.isNotEmpty(message.getLinkUrl())){
-                        tempContent.put("url",message.getLinkUrl());
-                    }
-
-                    param.put("link",tempContent);
-                }
-
-                //小程序
-                if(StringUtils.isNotEmpty(message.getMpTitle())){
-                    tempContent=new JSONObject();
-                    tempContent.put("title",message.getMpTitle());
-                    tempContent.put("pic_media_id",message.getMpPicMediaId());
-                    tempContent.put("appid",message.getMpAppid());
-                    tempContent.put("page",message.getMpPage());
-
-                    param.put("miniprogram",tempContent);
-                }
-                SysInfoBo sysInfoBo = commonFunService.getSysInfoByCode(CommonConstant.QYWX_CODE);
-                if(null==sysInfoBo||StringUtils.isEmpty(sysInfoBo.getSysDomain())){
-                    throw new LinkSteadyException("企业微信应用未配置！");
-                }
-                StringBuffer url=new StringBuffer(sysInfoBo.getSysDomain());
-                url.append(addMsg);
-                log.info("pushQywxMessage--->"+url.toString()+"---》"+param.toJSONString());
-                String result= OkHttpUtil.postRequestByJson(url.toString(),param.toJSONString());
-                if(StringUtils.isEmpty(result))
+            //图片
+            if(StringUtils.isNotEmpty(message.getImgMediaId())||StringUtils.isNotEmpty(message.getImgPicUrl())){
+                tempContent=new JSONObject();
+                if(StringUtils.isNotEmpty(message.getImgMediaId()))
                 {
-                    throw new LinkSteadyException("添加消息任务推送错误！");
+                    tempContent.put("media_id",message.getImgMediaId());
                 }
-                return result;
-            }catch (Exception e){
-                log.error("添加消息任务处理异常，异常原因为{}",e);
-                if(retryTimes+1>maxRetryTimes)
+                if(StringUtils.isNotEmpty(message.getImgPicUrl()))
                 {
+                    tempContent.put("pic_url",message.getImgPicUrl());
+                }
+                param.put("image",tempContent);
+            }
+            //链接
+            if(StringUtils.isNotEmpty(message.getLinkTitle())) {
+                tempContent=new JSONObject();
+                tempContent.put("title",message.getLinkTitle());
+
+                if(StringUtils.isNotEmpty(message.getLinkPicUrl())){
+                    tempContent.put("picurl",message.getLinkPicUrl());
+                }
+
+                if(StringUtils.isNotEmpty(message.getLinkDesc())){
+                    tempContent.put("desc",message.getLinkDesc());
+                }
+
+                if(StringUtils.isNotEmpty(message.getLinkUrl())){
+                    tempContent.put("url",message.getLinkUrl());
+                }
+
+                param.put("link",tempContent);
+            }
+
+            //小程序
+            if(StringUtils.isNotEmpty(message.getMpTitle())){
+                tempContent=new JSONObject();
+                tempContent.put("title",message.getMpTitle());
+                tempContent.put("pic_media_id",message.getMpPicMediaId());
+                tempContent.put("appid",message.getMpAppid());
+                tempContent.put("page",message.getMpPage());
+
+                param.put("miniprogram",tempContent);
+            }
+            SysInfoBo sysInfoBo = commonFunService.getSysInfoByCode(CommonConstant.QYWX_CODE);
+            if(null==sysInfoBo||StringUtils.isEmpty(sysInfoBo.getSysDomain())){
+                log.error("企业微信应用未配置！");
+              return result;
+            }
+            StringBuffer url=new StringBuffer(sysInfoBo.getSysDomain());
+            url.append(addMsg);
+            result= OkHttpUtil.postRequestByJson(url.toString(),param.toJSONString());
+            JSONObject object = JSONObject.parseObject(result);
+            //解析推送微信返回过来的值，如果不成功，进入重试模式。
+            if(null==object||!"0".equals(object.getString("errcode"))){
+                if(retryTimes+1>maxRetryTimes){
+                    //超过最大重试次数，写log日志，将错误信息返回上一层处理
                     log.warn("推送消息重试达到最大次数，接收到的参数为{}",message,sender,externalUserList.toString());
                 }else{
-                    //线程休眠
+                    //线程休眠，进入重试模式
                     long delayMins=1000* (1 << retryTimes);
                     log.debug("添加消息任务处理错误，{}毫秒后进行{}次重试",delayMins,retryTimes);
                     try {
@@ -130,7 +127,7 @@ public class QywxMessageServiceImpl implements QywxMessageService {
                 }
             }
         }while (retryTimes++<maxRetryTimes);
-        throw new LinkSteadyException("添加消息任务推送错误");
+        return result;
     }
 
     @Override

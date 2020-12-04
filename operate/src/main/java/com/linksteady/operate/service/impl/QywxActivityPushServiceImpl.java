@@ -269,7 +269,6 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
      * @throws Exception
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void pushActivity(QywxActivityPlan activityPlan) throws Exception{
         //根据锁去更新状态 更新为执行中
         int count= qywxActivityPushMapper.updateStatus(activityPlan.getPlanId(),ActivityPlanStatusEnum.EXEC.getStatusCode(),activityPlan.getVersion());
@@ -317,6 +316,7 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
                             qywxPushList.setMpUrl(qywxActivityDetailList.get(0).getMpUrl());
                             qywxPushList.setMpMediaId(mediaId);
                             qywxPushList.setMpAppid(appId);
+                            //获取推送外部联系人列表。放入pushlist表中。
                             qywxPushList.setExternalContactIds(org.apache.commons.lang3.StringUtils.join(qywxActivityDetailList.stream().map(QywxActivityDetail::getQywxContractId).collect(Collectors.toList()),","));
                             qywxPushList.setFollowUserId(followUserId);
                             qywxPushList.setSourceId(qywxActivityDetailList.get(0).getQywxDetailId());
@@ -332,6 +332,7 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
                         int pageNum = waitCount % pageSize == 0 ? (waitCount / pageSize) : ((waitCount / pageSize) + 1);
                         for (int i = 0; i < pageNum; i++) {
                             log.info("当前文本推送条数{}，偏移量为{}", pageSize,i*pageSize);
+                            //获取活动明细表，条数大于一万条，然后分页查询推送
                             List<QywxActivityDetail> tmpUserList = qywxActivityPushMapper.getQywxUserList(headId,followUserId,y,pageSize,i * pageSize);
                             if(tmpUserList.size() > 0) {
                                 String mediaId="";
@@ -351,6 +352,7 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
                                 qywxPushList.setExternalContactIds(org.apache.commons.lang3.StringUtils.join(tmpUserList.stream().map(QywxActivityDetail::getQywxContractId).collect(Collectors.toList()),","));
                                 qywxPushList.setFollowUserId(followUserId);
                                 qywxPushList.setSourceId(tmpUserList.get(0).getQywxDetailId());
+                                //将信息，放入uo_qywx_push_list表中。
                                 qywxActivityPushMapper.insertPushList(qywxPushList);
                                 //推送并更新状态
                                 try {
@@ -376,7 +378,8 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
      *
      * @param qywxPushList (待推送的对象)
      */
-    private void pushQywxMsg(QywxPushList qywxPushList,List<QywxActivityDetail> qywxActivityDetailList)throws Exception {
+    @Transactional(rollbackFor = Exception.class)
+    public void pushQywxMsg(QywxPushList qywxPushList,List<QywxActivityDetail> qywxActivityDetailList)throws Exception {
 
         if(null==qywxActivityDetailList||qywxActivityDetailList.size()==0){
             qywxActivityPushMapper.updatePushList(qywxPushList.getPushId(),"F","","","推送列表为空");
@@ -437,6 +440,7 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
                     remark="调用企业微信接口失败";
                 }
             }
+            //更新状态。
             qywxActivityPushMapper.updatePushList(qywxPushList.getPushId(),status,msgId,failList,remark);
 
             List<Long> detailIdList=qywxActivityDetailList.stream().map(QywxActivityDetail::getQywxDetailId).collect(Collectors.toList());
