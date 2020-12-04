@@ -170,4 +170,7 @@ public class QywxDailyDetail implements Serializable {
      */
     private String qywxContactName;
 
+
+    private String mpMediaId;
+
 }

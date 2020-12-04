@@ -21,12 +21,14 @@ public class TransQywxDailyContentThread implements Callable {
     int limit;
     Long headerId;
     Map<String,List<GroupCouponVO>> groupCouponList;
+    Map<String,String> mediaMap;
 
-    public TransQywxDailyContentThread(Long headerId, int limit,int offset,  Map<String,List<GroupCouponVO>> groupCouponList) {
+    public TransQywxDailyContentThread(Long headerId, int limit,int offset,  Map<String,List<GroupCouponVO>> groupCouponList,Map<String,String> mediaMap) {
         this.headerId = headerId;
         this.limit = limit;
         this.offset = offset;
         this.groupCouponList=groupCouponList;
+        this.mediaMap=mediaMap;
     }
 
     @Override
@@ -36,7 +38,7 @@ public class TransQywxDailyContentThread implements Callable {
             QywxDailyDetailServiceImpl qywxDailyDetailService = (QywxDailyDetailServiceImpl) SpringContextUtils.getBean("qywxDailyDetailServiceImpl");
             list = qywxDailyDetailService.getUserList(headerId,  limit, offset);
             //转换文案
-            List<QywxDailyDetail> targetList = qywxDailyDetailService.transContent(list,groupCouponList);
+            List<QywxDailyDetail> targetList = qywxDailyDetailService.transContent(list,groupCouponList,mediaMap);
             log.info("{}的从{}开始的{}条记录处理完成",headerId,limit,offset);
             return targetList;
         } catch (Exception e) {

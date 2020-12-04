@@ -221,8 +221,6 @@ public class QywxActivityPlanController {
                 return ResponseBo.error(msg);
             }
 
-
-
             if (qywxActivityPushService.getTransActivityContentLock(activityPlan.getHeadId())) {
                 try {
                     qywxActivityPushService.transActivityDetail(activityPlan);
@@ -238,13 +236,11 @@ public class QywxActivityPlanController {
                     //释放锁
                     qywxActivityPushService.delTransLock();
                 }
-
             } else {
                 return ResponseBo.error("其他用户正在操作，请稍后再试！");
             }
         }
     }
-
 
     /**
      * 获取当前计划的汇总信息

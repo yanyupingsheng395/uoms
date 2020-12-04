@@ -34,6 +34,7 @@
         <result column="LIFECYCLE" jdbcType="VARCHAR" property="lifecycle"></result>
         <result column="follow_user_name" jdbcType="VARCHAR" property="followUserName"></result>
         <result column="qywx_contact_name" jdbcType="VARCHAR" property="qywxContactName"></result>
+        <result column="mp_media_id" jdbcType="VARCHAR" property="mpMediaId"></result>
     </resultMap>
 
     <resultMap id="followUserResult" type="com.linksteady.operate.vo.FollowUserVO">
@@ -77,7 +78,7 @@
     </select>
 
     <update id="insertPushContentTemp">
-        insert into uo_qywx_daily_content_tmp(detail_id,head_id,text_content,coupon_id,coupon_min,coupon_deno,qywx_msg_sign)
+        insert into uo_qywx_daily_content_tmp(detail_id,head_id,text_content,coupon_id,coupon_min,coupon_deno,qywx_msg_sign,mp_media_id)
         values
         <foreach collection="list" item="item" index="index"
                  separator=",">
@@ -87,7 +88,8 @@
             #{item.couponId}::numeric,
             #{item.couponMin}::numeric,
             #{item.couponDeno}::numeric,
-            #{item.qywxMsgSign})
+            #{item.qywxMsgSign},
+            #{item.mpMediaId})
         </foreach>
     </update>
 
@@ -96,8 +98,8 @@
     </delete>
 
     <update id="updatePushContentFromTemp">
-        update uo_qywx_daily_detail set (text_content,coupon_id,coupon_min,coupon_deno,qywx_msg_sign) =
-            (select text_content,coupon_id,coupon_min,coupon_deno,qywx_msg_sign from uo_qywx_daily_content_tmp where
+        update uo_qywx_daily_detail set (text_content,coupon_id,coupon_min,coupon_deno,qywx_msg_sign,mp_media_id) =
+            (select text_content,coupon_id,coupon_min,coupon_deno,qywx_msg_sign,mp_media_id from uo_qywx_daily_content_tmp where
             uo_qywx_daily_content_tmp.detail_id = uo_qywx_daily_detail.detail_id
             and uo_qywx_daily_content_tmp.head_id=uo_qywx_daily_detail.head_id)
         where head_id=#{headId}
@@ -238,4 +240,8 @@
             #{item}
         </foreach>
     </update>
+
+    <select id="getProductIdList" resultType="string">
+        select distinct REC_PROD_ID from uo_qywx_daily_detail where head_id = #{headId}
+    </select>
 </mapper>

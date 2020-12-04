@@ -13,7 +13,6 @@ import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.exception.SendCouponException;
 import com.linksteady.operate.service.QywxDailyService;
-import com.linksteady.operate.service.QywxMdiaService;
 import com.linksteady.operate.service.QywxMessageService;
 import com.linksteady.operate.service.QywxSendCouponService;
 import com.linksteady.operate.vo.FollowUserVO;
@@ -56,9 +55,6 @@ public class QywxDailyServiceImpl implements QywxDailyService {
 
     @Autowired
     private QywxMessageService qywxMessageService;
-
-    @Autowired
-    QywxMdiaService qywxMdiaService;
 
     @Autowired
     QywxSendCouponService qywxSendCouponService;
@@ -121,11 +117,7 @@ public class QywxDailyServiceImpl implements QywxDailyService {
             }
         }
 
-        //todo 预先为所有商品生成mediaid
-
-
         String appId = qywxMessageService.getMpAppId();
-
         //按导购分组
         List<FollowUserVO> followUserIdList =qywxDailyDetailMapper.getFollowUserList(headId);
 
@@ -146,18 +138,11 @@ public class QywxDailyServiceImpl implements QywxDailyService {
                         //获取当前待推送的列表
                         List<QywxDailyDetail> qywxDailyDetailList=qywxDailyDetailMapper.getQywxUserList(headId,followUserId,y,waitCount,0);
 
-                        String mediaId= null;
-                        try {
-                            mediaId = qywxMdiaService.getMpMediaId(qywxDailyDetailList.get(0).getRecProdId());
-                        } catch (Exception e) {
-                            throw new RuntimeException(e.getMessage());
-                        }
-
                         QywxPushList qywxPushList=new QywxPushList();
                         qywxPushList.setTextContent(qywxDailyDetailList.get(0).getTextContent());
                         qywxPushList.setMpTitle(qywxDailyDetailList.get(0).getMpTitle());
                         qywxPushList.setMpUrl(qywxDailyDetailList.get(0).getMpUrl());
-                        qywxPushList.setMpMediaId(mediaId);
+                        qywxPushList.setMpMediaId(qywxDailyDetailList.get(0).getMpMediaId());
                         qywxPushList.setMpAppid(appId);
                         qywxPushList.setExternalContactIds(StringUtils.join(qywxDailyDetailList.stream().map(QywxDailyDetail::getQywxContractId).collect(Collectors.toList()),","));
                         qywxPushList.setFollowUserId(followUserId);
@@ -176,19 +161,11 @@ public class QywxDailyServiceImpl implements QywxDailyService {
                         log.info("当前文本推送条数{}，偏移量为{}", pageSize,i*pageSize);
                         List<QywxDailyDetail> tmpUserList = qywxDailyDetailMapper.getQywxUserList(headId,followUserId,y,pageSize,i * pageSize);
                         if(tmpUserList.size() > 0) {
-
-                            String mediaId="";
-                            try {
-                                mediaId=qywxMdiaService.getMpMediaId(tmpUserList.get(0).getRecProdId());
-                            } catch (Exception e) {
-                                throw new RuntimeException(e.getMessage());
-                            }
-
                             QywxPushList qywxPushList=new QywxPushList();
                             qywxPushList.setTextContent(tmpUserList.get(0).getTextContent());
                             qywxPushList.setMpTitle(tmpUserList.get(0).getMpTitle());
                             qywxPushList.setMpUrl(tmpUserList.get(0).getMpUrl());
-                            qywxPushList.setMpMediaId(mediaId);
+                            qywxPushList.setMpMediaId(tmpUserList.get(0).getMpMediaId());
                             qywxPushList.setMpAppid(appId);
                             qywxPushList.setExternalContactIds(StringUtils.join(tmpUserList.stream().map(QywxDailyDetail::getQywxContractId).collect(Collectors.toList()),","));
                             qywxPushList.setFollowUserId(followUserId);
@@ -411,18 +388,11 @@ public class QywxDailyServiceImpl implements QywxDailyService {
                         //获取当前待推送的列表
                         List<QywxDailyDetail> qywxDailyDetailList=qywxDailyDetailMapper.getQywxUserList(headId,followUserId,y,waitCount,0);
 
-                        String mediaId= null;
-                        try {
-                            mediaId = qywxMdiaService.getMpMediaId(qywxDailyDetailList.get(0).getRecProdId());
-                        } catch (Exception e) {
-                            throw new RuntimeException(e.getMessage());
-                        }
-
                         QywxPushList qywxPushList=new QywxPushList();
                         qywxPushList.setTextContent(qywxDailyDetailList.get(0).getTextContent());
                         qywxPushList.setMpTitle(qywxDailyDetailList.get(0).getMpTitle());
                         qywxPushList.setMpUrl(qywxDailyDetailList.get(0).getMpUrl());
-                        qywxPushList.setMpMediaId(mediaId);
+                        qywxPushList.setMpMediaId(qywxDailyDetailList.get(0).getMpMediaId());
                         qywxPushList.setMpAppid(appId);
                         qywxPushList.setExternalContactIds(StringUtils.join(qywxDailyDetailList.stream().map(QywxDailyDetail::getQywxContractId).collect(Collectors.toList()),","));
                         qywxPushList.setFollowUserId(followUserId);
@@ -442,18 +412,11 @@ public class QywxDailyServiceImpl implements QywxDailyService {
                         List<QywxDailyDetail> tmpUserList = qywxDailyDetailMapper.getQywxUserList(headId,followUserId,y,pageSize,i * pageSize);
                         if(tmpUserList.size() > 0) {
 
-                            String mediaId="";
-                            try {
-                                mediaId=qywxMdiaService.getMpMediaId(tmpUserList.get(0).getRecProdId());
-                            } catch (Exception e) {
-                                throw new RuntimeException(e.getMessage());
-                            }
-
                             QywxPushList qywxPushList=new QywxPushList();
                             qywxPushList.setTextContent(tmpUserList.get(0).getTextContent());
                             qywxPushList.setMpTitle(tmpUserList.get(0).getMpTitle());
                             qywxPushList.setMpUrl(tmpUserList.get(0).getMpUrl());
-                            qywxPushList.setMpMediaId(mediaId);
+                            qywxPushList.setMpMediaId(tmpUserList.get(0).getMpMediaId());
                             qywxPushList.setMpAppid(appId);
                             qywxPushList.setExternalContactIds(StringUtils.join(tmpUserList.stream().map(QywxDailyDetail::getQywxContractId).collect(Collectors.toList()),","));
                             qywxPushList.setFollowUserId(followUserId);

@@ -1,6 +1,7 @@
 package com.linksteady.operate.service.impl;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.common.util.MD5Utils;
@@ -9,6 +10,7 @@ import com.linksteady.operate.dao.QywxDailyDetailMapper;
 import com.linksteady.operate.domain.QywxDailyDetail;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.QywxDailyDetailService;
+import com.linksteady.operate.service.QywxMdiaService;
 import com.linksteady.operate.service.ShortUrlService;
 import com.linksteady.operate.thread.TransQywxDailyContentThread;
 import com.linksteady.operate.vo.FollowUserVO;
@@ -52,6 +54,9 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
     ShortUrlService shortUrlService;
 
     @Autowired
+    QywxMdiaService qywxMdiaService;
+
+    @Autowired
     ExceptionNoticeHandler exceptionNoticeHandler;
 
     @Override
@@ -63,6 +68,13 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
         Map<String, List<GroupCouponVO>> groupCouponList = groupingCouponByGroupId(groupCouponInfo);
         Long startTime = System.currentTimeMillis();
 
+        //本次所有商品的mediaId
+        Map<String,String> mediaMap= Maps.newHashMap();
+        List<String> productIdList=qywxDailyDetailMapper.getProductIdList(headerId);
+        for(int i=0;i<productIdList.size();i++)
+        {
+            mediaMap.put(productIdList.get(i),qywxMdiaService.getMpMediaId(productIdList.get(i)));
+        }
         //根据headerID获取当前有多少人需要推送
         int pushUserCount = qywxDailyDetailMapper.getUserCount(headerId);
         int pageSize = 200;
@@ -70,7 +82,7 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
         if (pushUserCount <= pageSize) {
             List<QywxDailyDetail> list = qywxDailyDetailMapper.getUserList(headerId, pushUserCount, 0);
             //填充模板 生成文案
-            List<QywxDailyDetail> targetList = transContent(list, groupCouponList);
+            List<QywxDailyDetail> targetList = transContent(list, groupCouponList,mediaMap);
             //保存要推送的文案
             if (null != targetList && targetList.size() > 0) {
                 qywxDailyDetailMapper.insertPushContentTemp(targetList);
@@ -94,7 +106,7 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
                 List taskList = Lists.newArrayList();
                 //生成线程对象列表
                 for (int i = 0; i < page; i++) {
-                    taskList.add(new TransQywxDailyContentThread(headerId, pageSize, i * pageSize, groupCouponList));
+                    taskList.add(new TransQywxDailyContentThread(headerId, pageSize, i * pageSize, groupCouponList,mediaMap));
                 }
 
                 log.info("转换文案一共需要{}个线程来处理", taskList.size());
@@ -181,7 +193,7 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
      * @param list
      * @return
      */
-    public List<QywxDailyDetail> transContent(List<QywxDailyDetail> list, Map<String, List<GroupCouponVO>> groupCouponList) {
+    public List<QywxDailyDetail> transContent(List<QywxDailyDetail> list, Map<String, List<GroupCouponVO>> groupCouponList,Map<String,String> mediaMap) {
         List<QywxDailyDetail> targetList = Lists.newArrayList();
         QywxDailyDetail temp = null;
 
@@ -263,6 +275,7 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
             temp.setDetailId(qywxDailyDetail.getDetailId());
             temp.setTextContent(textContent);
             temp.setHeadId(qywxDailyDetail.getHeadId());
+            temp.setMpMediaId(mediaMap.get(qywxDailyDetail.getRecProdId()));
 
             //构造qywxMsgSign  textcontent、mptitle、mpurl三者联合做签名
             temp.setQywxMsgSign(new Md5Hash(textContent+"|"+qywxDailyDetail.getMpTitle()+"|"+qywxDailyDetail.getMpUrl()).toString());

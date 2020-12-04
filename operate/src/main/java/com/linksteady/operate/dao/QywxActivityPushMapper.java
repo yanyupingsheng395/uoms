@@ -93,4 +93,6 @@ public interface QywxActivityPushMapper {
     void updatePushId(List<Long> detailIdList, long pushId,String msgId,String status);
 
     List<FollowUserVO> getFollowUserList(Long planId);
+
+    List<String> getProductIdList(Long planId);
 }

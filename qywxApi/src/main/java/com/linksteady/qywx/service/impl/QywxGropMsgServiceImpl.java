@@ -62,7 +62,7 @@ public class QywxGropMsgServiceImpl implements QywxGropMsgService {
             url.append(token);
             result=OkHttpUtil.postRequestByJson(url.toString(),param.toJSONString());
         }catch (Exception e){
-            log.error("获取token失败{}",e);
+            log.error("发送群发消息失败{}",e);
         }
         return result;
     }

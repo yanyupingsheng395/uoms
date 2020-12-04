@@ -18,12 +18,14 @@ public class TransQywxActivityContentThread implements Callable {
     int offset;
     Long planId;
     Map<String,String> templateMap;
+    Map<String,String> mediaMap;
 
-    public TransQywxActivityContentThread(Long planId, int limit, int offset, Map<String,String> templateMap) {
+    public TransQywxActivityContentThread(Long planId, int limit, int offset, Map<String,String> templateMap,Map<String,String> mediaMap) {
         this.planId=planId;
         this.limit = limit;
         this.offset = offset;
         this.templateMap=templateMap;
+        this.mediaMap=mediaMap;
     }
 
     @Override
@@ -37,7 +39,7 @@ public class TransQywxActivityContentThread implements Callable {
             list = activityPushMapper.getPushList(limit,offset,planId);
 
             //转换文案
-            List<QywxActivityContentTmp> targetList = activityPushService.processVariable(list,templateMap);
+            List<QywxActivityContentTmp> targetList = activityPushService.processVariable(list,templateMap,mediaMap);
             log.info("{}的从{}开始的{}条记录处理完成",planId,limit,offset);
             return targetList;
         } catch (Exception e) {

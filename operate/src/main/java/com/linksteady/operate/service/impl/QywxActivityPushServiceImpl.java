@@ -66,9 +66,6 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
     ShortUrlService shortUrlService;
 
     @Autowired
-    QywxMdiaService qywxMdiaService;
-
-    @Autowired
     RedisTemplate<String, String> redisTemplate;
 
     @Autowired
@@ -79,6 +76,9 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
 
     @Autowired
     private QywxMessageService qywxMessageService;
+
+    @Autowired
+    QywxMdiaService qywxMdiaService;
 
     /**
      * 对活动推送文案进行转换
@@ -130,6 +130,14 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
             templateMap.put(String.valueOf(template.get("group_id")),template.get("tmp_content"));
         }
 
+        //本次所有商品的mediaId
+        Map<String,String> mediaMap=Maps.newHashMap();
+        List<String> productIdList=qywxActivityPushMapper.getProductIdList(planId);
+        for(int i=0;i<productIdList.size();i++)
+        {
+            mediaMap.put(productIdList.get(i),qywxMdiaService.getMpMediaId(productIdList.get(i)));
+        }
+
         //根据planId获取当前有多少人需要推送
         int pushUserCount= qywxActivityPushMapper.getPushCount(planId);
         int pageSize=400;
@@ -139,7 +147,7 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
             //填充模板 生成文案
             List<QywxActivityContentTmp> targetList= null;
             try {
-                targetList = processVariable(list,templateMap);
+                targetList = processVariable(list,templateMap,mediaMap);
             } catch (Exception e) {
                 //错误日志上报
                 log.error("活动运营转化文案错误，错误堆栈为{}",e);
@@ -173,7 +181,7 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
                 //生成线程对象列表
                 for(int i=0;i<page;i++)
                 {
-                    taskList.add(new TransQywxActivityContentThread(planId,pageSize,i*pageSize,templateMap));
+                    taskList.add(new TransQywxActivityContentThread(planId,pageSize,i*pageSize,templateMap,mediaMap));
                 }
 
                 log.info("活动运营转换文案一共需要{}个线程来处理",taskList.size());
@@ -213,7 +221,7 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
      * @param list
      * @return
      */
-    public List<QywxActivityContentTmp> processVariable(List<QywxActivityDetail> list, Map<String,String> templateMap){
+    public List<QywxActivityContentTmp> processVariable(List<QywxActivityDetail> list, Map<String,String> templateMap,Map<String,String> mediaMap){
         List<QywxActivityContentTmp> targetList = Lists.newArrayList();
         DecimalFormat decimalFormat = new DecimalFormat("###################.###########");
         QywxActivityContentTmp activityContentVO = null;
@@ -245,6 +253,7 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
             activityContentVO.setQywxDetailId(activityDetail.getQywxDetailId());
             activityContentVO.setMpTitle(activityDetail.getMpTitle());
             activityContentVO.setMpUrl(activityDetail.getMpUrl());
+            activityContentVO.setMpMediaId(mediaMap.get(activityDetail.getEpbProductId()));
             activityContentVO.setQywxMsgSign(new Md5Hash(smsContent+"|"+activityDetail.getMpTitle()+"|"+activityDetail.getMpUrl()).toString());
 
             targetList.add(activityContentVO);
@@ -302,19 +311,13 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
                         if(waitCount>0){
                             //获取当前待推送的列表
                             List<QywxActivityDetail> qywxActivityDetailList=qywxActivityPushMapper.getQywxUserList(headId,followUserId,y,waitCount,0);
-                            String mediaId= null;
-                            try {
-                                //调用微信接口，获取商品的mediaId
-                                mediaId = qywxMdiaService.getMpMediaId(qywxActivityDetailList.get(0).getEpbProductId());
-                            } catch (Exception e) {
-                                throw new RuntimeException(e.getMessage());
-                            }
+
                             //组织推送信息
                             QywxPushList qywxPushList=new QywxPushList();
                             qywxPushList.setTextContent(qywxActivityDetailList.get(0).getSmsContent());
                             qywxPushList.setMpTitle(qywxActivityDetailList.get(0).getMpTitle());
                             qywxPushList.setMpUrl(qywxActivityDetailList.get(0).getMpUrl());
-                            qywxPushList.setMpMediaId(mediaId);
+                            qywxPushList.setMpMediaId(qywxActivityDetailList.get(0).getMpMediaId());
                             qywxPushList.setMpAppid(appId);
                             //获取推送外部联系人列表。放入pushlist表中。
                             qywxPushList.setExternalContactIds(org.apache.commons.lang3.StringUtils.join(qywxActivityDetailList.stream().map(QywxActivityDetail::getQywxContractId).collect(Collectors.toList()),","));
@@ -335,19 +338,12 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
                             //获取活动明细表，条数大于一万条，然后分页查询推送
                             List<QywxActivityDetail> tmpUserList = qywxActivityPushMapper.getQywxUserList(headId,followUserId,y,pageSize,i * pageSize);
                             if(tmpUserList.size() > 0) {
-                                String mediaId="";
-                                try {
-                                    //调用微信接口，获取商品的mediaId
-                                    mediaId=qywxMdiaService.getMpMediaId(tmpUserList.get(0).getRecProdId());
-                                } catch (Exception e) {
-                                    throw new RuntimeException(e.getMessage());
-                                }
                                 //组织推送信息
                                 QywxPushList qywxPushList=new QywxPushList();
                                 qywxPushList.setTextContent(tmpUserList.get(0).getSmsContent());
                                 qywxPushList.setMpTitle(tmpUserList.get(0).getMpTitle());
                                 qywxPushList.setMpUrl(tmpUserList.get(0).getMpUrl());
-                                qywxPushList.setMpMediaId(mediaId);
+                                qywxPushList.setMpMediaId(tmpUserList.get(0).getMpMediaId());
                                 qywxPushList.setMpAppid(appId);
                                 qywxPushList.setExternalContactIds(org.apache.commons.lang3.StringUtils.join(tmpUserList.stream().map(QywxActivityDetail::getQywxContractId).collect(Collectors.toList()),","));
                                 qywxPushList.setFollowUserId(followUserId);

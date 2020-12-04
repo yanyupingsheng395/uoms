@@ -123,4 +123,7 @@ public interface QywxDailyDetailMapper {
     List<QywxDailyDetail> getQywxUserList(Long headId, String followUserId,String msgSign,int limit,int offset);
 
     void updatePushId(List<Long> detailIdList,long pushId,String msgId,String status);
+
+
+    List<String> getProductIdList(long headId);
 }

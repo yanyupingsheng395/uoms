@@ -70,6 +70,7 @@
         <result column="PUSH_ID" jdbcType="NUMERIC" property="pushId"/>
         <result column="QYWX_CONTRACT_ID" jdbcType="VARCHAR" property="qywxContractId"/>
         <result column="FOLLOW_USER_ID" jdbcType="VARCHAR" property="followUserId"/>
+        <result column="MP_MEDIA_ID" jdbcType="VARCHAR" property="mpMediaId"/>
     </resultMap>
 
     <resultMap id="followUserResult" type="com.linksteady.operate.vo.FollowUserVO">
@@ -136,19 +137,20 @@
     </select>
 
     <insert id="insertPushContentTemp">
-        insert into UO_QYWX_ACTIVITY_CONTENT_TMP(QYWX_DETAIL_ID,PLAN_ID,TEXT_CONTENT,QYWX_MSG_SIGN,MP_TITLE,MP_URL) values
+        insert into UO_QYWX_ACTIVITY_CONTENT_TMP(QYWX_DETAIL_ID,PLAN_ID,TEXT_CONTENT,QYWX_MSG_SIGN,MP_TITLE,MP_URL,MP_MEDIA_ID) values
         <foreach collection="list" item="item" index="index" separator=",">
             (#{item.qywxDetailId},
             #{item.planId},
             #{item.textContent},
             #{item.qywxMsgSign},
             #{item.mpTitle},
-            #{item.mpUrl})
+            #{item.mpUrl},
+            #{item.mpMediaId})
         </foreach>
     </insert>
 
     <update id="updatePushContentFromTemp">
-        UPDATE UO_QYWX_ACTIVITY_DETAIL SET SMS_CONTENT=TMP.TEXT_CONTENT,QYWX_MSG_SIGN=TMP.QYWX_MSG_SIGN
+        UPDATE UO_QYWX_ACTIVITY_DETAIL SET SMS_CONTENT=TMP.TEXT_CONTENT,QYWX_MSG_SIGN=TMP.QYWX_MSG_SIGN,MP_MEDIA_ID=TMP.MP_MEDIA_ID
         FROM UO_QYWX_ACTIVITY_CONTENT_TMP AS TMP
         WHERE UO_QYWX_ACTIVITY_DETAIL.QYWX_DETAIL_ID=TMP.QYWX_DETAIL_ID
         AND UO_QYWX_ACTIVITY_DETAIL.PLAN_ID=#{planId}::int4
@@ -235,6 +237,10 @@
             (select distinct follow_user_id from uo_qywx_activity_detail where plan_id=#{planId} and push_status='X') t1 left join
             uo_qywx_follower_user_list on t1.follow_user_id=uo_qywx_follower_user_list.user_id
             order by follow_user_id asc
+    </select>
+
+    <select id="getProductIdList" resultType="string">
+        select distinct EPB_PRODUCT_ID from uo_qywx_activity_detail where plan_id=#{planId}
     </select>
 
 </mapper>

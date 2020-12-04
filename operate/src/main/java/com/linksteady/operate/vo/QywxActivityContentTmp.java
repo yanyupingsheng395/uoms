@@ -29,4 +29,9 @@ public class QywxActivityContentTmp {
      */
     private String mpUrl;
 
+    /**
+     * 小程序封面mediaId
+     */
+    private String mpMediaId;
+
 }

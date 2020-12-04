@@ -292,4 +292,7 @@ public class QywxActivityDetail implements Serializable {
      */
     private String qywxContactName;
 
+
+    private String mpMediaId;
+
 }
