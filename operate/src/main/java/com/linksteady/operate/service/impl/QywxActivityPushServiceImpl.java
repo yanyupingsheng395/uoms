@@ -277,6 +277,7 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
      * @param activityPlan
      * @throws Exception
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void pushActivity(QywxActivityPlan activityPlan) throws Exception{
         //根据锁去更新状态 更新为执行中
@@ -325,11 +326,7 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
                             qywxPushList.setSourceId(qywxActivityDetailList.get(0).getQywxDetailId());
                             qywxActivityPushMapper.insertPushList(qywxPushList);
                             //推送并更新状态
-                            try {
-                                pushQywxMsg(qywxPushList,qywxActivityDetailList);
-                            } catch (Exception e) {
-                                new LinkSteadyException("推送任务出现异常！"+e);
-                            }
+                            pushQywxMsg(qywxPushList,qywxActivityDetailList);
                         }
                     }else {
                         int pageNum = waitCount % pageSize == 0 ? (waitCount / pageSize) : ((waitCount / pageSize) + 1);
@@ -351,11 +348,7 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
                                 //将信息，放入uo_qywx_push_list表中。
                                 qywxActivityPushMapper.insertPushList(qywxPushList);
                                 //推送并更新状态
-                                try {
-                                    pushQywxMsg(qywxPushList,tmpUserList);
-                                } catch (Exception e) {
-                                    new LinkSteadyException("推送任务出现异常！"+e);
-                                }
+                                pushQywxMsg(qywxPushList,tmpUserList);
                             }
                         }
                     }
@@ -374,8 +367,7 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
      *
      * @param qywxPushList (待推送的对象)
      */
-    @Transactional(rollbackFor = Exception.class)
-    public void pushQywxMsg(QywxPushList qywxPushList,List<QywxActivityDetail> qywxActivityDetailList)throws Exception {
+    public void pushQywxMsg(QywxPushList qywxPushList,List<QywxActivityDetail> qywxActivityDetailList) {
 
         if(null==qywxActivityDetailList||qywxActivityDetailList.size()==0){
             qywxActivityPushMapper.updatePushList(qywxPushList.getPushId(),"F","","","推送列表为空");

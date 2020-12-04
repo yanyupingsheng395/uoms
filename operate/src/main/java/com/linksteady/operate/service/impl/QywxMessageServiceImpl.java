@@ -108,10 +108,15 @@ public class QywxMessageServiceImpl implements QywxMessageService {
             }
             StringBuffer url=new StringBuffer(sysInfoBo.getSysDomain());
             url.append(addMsg);
-            result= OkHttpUtil.postRequestByJson(url.toString(),param.toJSONString());
-            JSONObject object = JSONObject.parseObject(result);
-            //解析推送微信返回过来的值，如果不成功，进入重试模式。
-            if(null==object||!"0".equals(object.getString("errcode"))){
+            try {
+                result= OkHttpUtil.postRequestByJson(url.toString(),param.toJSONString());
+                if(org.springframework.util.StringUtils.isEmpty(result))
+                {
+                    throw new Exception("企业微信接口返回为空");
+                }
+                return result;
+            } catch (Exception e) {
+                log.error("调用企业微信接口发送消息失败，即将进行重试");
                 if(retryTimes+1>maxRetryTimes){
                     //超过最大重试次数，写log日志，将错误信息返回上一层处理
                     log.warn("推送消息重试达到最大次数，接收到的参数为{}",message,sender,externalUserList.toString());

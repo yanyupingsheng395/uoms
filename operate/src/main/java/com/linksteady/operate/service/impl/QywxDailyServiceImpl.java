@@ -148,12 +148,9 @@ public class QywxDailyServiceImpl implements QywxDailyService {
                         qywxPushList.setFollowUserId(followUserId);
                         qywxPushList.setSourceId(qywxDailyDetailList.get(0).getHeadId());
                         qywxDailyMapper.insertPushList(qywxPushList);
+
                         //推送并更新状态
-                        try {
-                            pushQywxMsg(qywxPushList,qywxDailyDetailList);
-                        } catch (Exception e) {
-                            new LinkSteadyException("推送任务出现异常！"+e);
-                        }
+                        pushQywxMsg(qywxPushList,qywxDailyDetailList);
                     }
                 } else {
                     int pageNum = waitCount % pageSize == 0 ? (waitCount / pageSize) : ((waitCount / pageSize) + 1);
@@ -172,11 +169,7 @@ public class QywxDailyServiceImpl implements QywxDailyService {
                             qywxPushList.setSourceId(tmpUserList.get(0).getHeadId());
                             qywxDailyMapper.insertPushList(qywxPushList);
                             //推送并更新状态
-                            try {
-                                pushQywxMsg(qywxPushList,tmpUserList);
-                            } catch (Exception e) {
-                                new LinkSteadyException("推送任务出现异常！"+e);
-                            }
+                            pushQywxMsg(qywxPushList,tmpUserList);
                         }
                     }
                 }
@@ -189,7 +182,7 @@ public class QywxDailyServiceImpl implements QywxDailyService {
      *
      * @param qywxPushList (待推送的对象)
      */
-    private void pushQywxMsg(QywxPushList qywxPushList,List<QywxDailyDetail> qywxDailyDetailList)throws Exception {
+    private void pushQywxMsg(QywxPushList qywxPushList,List<QywxDailyDetail> qywxDailyDetailList) {
         if(null==qywxDailyDetailList||qywxDailyDetailList.size()==0)
         {
             qywxDailyMapper.updatePushList(qywxPushList.getPushId(),"F","","","推送列表为空");
@@ -226,19 +219,19 @@ public class QywxDailyServiceImpl implements QywxDailyService {
 
         }else
         {
-            List<String> contactIdList=qywxDailyDetailList.stream().map(QywxDailyDetail::getQywxContractId).collect(Collectors.toList());
-            String result = qywxMessageService.pushQywxMessage(qywxMessage, qywxPushList.getFollowUserId(), contactIdList);
-            log.info("日运营企微：推送结果【{}】", result);
-
             String status="S";
             String msgId ="";
             String failList="";
             String remark="推送成功";
 
+            List<String> contactIdList=qywxDailyDetailList.stream().map(QywxDailyDetail::getQywxContractId).collect(Collectors.toList());
+            String result = qywxMessageService.pushQywxMessage(qywxMessage, qywxPushList.getFollowUserId(), contactIdList);
+            log.info("日运营企微：推送结果【{}】", result);
+
             if(StringUtils.isEmpty(result))
             {
                  status="F";
-                remark="调用企业微信接口返回空";
+                remark="调用企业微信接口无返回数据";
             }else
             {
                 JSONObject jsonObject = JSON.parseObject(result);
