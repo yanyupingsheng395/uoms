@@ -1,23 +1,16 @@
 package com.linksteady.operate.dao;
 
-import com.linksteady.operate.domain.ManualHeader;
 import com.linksteady.operate.domain.QywxManualDetail;
 import com.linksteady.operate.domain.QywxManualHeader;
 import com.linksteady.operate.domain.QywxPushList;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Map;
 
-/**
- * @author hxcao
- * @date 2019/12/25
- */
 public interface QywxManualHeaderMapper {
 
     int checkFollowerId(String followerId);
 
-    int checkExternalUserId(String externalUserId);
+    int checkExternalUserId(String externalUserId,String followerId);
 
     void saveQywxManualHeader(QywxManualHeader qywxManualHeader);
 

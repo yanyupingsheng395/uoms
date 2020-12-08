@@ -103,6 +103,10 @@
                                 <font class="h6" style="color: #7c7c7c;">
                                     *仅支持csv格式的文件
                                 </font>
+                                <br/>
+                                <font class="h6" style="color: #7c7c7c;">
+                                    *数据请从文档的第二行开始录入
+                                </font>
                             </div>
                         </div>
                     </div>
@@ -139,6 +143,28 @@
         </div>
     </div>
 </div>
+
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="upload_error_modal" data-backdrop="static">
+    <div class="modal-dialog" role="document" style="width: 50%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">×</span></button>
+                <h5 class="modal-title">文件校验失败，描述如下</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 table-striped">
+                        <table id="errorDataTable" class="table table-striped table-bordered"></table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
 <th:block th:include="common/include::clipboard-js" />
 <th:block th:include="common/include::footer" />
 <th:block th:include="common/include::perfect-scrollbar" />
@@ -149,12 +175,6 @@
 <th:block th:include="common/include::echarts" />
 <th:block th:include="common/include::datetimepicker-js" />
 <th:block th:include="common/include::datepicker-js" />
-<script>
-    let signatureLen=0;
-    let unsubscribeLen=0;
-    let signature=0;
-    let unsubscribe=0;
-</script>
 <script data-th-src="@{/js/app/operate/common/template.js}"></script>
 <script data-th-src="@{/js/app/operate/qywxmanual/qywxmanual.js}"></script>
 <script>

@@ -40,7 +40,7 @@
     </select>
 
     <select id="checkExternalUserId" resultType="int">
-        select count(1) from uo_qywx_external_user_list where external_userid=#{externalUserId}
+        select count(1) from uo_qywx_external_user_list where external_userid=#{externalUserId} and follow_user_id=#{followerId}
     </select>
 
     <insert id="saveQywxManualHeader" useGeneratedKeys="true" keyProperty="headId" keyColumn="head_id">

@@ -3,7 +3,6 @@ var $qywxManualForm_validator;
 $(function () {
     validQywxContact();
     initTable();
-    statInputNum();
 });
 
 function initTable() {
@@ -137,6 +136,8 @@ function submitData() {
                 if(data.code === 200){
                     if(data.data.errorFlag=="N"){
                         $MB.n_danger(data.data.errorDesc);
+                    }else if(data.data.errorFlag=="P"){
+                        makeErrorTable(data.data.errorPosition);
                     }else{
                         $MB.n_success("数据提交成功！");
                     }
@@ -152,6 +153,28 @@ function submitData() {
             }
         });
     }
+}
+
+// 上传失败的提示列表数据
+function makeErrorTable(data) {
+    $("#errorDataTable").bootstrapTable({
+        showHeader:true,
+        columns: [{
+            title: '问题描述',
+            align: 'left',
+            formatter: function (value, row, index) {
+                return "文件中成员信息未查到或成员信息和外部客户信息不匹配！"
+            }
+        },{
+            title: '出现位置',
+            align: 'center',
+            formatter: function (value, row, index) {
+                return "第"+row+"行"
+            }
+        }]
+    });
+    $("#errorDataTable").bootstrapTable('load', data);
+    $("#upload_error_modal").modal('show');
 }
 
 function validQywxContact() {
@@ -255,7 +278,7 @@ $("#btn_delete").click(function () {
             if(r.code === 200) {
                 $MB.n_success("删除成功！");
             }else {
-                $MB.n_danger("删除失败！");
+                $MB.n_danger(r.msg);
             }
             $MB.refreshTable('dataTable');
         });
@@ -270,26 +293,6 @@ $("#add_modal").on('hidden.bs.modal', function () {
     $("#mpUrl").val('');
     $("#mediaId").val('');
 });
-
-function statInputNum() {
-    $("#smsContent").on('input propertychange', function () {
-        let curLength = $('#smsContent').val().length;
-        let total_num = curLength+signatureLen+unsubscribeLen;
-        let snum3=0;
-        $("#snum1").text(curLength);
-        $("#snum2").text(total_num);
-
-        if(total_num<=70)
-        {
-            snum3=1;
-        }else
-        {
-            snum3=total_num%67===0?total_num/67:(parseInt(total_num/67)+1);
-        }
-        //计算文案的条数
-        $("#snum3").text(snum3);
-    });
-}
 
 $("#send_modal").on('hidden.bs.modal', function () {
     $('#phoneNum').val("");

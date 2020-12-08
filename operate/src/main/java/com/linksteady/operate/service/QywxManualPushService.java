@@ -30,10 +30,9 @@ public interface QywxManualPushService {
 
     /**
      * 推送信息
-     * @param headId
      * @throws Exception
      */
-    void pushMessage(Long headId) throws Exception;
+    void pushMessage(QywxManualHeader qywxManualHeader) throws Exception;
 
     /**
      *获得状态
@@ -47,4 +46,11 @@ public interface QywxManualPushService {
      * @param headId
      */
     void deleteData(Long headId);
+
+    /**
+     * 获取QywxManualHeader头表信息，用于校验内容是否填完整
+     * @param headId
+     * @return
+     */
+    QywxManualHeader getManualHeader(Long headId);
 }

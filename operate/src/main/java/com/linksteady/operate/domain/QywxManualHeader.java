@@ -12,7 +12,7 @@ public class QywxManualHeader {
      */
     private long headId;
     /**
-     * 用成员数
+     * 用户成员数
      */
     private long userNumber;
     /**

@@ -11,7 +11,7 @@ public class QywxManualError {
      */
     private String errorDesc;
     private String errorFlag;
-    private List<String> errorUserId;
+    private List<String> errorPosition;
 
 
 }
