@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.QywxManualHeaderMapper">
+
+    <resultMap id="base" type="com.linksteady.operate.domain.QywxManualHeader">
+        <result column="head_id" jdbcType="DECIMAL" property="headId"/>
+        <result column="user_number" jdbcType="DECIMAL" property="userNumber"/>
+        <result column="total_num" jdbcType="DECIMAL" property="totalNum"/>
+        <result column="success_num" jdbcType="DECIMAL" property="successNum"/>
+        <result column="convert_num" jdbcType="DECIMAL" property="convertNum"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="insert_dt" jdbcType="TIMESTAMP" property="insertDt"/>
+        <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt"/>
+        <result column="push_date" jdbcType="TIMESTAMP" property="pushDate"/>
+        <result column="insert_by" jdbcType="VARCHAR" property="insertBy"/>
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+        <result column="text_content" jdbcType="VARCHAR" property="textContent"/>
+        <result column="mp_url" jdbcType="VARCHAR" property="mpUrl"/>
+        <result column="mp_title" jdbcType="VARCHAR" property="mpTitle"/>
+        <result column="mp_mediald" jdbcType="VARCHAR" property="mpMediald"/>
+    </resultMap>
+
+    <resultMap id="baseDetail" type="com.linksteady.operate.domain.QywxManualDetail">
+        <result column="detail_id" jdbcType="DECIMAL" property="detailId"/>
+        <result column="head_id" jdbcType="DECIMAL" property="headId"/>
+        <result column="follower_user_id" jdbcType="VARCHAR" property="followerUserId"/>
+        <result column="qywx_contact_id" jdbcType="VARCHAR" property="qywxContactId"/>
+        <result column="exec_status" jdbcType="DECIMAL" property="execStatus"/>
+        <result column="exec_date" jdbcType="TIMESTAMP" property="execDate"/>
+        <result column="msg_id" jdbcType="VARCHAR" property="msgId"/>
+        <result column="push_id" jdbcType="VARCHAR" property="pushId"/>
+        <result column="insert_by" jdbcType="VARCHAR" property="insertBy"/>
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+        <result column="insert_dt" jdbcType="TIMESTAMP" property="insertDt"/>
+        <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt"/>
+    </resultMap>
+
+    <select id="checkFollowerId" resultType="int">
+        select count(1) from uo_qywx_follower_user_list where user_id=#{followerId}
+    </select>
+
+    <select id="checkExternalUserId" resultType="int">
+        select count(1) from uo_qywx_external_user_list where external_userid=#{externalUserId}
+    </select>
+
+    <insert id="saveQywxManualHeader" useGeneratedKeys="true" keyProperty="headId" keyColumn="head_id">
+    insert into uo_qywx_manual_header(user_number,
+                                  total_num,
+                                  status,
+                                  insert_by,
+                                  insert_dt,
+                                  text_content,
+                                  mp_url,
+                                  mp_title,
+                                  mp_mediald)
+                                  values (
+                                  #{userNumber},
+                                  #{totalNum},
+                                  #{status},
+                                  #{insertBy},
+                                  #{insertDt},
+                                  #{textContent},
+                                  #{mpUrl},
+                                  #{mpTitle},
+                                  #{mpMediald})
+    </insert>
+
+    <insert id="saveQywxManualDetail">
+        insert into uo_qywx_manual_detail (head_id,
+        follower_user_id,
+        qywx_contact_id,
+        exec_status,
+        insert_by,
+        insert_dt)values
+        <foreach collection="list" separator="," item="item">
+            (#{item.headId}, #{item.followerUserId}, #{item.qywxContactId}, #{item.execStatus}, #{item.insertBy}, #{item.insertDt})
+        </foreach>
+    </insert>
+
+    <select id="getHeaderListCount" resultType="int">
+        select count(1) from uo_qywx_manual_header
+    </select>
+
+    <select id="getHeaderListData" resultMap="base">
+        select head_id, user_number, total_num, success_num, convert_num, status,push_date,
+        insert_by,insert_dt,update_by,update_dt,text_content,mp_url,mp_title,mp_mediald
+        from uo_qywx_manual_header
+        order by head_id desc
+        limit #{limit} offset #{offset}
+    </select>
+    <delete id="deleteManualHeaderData">
+        delete from uo_qywx_manual_header where head_id=#{headId}
+    </delete>
+    <delete id="deleteManualDetail">
+        delete from uo_qywx_manual_detail where head_id=#{headId}
+    </delete>
+    <select id="getHeadStatus" resultType="string">
+        select status from uo_qywx_manual_header where head_id=#{headId}
+    </select>
+    <update id="updateStatusToPlaning">
+         update uo_qywx_manual_header set STATUS = #{status}
+        where head_id = #{headId} and STATUS = #{initialStatus}
+    </update>
+
+    <select id="getQywxManualHeader" resultMap="base">
+        select head_id, user_number, total_num, success_num, convert_num, status,push_date,
+        insert_by,insert_dt,update_by,update_dt,text_content,mp_url,mp_title,mp_mediald
+        from uo_qywx_manual_header where head_id=#{headId}
+    </select>
+
+    <select id="getQywxManualDetail" resultMap="baseDetail">
+        select detail_id,head_id,follower_user_id,qywx_contact_id,exec_status,exec_date,
+       msg_id,push_id,insert_by,insert_dt,update_by,update_dt
+       from uo_qywx_manual_detail where head_id=#{headId}
+    </select>
+
+    <select id="getQywxManualDetailCount" resultType="int">
+        select count(1) from uo_qywx_manual_detail where head_id=#{headId} and follower_user_id=#{followerUserId}
+    </select>
+
+
+    <select id="getQywxManualDetailByPage" resultMap="baseDetail">
+        select detail_id,head_id,follower_user_id,qywx_contact_id,exec_status,exec_date,
+       msg_id,push_id,insert_by,insert_dt,update_by,update_dt
+       from uo_qywx_manual_detail where head_id=#{headId} and  follower_user_id=#{followerUserId}  limit #{size} offset #{page}
+    </select>
+
+    <update id="updatePushList">
+        update uo_qywx_push_list set
+           push_status = #{status},
+           msgid = #{msgId},
+           push_date = now(),
+           fail_list = #{failList},
+           remark=#{remark}
+        where
+           push_id=#{pushId}
+    </update>
+
+    <insert id="insertPushList" useGeneratedKeys="true" keyProperty="pushId" keyColumn="push_id">
+        insert into uo_qywx_push_list(
+           text_content,
+           push_status,
+           source_code,
+           source_id,
+           follow_user_id,
+           insert_dt,
+           mp_media_id,
+           mp_appid,
+           mp_title,
+           mp_url,
+           external_contact_ids)
+        values(#{textContent},
+                 'P',
+                 'MANUAL',
+                 #{sourceId},
+                 #{followUserId},
+                 now(),
+                 #{mpMediaId},
+                 #{mpAppid},
+                 #{mpTitle},
+                 #{mpUrl},
+                 #{externalContactIds})
+    </insert>
+
+    <update id="updatePushId">
+        update uo_qywx_manual_detail set push_id=#{pushId},msg_id=#{msgId}
+        where detail_id in
+        <foreach collection="detailIdList" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+</mapper>

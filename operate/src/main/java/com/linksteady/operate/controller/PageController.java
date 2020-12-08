@@ -332,6 +332,15 @@ public class PageController extends BaseController {
     }
 
     /**
+     * 手动短信推送
+     *
+     */
+    @RequestMapping("/qywxManual")
+    public String qywxManual() {
+        return "operate/qywxmanual/qywxmanual";
+    }
+
+    /**
      * 单一用户的成长洞察
      */
     @RequestMapping("/personInsight")

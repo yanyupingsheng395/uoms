@@ -1,0 +1,50 @@
+package com.linksteady.operate.service;
+
+import com.linksteady.operate.domain.QywxManualError;
+import com.linksteady.operate.domain.QywxManualHeader;
+import com.linksteady.operate.exception.LinkSteadyException;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
+
+public interface QywxManualPushService {
+    /**
+     * 插入数据
+     */
+    QywxManualError saveManualData(String smsContent, MultipartFile file, String mpTitle, String mpUrl, String mediaId) throws IOException, LinkSteadyException;
+
+    /**
+     * 获取数量
+     * @return
+     */
+    int getHeaderListCount();
+
+    /**
+     * 分页查询微信手动推送记录
+     * @param limit
+     * @param offset
+     * @return
+     */
+    List<QywxManualHeader> getHeaderListData(int limit, int offset);
+
+    /**
+     * 推送信息
+     * @param headId
+     * @throws Exception
+     */
+    void pushMessage(Long headId) throws Exception;
+
+    /**
+     *获得状态
+     * @param headId
+     * @return
+     */
+    String getHeadStatus(Long headId);
+
+    /**
+     * 删除记录
+     * @param headId
+     */
+    void deleteData(Long headId);
+}
