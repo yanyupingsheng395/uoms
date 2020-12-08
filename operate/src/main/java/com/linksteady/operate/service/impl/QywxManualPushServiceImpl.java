@@ -282,7 +282,6 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
         qywxManualHeader.setTotalNum(gbk.size());
 
         qywxManualHeaderMapper.saveQywxManualHeader(qywxManualHeader);
-
         long headId = qywxManualHeader.getHeadId();
 
         for (QywxManualDetail qywxManualDetail : list) {
