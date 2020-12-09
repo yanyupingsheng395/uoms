@@ -1,5 +1,6 @@
 package com.linksteady.qywx.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -19,6 +20,7 @@ public class QywxMediaImg implements Serializable {
     /**
      * 新增时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime insertDt;
     /**
      * 新增人
@@ -35,6 +37,7 @@ public class QywxMediaImg implements Serializable {
     /**
      * 媒介失效时间
      */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime mediaExpireDate;
     /**
      * 业务标记ID

@@ -64,8 +64,8 @@
         update uo_qywx_media_img set media_id=#{mediaId} ,media_expire_date=#{expreDt},img_content=#{mediaContent} where identity_id=#{identityId} and identity_type=#{identityType}
     </update>
     <insert id="saveQywxMediaImg">
-        insert  into uo_qywx_media_img(img_content, insert_dt,media_id, media_expire_date, identity_id, identity_type)
-        values (#{mediaContent},#{nowtime},#{mediaId},#{expreDt},#{identityId},#{identityType})
+        insert  into uo_qywx_media_img(img_content,img_title,insert_dt,media_id, media_expire_date, identity_id, identity_type)
+        values (#{mediaContent},#{title},#{nowtime},#{mediaId},#{expreDt},#{identityId},#{identityType})
     </insert>
 
     <select id="getImageCount" resultType="int">
@@ -81,4 +81,12 @@
            #{title},#{url},now(),#{insertBy}
         )
     </insert>
+
+    <select id="getMediaImageCount" resultType="int">
+        select count(*) from uo_qywx_media_img
+    </select>
+
+    <select id="getMediaImgList" resultMap="getMediaImgMap">
+        select img_id,img_title,insert_dt,insert_by,media_id,media_expire_date,identity_type from uo_qywx_media_img order by insert_dt desc limit #{limit} offset #{offset}
+    </select>
 </mapper>

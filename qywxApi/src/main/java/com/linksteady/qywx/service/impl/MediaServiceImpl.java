@@ -66,6 +66,8 @@ public class MediaServiceImpl implements MediaService {
         }
     }
 
+
+
     /**
      * identityType 可选的值有 PRODUCT表示商品 COUPON表示优惠券
      * @param identityType
@@ -101,12 +103,11 @@ public class MediaServiceImpl implements MediaService {
         {
            //找不到，调用生成逻辑
             byte[] mediaContent = getMediaContent(identityType, identityId);
-            log.info("");
             JSONObject object = getMediaId(mediaContent);
             mediaId=(String)object.get("mediaId");
             LocalDateTime expreDt= (LocalDateTime) object.get("expreDt");
             LocalDateTime nowtime = LocalDateTime.now();//新增时间
-            mediaMapper.saveQywxMediaImg(mediaContent,nowtime,mediaId,expreDt,identityId,identityType);
+            mediaMapper.saveQywxMediaImg(mediaContent,"",nowtime,mediaId,expreDt,identityId,identityType);
 
         }
         return mediaId;
@@ -251,5 +252,46 @@ public class MediaServiceImpl implements MediaService {
         }
         return  null;
     }
+
+    @Override
+    public int getMediaImageCount() {
+        return mediaMapper.getMediaImageCount();
+    }
+
+    @Override
+    public List<QywxMediaImg> getMediaImgList(int limit, int offset) {
+        return mediaMapper.getMediaImgList(limit,offset);
+    }
+
+    @Override
+    public void uploadQywxMaterial(String title, File file, String username) {
+        byte[] mediaContent = fileConvertToByteArray(file);
+        JSONObject object = getMediaId(mediaContent);
+        String mediaId=(String)object.get("mediaId");
+        LocalDateTime expreDt= (LocalDateTime) object.get("expreDt");
+        LocalDateTime nowtime = LocalDateTime.now();
+        mediaMapper.saveQywxMediaImg(mediaContent,title,nowtime,mediaId,expreDt,-1l,"MANUAL");
+    }
+
+    private byte[] fileConvertToByteArray(File file) {
+        byte[] data = null;
+        try {
+            FileInputStream fis = new FileInputStream(file);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+            int len;
+            byte[] buffer = new byte[1024];
+            while ((len = fis.read(buffer)) != -1) {
+                baos.write(buffer, 0, len);
+            }
+            data = baos.toByteArray();
+            fis.close();
+            baos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+
 
 }

@@ -263,4 +263,13 @@ public class PageController  extends BaseController {
         return "msg/list";
     }
 
+    /**
+     * 企业微信上传图片列表
+     * @return
+     */
+    @RequestMapping("/qywxMedia")
+    public String qywxMedia(){
+        return "qywx/qywxMedia/qywxImgList";
+    }
+
 }

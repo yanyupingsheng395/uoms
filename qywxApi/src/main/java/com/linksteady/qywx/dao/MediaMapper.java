@@ -43,7 +43,7 @@ public interface MediaMapper {
      * @param identityId
      * @param identityType
      */
-    void saveQywxMediaImg(byte[] mediaContent, LocalDateTime nowtime, String mediaId, LocalDateTime expreDt, Long identityId, String identityType);
+    void saveQywxMediaImg(byte[] mediaContent, String title,LocalDateTime nowtime, String mediaId, LocalDateTime expreDt, Long identityId, String identityType);
 
     int getImageCount();
 
@@ -51,4 +51,7 @@ public interface MediaMapper {
 
     void saveMediaImg(String title,String url,String insertBy);
 
+    int getMediaImageCount();
+
+    List<QywxMediaImg> getMediaImgList(int limit, int offset);
 }
