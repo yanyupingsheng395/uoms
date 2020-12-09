@@ -235,10 +235,9 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
         //循环存入数据
         for (int i = 0; i < gbk.size(); i++) {
             String followerId="";
-
             if(gbk.get(i)[0].isEmpty()||gbk.get(i)[1].isEmpty())
             {
-                //todo
+               throw new LinkSteadyException("上传文件中成员和外部客户必须匹配，不能为空！");
             }
 
             QywxManualDetail qywxManualDetail=new QywxManualDetail();
@@ -291,18 +290,20 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
     private QywxManualError checkQywxManualDetail(long headId){
         QywxManualError qywxManualError=new QywxManualError();
         String errorFlag="Y";
+        String desc="";
         List<String> notExistsFollowUserList = qywxManualHeaderMapper.getNotExistsFollowUser(headId);
        if(notExistsFollowUserList.size()>0){
            errorFlag="N";
            qywxManualError.setErrorFollow(notExistsFollowUserList);
-           qywxManualError.setErrorDesc("文件中有"+notExistsFollowUserList.size()+"个成员不存在");
+           desc+="文件中有"+notExistsFollowUserList.size()+"个成员不存在;";
        }
         List<String> notExistsContactList = qywxManualHeaderMapper.getNotExistsContact(headId);
         if(notExistsContactList.size()>0){
             errorFlag="N";
             qywxManualError.setErrorExternal(notExistsContactList);
-            qywxManualError.setErrorDesc("文件中有"+notExistsContactList.size()+"个客户不存在");
+            desc+="文件中有"+notExistsContactList.size()+"个客户不存在;";
         }
+        qywxManualError.setErrorDesc(desc);
         qywxManualError.setErrorFlag(errorFlag);
         return  qywxManualError;
     }
