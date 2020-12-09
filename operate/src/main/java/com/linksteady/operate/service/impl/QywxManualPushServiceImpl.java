@@ -237,7 +237,7 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
             String followerId="";
             if(gbk.get(i)[0].isEmpty()||gbk.get(i)[1].isEmpty())
             {
-               throw new LinkSteadyException("上传文件中成员和外部客户必须匹配，不能为空！");
+               throw new LinkSteadyException("上传文件中成员ID和客户ID不能为空！");
             }
 
             QywxManualDetail qywxManualDetail=new QywxManualDetail();
