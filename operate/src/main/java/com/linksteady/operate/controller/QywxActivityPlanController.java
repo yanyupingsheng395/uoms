@@ -149,6 +149,8 @@ public class QywxActivityPlanController {
             return ResponseBo.ok();
         } catch (Exception e) {
             log.error("活动运营推送失败，异常堆栈为{}", e);
+            //更新计划为推送失败状态
+            qywxActivityPushService.updateStatusToFailed(activityPlan.getPlanId());
             if (e instanceof LinkSteadyException) {
                 return ResponseBo.error(e.getMessage());
             } else {

@@ -23,7 +23,7 @@ public enum ActivityPlanStatusEnum {
     /**
      * 已执行完
      */
-    EXEC_FINISH("3","执行完"),
+    EXEC_FINISH("3","已执行"),
 
     /**
      * 过期未执行
@@ -33,7 +33,12 @@ public enum ActivityPlanStatusEnum {
     /**
      * 终止
      */
-    STOP("5","终止");
+    STOP("5","终止"),
+
+    /**
+     * 已执行、推送错误
+     */
+    FAILD("6","已执行、推送错误");
 
         private String statusCode;
 

@@ -243,4 +243,8 @@
         select distinct EPB_PRODUCT_ID from uo_qywx_activity_detail where plan_id=#{planId}
     </select>
 
+    <select id="updateStatusToFailed">
+        update UO_QYWX_ACTIVITY_PLAN set PLAN_STATUS ='6' where PLAN_ID = #{planId}
+    </select>
+
 </mapper>

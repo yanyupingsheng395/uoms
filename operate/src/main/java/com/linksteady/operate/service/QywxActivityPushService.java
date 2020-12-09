@@ -37,4 +37,9 @@ public interface QywxActivityPushService {
      * 对活动文案的配置进行校验
      */
     boolean validateSmsConfig(QywxActivityPlan activityPlan);
+
+    /**
+     * 更新计划为推送错误
+     */
+    void updateStatusToFailed(Long planId);
 }

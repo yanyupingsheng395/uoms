@@ -95,4 +95,6 @@ public interface QywxActivityPushMapper {
     List<FollowUserVO> getFollowUserList(Long planId);
 
     List<String> getProductIdList(Long planId);
+
+    void updateStatusToFailed(Long planId);
 }

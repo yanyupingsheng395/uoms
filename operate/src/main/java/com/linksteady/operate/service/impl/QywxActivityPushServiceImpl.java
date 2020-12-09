@@ -6,22 +6,17 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.linksteady.common.domain.QywxMessage;
-import com.linksteady.common.domain.enums.ConfigEnum;
 import com.linksteady.common.service.ConfigService;
-import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.dao.QywxActivityDetailMapper;
 import com.linksteady.operate.dao.QywxActivityProductMapper;
 import com.linksteady.operate.dao.QywxActivityPushMapper;
-import com.linksteady.operate.dao.QywxDailyDetailMapper;
 import com.linksteady.operate.domain.QywxActivityDetail;
 import com.linksteady.operate.domain.QywxActivityPlan;
-import com.linksteady.operate.domain.QywxDailyDetail;
 import com.linksteady.operate.domain.QywxPushList;
 import com.linksteady.operate.domain.enums.ActivityPlanStatusEnum;
 import com.linksteady.operate.domain.enums.ActivityStatusEnum;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.*;
-import com.linksteady.operate.thread.TransActivityContentThread;
 import com.linksteady.operate.thread.TransQywxActivityContentThread;
 import com.linksteady.operate.vo.FollowUserVO;
 import com.linksteady.operate.vo.QywxActivityContentTmp;
@@ -463,6 +458,11 @@ public class QywxActivityPushServiceImpl implements QywxActivityPushService {
         int count =qywxActivityPushMapper.validateSmsConfig(activityPlan.getHeadId(),activityPlan.getPlanType());
         //如果存在，则校验失败
         return count>0;
+    }
+
+    @Override
+    public void updateStatusToFailed(Long planId) {
+        qywxActivityPushMapper.updateStatusToFailed(planId);
     }
 
 

@@ -91,13 +91,16 @@ function getPlanTable() {
                             res = "<span class=\"badge bg-warning\">执行中</span>";
                             break;
                         case "3":
-                            res = "<span class=\"badge bg-info\">执行完</span>";
+                            res = "<span class=\"badge bg-info\">已执行</span>";
                             break;
                         case "4":
                             res = "<span class=\"badge bg-gray\">过期未执行</span>";
                             break;
                         case "5":
                             res = "<span class=\"badge bg-danger\">终止</span>";
+                            break;
+                        case "6":
+                            res = "<span class=\"badge bg-danger\">已执行、推送错误</span>";
                             break;
                     }
                     return res;

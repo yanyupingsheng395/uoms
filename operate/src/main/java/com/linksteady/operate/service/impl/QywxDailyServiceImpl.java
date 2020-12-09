@@ -107,7 +107,7 @@ public class QywxDailyServiceImpl implements QywxDailyService {
             try {
                 boolean flag = qywxSendCouponService.sendCouponToUser(headId);
                 if (!flag) {
-                    throw new SendCouponException("券已发出，但接口返回的结果为异常");
+                    throw new SendCouponException("发券失败，请联系系统运维人员");
                 }else
                 {
                     qywxDailyMapper.updateSendCouponFlag(headId);

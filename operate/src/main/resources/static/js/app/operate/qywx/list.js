@@ -67,10 +67,10 @@ function initTable() {
                         res = "<span class=\"badge bg-success\">已执行</span>";
                         break;
                     case "done_ce":
-                        res = "<span class=\"badge bg-warning\">已执行、部分发券错误</span>";
+                        res = "<span class=\"badge bg-warning\">已执行、发券错误</span>";
                         break;
                     case "done_pe":
-                        res = "<span class=\"badge bg-warning\">已执行、部分推送消息错误</span>";
+                        res = "<span class=\"badge bg-warning\">已执行、推送消息错误</span>";
                         break;
                     case "finished":
                         res = "<span class=\"badge bg-primary\">已结束</span>";
