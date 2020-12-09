@@ -76,7 +76,7 @@ public class QywxManualPushController {
              error = qywxManualPushService.saveManualData(smsContent, file, mpTitle, mpUrl, mediaId);
         } catch (IOException e) {
             e.printStackTrace();
-            ResponseBo.error("文件解析异常！");
+            return ResponseBo.error("文件解析异常！");
         } catch (LinkSteadyException e) {
             return  ResponseBo.error(e.getMessage());
         }
