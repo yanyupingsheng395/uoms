@@ -168,6 +168,9 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
         }else {
             //获取对应企业微信客户ID集合
             List<String> contactIdList=qywxManualDetailList.stream().map(QywxManualDetail::getQywxContactId).collect(Collectors.toList());
+            log.info("推送微信消息参数【{}】",qywxMessage.toString());
+            log.info("推送微信消息成员【{}】",qywxPushList.getFollowUserId());
+            log.info("推送微信消息客户【{}】",contactIdList);
             //调用企业微信接口，发送信息
             String result = qywxMessageService.pushQywxMessage(qywxMessage, qywxPushList.getFollowUserId(), contactIdList);
             log.info("手动推送企微消息：推送结果【{}】", result);
@@ -196,7 +199,7 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
             qywxManualHeaderMapper.updatePushList(qywxPushList.getPushId(),status,msgId,failList,remark);
 
             List<Long> detailIdList=qywxManualDetailList.stream().map(QywxManualDetail::getDetailId).collect(Collectors.toList());
-            log.info("更新pushidpushid:{}",qywxPushList.getPushId());
+            log.info("回写手动推送任务表的参数:【{}】，【{}】，【{}】",detailIdList.toString(),qywxPushList.getPushId(),msgId);
             if(detailIdList.size()>0)
             {
                 qywxManualHeaderMapper.updatePushId(detailIdList,qywxPushList.getPushId(),msgId);

@@ -239,7 +239,7 @@ function getPushInfo(headId) {
     $MB.loadingDesc("show", "正在处理数据中，请稍候...");
     $.post("/qywxmanual/pushMessage", {headId: headId}, function (res) {
         if(res.code === 200) {
-            $MB.n_success("已经触发推送，请稍候...");
+            $MB.n_success("推送成功！");
         }else {
             $MB.n_danger(res.msg);
         }

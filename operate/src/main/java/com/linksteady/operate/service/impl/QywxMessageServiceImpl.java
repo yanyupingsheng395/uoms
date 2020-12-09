@@ -110,6 +110,7 @@ public class QywxMessageServiceImpl implements QywxMessageService {
             url.append(addMsg);
             try {
                 result= OkHttpUtil.postRequestByJson(url.toString(),param.toJSONString());
+                log.info("微信返回接口数据【{}】",result);
                 if(org.springframework.util.StringUtils.isEmpty(result))
                 {
                     throw new Exception("企业微信接口返回为空");
