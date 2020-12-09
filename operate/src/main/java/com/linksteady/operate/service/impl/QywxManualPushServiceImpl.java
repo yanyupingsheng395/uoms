@@ -27,10 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -209,7 +206,6 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public QywxManualError saveManualData(String smsContent, MultipartFile file, String mpTitle, String mpUrl, String mediaId) throws LinkSteadyException {
-        boolean flag=true;
         QywxManualError qywxManualError=new QywxManualError();
         // 保存QywxManualHeader
         QywxManualHeader qywxManualHeader = new QywxManualHeader();
@@ -224,7 +220,6 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
         // 解析file
         List<String> followerIds = Lists.newArrayList();
         List<String> externalUserIds = Lists.newArrayList();
-        List<String> errorPosition = Lists.newArrayList();
         List<String[]> gbk =new ArrayList<String[]>();
         //定义集合，校验过的followuerid放入集合中;
         List<String> checkfollower=Lists.newArrayList();
@@ -237,66 +232,29 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
         }catch (Exception e) {
             throw new LinkSteadyException("文件解析异常！");
         }
-
         //手动推送明细表集合
         List<QywxManualDetail> list=Lists.newArrayList();
-
+        //循环存入数据
         for (int i = 0; i < gbk.size(); i++) {
             String followerId="";
             QywxManualDetail qywxManualDetail=new QywxManualDetail();
             if(!gbk.get(i)[0].isEmpty()){
                 followerId=gbk.get(i)[0];
-                int count =0;
-                //判断集合中是否有该元素，有就说明校验过，不需要再校验了
                 if(!checkfollower.contains(followerId)){
-                    count = qywxManualHeaderMapper.checkFollowerId(followerId);
                     checkfollower.add(followerId);
-                }else{
-                    count=1;
                 }
-                if(count>0&&flag){
-                    followerIds.add(followerId);
-                    qywxManualDetail.setFollowerUserId(followerId);
-                }
-                if(count<=0){
-                    flag=false;
-                    if(!errorPosition.contains(i+2+"")){
-                        errorPosition.add(i+2+"");
-                    }
-                }
+                followerIds.add(followerId);
+                qywxManualDetail.setFollowerUserId(followerId);
             }
           if(!gbk.get(i)[1].isEmpty()){
               String externalUserId=gbk.get(i)[1];
-              int count =qywxManualHeaderMapper.checkExternalUserId(externalUserId,followerId);
-              if(count>0&&flag){
-                  externalUserIds.add(externalUserId);
-                  qywxManualDetail.setQywxContactId(externalUserId);
-              }
-              if(count<=0){
-                  flag=false;
-                  if(!errorPosition.contains(i+2+"")){
-                      errorPosition.add(i+2+"");
-                  }
-              }
+              externalUserIds.add(externalUserId);
+              qywxManualDetail.setQywxContactId(externalUserId);
           }
-          if(flag){
-              qywxManualDetail.setExecStatus(-999);
-              qywxManualDetail.setInsertBy(((UserBo) SecurityUtils.getSubject().getPrincipal()).getUsername());
-              qywxManualDetail.setInsertDt(new Date());
-              list.add(qywxManualDetail);
-          }
-        }
-
-        if(!flag){
-            qywxManualError.setErrorFlag("P");
-            qywxManualError.setErrorDesc("文件中成员信息未查到或成员信息和外部客户信息不匹配！");
-            qywxManualError.setErrorPosition(errorPosition);
-            return qywxManualError;
-        }
-        if(externalUserIds.size()!=followerIds.size()){
-            qywxManualError.setErrorFlag("N");
-            qywxManualError.setErrorDesc("成员列表ID和外部客户ID不匹配");
-            return qywxManualError;
+          qywxManualDetail.setExecStatus(-999);
+          qywxManualDetail.setInsertBy(((UserBo) SecurityUtils.getSubject().getPrincipal()).getUsername());
+          qywxManualDetail.setInsertDt(new Date());
+          list.add(qywxManualDetail);
         }
         //文件中包含followuser的人数
         qywxManualHeader.setUserNumber(checkfollower.size());
@@ -308,12 +266,82 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
         for (QywxManualDetail qywxManualDetail : list) {
             qywxManualDetail.setHeadId(headId);
         }
-
+        //插入明细表数据
         qywxManualHeaderMapper.saveQywxManualDetail(list);
-        qywxManualError.setErrorFlag("Y");
-        qywxManualError.setErrorDesc("新增成功！");
-        return qywxManualError;
+        //验证数据
+        qywxManualError = checkQywxManualDetail(headId, followerIds, externalUserIds);
+        if("N".equals(qywxManualError.getErrorFlag())){
+            throw new LinkSteadyException(qywxManualError.getErrorDesc());
+        }else {
+            qywxManualError.setErrorFlag("Y");
+            qywxManualError.setErrorDesc("新增成功！");
+            return qywxManualError;
+        }
     }
+
+    /**
+     * 验证数据
+     * @param headId
+     * @param followerIds
+     * @param externalUserIds
+     * @return
+     */
+    private QywxManualError checkQywxManualDetail(long headId,List<String> followerIds, List<String> externalUserIds){
+        QywxManualError qywxManualError=new QywxManualError();
+        String errorFlag="Y";
+        if(!(followerIds.size()==externalUserIds.size())){
+            qywxManualError.setErrorFlag("N");
+            qywxManualError.setErrorDesc("上传文件成员数和外部客户数量不匹配");
+            return qywxManualError;
+        }
+        List<String> allFollwUserId = qywxManualHeaderMapper.getAllFollwUserId(headId);
+        List<String> resultFollow = removeAll(followerIds, allFollwUserId);
+        //followerIds，说明上传文件中存在有的followuserid不存在
+       if(resultFollow.size()>0){
+           errorFlag="N";
+           qywxManualError.setErrorFollow(resultFollow);
+           qywxManualError.setErrorDesc("文件中成员信息未查到或成员信息和外部客户信息不匹配！");
+       }
+        List<String> allExternal = qywxManualHeaderMapper.getAllContactId(headId);
+        List<String> resultExternal = removeAll(externalUserIds, allExternal);
+        if(resultExternal.size()>0){
+            errorFlag="N";
+            qywxManualError.setErrorExternal(resultExternal);
+            qywxManualError.setErrorDesc("文件中成员信息未查到或成员信息和外部客户信息不匹配！");
+        }
+        qywxManualError.setErrorFlag(errorFlag);
+        return  qywxManualError;
+    }
+
+    /**
+     *list集合去除重复
+     * @return
+     */
+    private List<String> removeAll(List<String> source, List<String> destination) {
+        List<String> result = new LinkedList<String>();
+
+        Map<String, Integer> sourceMap = new HashMap<String, Integer>();
+        for (String t : source) {
+            if (sourceMap.containsKey(t)) {
+                sourceMap.put(t, sourceMap.get(t) + 1);
+            } else {
+                sourceMap.put(t, 1);
+            }
+        }
+
+        Set<String> all = new HashSet<String>(destination);
+        for (Map.Entry<String, Integer> entry : sourceMap.entrySet()) {
+            String key = entry.getKey();
+            Integer value = entry.getValue();
+            if (all.add(key)) {
+                for (int i = 0; i < value; i++) {
+                    result.add(key);
+                }
+            }
+        }
+        return result;
+    }
+
 
     //解析csv文件内容
     public static List<String[]> getCsvData(InputStream in, String charsetName) throws LinkSteadyException {

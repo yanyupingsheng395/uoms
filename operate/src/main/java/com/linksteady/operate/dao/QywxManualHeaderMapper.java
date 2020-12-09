@@ -41,4 +41,8 @@ public interface QywxManualHeaderMapper {
     void insertPushList(QywxPushList qywxPushList);
 
     void updatePushId(List<Long> detailIdList, long pushId, String msgId);
+
+    List<String> getAllFollwUserId(long headId);
+
+    List<String> getAllContactId(long headId);
 }

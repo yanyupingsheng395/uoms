@@ -78,7 +78,7 @@ public class QywxManualPushController {
             e.printStackTrace();
             ResponseBo.error("文件解析异常！");
         } catch (LinkSteadyException e) {
-            ResponseBo.error(e.getMessage());
+            return  ResponseBo.error(e.getMessage());
         }
         return ResponseBo.okWithData(error.getErrorDesc(),error);
     }

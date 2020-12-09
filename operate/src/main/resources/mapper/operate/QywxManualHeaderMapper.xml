@@ -169,4 +169,16 @@
             #{item}
         </foreach>
     </update>
+
+    <select id="getAllFollwUserId" resultType="string">
+        select distinct follower_user_id from uo_qywx_manual_detail a right join uo_qywx_follower_user_list  b
+            on a.follower_user_id=b.user_id
+        where head_id=#{headId}
+    </select>
+
+    <select id="getAllContactId" resultType="string">
+    select distinct qywx_contact_id from uo_qywx_manual_detail a
+        right join uo_qywx_external_user_list b on a.qywx_contact_id=b.external_userid and a.follower_user_id=b.follow_user_id
+    where head_id=#{headId}
+    </select>
 </mapper>
