@@ -42,7 +42,7 @@ public interface QywxManualHeaderMapper {
 
     void updatePushId(List<Long> detailIdList, long pushId, String msgId);
 
-    List<String> getAllFollwUserId(long headId);
+    List<String> getNotExistsFollowUser(long headId);
 
-    List<String> getAllContactId(long headId);
+    List<String> getNotExistsContact(long headId);
 }

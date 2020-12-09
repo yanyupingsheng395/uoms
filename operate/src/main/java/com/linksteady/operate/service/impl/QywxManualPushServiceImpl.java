@@ -3,6 +3,7 @@ package com.linksteady.operate.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.domain.QywxMessage;
 import com.linksteady.common.util.FileUtils;
@@ -206,7 +207,6 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public QywxManualError saveManualData(String smsContent, MultipartFile file, String mpTitle, String mpUrl, String mediaId) throws LinkSteadyException {
-        QywxManualError qywxManualError=new QywxManualError();
         // 保存QywxManualHeader
         QywxManualHeader qywxManualHeader = new QywxManualHeader();
         qywxManualHeader.setInsertBy(((UserBo) SecurityUtils.getSubject().getPrincipal()).getUsername());
@@ -218,11 +218,9 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
         qywxManualHeader.setMpUrl(mpUrl);
 
         // 解析file
-        List<String> followerIds = Lists.newArrayList();
-        List<String> externalUserIds = Lists.newArrayList();
-        List<String[]> gbk =new ArrayList<String[]>();
-        //定义集合，校验过的followuerid放入集合中;
-        List<String> checkfollower=Lists.newArrayList();
+        List<String[]> gbk =null;
+        //定义集合 存放所有的成员ID
+        Set<String> followerSet= Sets.newHashSet();
         try {
             File tmpFile = FileUtils.multipartFileToFile(file);
             if(tmpFile == null) {
@@ -237,27 +235,33 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
         //循环存入数据
         for (int i = 0; i < gbk.size(); i++) {
             String followerId="";
+
+            if(gbk.get(i)[0].isEmpty()||gbk.get(i)[1].isEmpty())
+            {
+                //todo
+            }
+
             QywxManualDetail qywxManualDetail=new QywxManualDetail();
             if(!gbk.get(i)[0].isEmpty()){
                 followerId=gbk.get(i)[0];
-                if(!checkfollower.contains(followerId)){
-                    checkfollower.add(followerId);
+                if(!followerSet.contains(followerId)){
+                    followerSet.add(followerId);
                 }
-                followerIds.add(followerId);
                 qywxManualDetail.setFollowerUserId(followerId);
             }
+
           if(!gbk.get(i)[1].isEmpty()){
               String externalUserId=gbk.get(i)[1];
-              externalUserIds.add(externalUserId);
               qywxManualDetail.setQywxContactId(externalUserId);
           }
+
           qywxManualDetail.setExecStatus(-999);
           qywxManualDetail.setInsertBy(((UserBo) SecurityUtils.getSubject().getPrincipal()).getUsername());
           qywxManualDetail.setInsertDt(new Date());
           list.add(qywxManualDetail);
         }
         //文件中包含followuser的人数
-        qywxManualHeader.setUserNumber(checkfollower.size());
+        qywxManualHeader.setUserNumber(followerSet.size());
         qywxManualHeader.setTotalNum(gbk.size());
         //插入头表数据
         qywxManualHeaderMapper.saveQywxManualHeader(qywxManualHeader);
@@ -269,7 +273,7 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
         //插入明细表数据
         qywxManualHeaderMapper.saveQywxManualDetail(list);
         //验证数据
-        qywxManualError = checkQywxManualDetail(headId, followerIds, externalUserIds);
+        QywxManualError qywxManualError = checkQywxManualDetail(headId);
         if("N".equals(qywxManualError.getErrorFlag())){
             throw new LinkSteadyException(qywxManualError.getErrorDesc());
         }else {
@@ -282,64 +286,25 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
     /**
      * 验证数据
      * @param headId
-     * @param followerIds
-     * @param externalUserIds
      * @return
      */
-    private QywxManualError checkQywxManualDetail(long headId,List<String> followerIds, List<String> externalUserIds){
+    private QywxManualError checkQywxManualDetail(long headId){
         QywxManualError qywxManualError=new QywxManualError();
         String errorFlag="Y";
-        if(!(followerIds.size()==externalUserIds.size())){
-            qywxManualError.setErrorFlag("N");
-            qywxManualError.setErrorDesc("上传文件成员数和外部客户数量不匹配");
-            return qywxManualError;
-        }
-        List<String> allFollwUserId = qywxManualHeaderMapper.getAllFollwUserId(headId);
-        List<String> resultFollow = removeAll(followerIds, allFollwUserId);
-        //followerIds，说明上传文件中存在有的followuserid不存在
-       if(resultFollow.size()>0){
+        List<String> notExistsFollowUserList = qywxManualHeaderMapper.getNotExistsFollowUser(headId);
+       if(notExistsFollowUserList.size()>0){
            errorFlag="N";
-           qywxManualError.setErrorFollow(resultFollow);
-           qywxManualError.setErrorDesc("文件中成员信息未查到或成员信息和外部客户信息不匹配！");
+           qywxManualError.setErrorFollow(notExistsFollowUserList);
+           qywxManualError.setErrorDesc("文件中有"+notExistsFollowUserList.size()+"个成员不存在");
        }
-        List<String> allExternal = qywxManualHeaderMapper.getAllContactId(headId);
-        List<String> resultExternal = removeAll(externalUserIds, allExternal);
-        if(resultExternal.size()>0){
+        List<String> notExistsContactList = qywxManualHeaderMapper.getNotExistsContact(headId);
+        if(notExistsContactList.size()>0){
             errorFlag="N";
-            qywxManualError.setErrorExternal(resultExternal);
-            qywxManualError.setErrorDesc("文件中成员信息未查到或成员信息和外部客户信息不匹配！");
+            qywxManualError.setErrorExternal(notExistsContactList);
+            qywxManualError.setErrorDesc("文件中有"+notExistsContactList.size()+"个客户不存在");
         }
         qywxManualError.setErrorFlag(errorFlag);
         return  qywxManualError;
-    }
-
-    /**
-     *list集合去除重复
-     * @return
-     */
-    private List<String> removeAll(List<String> source, List<String> destination) {
-        List<String> result = new LinkedList<String>();
-
-        Map<String, Integer> sourceMap = new HashMap<String, Integer>();
-        for (String t : source) {
-            if (sourceMap.containsKey(t)) {
-                sourceMap.put(t, sourceMap.get(t) + 1);
-            } else {
-                sourceMap.put(t, 1);
-            }
-        }
-
-        Set<String> all = new HashSet<String>(destination);
-        for (Map.Entry<String, Integer> entry : sourceMap.entrySet()) {
-            String key = entry.getKey();
-            Integer value = entry.getValue();
-            if (all.add(key)) {
-                for (int i = 0; i < value; i++) {
-                    result.add(key);
-                }
-            }
-        }
-        return result;
     }
 
 
