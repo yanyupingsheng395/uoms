@@ -4,6 +4,7 @@ import com.linksteady.operate.domain.QywxManualDetail;
 import com.linksteady.operate.domain.QywxManualHeader;
 import com.linksteady.operate.domain.QywxPushList;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface QywxManualHeaderMapper {
@@ -26,7 +27,7 @@ public interface QywxManualHeaderMapper {
 
     String getHeadStatus(Long headId);
 
-    int updateStatusToPlaning(Long headId,String status,String initialStatus);
+    int updateStatusToPlaning(Long headId, String status, String initialStatus, LocalDateTime pushtime);
 
     QywxManualHeader getQywxManualHeader(Long headId);
 
@@ -45,4 +46,6 @@ public interface QywxManualHeaderMapper {
     List<String> getNotExistsFollowUser(long headId);
 
     List<String> getNotExistsContact(long headId);
+
+    int getPushDetailStatus(long headId);
 }

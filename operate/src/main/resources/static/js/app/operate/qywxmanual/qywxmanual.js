@@ -44,6 +44,9 @@ function initTable() {
                     case "1":
                         res = "<span class=\"badge bg-primary\">推送完成</span>";
                         break;
+                    case "3":
+                        res = "<span class=\"badge bg-warning\">推送完成,部分消息推送失败</span>";
+                        break;
                     default:
                         res = "-";
                         break;

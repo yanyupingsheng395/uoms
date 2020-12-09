@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -65,7 +66,7 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
     public void pushMessage(QywxManualHeader header) throws Exception{
         long headId = header.getHeadId();
         //更新状态为2，防止记录被其他用户更改        2为进行中的状态，0表示初始状态
-        int count=qywxManualHeaderMapper.updateStatusToPlaning(headId,"2","0");
+        int count=qywxManualHeaderMapper.updateStatusToPlaning(headId,"2","0",null);
         if(count==0){
             throw new OptimisticLockException();
         }
@@ -124,8 +125,15 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
                 }
             }
         });
+        LocalDateTime pushtime = LocalDateTime.now();
         //更新头表状态为"已推送"
-        qywxManualHeaderMapper.updateStatusToPlaning(headId,"1","2");
+       int failCount=qywxManualHeaderMapper.getPushDetailStatus(headId);
+       log.info("推送消息失败数量{}",failCount);
+       String status="1";
+       if(failCount>0){
+           status="3";
+       }
+        qywxManualHeaderMapper.updateStatusToPlaning(headId,status,"2",pushtime);
     }
 
     /**
@@ -168,9 +176,7 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
         }else {
             //获取对应企业微信客户ID集合
             List<String> contactIdList=qywxManualDetailList.stream().map(QywxManualDetail::getQywxContactId).collect(Collectors.toList());
-            log.info("推送微信消息参数【{}】",qywxMessage.toString());
-            log.info("推送微信消息成员【{}】",qywxPushList.getFollowUserId());
-            log.info("推送微信消息客户【{}】",contactIdList);
+            log.info("推送微信消息参数【{}】【{}】【{}】",qywxMessage.toString(),qywxPushList.getFollowUserId(),contactIdList);
             //调用企业微信接口，发送信息
             String result = qywxMessageService.pushQywxMessage(qywxMessage, qywxPushList.getFollowUserId(), contactIdList);
             log.info("手动推送企微消息：推送结果【{}】", result);
