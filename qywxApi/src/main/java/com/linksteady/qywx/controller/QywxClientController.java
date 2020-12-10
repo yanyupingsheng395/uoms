@@ -103,12 +103,10 @@ public class QywxClientController {
     /**
      * 导购发圈建议
      *
-     * @param model
-     * @param request
      * @return
      */
     @RequestMapping("/friendCirlceGuide")
-    public String friendCirlceGuide(Model model, HttpServletRequest request) {
+    public String friendCirlceGuide() {
         return "qywxClient/friends/list";
     }
 

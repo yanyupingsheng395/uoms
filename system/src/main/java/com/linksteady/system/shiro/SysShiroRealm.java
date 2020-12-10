@@ -56,16 +56,16 @@ public class SysShiroRealm extends UoShiroRealm {
             throw new AuthenticationException("登录失败，不存在的用户!");
         }
 
-        String loginType=customUsernamePasswordToken.getLoginType();
-        if("QYWX".equals(loginType)&&"PASS".equals(user.getUserType()))
-        {
-            throw new AuthenticationException("登录失败，此用户仅允许通过用户名/密码方式登录!");
-        }
-
-        if("PASS".equals(loginType)&&"QYWX".equals(user.getUserType()))
-        {
-            throw new AuthenticationException("登录失败，此用户仅允许通过企业微信扫码方式登录!");
-        }
+//        String loginType=customUsernamePasswordToken.getLoginType();
+//        if("QYWX".equals(loginType)&&"PASS".equals(user.getUserType()))
+//        {
+//            throw new AuthenticationException("登录失败，此用户仅允许通过用户名/密码方式登录!");
+//        }
+//
+//        if("PASS".equals(loginType)&&"QYWX".equals(user.getUserType()))
+//        {
+//            throw new AuthenticationException("登录失败，此用户仅允许通过企业微信扫码方式登录!");
+//        }
 
         if("QYWX".equals(customUsernamePasswordToken.getLoginType()))
         {
