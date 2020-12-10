@@ -95,7 +95,7 @@ public class QywxClientController {
      *
      * @return
      */
-    @RequestMapping("/guideResult")
+    @RequestMapping("/userManager")
     public String userManager() {
         return "qywxClient/guideResult/main";
     }
