@@ -283,14 +283,23 @@ function getFileMessage() {
     $.get("/qywx/getFileMessage",function (r) {
         if(r.code === 200) {
             var data=r.data;
-            $("#filename").val(data.oauthFilename);
-            $('#content').val(data.oauthFile);
-            $("#showfile").show();
+            if(data!=null&&!isEmpty(data.oauthFilename)&&!isEmpty(data.oauthFile)){
+                $("#filename").val(data.oauthFilename);
+                $('#content').val(data.oauthFile);
+                $("#showfile").show();
+            }
         }else {
             $MB.n_danger("获取数据异常！");
         }
     });
+}
 
+function isEmpty(obj){
+    if(typeof obj == "undefined" || obj == null || obj == ""){
+        return true;
+    }else{
+        return false;
+    }
 }
 
 var filename;
