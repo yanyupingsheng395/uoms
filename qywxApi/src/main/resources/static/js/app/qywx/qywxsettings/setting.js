@@ -31,7 +31,7 @@ function getQywxParam(){
                 $("#applicationSecret").val(r.msg.secret);
                 $("#agentId").val(r.msg.agentId);
             }else{
-                $MB.n_danger("未获取到企业微信基本信息！");
+                $MB.n_danger("尚未配置企业微信基本信息！");
             }
         }else {
             $MB.n_danger("获取数据异常！");

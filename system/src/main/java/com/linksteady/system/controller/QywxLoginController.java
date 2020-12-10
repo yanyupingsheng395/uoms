@@ -9,6 +9,7 @@ import com.linksteady.common.domain.SysInfoBo;
 import com.linksteady.common.domain.User;
 import com.linksteady.common.service.CommonFunService;
 import com.linksteady.common.shiro.UoShiroRealm;
+import com.linksteady.common.util.MD5Utils;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.system.exception.QywxLoginException;
 import com.linksteady.system.service.QywxLoginService;
@@ -162,6 +163,8 @@ public class QywxLoginController extends BaseController {
                             User newUser = new User();
                             //备注：用户名需要进行小写处理 因为 用户名:密码登录方式是做了这样处理的
                             newUser.setUsername(username.toLowerCase());
+                            String defaultPwd = userService.getDefaultPwd();
+                            newUser.setPassword(MD5Utils.encrypt(username.toLowerCase(),defaultPwd));
                             newUser.setCreateBy("qywxAutoLogin");
                             newUser.setUpdateBy("qywxAutoLogin");
                             newUser.setCreateDt(new Date());
