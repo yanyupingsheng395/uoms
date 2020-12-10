@@ -63,7 +63,6 @@ public class ActivityHeadServiceImpl implements ActivityHeadService {
         final String HAS_PREHEAT = "1";
         final String NO_PREHEAT = "0";
         String hasPreheat = activityHead.getHasPreheat();
-        activityHead.setFormalStatus("edit");
 
         activityHead.setFormalStatus(ActivityStatusEnum.EDIT.getStatusCode());
         activityHead.setFormalNotifyStatus(ActivityStatusEnum.EDIT.getStatusCode());

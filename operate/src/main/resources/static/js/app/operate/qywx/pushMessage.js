@@ -21,6 +21,9 @@ function validateRule() {
             externalContact: {
                 required: true
             },
+            mediaId: {
+                required: true
+            },
             messageTest: {
                 required: true
             }
@@ -36,6 +39,7 @@ function validateRule() {
             title: icon + "请输入标题名称",
             pathAddress: icon + "请输入路径地址",
             senderId: icon+"请输入发送人ID",
+            mediaId: icon+"请输入小程序封面图片MediaId",
             externalContact: icon + "请输入外部联系人ID",
             messageTest: icon + "请输入测试文本",
         }
@@ -47,10 +51,11 @@ function pushMessage(){
     if(!flag){return ;}
     var title=$("#title").val();
     var pathAddress=$("#pathAddress").val();
+    var mediaId=$("#mediaId").val();
     var senderId=$("#senderId").val();
     var externalContact=$("#externalContact").val();
     var messageTest=$("#messageTest").val();
-    $.get("/qywxDaily/testQywxPush", {title: title, pathAddress:pathAddress,senderId:senderId,externalContact:externalContact,messageTest:messageTest}, function (r) {
+    $.get("/qywxDaily/testQywxPush", {title: title, pathAddress:pathAddress,senderId:senderId,externalContact:externalContact,messageTest:messageTest,mediaId:mediaId}, function (r) {
         if(r.code==200){
             $MB.n_success("发送成功，请前往企业微信端查看！");
         }else if (r.code==500){

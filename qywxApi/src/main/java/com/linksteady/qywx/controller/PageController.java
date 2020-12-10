@@ -45,7 +45,7 @@ public class PageController  extends BaseController {
     /**
      * 企业微信应用配置
      */
-    @RequestMapping("/application")
+    @RequestMapping("/qywxSetting")
     public String application(){
         return "qywx/qywxsettings/applicationSetting";
     }

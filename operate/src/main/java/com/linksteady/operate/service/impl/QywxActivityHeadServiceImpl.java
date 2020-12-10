@@ -8,6 +8,7 @@ import com.linksteady.operate.domain.ActivityCoupon;
 import com.linksteady.operate.domain.ActivityGroup;
 import com.linksteady.operate.domain.ActivityHead;
 import com.linksteady.operate.domain.enums.ActivityPlanTypeEnum;
+import com.linksteady.operate.domain.enums.ActivityStatusEnum;
 import com.linksteady.operate.service.QywxActivityHeadService;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,8 @@ public class QywxActivityHeadServiceImpl implements QywxActivityHeadService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int saveActivityHead(ActivityHead activityHead, String coupons) {
-        activityHead.setFormalStatus("edit");
+        activityHead.setFormalStatus(ActivityStatusEnum.EDIT.getStatusCode());
+        activityHead.setFormalNotifyStatus(ActivityStatusEnum.EDIT.getStatusCode());
         activityHead.setInsertDt(new Date());
         activityHead.setInsertBy(((UserBo)SecurityUtils.getSubject().getPrincipal()).getUsername());
         qywxActivityHeadMapper.saveActivityHead(activityHead);

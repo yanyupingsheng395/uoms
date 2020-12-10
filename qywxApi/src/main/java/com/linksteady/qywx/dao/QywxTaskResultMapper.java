@@ -12,6 +12,6 @@ public interface QywxTaskResultMapper {
 
     void saveMsgResult(List<QywxMsgResult> qywxMsgResultList);
 
-    void updateExecStatus();
+    void updateDailyExecStatus();
 
 }

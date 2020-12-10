@@ -21,6 +21,6 @@ public interface QywxBaseDataService {
 
     int getDeptCount();
 
-    List<Map<String, Object>> getDept() throws Exception;
-    List<Map<String, Object>> getUser() throws Exception;
+    List<Map<String, Object>> getDept();
+    List<Map<String, Object>> getUser();
 }

@@ -6,6 +6,6 @@ public interface QywxTaskResultService {
 
     void syncPushResult()  throws WxErrorException;
 
-    void updateExecStatus();
+    void updateDailyExecStatus();
 
 }

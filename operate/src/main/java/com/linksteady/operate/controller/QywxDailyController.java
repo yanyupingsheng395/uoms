@@ -319,9 +319,9 @@ public class QywxDailyController {
      * 企业微信测试推送
      */
     @GetMapping("/testQywxPush")
-    public ResponseBo testQywxPush(String title, String pathAddress, String senderId, String externalContact, String messageTest) {
+    public ResponseBo testQywxPush(String title, String pathAddress, String senderId, String externalContact, String messageTest,String mediaId) {
         try {
-            testPush(title, pathAddress, senderId, externalContact, messageTest);
+            testPush(title, pathAddress, senderId, externalContact, messageTest,mediaId);
             return ResponseBo.ok();
         } catch (Exception e) {
             return ResponseBo.error(e.getMessage());
@@ -334,18 +334,11 @@ public class QywxDailyController {
      *
      * @return
      */
-    private String testPush(String title, String pathAddress, String senderId, String externalContact, String messageTest) throws Exception {
+    private String testPush(String title, String pathAddress, String senderId, String externalContact, String messageTest,String mediaId) throws Exception {
         QywxMessage qywxMessage = new QywxMessage();
         qywxMessage.setText(messageTest);
         qywxMessage.setMpTitle(title);
 
-        //获取小程序的相关参数
-        String mediaId = null;
-        try {
-            mediaId = qywxMdiaService.getMpMediaId("-1");
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
         String appId =qywxMessageService.getMpAppId();
 
         qywxMessage.setMpPicMediaId(mediaId);

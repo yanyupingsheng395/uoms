@@ -32,7 +32,7 @@ public class QywxTaskResultController {
     public ResponseBo syncPushResult(HttpServletRequest request) {
         try {
             qywxTaskResultService.syncPushResult();
-            qywxTaskResultService.updateExecStatus();
+            qywxTaskResultService.updateDailyExecStatus();
             return ResponseBo.ok();
         } catch (WxErrorException e) {
             return ResponseBo.error(e.getMessage());

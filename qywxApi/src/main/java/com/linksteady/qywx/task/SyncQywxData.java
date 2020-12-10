@@ -31,17 +31,18 @@ public class SyncQywxData extends IJobHandler {
     @Override
     public ResultInfo execute(String param) {
         try {
+            //同步基础数据
             followUserService.syncDept();
             followUserService.syncQywxFollowUser();
             externalContactService.syncExternalContact();
 
-            //todo 全量匹配
+            //进行外部联系人和w_users表的匹配
             mappingService.mappingAll();
             mappingService.unMappingAll();
 
             //同步发送任务的执行结果
             qywxTaskResultService.syncPushResult();
-            qywxTaskResultService.updateExecStatus();
+            qywxTaskResultService.updateDailyExecStatus();
 
             log.info("同步企业微信任务执行成功");
             return ResultInfo.success("");
