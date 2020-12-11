@@ -5,6 +5,7 @@ import com.linksteady.common.domain.SysInfoBo;
 import com.linksteady.common.service.CommonFunService;
 import com.linksteady.common.util.SpringContextUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.AccessControlFilter;
 import org.apache.shiro.web.util.WebUtils;
@@ -44,9 +45,8 @@ public class QwClientFilter extends AccessControlFilter {
             HttpServletRequest httpRequest = WebUtils.toHttp(servletRequest);
             //获取请求的路径
             String sourceUrl=java.net.URLEncoder.encode(httpRequest.getServletPath(),"utf-8");
-            log.info("QwClientFilter sourceUrl={}",sourceUrl);
-            httpRequest.getSession().setAttribute("sourceUrl",sourceUrl);
-            log.info("拦截器sessionid{}",httpRequest.getSession().getId());
+            Session session = subject.getSession();
+            session.setAttribute("sourceUrl",sourceUrl);
             //重定向到企业微信的oauth接口
             WebUtils.issueRedirect(servletRequest, servletResponse,sysInfoBo.getSysDomain()+"/qw/oauth");
             return false;

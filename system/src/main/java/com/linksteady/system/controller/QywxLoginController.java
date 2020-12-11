@@ -17,6 +17,8 @@ import com.linksteady.system.service.UserService;
 import com.linksteady.system.shiro.CustomUsernamePasswordToken;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.subject.Subject;
+import org.apache.shiro.web.filter.AccessControlFilter;
+import org.mockito.internal.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -211,18 +213,26 @@ public class QywxLoginController extends BaseController {
         //构造OAuth链接
         StringBuffer sbf = new StringBuffer(oAuthUrl);
         String corpId=qywxLoginService.getCorpId();
-        if(StringUtils.isEmpty(corpId))
-        {
+        String redirectUrl="";
+        String sourceUrl=(String) getSubject().getSession().getAttribute("sourceUrl");
+        if(StringUtils.isEmpty(corpId)){
             model.addAttribute("msg", "管理员尚未完成配置!!");
             return "error/udferror";
         }
         sbf.append("appid=" + corpId);
 
-        String basePath = request.getScheme() + "://" + request.getServerName();
-        String redirectUrl = null;
+        StringBuffer basePath=new StringBuffer(request.getScheme() + "://" + request.getServerName());
+        basePath.append("/qw/oauthRedirect");
+        redirectUrl=basePath.toString();
+        if(!StringUtils.isEmpty(sourceUrl)){
+            if(redirectUrl.contains("?")){
+                redirectUrl=redirectUrl+"&sourceUrl="+sourceUrl;
+            }else{
+                redirectUrl=redirectUrl+"?sourceUrl="+sourceUrl;
+            }
+        }
         try {
-            redirectUrl = java.net.URLEncoder.encode(basePath + "/qw/oauthRedirect", "utf-8");
-
+            redirectUrl = java.net.URLEncoder.encode(redirectUrl, "utf-8");
             sbf.append("&redirect_uri=" + redirectUrl);
             sbf.append("&response_type=code");
             sbf.append("&scope=snsapi_base");
@@ -244,6 +254,7 @@ public class QywxLoginController extends BaseController {
         String code = request.getParameter("code");
         //验证码
         String stage = request.getParameter("state");
+        String sourceUrl=request.getParameter("sourceUrl");
         //获取用户的身份信息
         try {
             if (StringUtils.isEmpty(code) || StringUtils.isEmpty(stage)) {
@@ -309,8 +320,6 @@ public class QywxLoginController extends BaseController {
                     userService.updateLoginTime(username);
                     //记录登录事件
                     userService.logLoginEvent(username, "企业微信客户端登录成功");
-                    log.info("微信回调后sessionid{}",getSession().getId());
-                   String sourceUrl = (String) getSession().getAttribute("sourceUrl");
                     log.info("用户来源的地址为:{}",sourceUrl);
                     if (!StringUtils.isEmpty(sourceUrl)) {
                         String s = sysInfoBo.getSysDomain()+"/qwClient/index";
@@ -319,7 +328,6 @@ public class QywxLoginController extends BaseController {
                         } catch (UnsupportedEncodingException e) {
                             e.printStackTrace();
                         }
-                        request.getSession().setAttribute("sourceUrl", "");
                         return "redirect:" + sysInfoBo.getSysDomain()+s;
                     } else {
                         return "redirect:"+sysInfoBo.getSysDomain()+"/qwClient/index";
@@ -331,7 +339,7 @@ public class QywxLoginController extends BaseController {
             //未获得授权的请求
             log.error("授权已完成，但是获取用户信息失败，原因为{}", e);
             model.addAttribute("msg", "授权失败!");
-            return "error/udferror";
+            return "error/udfError";
         }
     }
 
