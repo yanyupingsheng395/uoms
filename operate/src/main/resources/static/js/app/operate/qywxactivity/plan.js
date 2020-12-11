@@ -257,7 +257,7 @@ function getUserDetail(){
                 title: '接收消息的用户',
                 align: "center",
             },{
-                field: 'recProdName',
+                field: 'epbProductName',
                 title: '推荐购买的商品',
                 align: "center",
             }

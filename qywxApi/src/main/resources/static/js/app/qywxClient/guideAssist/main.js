@@ -79,8 +79,11 @@ function getExternalUserId() {
                         recProductList(operateUserId);
                     }else{
                         $( "#allcontent" ).html( "<div class=\"weui-loadmore weui-loadmore_line\">\n" +
-                            "    <span class=\"weui-loadmore__tips\">此用户尚未匹配到商城用户！</span>\n" +
+                            "    <span class=\"weui-loadmore__tips\">当前客户尚未匹配到商城用户！</span>\n" +
                             "</div>" );
+
+                      //  $("#allcontent").html("<div ><i class=\"weui-icon-warn  weui-icon_msg\"></i><h2 class=\"weui-msg__title\">当前客户尚未匹配到商城用户!</h2></div>" );
+
                     }
                     //企业微信外部客户的名称
                     let userName = r.data['name'];
