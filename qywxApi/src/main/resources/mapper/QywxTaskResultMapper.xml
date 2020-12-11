@@ -31,9 +31,10 @@
     </insert>
 
     <update id="updateDailyExecStatus">
-        update uo_qywx_daily_detail as d1 set exec_status=d2.status
+       update uo_qywx_daily_detail as d1 set exec_status=d2.status,exec_date=d2.send_time_dt
         from uo_qywx_msg_result d2
         where d1.msg_id=d2.msg_id and d1.qywx_contract_id=d2.external_userid
+          and d1.insert_dt::date&gt;=current_date-30
     </update>
 
 </mapper>
