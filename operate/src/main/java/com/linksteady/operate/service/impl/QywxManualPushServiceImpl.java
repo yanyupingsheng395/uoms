@@ -230,8 +230,9 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
         List<String[]> gbk =null;
         //定义集合 存放所有的成员ID
         Set<String> followerSet= Sets.newHashSet();
+        File tmpFile =null;
         try {
-            File tmpFile = FileUtils.multipartFileToFile(file);
+             tmpFile = FileUtils.multipartFileToFile(file);
             if(tmpFile == null) {
                 throw new RuntimeException("上传的文件为空！");
             }
@@ -282,6 +283,7 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
         qywxManualHeaderMapper.saveQywxManualDetail(list);
         //验证数据
         QywxManualError qywxManualError = checkQywxManualDetail(headId);
+        FileUtils.deleteTempFile(tmpFile);
         if("N".equals(qywxManualError.getErrorFlag())){
             throw new LinkSteadyException(qywxManualError.getErrorDesc());
         }else {

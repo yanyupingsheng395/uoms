@@ -166,7 +166,8 @@ public class MediaServiceImpl implements MediaService {
 
             File file= null;
             try {
-                file = byteArrayToFile(mediaContent,"miniprogram_media_temp.png");
+                String fileName="miniprogram_"+System.currentTimeMillis()+".png";
+                file = byteArrayToFile(mediaContent,fileName);
             } catch (Exception e) {
                 e.printStackTrace();
             }
