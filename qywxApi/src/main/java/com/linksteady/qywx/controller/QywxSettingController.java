@@ -196,8 +196,9 @@ public class QywxSettingController {
             file = null;
         } else {
             InputStream ins = null;
+            String filePath = "file/";
             ins = file.getInputStream();
-            toFile = new File(file.getOriginalFilename());
+            toFile = new File(filePath+file.getOriginalFilename());
             inputStreamToFile(ins, toFile);
             ins.close();
         }
