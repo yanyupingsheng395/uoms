@@ -70,12 +70,13 @@ function saveMaterial() {
         $MB.n_warning("图片不能为空！");
         return false;
     }
-
+    $MB.loadingDesc("show", "图片正在上传中，请稍候...");
     $.post( "/wxMedia/uploadQywxMaterial", {
         title: title,
         mediaType: 'image',
         base64Code: code
     }, function (r) {
+        $MB.loadingDesc("hide");
         if (r.code === 200) {
             $MB.n_success( "保存成功！" );
             //关闭弹出框
