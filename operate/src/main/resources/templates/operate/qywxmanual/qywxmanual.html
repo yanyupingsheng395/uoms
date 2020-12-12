@@ -88,6 +88,31 @@
             <div class="modal-body">
                 <form class="form-horizontal" method="post" id="qywx-manual-form">
                     <div class="form-group">
+                        <label class="col-md-3 control-label">小程序封面ID：</label>
+                        <div class="col-md-7">
+                            <input name="mediaId" id="mediaId"  readonly="readonly" class="form-control"/>
+                        </div>
+                        <a id='addShopDiscountBtn' style="cursor:pointer;color: #409eff !important;" onclick="chooseMedia()"><i class="fa fa-plus-circle"></i>添加</a>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">小程序标题：</label>
+                        <div class="col-md-7">
+                            <input name="mpTitle" id="mpTitle"  class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">小程序链接：</label>
+                        <div class="col-md-7">
+                            <input name="mpUrl" id="mpUrl"  class="form-control"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-3 control-label">推送内容：</label>
+                        <div class="col-md-7">
+                            <textarea name="smsContent" id="smsContent" cols="30" rows="4" class="form-control"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label class="col-md-3 control-label">上传文件：</label>
                         <div class="col-md-7">
                             <input type="file" id="file" name="file" style="display: none;"
@@ -112,30 +137,6 @@
                                     *数据请连续录入，中间不能存在空行
                                 </font>
                             </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">推送内容：</label>
-                        <div class="col-md-7">
-                            <textarea name="smsContent" id="smsContent" cols="30" rows="4" class="form-control"></textarea>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">小程序标题：</label>
-                        <div class="col-md-7">
-                            <input name="mpTitle" id="mpTitle"  class="form-control"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">小程序链接：</label>
-                        <div class="col-md-7">
-                            <input name="mpUrl" id="mpUrl"  class="form-control"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">小程序封面ID：</label>
-                        <div class="col-md-7">
-                            <input name="mediaId" id="mediaId"  class="form-control"/>
                         </div>
                     </div>
                 </form>
@@ -169,6 +170,8 @@
         </div>
     </div>
 </div>
+<div data-th-include="operate/chooseMedia/chooseMedia"></div>
+
 <th:block th:include="common/include::clipboard-js" />
 <th:block th:include="common/include::footer" />
 <th:block th:include="common/include::perfect-scrollbar" />
@@ -179,8 +182,10 @@
 <th:block th:include="common/include::echarts" />
 <th:block th:include="common/include::datetimepicker-js" />
 <th:block th:include="common/include::datepicker-js" />
+<script data-th-src="@{/plugins/imageUpload/cupload.js}"></script>
 <script data-th-src="@{/js/app/operate/common/template.js}"></script>
 <script data-th-src="@{/js/app/operate/qywxmanual/qywxmanual.js}"></script>
+<script data-th-src="@{/js/app/operate/chooseMedia/chooseMedia.js}"></script>
 <script>
     let clipboard1 = new ClipboardJS('.copy_btn');
     clipboard1.on('success', function(e) {

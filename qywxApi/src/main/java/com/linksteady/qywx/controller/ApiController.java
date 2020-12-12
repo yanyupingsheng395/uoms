@@ -2,6 +2,8 @@ package com.linksteady.qywx.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.common.util.Base64Img;
+import com.linksteady.qywx.domain.QywxMediaImg;
 import com.linksteady.qywx.exception.WxErrorException;
 import com.linksteady.qywx.service.MediaService;
 import com.linksteady.qywx.service.QywxGropMsgService;
@@ -11,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -77,6 +81,62 @@ public class ApiController {
             return ResponseBo.error(e.getMessage());
         }
     }
+
+
+    /**
+     * 获取临时素材图片列表
+     * @param request
+     * @return
+     */
+    @RequestMapping("/getMediaImgList")
+    public ResponseBo getMediaImgList(HttpServletRequest request,
+                                      @RequestParam("limit")int limit,
+                                      @RequestParam("offset")int offset) {
+        List<QywxMediaImg> qywxImageList = mediaService.getMediaImgList(limit,offset);
+        try {
+            return ResponseBo.okWithData(null,qywxImageList);
+        } catch (Exception e) {
+            return ResponseBo.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 获取临时素材数量
+     * @param request
+     * @return
+     */
+    @RequestMapping("/getMediaImgCount")
+    public ResponseBo getMediaImgCount(HttpServletRequest request) {
+        int count=mediaService.getMediaImageCount();
+        try {
+            return ResponseBo.okWithData(null,count);
+        } catch (Exception e) {
+            return ResponseBo.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 上传图片
+     * @param
+     * @return
+     */
+    @PostMapping("/uploadQywxMaterial")
+    public ResponseBo uploadQywxMaterial(HttpServletRequest request,
+                                         @RequestParam("title") String title,
+                                         @RequestParam("base64Code") String base64Code)  {
+        try {
+            String fileSuffix = base64Code.substring("data:image/".length(), base64Code.lastIndexOf(";base64,"));
+            String fileName="tmp." + fileSuffix;
+            File file = Base64Img.base64ToFile(base64Code, fileName);
+            mediaService.uploadQywxMaterial(title,file,"");
+            return ResponseBo.ok();
+        } catch (Exception e) {
+            log.error("上传素材（图片）报错！");
+            return ResponseBo.error();
+        }
+    }
+
+
 
     /**
      * 获取accessToken
