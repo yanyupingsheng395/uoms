@@ -1,7 +1,7 @@
-package com.linksteady.operate.controller;
+package com.linksteady.qywx.controller;
 
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.operate.domain.*;
+import com.linksteady.qywx.domain.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;

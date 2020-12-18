@@ -272,4 +272,86 @@ public class PageController  extends BaseController {
         return "qywx/qywxMedia/qywxImgList";
     }
 
+    /**
+     * 进入客户群联系列表界面
+     * @return
+     */
+    @RequestMapping("/goCustomerBase")
+    public String goCustomerBase(){
+        return  "qywx/customerBaseList/Baselist";
+    }
+
+    /**
+     * 进入群发消息
+     * @return
+     */
+    @RequestMapping("/goBaseMsg")
+    public String goBaseMsg(){
+        return  "qywx/customerBaseSend/BaseSendMsg";
+    }
+
+    /**
+     * 群SOP
+     * @return
+     */
+    @RequestMapping("/goBaseSop")
+    public String goBaseSop(){
+        return  "qywx/groupSOP/BaseSOP";
+    }
+
+    /**
+     * 进入自动拉群界面
+     * @return
+     */
+    @RequestMapping("/goPullGroup")
+    public String goPullGroup(){
+        return  "qywx/autoPullGroup/PullGroup";
+    }
+
+    /**
+     * 进入新建拉群界面
+     * @return
+     */
+    @RequestMapping("/goAddGroup")
+    public String goAddGroup(){
+        return  "qywx/autoPullGroup/addGroup";
+    }
+
+    /**
+     * 进入标签建群界面
+     * @return
+     */
+    @RequestMapping("/goTagGroup")
+    public String goTagGroup(){
+        return  "qywx/tagGroup/tagGroupList";
+    }
+
+    /**
+     * 进入添加标签群界面
+     * @return
+     */
+    @RequestMapping("/addTagGroup")
+    public String addTagGroup(){
+        return  "qywx/tagGroup/addTagGroup";
+    }
+
+    /**
+     * 进入群日历列表界面
+     * @return
+     */
+    @RequestMapping("/goGroupCalendar")
+    public String goGroupCalendar(){
+        return "qywx/groupCalendar/groupCalendarList";
+    }
+
+    /**
+     * 进入添加群日历界面
+     * @return
+     */
+    @RequestMapping("/addGroupCalendar")
+    public String addGroupCalendar(){
+        return "qywx/groupCalendar/addGroupCalendar";
+    }
+
+
 }

@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="edge" />
-    <title>自动拉群</title>
+    <title>标签建群</title>
     <th:block th:include="common/include :: common-css" />
     <th:block th:include="common/include::jstree-css" />
     <th:block th:include="common/include::bootstrap-table-css" />
@@ -27,7 +27,7 @@
                 <div class="row">
                     <div class="col-sm-12 search-collapse">
                         <div class="row">
-                            <h5 class="navbar-page-title">自动拉群</h5>
+                            <h5 class="navbar-page-title">标签建群</h5>
                         </div>
                         <div class="row">
                             <div class="col-md-12">
@@ -38,7 +38,7 @@
                             <div class="select-list">
                                 <ul>
                                     <li>
-                                        <a class="btn btn-primary btn-save" onclick="addGroup()">&nbsp;新建拉群</a>
+                                        <a class="btn btn-primary btn-save" href="/page/addTagGroup">&nbsp;创建群邀请</a>
                                     </li>
                                     <li>
                                         &nbsp&nbsp&nbsp&nbsp群名称：<input type="text" name="baseName" id="name"/>
@@ -55,13 +55,13 @@
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="btn-group-sm" id="toolbar" role="group">
-                                    <a class="btn btn-success btn-edit" id="btn_Calendar">
-                                        <i class="fa fa-pencil"></i>详情
+                                    <a class="btn btn-success btn-save" id="btn_Calendar">
+                                        <i class="fa fa-pencil"></i>提醒发送
                                     </a>
                                     <a class="btn btn-primary btn-edit" id="btn_Details">
-                                        <i class="fa fa-check-square-o"></i>下载
+                                        <i class="fa fa-check-square-o"></i> 详情
                                     </a>
-                                    <a class="btn btn-primary" id="btn_sop">
+                                    <a class="btn btn-danger  btn-close" id="btn_sop">
                                         <i class="fa fa-edit"></i> 删除
                                     </a>
                                 </div>
@@ -78,6 +78,7 @@
         </main>
     </div>
 </div>
+
 <th:block th:include="common/include::footer" />
 <th:block th:include="common/include::perfect-scrollbar" />
 <th:block th:include="common/include::jquery-validate-js" />
@@ -87,7 +88,7 @@
 <th:block th:include="common/include::bootstrap-select-js" />
 <th:block th:include="common/include::datepicker-js" />
 <th:block th:include="common/include::jquery-confirm-js" />
-<script data-th-src="@{/js/app/operate/common/template.js}"></script>
-<script data-th-src="@{/js/app/operate/autoPullGroup/PullGroup.js}"></script>
+<script data-th-src="@{/js/app/qywx/common/template.js}"></script>
+<script data-th-src="@{/js/app/qywx/tagGroup/tagGroupList.js}"></script>
 </body>
 </html>
