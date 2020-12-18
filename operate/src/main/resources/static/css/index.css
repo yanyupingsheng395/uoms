@@ -1,0 +1,34 @@
+
+
+
+* {
+	padding: 0;
+	margin: 0;
+}
+html, body {
+	position: relative;
+	/*width: 100%;
+	height: 100%;*/
+}
+
+#calendar {
+	max-width: 1200px;
+	margin: 20px auto 0;
+}
+
+
+.green {
+	color: #FFFFFF;
+	background-color: #369a5f;
+	border: 1px solid #257e4a;
+}
+.yellow {
+	color: #FFFFFF;
+	background-color: #f3b20f;
+	border: 1px solid #af7d00;
+}
+.red {
+	color: #FFFFFF;
+	background-color: #ea5454;
+	border: 1px solid #b11616;
+}

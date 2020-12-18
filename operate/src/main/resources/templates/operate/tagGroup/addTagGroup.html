@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <title>标签建群</title>
+    <th:block th:include="common/include :: common-css" />
+    <th:block th:include="common/include::jstree-css" />
+    <th:block th:include="common/include::bootstrap-table-css" />
+    <th:block th:include="common/include::bootstrap-select-css" />
+    <th:block th:include="common/include::jquery-confirm-css" />
+    <script data-th-src="@{/plugins/clipboard.min.js}"></script>
+</head>
+
+<body class="gray-bg">
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-div ui-layout-center">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <div class="row">
+                            <h5 class="navbar-page-title">标签建群</h5>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <hr class="hr m-t-0 m-b-5"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 select-table table-striped">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <form class="form-inline" method="post" id="basic-add-form">
+                                    <div class="row  m-t-10">
+                                        <div class="form-group">
+                                            &#12288;任务名称名称：<input type="text" class="form-control" name="qrcodeName"/>
+                                        </div>
+                                    </div>
+                                    <div class="row m-t-10">
+                                        <div class="form-group">
+                                            &#12288; 选择群发账号：
+                                            <select name="activitySource" id="userName" class="form-control" style="width: 172px;">
+                                                <option value="0">使用人1</option>
+                                                <option value="1">使用人2</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row m-t-10">
+                                        <div class="form-group">
+                                            &#12288;筛选客户：
+                                        </div>
+                                    </div>
+                                    <div class="row m-t-10">
+                                        <div class="col-md-8 ">
+                                            <div class="form-group">
+                                                <label class="radio-primary">
+                                                    入群引导语： <textarea class="form-control" id="smsContent" name="smsContent" style="height: 120px;width:600px;border: solid 1px #ebebeb;" oninput="smsContentValid()"></textarea>
+                                                </label>
+                                                <label class="radio-primary">
+                                                    &#12288;&#12288;&#12288;&#12288; &#12288;&#12288;<div style="height: 135px;width:600px;border: solid 1px #ebebeb;background-color: #FFEE99;" class="form-control" >
+                                                    <p style="color:#EE7700;">提示：</p>
+                                                    <p style="color:#EE7700;"> 1、可选择多个群聊，当前面的群人数达到上限，自动发送后面群的二维码</p>
+                                                    <p style="color:#EE7700;"> 2、群人数上限最多为200人</p>
+                                                    <p style="color:#EE7700;"> 3、上传二维码请自信核对。群二维码和群聊对应错误，会导致拉群任务创建失败</p>
+                                                    </div>
+                                                </label>
+                                                <br/>
+                                                <label class="radio-primary" style="margin-top: 10px;">
+                                                   选择群聊：
+                                                    <a id='addShopDiscountBtn' style="cursor:pointer;color: #409eff !important;" onclick="chooseGroup()"><i class="fa fa-plus-circle"></i>选择群聊</a>
+                                                </label>
+                                                <div style="height: 150px;"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-4">
+                                            <div style="position:absolute;height: 470px;width:100%;background:url(/images/app_content_01.png) no-repeat -23px -39px;}"></div>
+                                            <div class="bubble" style="position: relative;margin-top: 140px;width: 233px;">
+                                                <div class="demo clearfix">
+                                                    <div class="article" id="article" style="margin-left: 95px;">请输入发送内容</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="row m-t-15">
+                            <div class="col-md-12 text-right">
+                                <a id='creatFormal' class="btn btn-sm btn-secondary" onclick="beforeSave('formal')"></i>确定</a>
+                                <a class="btn btn-secondary btn-sm" href="/page/goPullGroup"><i class="fa fa-backward"></i>&nbsp;返回 </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<th:block th:include="common/include::footer" />
+<th:block th:include="common/include::perfect-scrollbar" />
+<th:block th:include="common/include::jquery-validate-js" />
+<th:block th:include="common/include::common-js" />
+<th:block th:include="common/include::jstree-js" />
+<th:block th:include="common/include::bootstrap-table-js" />
+<th:block th:include="common/include::bootstrap-select-js" />
+<th:block th:include="common/include::datepicker-js" />
+<th:block th:include="common/include::jquery-confirm-js" />
+<script data-th-src="@{/js/app/operate/common/template.js}"></script>
+<script data-th-src="@{/plugins/imageUpload/cupload.js}"></script>
+<script data-th-src="@{/js/app/operate/tagGroup/tagGroupList.js}"></script>
+</body>
+</html>

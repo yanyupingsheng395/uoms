@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <title>客户群列表</title>
+    <th:block th:include="common/include :: common-css" />
+    <th:block th:include="common/include::jstree-css" />
+    <th:block th:include="common/include::bootstrap-table-css" />
+    <th:block th:include="common/include::bootstrap-select-css" />
+    <th:block th:include="common/include::jquery-confirm-css" />
+    <script data-th-src="@{/plugins/clipboard.min.js}"></script>
+</head>
+
+<body class="gray-bg">
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-div ui-layout-center">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <div class="row">
+                            <h5 class="navbar-page-title">客户群列表</h5>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <hr class="hr m-t-0 m-b-5"/>
+                            </div>
+                        </div>
+                        <form id="activity-form">
+                            <div class="select-list">
+                                <ul>
+                                    <button class="btn btn-secondary" style="float: left" id="btn_download_data1">
+                                        <i class="fa fa-download"></i> 导出Excel
+                                    </button>
+                                    <li>
+                                        &nbsp&nbsp&nbsp&nbsp群名称：<input type="text" name="baseName" id="name"/>
+                                    </li>
+                                    <li class="pull-right">
+                                        <a class="btn btn-primary btn-rounded btn-sm" onclick="searchActivity()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                        <a class="btn btn-warning btn-rounded btn-sm" onclick="resetActivity()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-12 select-table table-striped">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="btn-group-sm" id="toolbar" role="group">
+                                    <a class="btn btn-success btn-edit" id="btn_Calendar">
+                                        <i class="fa fa-pencil"></i>设置群日历
+                                    </a>
+                                    <a class="btn btn-primary" id="btn_sop">
+                                        <i class="fa fa-edit"></i> 设置群SOP
+                                    </a>
+                                    <a class="btn btn-success" id="btn_lable">
+                                        <i class="fa fa-eye-slash"></i> 打标签
+                                    </a>
+                                    <a class="btn btn-primary btn-edit" id="btn_Details">
+                                        <i class="fa fa-check-square-o"></i> 详情
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row m-t-10">
+                            <div class="col-sm-12 table-striped">
+                                <table id="baseTable" class="table table-striped table-bordered text-nowrap"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<div class="modal fade" id="lableModal" data-keyboard="false" data-backdrop="static" tabindex="-1">
+    <div class="modal-dialog" style="width: 41%;">
+        <div class="modal-content">
+            <div class="panel panel-primary" style="text-align: center">
+                <div class="panel-heading">
+                    <h3 class="panel-title">批量打标签</h3>
+                </div>
+                <div class="panel-body">
+                    将给群内3个客户批量打标签，请选择标签
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <form id="lableList">
+                            <span class="label label-default">Default</span>
+                            <span class="label label-default">Default</span>
+                            <span class="label label-default">Default</span>
+                            <span class="label label-default">Default</span>
+                            <span class="label label-default">Default</span>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-save btn-sm" onclick="saveMaterial()" name="save">保存</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="common/include::footer" />
+<th:block th:include="common/include::perfect-scrollbar" />
+<th:block th:include="common/include::jquery-validate-js" />
+<th:block th:include="common/include::common-js" />
+<th:block th:include="common/include::jstree-js" />
+<th:block th:include="common/include::bootstrap-table-js" />
+<th:block th:include="common/include::bootstrap-select-js" />
+<th:block th:include="common/include::jquery-confirm-js" />
+<script data-th-src="@{/js/app/operate/common/template.js}"></script>
+<script data-th-src="@{/js/app/operate/CustomerBaseList/Baselist.js}"></script>
+</body>
+</html>

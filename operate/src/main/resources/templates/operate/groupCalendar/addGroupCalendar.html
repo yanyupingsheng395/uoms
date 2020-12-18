@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <title>添加群日历</title>
+    <th:block th:include="common/include :: common-css" />
+    <th:block th:include="common/include::jstree-css" />
+    <th:block th:include="common/include::bootstrap-table-css" />
+    <th:block th:include="common/include::bootstrap-select-css" />
+    <th:block th:include="common/include::jquery-confirm-css" />
+    <link rel="stylesheet" th:href="@{/css/fullcalendar.css}" type="text/css">
+    <link rel="stylesheet" th:href="@{/css/index.css}" type="text/css">
+    <link rel="stylesheet" th:href="@{/css/layui.css}" type="text/css">
+</head>
+
+<body class="gray-bg">
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-div ui-layout-center">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <div class="row">
+                            <h5 class="navbar-page-title">群日历</h5>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <hr class="hr m-t-0 m-b-5"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 select-table table-striped">
+                        <div class="row m-t-10">
+                            <div class="col-sm-12 table-striped">
+                                <div id="calendar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<div data-th-include="operate/chooseMedia/chooseMedia"></div>
+<th:block th:include="common/include::footer" />
+<th:block th:include="common/include::perfect-scrollbar" />
+<th:block th:include="common/include::jquery-validate-js" />
+<th:block th:include="common/include::common-js" />
+<th:block th:include="common/include::jstree-js" />
+<th:block th:include="common/include::bootstrap-table-js" />
+<th:block th:include="common/include::bootstrap-select-js" />
+<th:block th:include="common/include::jquery-confirm-js" />
+<script data-th-src="@{/plugins/imageUpload/cupload.js}"></script>
+<script data-th-src="@{/js/app/operate/common/template.js}"></script>
+<script data-th-src="@{/plugins/fullCalendar/moment.min.js}"></script>
+<script data-th-src="@{/plugins/fullCalendar/fullcalendar.min.js}"></script>
+<script data-th-src="@{/plugins/fullCalendar/layui.all.js}"></script>
+<script data-th-src="@{/plugins/fullCalendar/index.js}"></script>
+<script data-th-src="@{/js/app/operate/chooseMedia/chooseMedia.js}"></script>
+</body>
+</html>
