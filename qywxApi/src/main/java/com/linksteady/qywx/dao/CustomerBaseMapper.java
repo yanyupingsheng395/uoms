@@ -11,9 +11,9 @@ public interface CustomerBaseMapper {
 
     List<QywxContractList> getDataList(int limit, int offset);
 
-    int getCustomerListCount(long groupId);
+    int getCustomerListCount(String chatId);
 
-    List<QywxContractDetail> getCustomerList(int limit, int offset, long groupId);
+    List<QywxContractDetail> getCustomerList(int limit, int offset, String chatId);
 
     List<FollowUser> getFollowUser();
 

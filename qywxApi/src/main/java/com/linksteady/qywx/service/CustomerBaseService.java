@@ -20,12 +20,12 @@ public interface CustomerBaseService {
 
     /**
      * 获取客户群人数
-     * @param groupId
+     * @param
      * @return
      */
-    int getCustomerListCount(long groupId);
+    int getCustomerListCount(String chatId);
 
-    List<QywxContractDetail> getCustomerList(int limit, int offset, long groupId);
+    List<QywxContractDetail> getCustomerList(int limit, int offset, String chatId);
 
     List<FollowUser> getFollowUser();
 }

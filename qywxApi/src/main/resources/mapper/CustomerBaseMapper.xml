@@ -2,11 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.qywx.dao.CustomerBaseMapper">
     <resultMap id="contractBase" type="com.linksteady.qywx.domain.QywxContractList">
-        <result column="group_id" jdbcType="DECIMAL" property="groupId"/>
-        <result column="status_filter" jdbcType="VARCHAR" property="statusFilter"/>
         <result column="chat_id" jdbcType="VARCHAR" property="chatId"/>
         <result column="status" jdbcType="VARCHAR" property="status"/>
         <result column="insert_dt" jdbcType="TIMESTAMP" property="insertDt"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="insert_by" jdbcType="VARCHAR" property="insertBy"/>
         <result column="group_number" jdbcType="DECIMAL" property="groupNumber"/>
         <result column="group_join" jdbcType="DECIMAL" property="groupJoin"/>
@@ -18,7 +17,7 @@
 
     <resultMap id="custractDetail" type="com.linksteady.qywx.domain.QywxContractDetail">
         <result column="detail_id" jdbcType="DECIMAL" property="detailId"/>
-        <result column="group_id" jdbcType="DECIMAL" property="groupId"/>
+        <result column="chat_id" jdbcType="VARCHAR" property="chatId"/>
         <result column="userid" jdbcType="VARCHAR" property="userId"/>
         <result column="user_type" jdbcType="VARCHAR" property="userType"/>
         <result column="unionid" jdbcType="VARCHAR" property="unionid"/>
@@ -28,25 +27,24 @@
     </resultMap>
 
     <select id="getCount" resultType="int">
-        select count(*) from uo_qywx_customer_base
+        select count(*) from uo_qywx_chat_base
     </select>
 
     <select id="getDataList" resultMap="contractBase">
-        select group_id,status_filter,chat_id,status,insert_dt,insert_by,group_number,group_join,group_out,group_name,owner,notice from uo_qywx_customer_base  order by insert_dt desc limit #{limit} offset #{offset}
+        select chat_id,status,insert_dt,insert_by,group_number,group_join,group_out,group_name,owner,notice,create_time from uo_qywx_chat_base  order by insert_dt desc limit #{limit} offset #{offset}
     </select>
     <select id="getCustomerListCount" resultType="int">
-        select count(*) from uo_qywx_customer_detail where group_id=#{groupId}
+        select count(*) from uo_qywx_chat_detail where chat_id=#{chatId}
     </select>
     <select id="getCustomerList" resultMap="custractDetail">
         select userid,user_type,join_scene,join_time,user_name from (
-            select a.userid,a.user_type,a.join_scene,a.join_time, b.name as user_name
-            from uo_qywx_customer_detail a,uo_qywx_external_user_list b
-            where  a.group_id=#{groupId} and a.userid=b.external_userid and a.user_type='2'
-            union ALL
-            select a.userid,a.user_type,a.join_scene,a.join_time, c.name as user_name
-            from uo_qywx_customer_detail a,uo_qywx_follower_user_list c
-            where a.userid=c.user_id and a.group_id=#{groupId} and a.user_type='1'
-        )bse limit #{limit} offset #{offset}
+        select a.userid,a.user_type,a.join_scene,a.join_time, b.name as user_name
+        from uo_qywx_chat_detail a,uo_qywx_external_user_list b
+        where  a.chat_id=#{chatId} and a.userid=b.external_userid and a.user_type='2'
+        union ALL
+        select a.userid,a.user_type,a.join_scene,a.join_time, c.name as user_name
+        from uo_qywx_chat_detail a,uo_qywx_follower_user_list c
+        where a.userid=c.user_id and a.chat_id=#{chatId} and a.user_type='1')bse limit 100 offset 1;
     </select>
     <select id="getFollowUser" resultType="com.linksteady.qywx.domain.FollowUser">
         select user_id,name from uo_qywx_follower_user_list

@@ -12,20 +12,6 @@ import java.util.Date;
 @NoArgsConstructor
 public class QywxContractList {
     /**
-     * 主键ID
-     */
-    private long groupId;
-    /**
-     * 群状态过滤。
-     * 0 - 所有列表
-     * 1 - 离职待继承
-     * 2 - 离职继承中
-     * 3 - 离职继承完成
-     *
-     * 默认为0
-     */
-    private String statusFilter;
-    /**
      * 群公告
      */
     private String notice;
@@ -67,6 +53,12 @@ public class QywxContractList {
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
     private Date insertDt;
+
+    /**
+     * 微信群创建时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
+    private Date createTime;
 
 
 }

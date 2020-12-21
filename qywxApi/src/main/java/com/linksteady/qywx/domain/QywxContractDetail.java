@@ -35,9 +35,10 @@ public class QywxContractDetail {
     /**
      * 主表ID
      */
-    private long groupId;
+    private String  chatId;
     /**
      * 用户名称
      */
     private String userName;
+
 }

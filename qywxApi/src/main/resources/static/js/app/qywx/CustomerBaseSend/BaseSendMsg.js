@@ -1,5 +1,58 @@
 $( function () {
+    getMessageList();
 });
+
+function getMessageList() {
+    var settings = {
+        url: "/qywxCustomer/getMeList",
+        cache: false,
+        pagination: true,
+        singleSelect: true,
+        sidePagination: "server",
+        pageNumber: 1,
+        pageSize: 10,
+        pageList: [10, 25, 50, 100],
+        queryParams: function (params) {
+            return {
+                pageSize: params.limit,
+                pageNum: (params.offset / params.limit) + 1
+            };
+        },
+        columns: [ {
+            checkbox: true,
+        },{
+            field: 'groupId',
+            title: 'ID',
+            visible: false
+        },{
+            field: 'groupName',
+            title: '群名称',
+            align: 'center'
+        }, {
+            field: 'owner',
+            title: '群主',
+            align: 'center'
+        }, {
+            field: 'groupNumber',
+            title: '群人数',
+            align: 'center'
+        }, {
+            field: 'groupJoin',
+            title: '今日入群',
+            align: 'center'
+        }, {
+            field: 'groupOut',
+            title: '今日退群',
+            align: 'center'
+        }, {
+            field: 'insertDt',
+            title: '创建时间',
+            align: 'center'
+        }
+        ]
+    };
+    $MB.initTable( 'baseTable', settings );
+}
 
 function showSendTime() {
     $("#sendtime").show();

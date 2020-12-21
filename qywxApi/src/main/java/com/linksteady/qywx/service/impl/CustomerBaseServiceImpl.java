@@ -27,13 +27,13 @@ public class CustomerBaseServiceImpl implements CustomerBaseService {
     }
 
     @Override
-    public int getCustomerListCount(long groupId) {
-        return customerBaseMapper.getCustomerListCount(groupId);
+    public int getCustomerListCount(String chatId) {
+        return customerBaseMapper.getCustomerListCount(chatId);
     }
 
     @Override
-    public List<QywxContractDetail> getCustomerList(int limit, int offset, long groupId) {
-        return customerBaseMapper.getCustomerList(limit, offset,groupId);
+    public List<QywxContractDetail> getCustomerList(int limit, int offset,String chatId) {
+        return customerBaseMapper.getCustomerList(limit, offset,chatId);
     }
 
     @Override

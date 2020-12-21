@@ -17,7 +17,7 @@ $(function () {
         columns: [ {
                 checkbox: true,
             },{
-                field: 'groupId',
+                field: 'chatId',
                 title: 'ID',
                 visible: false
             },{
@@ -58,15 +58,15 @@ $( "#btn_Details" ).click( function () {
         $MB.n_warning( '请选择要查看的群！' );
         return;
     }
-    var groupId = selected[0].groupId;
+    var chatId = selected[0].chatId;
     $("#customDetail").modal('show');
     $("#groupName").val(selected[0].groupName);
     $("#owner").val(selected[0].owner);
     $("#notice").val(selected[0].notice);
-    getCustomerList(groupId);
+    getCustomerList(chatId);
 } );
 
-function getCustomerList(groupId) {
+function getCustomerList(chatId) {
     var settings = {
         url: "/qywxCustomer/getCustomerList",
         cache: false,
@@ -80,7 +80,7 @@ function getCustomerList(groupId) {
             return {
                 pageSize: params.limit,  //页面大小
                 pageNum: (params.offset / params.limit)+ 1,
-                groupId: groupId
+                chatId: chatId
             }
         },
         columns: [{

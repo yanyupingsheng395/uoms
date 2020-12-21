@@ -37,11 +37,11 @@ public class CustomerBaseController {
 
     @RequestMapping("/getCustomerList")
     @ResponseBody
-    public ResponseBo getCustomerList(QueryRequest request, @RequestParam long groupId){
+    public ResponseBo getCustomerList(QueryRequest request, @RequestParam String chatId){
         int limit = request.getLimit();
         int offset = request.getOffset();
-        int count = customerBaseService.getCustomerListCount(groupId);
-        List<QywxContractDetail> lists= customerBaseService.getCustomerList(limit, offset,groupId);
+        int count = customerBaseService.getCustomerListCount(chatId);
+        List<QywxContractDetail> lists= customerBaseService.getCustomerList(limit, offset,chatId);
         return ResponseBo.okOverPaging(null,count,lists);
     }
 
