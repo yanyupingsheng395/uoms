@@ -1,8 +1,12 @@
 package com.linksteady.qywx.controller;
 
+import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.qywx.domain.*;
+import com.linksteady.qywx.service.CustomerBaseService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,20 +18,36 @@ import java.util.List;
 @RequestMapping("/qywxCustomer")
 public class CustomerBaseController {
 
+    @Autowired
+    private CustomerBaseService customerBaseService;
+
     /**
      * 获取客户群列表
+     *
      */
     @RequestMapping("/getContractList")
     @ResponseBody
-    public ResponseBo getContractList(){
-        List<QywxContractList> lists=new ArrayList<>();
-        lists.add(new QywxContractList(1,"群1","群主1",5,0,0,new Date()));
-        lists.add(new QywxContractList(2,"群2","群主2",5,0,0,new Date()));
-        lists.add(new QywxContractList(3,"群3","群主3",5,0,0,new Date()));
-        lists.add(new QywxContractList(4,"群4","群主4",5,0,0,new Date()));
-        lists.add(new QywxContractList(5,"群5","群主5",5,0,0,new Date()));
-        return ResponseBo.okOverPaging(null,5,lists);
+    public ResponseBo getContractList(QueryRequest request){
+        int limit = request.getLimit();
+        int offset = request.getOffset();
+        int count = customerBaseService.getCount();
+        List<QywxContractList> lists= customerBaseService.getDataList(limit, offset);
+        return ResponseBo.okOverPaging(null,count,lists);
     }
+
+    @RequestMapping("/getCustomerList")
+    @ResponseBody
+    public ResponseBo getCustomerList(QueryRequest request, @RequestParam long groupId){
+        int limit = request.getLimit();
+        int offset = request.getOffset();
+        int count = customerBaseService.getCustomerListCount(groupId);
+        List<QywxContractDetail> lists= customerBaseService.getCustomerList(limit, offset,groupId);
+        return ResponseBo.okOverPaging(null,count,lists);
+    }
+
+
+
+
 
     /**
      * 获取SOP规则列表内容
@@ -79,11 +99,6 @@ public class CustomerBaseController {
     @RequestMapping("/getGroupChat")
     public ResponseBo getGroupChat(){
         List<QywxContractList> lists=new ArrayList<>();
-        lists.add(new QywxContractList(1,"群1","群主1",5,0,0,new Date()));
-        lists.add(new QywxContractList(2,"群2","群主2",5,0,0,new Date()));
-        lists.add(new QywxContractList(3,"群3","群主3",5,0,0,new Date()));
-        lists.add(new QywxContractList(4,"群4","群主4",5,0,0,new Date()));
-        lists.add(new QywxContractList(5,"群5","群主5",5,0,0,new Date()));
         return ResponseBo.okOverPaging(null,5,lists);
     }
 

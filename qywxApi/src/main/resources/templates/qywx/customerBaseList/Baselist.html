@@ -37,13 +37,10 @@
                         <form id="activity-form">
                             <div class="select-list">
                                 <ul>
-                                    <button class="btn btn-secondary" style="float: left" id="btn_download_data1">
-                                        <i class="fa fa-download"></i> 导出Excel
-                                    </button>
                                     <li>
-                                        &nbsp&nbsp&nbsp&nbsp群名称：<input type="text" name="baseName" id="name"/>
+                                        &nbsp群名称：<input type="text" name="baseName" id="name"/>
                                     </li>
-                                    <li class="pull-right">
+                                    <li class="pull-left">
                                         <a class="btn btn-primary btn-rounded btn-sm" onclick="searchActivity()"><i class="fa fa-search"></i>&nbsp;搜索</a>
                                         <a class="btn btn-warning btn-rounded btn-sm" onclick="resetActivity()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
                                     </li>
@@ -55,12 +52,12 @@
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="btn-group-sm" id="toolbar" role="group">
-                                    <a class="btn btn-success btn-edit" id="btn_Calendar">
+                                   <!-- <a class="btn btn-success btn-edit" id="btn_Calendar">
                                         <i class="fa fa-pencil"></i>设置群日历
                                     </a>
                                     <a class="btn btn-primary" id="btn_sop">
                                         <i class="fa fa-edit"></i> 设置群SOP
-                                    </a>
+                                    </a>-->
                                     <a class="btn btn-success" id="btn_lable">
                                         <i class="fa fa-eye-slash"></i> 打标签
                                     </a>
@@ -97,11 +94,11 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <form id="lableList">
-                            <span class="label label-default">Default</span>
-                            <span class="label label-default">Default</span>
-                            <span class="label label-default">Default</span>
-                            <span class="label label-default">Default</span>
-                            <span class="label label-default">Default</span>
+                            <span class="label label-default" onclick="chooseLable(this)">购物群</span>
+                            <span class="label label-default" onclick="chooseLable(this)">聊天群</span>
+                            <span class="label label-default" onclick="chooseLable(this)">娱乐群</span>
+                            <span class="label label-default" onclick="chooseLable(this)">交流群</span>
+                            <span class="label label-default" onclick="chooseLable(this)">面膜群</span>
                         </form>
                     </div>
                 </div>
@@ -113,7 +110,7 @@
         </div>
     </div>
 </div>
-
+<div data-th-include="qywx/customerBaseList/customerDetail"></div>
 <th:block th:include="common/include::footer" />
 <th:block th:include="common/include::perfect-scrollbar" />
 <th:block th:include="common/include::jquery-validate-js" />

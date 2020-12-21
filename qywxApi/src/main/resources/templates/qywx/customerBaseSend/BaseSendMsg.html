@@ -12,6 +12,9 @@
     <th:block th:include="common/include::bootstrap-select-css" />
     <th:block th:include="common/include::jquery-confirm-css" />
     <script data-th-src="@{/plugins/clipboard.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/fullcalendar.css}" type="text/css">
+    <link rel="stylesheet" th:href="@{/css/index.css}" type="text/css">
+    <link rel="stylesheet" th:href="@{/css/layui.css}" type="text/css">
 </head>
 
 <body class="gray-bg">
@@ -41,16 +44,14 @@
                                                 <div class="example-box">
                                                     <label class="control-label">群发名称：</label>
                                                     <label class="radio-inline radio-primary">
-                                                        <input  type="text" class="form-control"  name="baseName" id="baseName">
+                                                        <input  type="text" class="form-control"  name="baseName" id="baseName" style="width: 432px;">
                                                     </label>
                                                 </div>
                                                 <div class="example-box" style="margin-top: 10px;">
                                                     <label class="control-label">选择群主：</label>
                                                     <label class="radio-inline radio-primary">
-                                                        <select name="chooseBase" class="form-control valid" style="width: 195px;">
-                                                            <option value="" selected>所有</option>
-                                                            <option value="0">锁定</option>
-                                                            <option value="1">有效</option>
+                                                        <select name="chooseBase" id="selectOwner"  class="form-control valid" style="width: 432px;">
+                                                            <option value="" th:each="user,FollowUser : ${foll}" th:text="${user.name}"></option>
                                                         </select>
                                                     </label>
                                                 </div>
@@ -80,8 +81,8 @@
                                                             <div class="col-md-12">
                                                                 <div class="form-horizontal">
                                                                     <div class="form-group" style="margin-bottom: 2px;">
-                                                                        <label class="col-md-3 control-label">图片地址：</label>
-                                                                        <div class="col-md-7">
+                                                                        <label class="col-md-1 control-label">图片地址：</label>
+                                                                        <div class="col-md-10">
                                                                             <input class="form-control" name="picUrl"/>
                                                                         </div>
                                                                     </div>
@@ -92,26 +93,26 @@
                                                     <div class="tab-pane fade" id="web">
                                                         <div class="form-horizontal">
                                                             <div class="form-group">
-                                                                <label class="col-md-3 control-label">消息标题：</label>
-                                                                <div class="col-md-7">
+                                                                <label class="col-md-1 control-label">消息标题：</label>
+                                                                <div class="col-md-11">
                                                                     <input class="form-control" name="linkTitle">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group">
-                                                                <label class="col-md-3 control-label">消息描述：</label>
-                                                                <div class="col-md-7">
+                                                                <label class="col-md-1 control-label">消息描述：</label>
+                                                                <div class="col-md-11">
                                                                     <input class="form-control" name="linkDesc">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group">
-                                                                <label class="col-md-3 control-label">消息地址：</label>
-                                                                <div class="col-md-7">
+                                                                <label class="col-md-1 control-label">消息地址：</label>
+                                                                <div class="col-md-11">
                                                                     <input class="form-control" name="linkUrl">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group" style="margin-bottom: 2px;">
-                                                                <label class="col-md-3 control-label">封面地址：</label>
-                                                                <div class="col-md-7">
+                                                                <label class="col-md-1 control-label">封面地址：</label>
+                                                                <div class="col-md-11">
                                                                     <input class="form-control" name="linkPicurl">
                                                                 </div>
                                                             </div>
@@ -120,20 +121,20 @@
                                                     <div class="tab-pane fade" id="miniprogram">
                                                         <div class="form-horizontal">
                                                             <div class="form-group">
-                                                                <label class="col-md-3 control-label">小程序标题：</label>
-                                                                <div class="col-md-7">
+                                                                <label class="col-md-1 control-label">小程序标题：</label>
+                                                                <div class="col-md-11">
                                                                     <input class="form-control" name="miniprogramTitle" id="minititle">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group" >
-                                                                <label class="col-md-3 control-label">小程序地址：</label>
-                                                                <div class="col-md-7">
+                                                                <label class="col-md-1 control-label">小程序地址：</label>
+                                                                <div class="col-md-11">
                                                                     <input class="form-control" name="miniprogramPage" id="miniaddress">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group" >
-                                                                <label class="col-md-3 control-label">小程序MediaID：</label>
-                                                                <div class="col-md-7">
+                                                                <label class="col-md-1 control-label">小程序MediaID：</label>
+                                                                <div class="col-md-10">
                                                                     <input class="form-control" name="mediaId" id="mediaId" readonly="readonly">
                                                                 </div>
                                                                 <a id='addShopDiscountBtn' style="cursor:pointer;color: #409eff !important;" onclick="chooseMedia()"><i class="fa fa-plus-circle"></i>添加</a>
@@ -156,7 +157,7 @@
                                         </div>
                                         <div class="form-group" id="sendtime" style="display: none">
                                             <div class="col-md-4">
-                                                发送时间：<input type="text" name="sendDT" id="sendDT" class="form-control">
+                                                发送时间：<input type="text" class="layui-input" id="test5" >
                                             </div>
                                         </div>
                                     </div>
@@ -190,6 +191,9 @@
 <th:block th:include="common/include::jquery-confirm-js" />
 <script data-th-src="@{/plugins/imageUpload/cupload.js}"></script>
 <script data-th-src="@{/js/app/qywx/common/template.js}"></script>
+<script data-th-src="@{/plugins/fullCalendar/moment.min.js}"></script>
+<script data-th-src="@{/plugins/fullCalendar/fullcalendar.min.js}"></script>
+<script data-th-src="@{/plugins/fullCalendar/layui.all.js}"></script>
 <script data-th-src="@{/js/app/qywx/CustomerBaseSend/BaseSendMsg.js}"></script>
 <script data-th-src="@{/js/app/qywx/chooseMedia/chooseMedia.js}"></script>
 </body>

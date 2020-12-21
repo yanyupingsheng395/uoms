@@ -4,12 +4,10 @@ import com.linksteady.common.annotation.Log;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.qywx.domain.AddUserHead;
+import com.linksteady.qywx.domain.FollowUser;
 import com.linksteady.qywx.domain.QywxParam;
 import com.linksteady.qywx.domain.QywxWelcome;
-import com.linksteady.qywx.service.AddUserService;
-import com.linksteady.qywx.service.AddUserTriggerService;
-import com.linksteady.qywx.service.QywxParamService;
-import com.linksteady.qywx.service.WelcomeService;
+import com.linksteady.qywx.service.*;
 import com.linksteady.qywx.vo.SmsConfigVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -40,6 +39,9 @@ public class PageController  extends BaseController {
 
     @Autowired
     ConfigService configService;
+
+    @Autowired
+    private CustomerBaseService customerBaseService;
 
 
     /**
@@ -286,7 +288,9 @@ public class PageController  extends BaseController {
      * @return
      */
     @RequestMapping("/goBaseMsg")
-    public String goBaseMsg(){
+    public String goBaseMsg(Model model){
+       List<FollowUser> foll= customerBaseService.getFollowUser();
+       model.addAttribute("foll",foll);
         return  "qywx/customerBaseSend/BaseSendMsg";
     }
 
