@@ -78,5 +78,10 @@ public interface QywxDailyService {
 
     int getConvertDetailCount(long headId);
 
+    /**
+     * 每日运营任务失效
+     */
+    void expireActivityDailyHead();
+
 
 }

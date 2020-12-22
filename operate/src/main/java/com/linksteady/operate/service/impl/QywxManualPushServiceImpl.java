@@ -95,7 +95,7 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
                     qywxPushList.setMpAppid(appId);
                     qywxPushList.setExternalContactIds(org.apache.commons.lang3.StringUtils.join( qywxManualDetailList.stream().map(QywxManualDetail::getQywxContactId).collect(Collectors.toList()),","));
                     qywxPushList.setFollowUserId(followerUserId);
-                    qywxPushList.setSourceId(detail.get(0).getDetailId());
+                    qywxPushList.setSourceId(detail.get(0).getHeadId());
                     qywxManualHeaderMapper.insertPushList(qywxPushList);
                     //推送并更新状态
                     pushQywxMsg(qywxPushList,qywxManualDetailList);
@@ -116,7 +116,7 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
                         qywxPushList.setMpAppid(appId);
                         qywxPushList.setExternalContactIds(org.apache.commons.lang3.StringUtils.join(qywxManualDetailList.stream().map(QywxManualDetail::getQywxContactId).collect(Collectors.toList()),","));
                         qywxPushList.setFollowUserId(followerUserId);
-                        qywxPushList.setSourceId(detail.get(0).getDetailId());
+                        qywxPushList.setSourceId(detail.get(0).getHeadId());
                         //将信息，放入uo_qywx_push_list表中。
                         qywxManualHeaderMapper.insertPushList(qywxPushList);
                         //推送并更新状态

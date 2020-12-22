@@ -233,4 +233,8 @@
                 where  t.daily_header_id=#{headId} and t.IS_CONVERSION = '1'
     </select>
 
+    <update id="expireActivityDailyHead">
+         update uo_qywx_daily_header h set status='timeout' where h.status='todo' and task_date::date&lt;current_date
+    </update>
+
 </mapper>

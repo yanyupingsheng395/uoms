@@ -58,5 +58,7 @@ public interface QywxDailyMapper {
 
     int getConvertDetailCount(long headId);
 
+    void expireActivityDailyHead();
+
 
 }

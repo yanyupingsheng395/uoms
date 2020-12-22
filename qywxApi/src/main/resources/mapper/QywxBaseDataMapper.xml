@@ -3,7 +3,7 @@
 <mapper namespace="com.linksteady.qywx.dao.QywxBaseDataMapper">
 
     <select id="getFollowUserList" resultType="map">
-        select user_id, name, insert_dt, update_dt from uo_qywx_follower_user_list order by user_id asc
+        select user_id, name, insert_dt, update_dt,operate_flag from uo_qywx_follower_user_list order by user_id asc
         limit #{limit} offset #{offset}
     </select>
 

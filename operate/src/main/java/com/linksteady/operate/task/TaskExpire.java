@@ -1,8 +1,6 @@
 package com.linksteady.operate.task;
 
-import com.linksteady.operate.service.ActivityHeadService;
-import com.linksteady.operate.service.ActivityPlanService;
-import com.linksteady.operate.service.DailyService;
+import com.linksteady.operate.service.*;
 import com.linksteady.smp.starter.annotation.JobHandler;
 import com.linksteady.smp.starter.domain.ResultInfo;
 import com.linksteady.smp.starter.jobclient.service.IJobHandler;
@@ -24,10 +22,19 @@ public class TaskExpire extends IJobHandler {
     DailyService dailyService;
 
     @Autowired
+    QywxDailyService qywxDailyService;
+
+    @Autowired
     ActivityPlanService activityPlanService;
 
     @Autowired
+    QywxActivityPlanService qywxActivityPlanService;
+
+    @Autowired
     ActivityHeadService activityHeadService;
+
+    @Autowired
+    QywxActivityHeadService qywxActivityHeadService;
 
     @Override
     public ResultInfo execute(String param) {
@@ -35,14 +42,21 @@ public class TaskExpire extends IJobHandler {
         log.info("开始每日运营任务失效处理");
         //每日运营任务失效
         dailyService.expireDailyHead();
+        //企微
+        qywxDailyService.expireActivityDailyHead();
 
         //活动运营 执行计划失效
         log.info("开始 活动运营-执行计划 失效处理");
         activityPlanService.expireActivityPlan();
+        //企微
+        qywxActivityPlanService.expireActivityPlan();
 
         //活动头表失效
-        activityHeadService.expireActivityHead();
         log.info("开始活动运营失效处理");
+        activityHeadService.expireActivityHead();
+        qywxActivityHeadService.expireActivityHead();
+
+
         return ResultInfo.success("");
     }
 }

@@ -8,4 +8,8 @@ public interface QywxTaskResultService {
 
     void updateDailyExecStatus();
 
+    void updateActivityExecStatus();
+
+    void updateManualExecStatus();
+
 }

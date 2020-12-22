@@ -93,4 +93,14 @@ public class QywxTaskResultServiceImpl implements QywxTaskResultService {
     public void updateDailyExecStatus() {
         qywxTaskResultMapper.updateDailyExecStatus();
     }
+
+    @Override
+    public void updateActivityExecStatus() {
+        qywxTaskResultMapper.updateActivityExecStatus();
+    }
+
+    @Override
+    public void updateManualExecStatus() {
+        qywxTaskResultMapper.updateManualExecStatus();
+    }
 }

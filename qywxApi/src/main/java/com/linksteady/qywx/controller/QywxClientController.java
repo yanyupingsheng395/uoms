@@ -1,7 +1,5 @@
 package com.linksteady.qywx.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.bo.UserBo;
@@ -14,7 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,8 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
@@ -384,13 +379,8 @@ public class QywxClientController {
     public Map<String, Object> guideList() {
         //获取当前用户及公司
         //获取当前页数、每页数量
-        int count=5;
+        int count=0;
         List<FriendsGuide> list= Lists.newArrayList();
-        list.add(new FriendsGuide("20200911","20200911-01","阿瓦提长绒棉浴巾,纯棉超柔婴儿浴巾","浴巾",""));
-        list.add(new FriendsGuide("20200911","20200911-02","华夫格多功能毯","休闲毯",""));
-        list.add(new FriendsGuide("20200911","20200911-03","老粗布条格凉席三件套,天然蔺草席三件套","凉席",""));
-        list.add(new FriendsGuide("20200912","20200912-01","30支精梳埃及浴巾,SPIMA棉条纹浴巾","浴巾",""));
-        list.add(new FriendsGuide("20200912","20200912-02","三层纱蓬松褶皱毛巾被","休闲毯",""));
         return ResponseBo.okOverPaging(null, count, list);
     }
 
@@ -403,9 +393,7 @@ public class QywxClientController {
                                 @RequestParam(name = "pushNum") int pushNum,
                                 @RequestParam(name = "productNum") int productNum,
                                 @RequestParam(name = "periodNum") int periodNum,
-                                @RequestParam(name = "pushStartDt") String pushStartDt,
-                                HttpServletRequest httpServletRequest) {
-        UserBo user =(UserBo) SecurityUtils.getSubject().getPrincipal();
+                                @RequestParam(name = "pushStartDt") String pushStartDt) {
         if(pushInterval>3||pushInterval<1)
         {
             return ResponseBo.error("商品朋友圈推送频率只能介于1-3之间!");
@@ -415,7 +403,6 @@ public class QywxClientController {
         {
             return ResponseBo.error("每条朋友圈体现商品数只能为1!");
         }
-
 
         if(pushNum>15||pushNum<1)
         {
@@ -442,41 +429,8 @@ public class QywxClientController {
         }
 
         log.info("朋友圈发圈接收到的参数为{}-{}-{}-{}-{}",pushInterval,pushNum,productNum,periodNum,pushStartDt);
-        //发送到用户成长系统
-        //推送到用户成长端
-        String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
-        String corpId=qywxService.getCorpId();
 
-        Map<String,String> param= Maps.newHashMap();
-        param.put("timestamp", timestamp);
-        param.put("corpId",corpId);
-        param.put("pushInterval",String.valueOf(pushInterval));
-        param.put("pushNum",String.valueOf(pushNum));
-        param.put("productNum",String.valueOf(productNum));
-        param.put("periodNum",String.valueOf(periodNum));
-        param.put("pushStartDt",pushStartDt);
-        param.put("followUserId",user.getUsername());
-        param.put("signature", SHA1.gen(timestamp,corpId,
-                String.valueOf(pushInterval),
-                String.valueOf(pushNum),
-                String.valueOf(productNum),
-                String.valueOf(periodNum),
-                pushStartDt,
-                user.getUsername()
-        ));
-
-        //推送到用户成长端
-        //String result= OkHttpUtil.postRequestByFormBody(qywxService.getOperateUrl(corpId)+ OperateConsts.GENERATE_FRIEND_POLICY,param);
-      String result="";
-        JSONObject jsonObject = JSON.parseObject(result);
-
-        if(null==jsonObject||200!=jsonObject.getIntValue("code"))
-        {
-            return ResponseBo.ok();
-        }else
-        {
-            return ResponseBo.error(jsonObject.getString("msg"));
-        }
+        return ResponseBo.ok();
     }
 
     /**

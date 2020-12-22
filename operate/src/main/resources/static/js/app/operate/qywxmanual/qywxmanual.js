@@ -31,7 +31,7 @@ function initTable() {
             title: '用户数（人）'
         }, {
             field: 'totalNum',
-            title: '需要推送信息数（人）'
+            title: '需要推送客户数（人）'
         },{
             field: 'status',
             title: '状态',
@@ -55,7 +55,7 @@ function initTable() {
             }
         }, {
             field: 'successNum',
-            title: '推送成功数量'
+            title: '成功推送客户数'
         }, {
             field: 'convertNum',
             title: '实际执行推送用户数'

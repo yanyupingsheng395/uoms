@@ -23,7 +23,7 @@
     <resultMap id="baseDetail" type="com.linksteady.operate.domain.QywxManualDetail">
         <result column="detail_id" jdbcType="DECIMAL" property="detailId"/>
         <result column="head_id" jdbcType="DECIMAL" property="headId"/>
-        <result column="follower_user_id" jdbcType="VARCHAR" property="followerUserId"/>
+        <result column="follow_user_id" jdbcType="VARCHAR" property="followerUserId"/>
         <result column="qywx_contact_id" jdbcType="VARCHAR" property="qywxContactId"/>
         <result column="exec_status" jdbcType="DECIMAL" property="execStatus"/>
         <result column="exec_date" jdbcType="TIMESTAMP" property="execDate"/>
@@ -67,7 +67,7 @@
 
     <insert id="saveQywxManualDetail">
         insert into uo_qywx_manual_detail (head_id,
-        follower_user_id,
+        follow_user_id,
         qywx_contact_id,
         exec_status,
         insert_by,
@@ -109,20 +109,20 @@
     </select>
 
     <select id="getQywxManualDetail" resultMap="baseDetail">
-        select detail_id,head_id,follower_user_id,qywx_contact_id,exec_status,exec_date,
+        select detail_id,head_id,follow_user_id,qywx_contact_id,exec_status,exec_date,
        msg_id,push_id,insert_by,insert_dt,update_by,update_dt
        from uo_qywx_manual_detail where head_id=#{headId}
     </select>
 
     <select id="getQywxManualDetailCount" resultType="int">
-        select count(1) from uo_qywx_manual_detail where head_id=#{headId} and follower_user_id=#{followerUserId}
+        select count(1) from uo_qywx_manual_detail where head_id=#{headId} and follow_user_id=#{followerUserId}
     </select>
 
 
     <select id="getQywxManualDetailByPage" resultMap="baseDetail">
-        select detail_id,head_id,follower_user_id,qywx_contact_id,exec_status,exec_date,
+        select detail_id,head_id,follow_user_id,qywx_contact_id,exec_status,exec_date,
        msg_id,push_id,insert_by,insert_dt,update_by,update_dt
-       from uo_qywx_manual_detail where head_id=#{headId} and  follower_user_id=#{followerUserId}  limit #{size} offset #{page}
+       from uo_qywx_manual_detail where head_id=#{headId} and  follow_user_id=#{followerUserId}  limit #{size} offset #{page}
     </select>
 
     <update id="updatePushList">
@@ -171,16 +171,16 @@
     </update>
 
     <select id="getNotExistsFollowUser" resultType="string">
-         select a.follower_user_id from
-                 (select distinct follower_user_id,qywx_contact_id from uo_qywx_manual_detail where head_id=#{headId}) a left join uo_qywx_follower_user_list  b
-            on a.follower_user_id=b.user_id
+         select a.follow_user_id from
+                 (select distinct follow_user_id,qywx_contact_id from uo_qywx_manual_detail where head_id=#{headId}) a left join uo_qywx_follower_user_list  b
+            on a.follow_user_id=b.user_id
         where b.user_id is null
     </select>
 
     <select id="getNotExistsContact" resultType="string">
        select a.qywx_contact_id from
-                 (select distinct follower_user_id,qywx_contact_id from uo_qywx_manual_detail where head_id=#{headId}) a left join uo_qywx_external_user_list  b
-            on a.qywx_contact_id=b.external_userid and a.follower_user_id=b.follow_user_id
+                 (select distinct follow_user_id,qywx_contact_id from uo_qywx_manual_detail where head_id=#{headId}) a left join uo_qywx_external_user_list  b
+            on a.qywx_contact_id=b.external_userid and a.follow_user_id=b.follow_user_id
         where b.external_userid is null
     </select>
 

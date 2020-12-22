@@ -14,4 +14,8 @@ public interface QywxTaskResultMapper {
 
     void updateDailyExecStatus();
 
+    void updateActivityExecStatus();
+
+    void updateManualExecStatus();
+
 }

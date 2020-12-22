@@ -1,16 +1,12 @@
 package com.linksteady.operate.task;
 
-import com.linksteady.operate.exception.LinkSteadyException;
-import com.linksteady.operate.task.common.CommonExecutors;
-import com.linksteady.operate.task.common.ExecType;
+import com.linksteady.operate.dao.DailyCalculateMapper;
 import com.linksteady.smp.starter.annotation.JobHandler;
 import com.linksteady.smp.starter.domain.ResultInfo;
 import com.linksteady.smp.starter.jobclient.service.IJobHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -23,39 +19,47 @@ import java.time.format.DateTimeFormatter;
 @JobHandler(value = "opDailyCalculate")
 public class OpDailyCalculate extends IJobHandler {
 
-   @Autowired
-   CommonExecutors commonExecutors;
+    @Autowired
+    private DailyCalculateMapper dailyCalculateMapper;
 
     @Override
     public ResultInfo execute(String param) {
         DateTimeFormatter dtf2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        log.info("开始运营效果的计算，开始的时间为:{}", dtf2.format(LocalDateTime.now()));
-        log.info("接收到的参数值为:{}",param);
+        log.info("开始每日计算任务，开始的时间为:{}", dtf2.format(LocalDateTime.now()));
 
         try {
-            //判断参数类型
-            if(StringUtils.isEmpty(param))
-            {
-                //每日运营 活动运营 手工推送
-                commonExecutors.executeSteps(ExecType.EFFECT_DAILY_KEY.getCode(),ExecType.EFFECT_ACTIVITY_KEY.getCode(),ExecType.EFFECT_MANUAL_KEY.getCode());
+            log.info("开始更新推送表的状态");
+            dailyCalculateMapper.execUpdatePushList();
+            dailyCalculateMapper.execUpdatePushListLarge();
 
-            }else if(ExecType.EFFECT_DAILY_KEY.getCode().equals(param))
-            {
-                //每日运营
-                commonExecutors.executeSteps(ExecType.EFFECT_DAILY_KEY.getCode());
+            log.info("根据推送表更新detail表");
+            dailyCalculateMapper.execUpdateDailyDetail();
+            dailyCalculateMapper.execUpdateActivityDetail();
+            dailyCalculateMapper.execUpdateManualDetail();
 
-            }else if(ExecType.EFFECT_ACTIVITY_KEY.getCode().equals(param))
-            {
-                //活动运营
-                commonExecutors.executeSteps(ExecType.EFFECT_ACTIVITY_KEY.getCode());
+            log.info("更新头表的状态");
+            dailyCalculateMapper.updateDailyHeader();
+            dailyCalculateMapper.updateActivityPreheat();
+            dailyCalculateMapper.updateActivityPreheatNotify();
+            dailyCalculateMapper.updateActivityFormal();
+            dailyCalculateMapper.updateActivityFormalNotify();
+            dailyCalculateMapper.updateManualHeader();
+            dailyCalculateMapper.updateManualActualPushDate();
 
-            }else if(ExecType.EFFECT_MANUAL_KEY.getCode().equals(param))
-            {
-                //手工推送
-                commonExecutors.executeSteps(ExecType.EFFECT_MANUAL_KEY.getCode());
-            }else {
-                throw new LinkSteadyException("无效的任务参数");
-            }
+            log.info("更新头表的统计数据");
+            dailyCalculateMapper.updateDailyPushStatistics();
+            dailyCalculateMapper.updateActivityPushStatistics();
+            dailyCalculateMapper.updateManualPushStatistics();
+
+            //企微更新头表的推送状态
+            dailyCalculateMapper.updateQywxDailyHeader();
+            dailyCalculateMapper.updateQywxActivityFormal();
+            dailyCalculateMapper.updateQywxActivityFormalNotify();
+
+            //企微头表的统计数据
+            dailyCalculateMapper.updateQywxDailyPushStatistics();
+            //dailyCalculateMapper.updateQywxActivityPushStatistics();
+            dailyCalculateMapper.updateQywxManualPushStatistics();
 
             log.info("完成运营效果的计算，完成的时间为:{}", dtf2.format(LocalDateTime.now()));
             return ResultInfo.success("执行任务成功!");

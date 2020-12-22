@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.operate.dao.DailyCalculateMapper">
+    <update id="execCommonUpdateSqls">
+        ${sql}
+    </update>
+
+    <delete id="execCommonDeleteSqls">
+        ${sql}
+    </delete>
+
+    <insert id="execCommonInsertSqls">
+        ${sql}
+    </insert>
+
+    <update id="execUpdatePushList">
+        update uo_op_push_list
+            set push_status=t2.status
+        from uo_op_push_rpt as t2
+        where uo_op_push_list.msgid = t2.msgid and uo_op_push_list.push_date::date&gt;=(current_date-3)
+    </update>
+
+    <update id="execUpdatePushListLarge">
+        update uo_op_push_list_large set
+               push_status=t2.status
+        from  uo_op_push_rpt as t2
+        where final_msg_id = t2.msgid and push_date::date&gt;=(current_date-3)
+    </update>
+
+    <update id="execUpdateDailyDetail">
+        update uo_op_daily_detail set
+            push_status = t4.push_status,
+            push_date   = t4.push_date,
+            is_push     = t4.is_push
+        from uo_op_push_list as t4
+          where daily_detail_id = t4.source_id and t4.source_code = 'D' and uo_op_daily_detail.insert_dt::date&gt;=(current_date-3)
+    </update>
+
+    <update id="execUpdateActivityDetail">
+        update UO_OP_ACTIVITY_DETAIL set
+              push_status = t4.push_status,
+              push_date   = t4.push_date,
+              is_push     = t4.is_push
+        from uo_op_push_list_large as t4
+        where activity_detail_id = t4.source_id and t4.source_code = 'ACTIVITY' and UO_OP_ACTIVITY_DETAIL.insert_dt::date&gt;=(current_date-3)
+    </update>
+
+    <update id="execUpdateManualDetail">
+        update uo_op_manual_detail set
+            push_status=t2.push_status,push_date=t2.push_date
+        from uo_op_push_list_large as t2
+        where detail_id = t2.source_id and t2.source_code='M' and head_id in (
+                        select h.head_id from uo_op_manual_header h where h.status in ('1','2') and h.schedule_date::date&gt;=(current_date-3)
+                )
+    </update>
+
+    <update id="updateDailyHeader">
+        UPDATE UO_OP_DAILY_HEADER c SET STATUS='finished' WHERE STATUS='done' AND not exists
+        (
+        select * from UO_OP_DAILY_DETAIL p where p.PUSH_STATUS='P' and p.head_id=c.head_id
+        ) AND insert_dt::date &gt;=(current_date-3)
+    </update>
+
+    <update id="updateActivityPreheat">
+        UPDATE uo_op_activity_header T
+                SET preheat_status = 'done'
+                where t.preheat_status = 'doing'
+                    and t.has_preheat='1'
+                    and  current_date &gt;t.preheat_end_dt::date
+                    and  exists (
+                    select p.head_id from uo_op_activity_plan p where p.head_id=t.head_id and p.plan_status in('3') and p.activity_stage='preheat' and p.plan_type='DURING'
+                    )
+    </update>
+
+    <update id="updateActivityPreheatNotify">
+        UPDATE uo_op_activity_header T
+                SET preheat_notify_status = 'done'
+                where t.preheat_notify_status = 'doing'
+                    and t.has_preheat='1'
+                    and  current_date &gt;t.preheat_notify_dt::date
+                    and  exists (
+                    select p.head_id from uo_op_activity_plan p where p.head_id=t.head_id and p.plan_status in('3')
+                        and p.activity_stage='preheat'
+                        and p.plan_type='NOTIFY'
+                    )
+    </update>
+
+    <update id="updateActivityFormal">
+        UPDATE uo_op_activity_header T
+                SET FORMAL_STATUS = 'done'
+                where t.FORMAL_STATUS = 'doing' and t.has_preheat='0'
+                    and  current_date &gt;t.Formal_End_Dt::date
+                    and  exists (
+                    select p.head_id from uo_op_activity_plan p where p.head_id=t.head_id and p.plan_status in('3') and p.activity_stage='formal' and p.plan_type='DURING'
+                    )
+    </update>
+
+    <update id="updateActivityFormalNotify">
+        UPDATE uo_op_activity_header T
+                SET formal_notify_status = 'done'
+                where t.formal_notify_status = 'doing' and t.has_preheat='0'
+                    and  current_date &gt;t.formal_notify_dt::date
+                    and  exists (
+                    select p.head_id from uo_op_activity_plan p where p.head_id=t.head_id and p.plan_status in('3')
+                        and p.activity_stage='formal'
+                        and p.plan_type='NOTIFY'
+                    )
+    </update>
+
+    <update id="updateActivityPlan">
+        UPDATE UO_OP_ACTIVITY_PLAN T SET PLAN_STATUS='3' WHERE T.PLAN_DATE_WID&gt;=cast(TO_CHAR(current_date-5,'yyyymmdd') as numeric) AND T.PLAN_STATUS='2' AND
+            NOT EXISTS (
+            SELECT 1 FROM uo_op_activity_detail AP1 WHERE AP1.HEAD_ID=T.HEAD_ID AND AP1.PLAN_DT=T.PLAN_DATE_WID AND AP1.IS_PUSH='0')
+    </update>
+
+    <update id="updateManualHeader">
+        update uo_op_manual_header c set status='2' where schedule_date::date &gt;= (current_date-3) and c.status='1'
+                    and not exists (
+                select 1 from uo_op_manual_detail d where d.head_id=c.head_id and d.push_status='P')
+    </update>
+
+    <update id="updateManualActualPushDate">
+        update uo_op_manual_header c set actual_push_date=(
+            select
+                max(d.push_date)
+            from uo_op_manual_detail d where d.head_id=c.head_id
+        ) where schedule_date::date&gt;=(current_date-3) and c.status='2'
+    </update>
+
+    <update id="updateDailyPushStatistics">
+            update UO_OP_DAILY_HEADER t
+                set (plan_num,faild_num,success_num)=
+                    (
+                     select
+                     SUM(case when c.PUSH_STATUS='P' then 1 else 0 end) plan_num,
+                     SUM(case when c.PUSH_STATUS='F' then 1 else 0 end) faild_num,
+                     SUM(case when c.PUSH_STATUS='S' then 1 else 0 end) success_num
+                     from UO_OP_DAILY_DETAIL c where c.head_id = t.head_id
+                    )where
+                    touch_dt::date&gt;=(current_date-3) and status in ('done','finished')
+    </update>
+
+    <update id="updateActivityPushStatistics">
+        UPDATE UO_OP_ACTIVITY_PLAN T SET (SUCCESS_NUM,FAILD_NUM,INTERCEPT_NUM)=(
+            SELECT
+                 COUNT(CASE WHEN D.PUSH_STATUS='S' THEN D.ACTIVITY_DETAIL_ID END) SUCCESS_NUM,
+                 COUNT(CASE WHEN D.PUSH_STATUS='F' THEN D.ACTIVITY_DETAIL_ID END) FAILD_NUM,
+                 COUNT(CASE WHEN D.PUSH_STATUS='C' THEN D.ACTIVITY_DETAIL_ID END) INTERCEPT_NUM
+            FROM UO_OP_ACTIVITY_DETAIL D WHERE D.PLAN_ID=T.PLAN_ID
+        ) WHERE T.PLAN_STATUS IN ('2','3') AND T.PLAN_DATE::date&gt;=(current_date-3)
+    </update>
+
+    <update id="updateManualPushStatistics">
+        update uo_op_manual_header c set (success_num,faild_num,intercept_num)=(
+                    select
+                        sum(case when d.push_status='S' then 1 else 0 end)  success_num,
+                        sum(case when d.push_status='F' then 1 else 0 end)  faild_num,
+                        sum(case when d.push_status='C' then 1 else 0 end) intercept_num
+                    from uo_op_manual_detail d where d.head_id=c.head_id
+                ) where schedule_date::date &gt;=(current_date-3)
+    </update>
+
+    <update id="updateQywxDailyHeader">
+      UPDATE UO_QYWX_DAILY_HEADER c SET STATUS='finished' WHERE STATUS='done' AND not exists
+        (
+        select * from UO_QYWX_DAILY_DETAIL p where p.PUSH_STATUS='P' and p.head_id=c.head_id
+        ) AND create_dt::date &gt;=(current_date-3)
+    </update>
+
+
+    <update id="updateQywxActivityFormalNotify">
+        UPDATE uo_qywx_activity_header T
+                SET formal_notify_status = 'done'
+                where t.formal_notify_status = 'doing'
+                    and  current_date &gt;t.formal_notify_dt::date
+                    and  exists (
+                    select p.head_id from uo_qywx_activity_plan p where p.head_id=t.head_id and p.plan_status in('3')
+                        and p.plan_type='NOTIFY'
+                    )
+    </update>
+
+    <update id="updateQywxActivityFormal">
+            UPDATE uo_qywx_activity_header T
+                SET formal_status = 'done'
+                where t.formal_status = 'doing'
+                    and  current_date &gt;t.formal_end_dt::date
+                    and  exists (
+                    select p.head_id from uo_qywx_activity_plan p where p.head_id=t.head_id and p.plan_status in('3')
+                        and p.plan_type='DURING'
+                    )
+    </update>
+
+    <update id="updateQywxDailyPushStatistics">
+        UPDATE uo_qywx_daily_header h
+            SET (
+                success_num,
+                push_success_rate,
+                qywx_message_count,
+                execute_staff_cnt,
+                execute_rate
+                ) =
+            (
+              select
+                    count(case when d.exec_status='1' then d.detail_id end) success_num,
+                    (case when count(*)=0 then 0 else
+                      round(count(case when d.exec_status='1' then d.detail_id end)/count(*)::numeric *100,2) end)  success_rate,
+                    count(distinct qywx_msg_sign) message_count,
+                    count(distinct case when d.exec_status='1' then follow_user_id end) exec_follow_count,
+                    (case when count(distinct follow_user_id)=0 then 0 else
+                        round(count(distinct case when d.exec_status='1' then follow_user_id end)/count(distinct follow_user_id)::numeric*100,2) end) execute_rate
+              from uo_qywx_daily_detail d where d.head_id=h.head_id
+            ) WHERE h.status  in ( 'done','finished') AND h.task_date::date&gt;=(current_date-3)
+    </update>
+
+    <update id="updateQywxManualPushStatistics">
+          update uo_qywx_manual_header h set (success_num,convert_num)=(
+            select
+              count(case when exec_status='1' then detail_id end) success_num,
+              count(distinct case when exec_status!='0' then follow_user_id end) exec_user_num
+            from uo_qywx_manual_detail where head_id=h.head_id and h.status='1' and h.push_date::date &gt; (current_date-30)
+          )
+    </update>
+
+
+</mapper>

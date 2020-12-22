@@ -440,5 +440,10 @@ public class QywxDailyServiceImpl implements QywxDailyService {
         return qywxDailyMapper.getConvertDetailCount(headId);
     }
 
+    @Override
+    public void expireActivityDailyHead() {
+        qywxDailyMapper.expireActivityDailyHead();
+    }
+
 
 }
