@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.qywx.dao.QywxChatBatchMsgMapper">
+    <resultMap id="chatBatchMsg" type="com.linksteady.qywx.domain.QywxChatBatchMsg">
+        <result column="batch_msg_id" jdbcType="DECIMAL" property="batchMsgId"/>
+        <result column="batch_msg_name" jdbcType="VARCHAR" property="batchMsgName"/>
+        <result column="chat_owner_list" jdbcType="VARCHAR" property="chatOwnerList"/>
+        <result column="text_content" jdbcType="VARCHAR" property="textContent"/>
+        <result column="img_url" jdbcType="VARCHAR" property="imgUrl"/>
+        <result column="link_title" jdbcType="VARCHAR" property="linkTitle"/>
+        <result column="link_pic_url" jdbcType="VARCHAR" property="linkPicUrl"/>
+        <result column="link_desc" jdbcType="VARCHAR" property="linkDesc"/>
+        <result column="link_url" jdbcType="VARCHAR" property="linkUrl"/>
+        <result column="mp_title" jdbcType="VARCHAR" property="mpTitle"/>
+        <result column="mp_url" jdbcType="VARCHAR" property="mpUrl"/>
+        <result column="mp_media_id" jdbcType="VARCHAR" property="mpMediaId"/>
+        <result column="send_type" jdbcType="VARCHAR" property="sendType"/>
+        <result column="fix_date" jdbcType="VARCHAR" property="fixDate"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="insert_by" jdbcType="VARCHAR" property="insertBy"/>
+        <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
+        <result column="insert_dt" jdbcType="TIMESTAMP" property="insertDt"/>
+        <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt"/>
+        <result column="exec_by" jdbcType="VARCHAR" property="execBy"/>
+        <result column="exec_date" jdbcType="TIMESTAMP" property="execDate"/>
+    </resultMap>
+    <insert id="saveData">
+        insert into uo_qywx_chat_batchmsg(batch_msg_name,
+                                  chat_owner_list,
+                                  text_content,
+                                  img_url,
+                                  link_title,
+                                  link_pic_url,
+                                  link_desc,
+                                  link_url,
+                                  mp_title,
+                                  mp_url,
+                                  mp_media_id,
+                                  send_type,
+                                  fix_date,
+                                  insert_by,
+                                  insert_dt)values (#{batchMsgName},#{chatOwnerList},#{textContent},#{imgUrl},#{linkTitle},#{linkPicUrl},#{linkDesc},#{linkUrl},#{mpTitle},#{mpUrl},#{mpMediaId}
+                                  ,#{sendType},#{fixDate},#{insertBy},#{insertDt})
+    </insert>
+    <delete id="deleteById">
+        delete from  uo_qywx_chat_batchmsg where batch_msg_id=#{id}
+    </delete>
+    <select id="getCount" resultType="int">
+        select count(*) from uo_qywx_chat_batchmsg
+    </select>
+
+    <select id="getDataList" resultMap="chatBatchMsg">
+        select batch_msg_id,batch_msg_name,chat_owner_list,text_content,img_url,link_title,link_pic_url,link_desc,link_url,mp_title,mp_url,mp_media_id,
+            send_type,fix_date,status,insert_by,update_by,insert_dt,update_dt,exec_by,exec_date
+         from uo_qywx_chat_batchmsg  order by insert_dt desc limit #{limit} offset #{offset}
+    </select>
+</mapper>

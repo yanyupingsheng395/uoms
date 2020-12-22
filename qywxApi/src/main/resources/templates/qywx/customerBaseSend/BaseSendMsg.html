@@ -44,14 +44,14 @@
                                                 <div class="example-box">
                                                     <label class="control-label">群发名称：</label>
                                                     <label class="radio-inline radio-primary">
-                                                        <input  type="text" class="form-control"  name="baseName" id="baseName" style="width: 432px;">
+                                                        <input  type="text" class="form-control"  name="batchMsgName" id="batchMsgName" style="width: 432px;">
                                                     </label>
                                                 </div>
                                                 <div class="example-box" style="margin-top: 10px;">
                                                     <label class="control-label">选择群主：</label>
                                                     <label class="radio-inline radio-primary">
-                                                        <select name="chooseBase" id="selectOwner"  class="form-control valid" style="width: 432px;">
-                                                            <option value="" th:each="user,FollowUser : ${foll}" th:text="${user.name}"></option>
+                                                        <select name="chatOwnerList" id="selectOwner"  class="form-control valid" style="width: 432px;">
+                                                            <option value="" th:each="user,FollowUser : ${foll}" th:text="${user.name}" th:value="${user.userId}"></option>
                                                         </select>
                                                     </label>
                                                 </div>
@@ -60,7 +60,7 @@
                                         <div class="form-group">
                                             <label class="col-xs-12" style="font-weight: bold;">群发消息1：</label>
                                             <label class="radio-inline radio-primary">
-                                                <textarea class="form-control" id="smsContent" name="smsContent" style="height: 102px;width:520px;border: solid 1px #ebebeb;" oninput="smsContentValid()"></textarea>
+                                                <textarea class="form-control" id="textContent" name="textContent" style="height: 102px;width:520px;border: solid 1px #ebebeb;" oninput="smsContentValid()"></textarea>
                                             </label>
                                         </div>
                                         <div class="form-group">
@@ -83,7 +83,7 @@
                                                                     <div class="form-group" style="margin-bottom: 2px;">
                                                                         <label class="col-md-1 control-label">图片地址：</label>
                                                                         <div class="col-md-10">
-                                                                            <input class="form-control" name="picUrl"/>
+                                                                            <input class="form-control" name="imgUrl" id="imgUrl"/>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -95,25 +95,25 @@
                                                             <div class="form-group">
                                                                 <label class="col-md-1 control-label">消息标题：</label>
                                                                 <div class="col-md-11">
-                                                                    <input class="form-control" name="linkTitle">
+                                                                    <input class="form-control" name="linkTitle" id="linkTitle">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group">
                                                                 <label class="col-md-1 control-label">消息描述：</label>
                                                                 <div class="col-md-11">
-                                                                    <input class="form-control" name="linkDesc">
+                                                                    <input class="form-control" name="linkDesc" id="linkDesc">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group">
                                                                 <label class="col-md-1 control-label">消息地址：</label>
                                                                 <div class="col-md-11">
-                                                                    <input class="form-control" name="linkUrl">
+                                                                    <input class="form-control" name="linkUrl" id="linkUrl">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group" style="margin-bottom: 2px;">
                                                                 <label class="col-md-1 control-label">封面地址：</label>
                                                                 <div class="col-md-11">
-                                                                    <input class="form-control" name="linkPicurl">
+                                                                    <input class="form-control" name="linkPicUrl" id="linkPicUrl">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -123,19 +123,19 @@
                                                             <div class="form-group">
                                                                 <label class="col-md-1 control-label">小程序标题：</label>
                                                                 <div class="col-md-11">
-                                                                    <input class="form-control" name="miniprogramTitle" id="minititle">
+                                                                    <input class="form-control" name="mpTitle" id="mpTitle">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group" >
                                                                 <label class="col-md-1 control-label">小程序地址：</label>
                                                                 <div class="col-md-11">
-                                                                    <input class="form-control" name="miniprogramPage" id="miniaddress">
+                                                                    <input class="form-control" name="mpUrl" id="mpUrl">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group" >
                                                                 <label class="col-md-1 control-label">小程序MediaID：</label>
                                                                 <div class="col-md-10">
-                                                                    <input class="form-control" name="mediaId" id="mediaId" readonly="readonly">
+                                                                    <input class="form-control" name="mpMediaId" id="mediaId" readonly="readonly">
                                                                 </div>
                                                                 <a id='addShopDiscountBtn' style="cursor:pointer;color: #409eff !important;" onclick="chooseMedia()"><i class="fa fa-plus-circle"></i>添加</a>
                                                             </div>
@@ -148,7 +148,7 @@
                                             <label class="col-xs-12" style="font-weight: bold;">群发时间：</label>
                                             <div class="col-md-12">
                                                 <label class="lyear-radio radio-inline radio-primary" onclick="closeSendTime()" style="padding-top: 0px;">
-                                                    <input type="radio" name="sendType" value="S" checked="checked"><span>立即发送</span>
+                                                    <input type="radio" name="sendType" value="A" checked="checked"><span>立即发送</span>
                                                 </label>
                                                 <label class="lyear-radio radio-inline radio-primary" onclick="showSendTime()" style="padding-top: 0px;">
                                                     <input type="radio" name="sendType" value="B" ><span>定时发送</span>
@@ -157,7 +157,7 @@
                                         </div>
                                         <div class="form-group" id="sendtime" style="display: none">
                                             <div class="col-md-4">
-                                                发送时间：<input type="text" class="layui-input" id="test5" >
+                                                发送时间：<input  class="layui-input" id="test5" name="fixDate">
                                             </div>
                                         </div>
                                     </div>
@@ -171,7 +171,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <button type="button" class="btn btn-primary" style="margin-left: 30%">通知成员发送</button>
+                            <button type="button" class="btn btn-primary" onclick="saveCouponData()" style="margin-left: 30%">通知成员发送</button>
                         </form>
                     </div>
                 </div>

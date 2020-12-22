@@ -52,7 +52,10 @@
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="btn-group-sm" id="toolbar" role="group">
-                                    <a class="btn btn-danger btn-edit" id="btn_Details">
+                                    <a class="btn btn-success btn-edit" id="btn_save">
+                                        <i class="fa fa-check-square-o"></i> 新增
+                                    </a>
+                                    <a class="btn btn-danger btn-edit" id="btn_delete">
                                         <i class="fa fa-check-square-o"></i> 删除
                                     </a>
                                 </div>
@@ -80,6 +83,9 @@
 <th:block th:include="common/include::bootstrap-select-js" />
 <th:block th:include="common/include::jquery-confirm-js" />
 <script data-th-src="@{/js/app/qywx/common/template.js}"></script>
+<script data-th-src="@{/plugins/fullCalendar/moment.min.js}"></script>
+<script data-th-src="@{/plugins/fullCalendar/fullcalendar.min.js}"></script>
+<script data-th-src="@{/plugins/fullCalendar/layui.all.js}"></script>
 <script data-th-src="@{/js/app/qywx/CustomerBaseSend/BaseSendMsg.js}"></script>
 </body>
 </html>

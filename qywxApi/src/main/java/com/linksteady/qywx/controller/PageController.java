@@ -283,6 +283,16 @@ public class PageController  extends BaseController {
         return  "qywx/customerBaseList/Baselist";
     }
 
+
+    /**
+     * 进入群发消息列表页
+     * @return
+     */
+    @RequestMapping("/goChatMsgList")
+    public String goChatMsgList(){
+        return  "qywx/customerBaseSend/groupMessageList";
+    }
+
     /**
      * 进入群发消息
      * @return
