@@ -311,7 +311,7 @@ function recProductList(operateUserId) {
         let settings = {
             columns: [
                 {
-                    field: 'epb_product_name',
+                    field: 'ebp_product_name',
                     title: '推荐商品'
                 }, {
                     field: 'price',
@@ -325,7 +325,7 @@ function recProductList(operateUserId) {
                         }
                     }
                 }, {
-                    field: 'epb_product_url',
+                    field: 'ebp_product_url',
                     title: '商品详情页',
                     formatter: function (value, row, index) {
                         return "<a onclick='sendMsgToUser(\"" + value + "\")' style='text-decoration: underline;'>发送链接</a>";
@@ -344,7 +344,7 @@ function recProductList(operateUserId) {
             pagination: false,
             columns: [
                 {
-                    field: 'epb_product_name',
+                    field: 'ebp_product_name',
                     title: '推荐商品'
                 }, {
                     field: 'price',
@@ -358,7 +358,7 @@ function recProductList(operateUserId) {
                         }
                     }
                 }, {
-                    field: 'epb_product_url',
+                    field: 'ebp_product_url',
                     title: '商品详情页',
                     formatter: function (value, row, index) {
                         return "<a onclick='sendMsgToUser(\"" + value + "\")' style='text-decoration: underline;'>发送链接</a>";
@@ -375,12 +375,12 @@ function recProductList(operateUserId) {
                     $( $element ).addClass( 'changeColor' );
                     $( $element ).siblings().removeClass( 'changeColor' );
                 }
-                getUserGuideInfo( operateUserId, row['epb_product_id'] );
-                $( ".product_name1" ).html( '' ).append( '&nbsp;' + row['epb_product_name'] + '&nbsp;' );
+                getUserGuideInfo( operateUserId, row['ebp_product_id'] );
+                $( ".product_name1" ).html( '' ).append( '&nbsp;' + row['ebp_product_name'] + '&nbsp;' );
             },
             onLoadSuccess: function (data) {
-                getUserGuideInfo( operateUserId, data.data[0]['epb_product_id'] );
-                $( ".product_name1" ).html( '' ).append( '&nbsp;' + data.data[0]['epb_product_name'] + '&nbsp;' );
+                getUserGuideInfo( operateUserId, data.data[0]['ebp_product_id'] );
+                $( ".product_name1" ).html( '' ).append( '&nbsp;' + data.data[0]['ebp_product_name'] + '&nbsp;' );
             }
         };
         $( "#recProductTable" ).bootstrapTable( settings );
@@ -509,7 +509,7 @@ function guideCoupon(data) {
     let settings = {
         columns: [
             {
-                field: 'epb_product_name',
+                field: 'ebp_product_name',
                 title: '引导购买商品'
             }, {
                 field: 'coupon_min',
