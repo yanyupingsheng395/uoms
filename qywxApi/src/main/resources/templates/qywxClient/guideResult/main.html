@@ -27,6 +27,9 @@
         <div class="weui-pay" style="padding: 0px;">
             <ul class="weui-payselect-ul" style="margin-top: 5px;">
                 <li class="weui-payselect-li" style="padding-bottom: 0">
+                    <a href="javascript:;" class="weui-payselect-a weui-payselect-on">所有</a>
+                </li>
+                <li class="weui-payselect-li" style="padding-bottom: 0">
                     <a href="javascript:;" class="weui-payselect-a weui-payselect-on">昨日</a>
                 </li>
                 <li class="weui-payselect-li" style="padding-bottom: 0">
@@ -75,7 +78,7 @@
                         用户总数
                     </p>
                     <p class="weui-grid__label">
-                        <span id="userTotalCnt"></span>人
+                        <span id="totalCnt"></span>人
                     </p>
                 </div>
                 <div href="javascript:;" class="weui-grid js_grid">
@@ -83,7 +86,7 @@
                         添加用户数
                     </p>
                     <p class="weui-grid__label">
-                        <span id="addUserCnt"></span>人
+                        <span id="addCnt"></span>人
                     </p>
                 </div>
                 <div href="javascript:;" class="weui-grid js_grid">
@@ -91,7 +94,7 @@
                         购买用户数
                     </p>
                     <p class="weui-grid__label">
-                        <span id="purchasedUserCnt"></span>人
+                        <span id="purchCnt"></span>人
                     </p>
                 </div>
             </div>
@@ -101,23 +104,21 @@
                         用户购买率
                     </p>
                     <p class="weui-grid__label">
-                        <span id="purchasedRate"></span>%
+                        <span id="purchRate"></span>%
                     </p>
                 </div>
                 <div href="javascript:;" class="weui-grid js_grid">
                     <p class="weui-grid__label" style="color: #4c4c4c;font-size: 13px;">
-                        累计购买金额
+                        购买金额
                     </p>
                     <p class="weui-grid__label">
-                        <span id="totalPurchasedAmount"></span>元
+                        <span id="totalAmount"></span>元
                     </p>
                 </div>
                 <div href="javascript:;" class="weui-grid js_grid">
                     <p class="weui-grid__label" style="color: #4c4c4c;font-size: 13px;">
-                        观测期购买金额
                     </p>
                     <p class="weui-grid__label">
-                        <span id="observePurchasedAmount"></span>元
                     </p>
                 </div>
             </div>
@@ -134,7 +135,7 @@
                         接收任务消息数
                     </p>
                     <p class="weui-grid__label">
-                        <span id="receiveMsgCnt"></span>条
+                        <span id="receiveMsg"></span>条
                     </p>
                 </div>
                 <div href="javascript:;" class="weui-grid js_grid">
@@ -142,7 +143,7 @@
                         推送消息数
                     </p>
                     <p class="weui-grid__label">
-                        <span id="pushMsgCnt"></span>条
+                        <span id="pushMsg"></span>条
                     </p>
                 </div>
                 <div href="javascript:;" class="weui-grid js_grid">
@@ -160,7 +161,7 @@
                         消息任务对应推送用户数
                     </p>
                     <p class="weui-grid__label">
-                        <span id="pushMsgUserCnt"></span>人
+                        <span id="receiveUserCnt"></span>人
                     </p>
                 </div>
                 <div href="javascript:;" class="weui-grid js_grid">
@@ -176,7 +177,7 @@
                         推送购买用户数
                     </p>
                     <p class="weui-grid__label">
-                        <span id="pushAndPurchaseUserCnt"></span>人
+                        <span id="pushCovCnt"></span>人
                     </p>
                 </div>
             </div>
@@ -186,7 +187,7 @@
                         推送转化率
                     </p>
                     <p class="weui-grid__label">
-                        <span id="pushConvertRate"></span>%
+                        <span id="pushCovRate"></span>%
                     </p>
                 </div>
                 <div href="javascript:;" class="weui-grid js_grid">
@@ -194,15 +195,15 @@
                         累计推送购买金额
                     </p>
                     <p class="weui-grid__label">
-                        <span id="allPushAmount"></span>元
+                        <span id="pushTotalAmount"></span>元
                     </p>
                 </div>
                 <div href="javascript:;" class="weui-grid js_grid">
                     <p class="weui-grid__label" style="color: #4c4c4c;font-size: 13px;">
-                        占整体
+                        占总体
                     </p>
                     <p class="weui-grid__label">
-                        <span id="allPushAmountScale"></span>%
+                        <span id="pushAmountPct"></span>%
                     </p>
                 </div>
             </div>
@@ -269,6 +270,10 @@
     });
     $(".weui-payselect-li").on('click',function(){
         var during = $(this).text().trim();
+        if(during === '所有') {
+            getOperateResultData("-1", "", "");
+            $("#date_plate").hide();
+        }
         if(during === '昨日') {
             getOperateResultData("0", "", "");
             $("#date_plate").hide();
@@ -290,21 +295,20 @@
         $.get("/qwClient/getGuideResultData", {during: during, startDt: startDt, endDt: endDt}, function(r){
             if(r.code === 200) {
                 var data = r.data;
-                $("#userTotalCnt").text(data.userTotalCnt);
-                $("#addUserCnt").text(data.userTotalCnt);
-                $("#purchasedUserCnt").text(data.userTotalCnt);
-                $("#purchasedRate").text(data.purchasedRate);
-                $("#totalPurchasedAmount").text(data.totalPurchasedAmount);
-                $("#observePurchasedAmount").text(data.observePurchasedAmount);
-                $("#receiveMsgCnt").text(data.receiveMsgCnt);
-                $("#pushMsgCnt").text(data.pushMsgCnt);
+                $("#totalCnt").text(data.totalCnt);
+                $("#addCnt").text(data.addCnt);
+                $("#purchCnt").text(data.purchCnt);
+                $("#purchRate").text(data.purchRate);
+                $("#totalAmount").text(data.totalAmount);
+                $("#receiveMsg").text(data.receiveMsg);
+                $("#pushMsg").text(data.pushMsg);
                 $("#pushExecuteRate").text(data.pushExecuteRate);
-                $("#pushMsgUserCnt").text(data.pushMsgUserCnt);
+                $("#receiveUserCnt").text(data.receiveUserCnt);
                 $("#pushUserCnt").text(data.pushUserCnt);
-                $("#pushAndPurchaseUserCnt").text(data.pushAndPurchaseUserCnt);
-                $("#pushConvertRate").text(data.pushConvertRate);
-                $("#allPushAmount").text(data.allPushAmount);
-                $("#allPushAmountScale").text(data.allPushAmountScale);
+                $("#pushCovCnt").text(data.pushCovCnt);
+                $("#pushCovRate").text(data.pushCovRate);
+                $("#pushTotalAmount").text(data.pushTotalAmount);
+                $("#pushAmountPct").text(data.pushAmountPct);
             }
         });
     }

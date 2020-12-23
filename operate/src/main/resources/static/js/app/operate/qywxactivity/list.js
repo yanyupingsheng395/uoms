@@ -66,6 +66,7 @@ $( function () {
                             break;
                         case "done":
                             res = "<span class=\"badge bg-success\">执行完</span>";
+                            break;
                         case "timeout":
                             res = "<span class=\"badge bg-gray\">过期未执行</span>";
                             break;
@@ -98,6 +99,7 @@ $( function () {
                             break;
                         case "done":
                             res = "<span class=\"badge bg-success\">执行完</span>";
+                            break;
                         case "timeout":
                             res = "<span class=\"badge bg-gray\">过期未执行</span>";
                             break;

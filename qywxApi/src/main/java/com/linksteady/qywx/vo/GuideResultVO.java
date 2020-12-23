@@ -1,25 +1,10 @@
-package com.linksteady.qywx.domain;
+package com.linksteady.qywx.vo;
 
 import lombok.Data;
-
 import java.io.Serializable;
 
-/**
- * @author hxcao
- * @date 2020/9/17
- */
 @Data
-public class GuideResult implements Serializable {
-
-    /**
-     * 导购id
-     */
-    private String followUserId;
-
-    /**
-     * 日期  YYYYMMDD格式
-     */
-    private Long dayWid;
+public class GuideResultVO implements Serializable {
 
     /**
      * 用户总数
@@ -35,6 +20,11 @@ public class GuideResult implements Serializable {
      * 购买用户数
      */
     private Integer purchCnt;
+
+    /**
+     * 用户购买率
+     */
+    private double purchRate;
 
     /**
      * 购买金额
@@ -53,6 +43,11 @@ public class GuideResult implements Serializable {
     private Integer pushMsg;
 
     /**
+     * 消息推送执行率
+     */
+    private double pushExecuteRate;
+
+    /**
      * 消息任务对应推送用户数
      */
     private Integer receiveUserCnt;
@@ -68,9 +63,24 @@ public class GuideResult implements Serializable {
     private Integer pushCovCnt;
 
     /**
+     * 推送转化率
+     */
+    private double pushCovRate;
+
+    /**
      * 累计推送购买金额
      */
     private double pushTotalAmount;
+
+    /**
+     * 订单金额
+     */
+    private double orderAmount;
+
+    /**
+     * 占总体
+     */
+    private double pushAmountPct;
 
 
 }

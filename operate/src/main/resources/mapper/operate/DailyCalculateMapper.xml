@@ -113,6 +113,13 @@
             SELECT 1 FROM uo_op_activity_detail AP1 WHERE AP1.HEAD_ID=T.HEAD_ID AND AP1.PLAN_DT=T.PLAN_DATE_WID AND AP1.IS_PUSH='0')
     </update>
 
+    <update id="updateQywxActivityPlan">
+        UPDATE UO_QYWX_ACTIVITY_PLAN T
+            SET PLAN_STATUS='3' WHERE T.PLAN_DATE_WID>=cast(TO_CHAR(current_date-5,'yyyymmdd') as numeric) AND T.PLAN_STATUS='2' AND
+            NOT EXISTS (
+            SELECT 1 FROM uo_qywx_activity_detail AP1 WHERE AP1.HEAD_ID=T.HEAD_ID AND AP1.PLAN_DT=T.PLAN_DATE_WID AND AP1.push_status='P')
+    </update>
+
     <update id="updateManualHeader">
         update uo_op_manual_header c set status='2' where schedule_date::date &gt;= (current_date-3) and c.status='1'
                     and not exists (

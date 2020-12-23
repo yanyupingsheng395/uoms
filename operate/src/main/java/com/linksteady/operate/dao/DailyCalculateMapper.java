@@ -37,6 +37,8 @@ public interface DailyCalculateMapper {
 
    void updateActivityPlan();
 
+   void updateQywxActivityPlan();
+
    void updateManualHeader();
 
    void updateManualActualPushDate();

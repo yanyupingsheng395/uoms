@@ -37,12 +37,18 @@ public class OpDailyCalculate extends IJobHandler {
             dailyCalculateMapper.execUpdateActivityDetail();
             dailyCalculateMapper.execUpdateManualDetail();
 
+            log.info("更新plan表");
+            dailyCalculateMapper.updateActivityPlan();
+            dailyCalculateMapper.updateQywxActivityPlan();
+
+
             log.info("更新头表的状态");
             dailyCalculateMapper.updateDailyHeader();
             dailyCalculateMapper.updateActivityPreheat();
             dailyCalculateMapper.updateActivityPreheatNotify();
             dailyCalculateMapper.updateActivityFormal();
             dailyCalculateMapper.updateActivityFormalNotify();
+
             dailyCalculateMapper.updateManualHeader();
             dailyCalculateMapper.updateManualActualPushDate();
 

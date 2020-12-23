@@ -4,9 +4,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.common.util.ArithUtil;
 import com.linksteady.common.util.crypto.SHA1;
 import com.linksteady.qywx.domain.*;
 import com.linksteady.qywx.service.*;
+import com.linksteady.qywx.vo.GuideResultVO;
+import io.netty.util.internal.MathUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.math.RoundingMode;
 import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -151,12 +155,21 @@ public class QywxClientController {
         UserBo userBo =(UserBo) SecurityUtils.getSubject().getPrincipal();
         if (null != userBo) {
             String followUserId = userBo.getUsername();
+            //累计
+            if(during.equalsIgnoreCase("-1")) {
+                LocalDate now = LocalDate.now();
+                LocalDate start = now.plusDays(-1);
+                startDt = "20201101";
+                endDt = start.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            }
+            //昨日
             if(during.equalsIgnoreCase("0")) {
                 LocalDate now = LocalDate.now();
                 LocalDate start = now.plusDays(-1);
                 startDt = start.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
                 endDt = start.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
             }
+            //最近7日
             if(during.equalsIgnoreCase("1")) {
                 LocalDate now = LocalDate.now();
                 LocalDate start = now.plusDays(-8);
@@ -164,9 +177,43 @@ public class QywxClientController {
                 startDt = start.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
                 endDt = end.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
             }
-            GuideResult resultData = guideResultService.getResultData(followUserId, startDt, endDt);
-            resultData.getUserTotalCnt();
-            return ResponseBo.okWithData(null,resultData);
+            //查询当前企业微信的总用户数
+            int totalCnt=guideResultService.getTotalCnt(followUserId,Integer.parseInt(endDt));
+            //查询其它的数据
+            GuideResult resultData = guideResultService.getResultData(followUserId, Integer.parseInt(startDt), Integer.parseInt(endDt));
+
+            //查询订单总金额
+            double TotalOrderAmount=guideResultService.getTotalOrderAmount(Integer.parseInt(startDt),Integer.parseInt(endDt));
+
+            //构造返回数据
+            GuideResultVO guideResultVO=new GuideResultVO();
+            guideResultVO.setTotalCnt(totalCnt);
+            guideResultVO.setAddCnt(resultData.getAddCnt());
+            guideResultVO.setPurchCnt(resultData.getPurchCnt());
+            //用户购买率
+            guideResultVO.setPurchRate(0d);
+
+            guideResultVO.setTotalAmount(resultData.getTotalAmount());
+            guideResultVO.setReceiveMsg(resultData.getReceiveMsg());
+            guideResultVO.setPushMsg(resultData.getPushMsg());
+
+            double executeRate=ArithUtil.formatDoubleByMode(resultData.getReceiveMsg()==0?0d: resultData.getPushMsg()*1.00/resultData.getReceiveMsg()*100,2, RoundingMode.HALF_UP);
+            //消息执行率
+            guideResultVO.setPushExecuteRate(executeRate);
+            guideResultVO.setReceiveUserCnt(resultData.getReceiveUserCnt());
+            guideResultVO.setPushUserCnt(resultData.getPushUserCnt());
+            guideResultVO.setPushCovCnt(resultData.getPushCovCnt());
+            //推送转化率
+            double covRate=ArithUtil.formatDoubleByMode(resultData.getPushUserCnt()==0?0d: resultData.getPushCovCnt()*1.00/resultData.getPushUserCnt()*100,2, RoundingMode.HALF_UP);
+            guideResultVO.setPushCovRate(covRate);
+
+            guideResultVO.setPushTotalAmount(resultData.getPushTotalAmount());
+            guideResultVO.setOrderAmount(TotalOrderAmount);
+            //占总体
+            double pushAmountPct=ArithUtil.formatDoubleByMode(TotalOrderAmount==0?0d: resultData.getPushTotalAmount()*1.00/TotalOrderAmount*100,2, RoundingMode.HALF_UP);
+            guideResultVO.setPushAmountPct(pushAmountPct);
+
+            return ResponseBo.okWithData(null,guideResultVO);
         } else {
             throw new IllegalArgumentException("未获取到登录会话！");
         }

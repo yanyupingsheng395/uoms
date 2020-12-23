@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.qywx.dao.GuideResultMapper">
+    <resultMap id="guideResultMap" type="com.linksteady.qywx.domain.GuideResult">
+        <result column="total_cnt" jdbcType="DECIMAL" property="totalCnt"/>
+        <result column="add_cnt" jdbcType="DECIMAL" property="addCnt"/>
+        <result column="purch_cnt" jdbcType="DECIMAL" property="purchCnt"/>
+        <result column="total_amount" jdbcType="DECIMAL" property="totalAmount"/>
+        <result column="receive_msg" jdbcType="DECIMAL" property="receiveMsg"/>
+        <result column="push_msg" jdbcType="DECIMAL" property="pushMsg"/>
+        <result column="receive_user_cnt" jdbcType="DECIMAL" property="receiveUserCnt"/>
+        <result column="push_user_cnt" jdbcType="DECIMAL" property="pushUserCnt"/>
+        <result column="push_cov_cnt" jdbcType="DECIMAL" property="pushCovCnt"/>
+        <result column="push_total_amount" jdbcType="DECIMAL" property="pushTotalAmount"/>
+    </resultMap>
+
+    <select id="getResultData" resultMap="guideResultMap">
+       select
+          sum(add_cnt) add_cnt,
+          sum(purch_cnt) purch_cnt,
+          sum(total_amount) total_amount,
+          sum(receive_msg) receive_msg,
+          sum(push_msg) push_msg,
+          sum(receive_user_cnt) receive_user_cnt,
+          sum(push_user_cnt) push_user_cnt,
+          sum(push_cov_cnt) push_cov_cnt,
+          sum(push_total_amount) push_total_amount
+       from uo_qywx_guide_result where follow_user_id=#{followUserId}
+       and day_wid &gt;=#{startDt}
+       and day_wid &lt;=#{endDt}
+    </select>
+
+    <select id="getTotalCnt" resultType="int">
+        select total_cnt from uo_qywx_guide_result where follow_user_id=#{followUserId} and day_wid=#{dayWid}
+    </select>
+    <select id="getTotalOrderAmount" resultType="double">
+        select sum(real_fee) from w_orders where order_dt_wid &gt;=#{startDt} and order_dt_wid &lt;=#{endDt} and valid_status='1'
+    </select>
+</mapper>

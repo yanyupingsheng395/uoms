@@ -12,8 +12,18 @@ import org.springframework.stereotype.Service;
 public class GuideResultServiceImpl implements GuideResultService {
 
     @Override
-    public GuideResult getResultData(String followUserId, String startDt, String endDt) {
-        GuideResult guideResult = new GuideResult();
-        return guideResult;
+    public GuideResult getResultData(String followUserId, int startDt, int endDt) {
+
+        return null;
+    }
+
+    @Override
+    public int getTotalCnt(String followUserId, int dayWid) {
+        return 0;
+    }
+
+    @Override
+    public double getTotalOrderAmount(int startDt, int endDt) {
+        return 0;
     }
 }

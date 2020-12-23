@@ -7,5 +7,9 @@ import com.linksteady.qywx.domain.GuideResult;
  */
 public interface GuideResultService {
 
-    GuideResult getResultData(String followUserId, String startDt, String endDt);
+    GuideResult getResultData(String followUserId, int startDt, int endDt);
+
+    int getTotalCnt(String followUserId,int dayWid);
+
+    double getTotalOrderAmount(int startDt,int endDt);
 }
