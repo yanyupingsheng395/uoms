@@ -1,6 +1,6 @@
 //显示选择临时素材列界面
 function chooseMedia() {
-    $("#add_modal").modal('hide');
+    $("#add_modal").hide();
     $("#chooseMedia").modal('show');
     getDataList( 'imageTable');
 }
@@ -88,7 +88,7 @@ function saveMaterial() {
 }
 
 function closeChoose() {
-    $("#add_modal").modal('show');
+    $("#add_modal").show();
     $("#chooseMedia").modal('hide');
 }
 

@@ -261,6 +261,7 @@ public class MediaServiceImpl implements MediaService {
 
     @Override
     public List<QywxMediaImg> getMediaImgList(int limit, int offset) {
+
         return mediaMapper.getMediaImgList(limit,offset);
     }
 

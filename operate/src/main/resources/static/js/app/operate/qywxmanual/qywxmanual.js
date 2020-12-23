@@ -108,11 +108,11 @@ function beforeUpload() {
 function submitData() {
     let file = document.getElementById('file').files;
     if(document.getElementById('file').files.length === 0) {
-        $MB.n_warning("请上传文件！");
+        $MB.n_warning("请上传数据！");
         return false;
     }
     if(file[0].size > 10485760) {
-        $MB.n_warning("上传文件不能超过10M的文件！");
+        $MB.n_warning("上传数据不能超过10M！");
         return false;
     }
     var validator = $qywxManualForm.validate();
@@ -143,13 +143,14 @@ function submitData() {
                         makeErrorTable(data.data.errorPosition);
                     }else{
                         $MB.n_success("数据提交成功！");
+                        $MB.loadingDesc('hide');
+                        $("#add_modal").modal('hide');
+                        $MB.refreshTable('dataTable');
                     }
                 }else {
+                    $MB.loadingDesc('hide');
                     $MB.n_danger(data.msg);
                 }
-                $MB.loadingDesc('hide');
-                $("#add_modal").modal('hide');
-                $MB.refreshTable('dataTable');
             },
             error: function (data) {
                 $MB.n_danger(data.msg);

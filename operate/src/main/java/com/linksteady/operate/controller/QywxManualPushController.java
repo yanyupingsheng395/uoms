@@ -11,13 +11,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.List;
 
 /**
@@ -144,11 +143,15 @@ public class QywxManualPushController {
      * @throws IOException
      */
     @RequestMapping("/download")
-    public void fileDownload(HttpServletResponse response) throws IOException {
+    public void fileDownload(HttpServletResponse response) throws Exception {
         String fileName = "manual_template_s.csv";
-        String realFileName = System.currentTimeMillis() + "_" + fileName.substring(fileName.indexOf('_') + 1);
-        ClassPathResource classPathResource = new ClassPathResource("excel/" + fileName);
-        InputStream in = classPathResource.getInputStream();
+        String realFileName = fileName.substring(fileName.indexOf('_') + 1);
+        Resource resource =  new ClassPathResource("excel/" + fileName);
+        File file = resource.getFile();
+        if (!file.exists()) {
+            throw new Exception("模板文件不存在");
+        }
+        InputStream in = new FileInputStream(file);
         response.setHeader("Content-Disposition", "inline;fileName=" + java.net.URLEncoder.encode(realFileName, "utf-8"));
         response.setContentType("application/vnd.ms-excel");
         response.setCharacterEncoding("utf-8");
