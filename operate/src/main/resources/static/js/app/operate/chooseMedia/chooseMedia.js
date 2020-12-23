@@ -81,10 +81,21 @@ function saveMaterial() {
             $MB.n_success( "保存成功！" );
             //关闭弹出框
             $("#materialModal").modal('hide');
+            $("#chooseMedia").show();
             //刷新表格
             $MB.refreshTable('imageTable');
         }
     } );
+}
+
+function closeMaterial() {
+    $("#materialModal").modal('hide');
+    $("#chooseMedia").show();
+}
+
+function showUpImg() {
+    $("#chooseMedia").hide();
+    $('#materialModal').modal('show');
 }
 
 function closeChoose() {

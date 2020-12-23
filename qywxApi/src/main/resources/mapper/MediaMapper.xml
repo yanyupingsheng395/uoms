@@ -83,10 +83,10 @@
     </insert>
 
     <select id="getMediaImageCount" resultType="int">
-        select count(*) from uo_qywx_media_img where identity_type='MANUAL'
+        select count(*) from uo_qywx_media_img where media_expire_date::date>=current_date and identity_type='MANUAL'
     </select>
 
     <select id="getMediaImgList" resultMap="getMediaImgMap">
-        select img_id,img_title,insert_dt,insert_by,media_id,media_expire_date,identity_type from uo_qywx_media_img where media_expire_date>now() and identity_type='MANUAL' order by insert_dt desc limit #{limit} offset #{offset}
+        select img_id,img_title,insert_dt,insert_by,media_id,media_expire_date,identity_type from uo_qywx_media_img where media_expire_date::date>=current_date and identity_type='MANUAL' order by insert_dt desc limit #{limit} offset #{offset}
     </select>
 </mapper>
