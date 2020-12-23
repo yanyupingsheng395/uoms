@@ -87,6 +87,17 @@ function saveMaterial() {
     } );
 }
 
+
+function closeMaterial() {
+    $("#materialModal").modal('hide');
+    $("#chooseMedia").show();
+}
+
+function showUpImg() {
+    $("#chooseMedia").hide();
+    $('#materialModal').modal('show');
+}
+
 function closeChoose() {
     $("#add_modal").modal('show');
     $("#chooseMedia").modal('hide');

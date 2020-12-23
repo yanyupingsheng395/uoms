@@ -1,4 +1,4 @@
-<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="chooseMedia" data-backdrop="static" style="z-index:19999999">
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="chooseMedia" data-backdrop="static" style="z-index:19999888">
     <div class="modal-dialog" role="document" style="width: 50%;">
         <div class="modal-content">
             <div class="modal-body">
@@ -7,7 +7,7 @@
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="btn-group-sm" id="toolbar" role="group">
-                                    <a class="btn btn-primary btn-edit" id="btn_upload" onclick="$('#materialModal').modal('show')">
+                                    <a class="btn btn-primary btn-edit" id="btn_upload" onclick="showUpImg()">
                                         <i class="fa fa-cog"></i> 上传图片
                                     </a>
                                 </div>
@@ -29,7 +29,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="materialModal" data-keyboard="false" data-backdrop="static" tabindex="-1">
+<div class="modal fade" id="materialModal" data-keyboard="false" data-backdrop="static" tabindex="-1" style="z-index:19999999">
     <div class="modal-dialog" style="width: 41%;">
         <div class="modal-content">
             <div class="modal-header">
@@ -58,7 +58,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary btn-save btn-sm" onclick="saveMaterial()" name="save">保存</button>
-                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal" onclick="closeMaterial()">关闭</button>
             </div>
         </div>
     </div>
