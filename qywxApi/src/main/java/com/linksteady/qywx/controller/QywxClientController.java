@@ -8,8 +8,8 @@ import com.linksteady.common.util.ArithUtil;
 import com.linksteady.common.util.crypto.SHA1;
 import com.linksteady.qywx.domain.*;
 import com.linksteady.qywx.service.*;
+import com.linksteady.qywx.vo.GuideResultPurchInfoVO;
 import com.linksteady.qywx.vo.GuideResultVO;
-import io.netty.util.internal.MathUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
@@ -147,11 +147,10 @@ public class QywxClientController {
      * @param startDt
      * @param endDt
      * @return
-     * @throws URISyntaxException
      */
     @GetMapping("/getGuideResultData")
     @ResponseBody
-    public ResponseBo getGuideResultData(@RequestParam("during") String during, String startDt, String endDt) throws URISyntaxException {
+    public ResponseBo getGuideResultData(@RequestParam("during") String during, String startDt, String endDt) {
         UserBo userBo =(UserBo) SecurityUtils.getSubject().getPrincipal();
         if (null != userBo) {
             String followUserId = userBo.getUsername();
@@ -159,7 +158,7 @@ public class QywxClientController {
             if(during.equalsIgnoreCase("-1")) {
                 LocalDate now = LocalDate.now();
                 LocalDate start = now.plusDays(-1);
-                startDt = "20201101";
+                startDt = guideResultService.getMinDayWid();
                 endDt = start.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
             }
             //昨日
@@ -177,23 +176,39 @@ public class QywxClientController {
                 startDt = start.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
                 endDt = end.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
             }
+            log.info("导购运行结果，参数为{},{},{}",during,startDt,endDt);
             //查询当前企业微信的总用户数
             int totalCnt=guideResultService.getTotalCnt(followUserId,Integer.parseInt(endDt));
-            //查询其它的数据
+            //查询当前企业微信在给定时间段内的添加用户数
+            int addCnt=guideResultService.getAddCnt(followUserId,Integer.parseInt(startDt),Integer.parseInt(endDt));
+
+            //获取推送转化数据
             GuideResult resultData = guideResultService.getResultData(followUserId, Integer.parseInt(startDt), Integer.parseInt(endDt));
 
+            if(resultData==null)
+            {
+                resultData=new GuideResult();
+            }
             //查询订单总金额
             double TotalOrderAmount=guideResultService.getTotalOrderAmount(Integer.parseInt(startDt),Integer.parseInt(endDt));
 
+            //观测期购买用户数和购买金额、订单总金额
+            GuideResultPurchInfoVO guideResultPurchInfoVO=guideResultService.getPurchInfo(followUserId,Integer.parseInt(startDt),Integer.parseInt(endDt));
+
             //构造返回数据
             GuideResultVO guideResultVO=new GuideResultVO();
+            //总用户数
             guideResultVO.setTotalCnt(totalCnt);
-            guideResultVO.setAddCnt(resultData.getAddCnt());
-            guideResultVO.setPurchCnt(resultData.getPurchCnt());
+            //添加用户数
+            guideResultVO.setAddCnt(addCnt);
+            //购买用户数
+            guideResultVO.setPurchCnt(guideResultPurchInfoVO.getPurchCnt());
             //用户购买率
-            guideResultVO.setPurchRate(0d);
+            double purchRate=ArithUtil.formatDoubleByMode(totalCnt==0?0d:guideResultPurchInfoVO.getPurchCnt()*1.00/totalCnt*100,2, RoundingMode.HALF_UP);
+            guideResultVO.setPurchRate(purchRate);
+            //购买金额
+            guideResultVO.setTotalAmount(guideResultPurchInfoVO.getPurchAmount());
 
-            guideResultVO.setTotalAmount(resultData.getTotalAmount());
             guideResultVO.setReceiveMsg(resultData.getReceiveMsg());
             guideResultVO.setPushMsg(resultData.getPushMsg());
 

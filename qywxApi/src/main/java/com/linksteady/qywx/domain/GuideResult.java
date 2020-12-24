@@ -22,50 +22,29 @@ public class GuideResult implements Serializable {
     private Long dayWid;
 
     /**
-     * 用户总数
-     */
-    private Integer totalCnt;
-
-    /**
-     * 添加用户数
-     */
-    private Integer addCnt;
-
-    /**
-     * 购买用户数
-     */
-    private Integer purchCnt;
-
-    /**
-     * 购买金额
-     */
-    private double totalAmount;
-
-
-    /**
      * 接收消息条数
      */
-    private Integer receiveMsg;
+    private int receiveMsg;
 
     /**
      * 推送消息条数
      */
-    private Integer pushMsg;
+    private int pushMsg;
 
     /**
      * 消息任务对应推送用户数
      */
-    private Integer receiveUserCnt;
+    private int receiveUserCnt;
 
     /**
      * 推送用户数
      */
-    private Integer pushUserCnt;
+    private int pushUserCnt;
 
     /**
      * 推送购买用户数
      */
-    private Integer pushCovCnt;
+    private int pushCovCnt;
 
     /**
      * 累计推送购买金额

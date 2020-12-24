@@ -12,4 +12,6 @@ public interface QywxTaskResultService {
 
     void updateManualExecStatus();
 
+    void manualSyncMsgResult(String msgId) throws WxErrorException;
+
 }

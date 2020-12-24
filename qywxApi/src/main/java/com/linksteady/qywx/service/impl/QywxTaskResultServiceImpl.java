@@ -103,4 +103,47 @@ public class QywxTaskResultServiceImpl implements QywxTaskResultService {
     public void updateManualExecStatus() {
         qywxTaskResultMapper.updateManualExecStatus();
     }
+
+    @Override
+    public void manualSyncMsgResult(String msgId) throws WxErrorException {
+        qywxTaskResultMapper.deletePushResult(msgId);
+        //重新同步结果
+        JSONObject param = new JSONObject();
+        param.put("msgid", msgId);
+
+        StringBuffer requestUrl = new StringBuffer(qywxService.getRedisConfigStorage().getApiUrl(WxPathConsts.ExternalContacts.GET_GROUP_MSG_RESULT));
+        requestUrl.append(qywxService.getAccessToken());
+
+        String result = OkHttpUtil.postRequestByJson(requestUrl.toString(), param.toJSONString());
+        log.info("{}获取推送的结果为{}", msgId, result);
+
+        JSONObject jsonObject = JSON.parseObject(result);
+        int errcode = jsonObject.getIntValue("errcode");
+
+        if (errcode == 0) {
+            //构造结果
+            JSONArray detailList = jsonObject.getJSONArray("detail_list");
+
+            List<QywxMsgResult> qywxMsgResultList = Lists.newArrayList();
+            QywxMsgResult qywxMsgResult = null;
+            JSONObject obj = null;
+            for (int i = 0; i < detailList.size(); i++) {
+                obj = detailList.getJSONObject(i);
+                qywxMsgResult = new QywxMsgResult();
+
+                qywxMsgResult.setExternalUserId(obj.getString("external_userid"));
+                qywxMsgResult.setChatId(obj.getString("chat_id"));
+                qywxMsgResult.setFollowUserId(obj.getString("userid"));
+                qywxMsgResult.setStatus(obj.getIntValue("status"));
+                qywxMsgResult.setSendTime(obj.getString("send_time"));
+                if (obj.getIntValue("status") == 1) {
+                    qywxMsgResult.setSendTimeDt(new Date(Long.parseLong(obj.getString("send_time")) * 1000));
+                }
+                qywxMsgResult.setMsgId(msgId);
+                qywxMsgResultList.add(qywxMsgResult);
+            }
+            qywxTaskResultMapper.saveMsgResult(qywxMsgResultList);
+
+        }
+    }
 }

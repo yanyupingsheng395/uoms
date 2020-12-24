@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @RestController
 @RequestMapping("/followUser")
-public class FollowUserController extends VerifyController {
+public class FollowUserController {
 
     @Autowired
     private FollowUserService followUserService;

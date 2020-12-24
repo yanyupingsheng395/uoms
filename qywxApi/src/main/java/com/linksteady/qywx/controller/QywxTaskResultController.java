@@ -37,7 +37,19 @@ public class QywxTaskResultController {
         } catch (WxErrorException e) {
             return ResponseBo.error(e.getMessage());
         }
+    }
 
-
+    /**
+     * 手工同步企业微信执行结果
+     */
+    @RequestMapping("/manualSyncMsgResult")
+    public ResponseBo manualSyncMsgResult(String msgId) {
+        try {
+            qywxTaskResultService.manualSyncMsgResult(msgId);
+            return ResponseBo.ok();
+        } catch (Exception e) {
+            log.error("同步企业微信消息执行结果失败，失败原因为{}，错误原因为{}",e);
+            return ResponseBo.error(e.getMessage());
+        }
     }
 }

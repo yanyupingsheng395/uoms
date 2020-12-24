@@ -2,10 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.qywx.dao.GuideResultMapper">
     <resultMap id="guideResultMap" type="com.linksteady.qywx.domain.GuideResult">
-        <result column="total_cnt" jdbcType="DECIMAL" property="totalCnt"/>
-        <result column="add_cnt" jdbcType="DECIMAL" property="addCnt"/>
-        <result column="purch_cnt" jdbcType="DECIMAL" property="purchCnt"/>
-        <result column="total_amount" jdbcType="DECIMAL" property="totalAmount"/>
         <result column="receive_msg" jdbcType="DECIMAL" property="receiveMsg"/>
         <result column="push_msg" jdbcType="DECIMAL" property="pushMsg"/>
         <result column="receive_user_cnt" jdbcType="DECIMAL" property="receiveUserCnt"/>
@@ -16,9 +12,6 @@
 
     <select id="getResultData" resultMap="guideResultMap">
        select
-          sum(add_cnt) add_cnt,
-          sum(purch_cnt) purch_cnt,
-          sum(total_amount) total_amount,
           sum(receive_msg) receive_msg,
           sum(push_msg) push_msg,
           sum(receive_user_cnt) receive_user_cnt,
@@ -31,9 +24,34 @@
     </select>
 
     <select id="getTotalCnt" resultType="int">
-        select total_cnt from uo_qywx_guide_result where follow_user_id=#{followUserId} and day_wid=#{dayWid}
+        select count(*) from uo_qywx_external_user_list
+         where follow_user_id=#{followUserId}
+         and to_char(to_timestamp(createtime::int8),'yyyyMMdd')::int8 &gt;=#{dayWid}
     </select>
+
+    <select id="getAddCnt" resultType="int">
+         select count(*) from uo_qywx_external_user_list
+         where follow_user_id=#{followUserId}
+         and to_char(to_timestamp(createtime::int8),'yyyyMMdd')::int8 &gt;=#{startDt}
+         and to_char(to_timestamp(createtime::int8),'yyyyMMdd')::int8 &lt;=#{endDt}
+    </select>
+
+    <select id="getPurchInfo" resultType="com.linksteady.qywx.vo.GuideResultPurchInfoVO">
+        select count(distinct w_orders.user_id) purch_cnt,
+               sum(w_orders.real_fee) purch_amount
+        from w_orders join w_users
+        on w_orders.user_id=w_users.id
+        and w_orders.valid_status=1
+        and w_orders.order_dt_wid &gt;=#{startDt}
+        and w_orders.order_dt_wid &lt;=#{endDt}
+        and w_users.qywx_follow_user_id=#{followUserId}
+    </select>
+
     <select id="getTotalOrderAmount" resultType="double">
         select sum(real_fee) from w_orders where order_dt_wid &gt;=#{startDt} and order_dt_wid &lt;=#{endDt} and valid_status='1'
+    </select>
+
+    <select id="getMinDayWid" resultType="string">
+        select min(day_wid)::varchar from uo_qywx_guide_result
     </select>
 </mapper>

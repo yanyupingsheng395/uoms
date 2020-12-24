@@ -214,6 +214,15 @@
 <script>
     getOperateResultData("0", "", "");
     $(function(){
+        var lastDay = new Date();
+        lastDay.setDate(lastDay.getDate()-1);
+        var month = lastDay.getMonth() + 1;
+        month = month < 10 ? '0'+month : month;
+        var day = lastDay.getDate() < 10 ? '0'+lastDay.getDate() : lastDay.getDate();
+        var last = lastDay.getFullYear() + ''+month+''+day;
+
+        var endDateInitValue= lastDay.getFullYear() + '-'+month+'-'+day;
+
         $("#dateStart").datetimePicker({
             title: '请选择开始时间',
             times:function(){return [];},
@@ -221,7 +230,7 @@
                 return str.split("-");
             },
             onChange: function (picker, values, displayValues) {
-                console.log(values);
+                // console.log(values);
             },
             onClose:  function (picker, values, displayValues) {
                 var dateStart = $("#dateStart").val();
@@ -230,10 +239,13 @@
                 if(dateEnd !== '') {
                     dateEnd = dateEnd.replace(/-/g, "");
                     if(dateStart > dateEnd) {
-                        $.toast("<font style='font-size: 14px;'><span class='icon icon-73'></span>&nbsp;开始时间不能大于结束时间！</font>", "text");
+                        $.toast("<font style='font-size: 14px;'><span class='icon icon-73'></span>&nbsp;开始日期不能大于结束日期！</font>", "text");
                     }else {
-                        getOperateResultData("2", dateStart, dateEnd);
+                        getOperateResultData("2", dateStart.trim(), dateEnd.trim());
                     }
+                }else
+                {
+                    $.toast("<font style='font-size: 14px;'><span class='icon icon-73'></span>&nbsp;请选择结束日期！</font>", "text");
                 }
             }
         });
@@ -244,25 +256,27 @@
                 return str.split("-");
             },
             onChange: function (picker, values, displayValues) {
-                console.log(values);
+                // console.log(values);
             },
             onClose:  function (picker, values, displayValues) {
                 var dateStart = $("#dateStart").val();
                 var dateEnd = $("#dateEnd").val();
                 dateStart = dateStart.replace(/-/g, "");
                 dateEnd = dateEnd.replace(/-/g, "");
-                var lastDay = new Date();
-                lastDay.setDate(lastDay.getDate()-1);
-                var last = lastDay.getFullYear() + ((lastDay.getMonth()+1) < 10 ? ("0" + (lastDay.getMonth()+1)) : "0" + (lastDay.getMonth()+1)) + lastDay.getDate();
-                if(dateEnd > last) {
-                    $.toast("<font style='font-size: 14px;'><span class='icon icon-73'></span>&nbsp;结束时间不能大于昨天！</font>", "text");
+
+                if(dateEnd > parseInt(last)) {
+                    $.toast("<font style='font-size: 14px;'><span class='icon icon-73'></span>&nbsp;结束日期只能小于等于昨天！</font>", "text");
                 }else {
                     if(dateStart !== '') {
                         if(dateStart > dateEnd) {
-                            $.toast("<font style='font-size: 14px;'><span class='icon icon-73'></span>&nbsp;结束时间不能小于开始时间！</font>", "text");
+                            $.toast("<font style='font-size: 14px;'><span class='icon icon-73'></span>&nbsp;结束日期不能小于开始日期！</font>", "text");
                         }else {
-                            getOperateResultData("2", dateStart, dateEnd);
+                            getOperateResultData("2", dateStart.trim(), dateEnd.trim());
                         }
+                    }else
+                    {
+                        //请选择开始时间
+                        $.toast("<font style='font-size: 14px;'><span class='icon icon-73'></span>&nbsp;请选择开始日期！</font>", "text");
                     }
                 }
             }
@@ -292,7 +306,7 @@
 
 
     function getOperateResultData(during, startDt, endDt) {
-        $.get("/qwClient/getGuideResultData", {during: during, startDt: startDt, endDt: endDt}, function(r){
+        $.get("/qwClient/getGuideResultData", {during:during, startDt:startDt, endDt:endDt}, function(r){
             if(r.code === 200) {
                 var data = r.data;
                 $("#totalCnt").text(data.totalCnt);
@@ -309,6 +323,9 @@
                 $("#pushCovRate").text(data.pushCovRate);
                 $("#pushTotalAmount").text(data.pushTotalAmount);
                 $("#pushAmountPct").text(data.pushAmountPct);
+            }else
+            {
+                $.toast("<font style='font-size: 14px;'><span class='icon icon-73'></span>&nbsp;查询错误！</font>", "text");
             }
         });
     }
