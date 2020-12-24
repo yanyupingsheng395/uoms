@@ -257,7 +257,7 @@
 
     <select id="selectExternalUserList" resultMap="externalUserMap">
          select external_userid,name,follow_user_id,remark,state,createtime from uo_qywx_external_user_list
-         where lower(follow_user_id)=#{followUserId}
+         where follow_user_id=#{followUserId}
          <choose>
              <when test="addtime!=null and addtime!='' and addtime=='onday'">
                  and current_date=insert_dt::date
@@ -277,7 +277,7 @@
 
     <select id="getQywxGuidanceList" resultMap="externalUserMap">
         select external_userid,name,follow_user_id,remark,state,createtime from uo_qywx_external_user_list
-         where lower(follow_user_id)=#{followUserId}
+         where follow_user_id=#{followUserId}
         <if test="relation!=null and relation !=''">
             and relation=#{relation}
         </if>
@@ -295,12 +295,12 @@
 
     <select id="getgetAddTimeCount" resultType="int">
           select count(*) from uo_qywx_external_user_list
-         where lower(follow_user_id)=#{followUserId}
+         where follow_user_id=#{followUserId}
     </select>
 
     <select id="getQywxGuidanceCount" resultType="int">
         select count(*) from uo_qywx_external_user_list
-        where lower(follow_user_id)=#{followUserId}
+        where follow_user_id=#{followUserId}
         <if test="relation!=null and relation !=''">
             and relation=#{relation}
         </if>
@@ -326,7 +326,7 @@
             from uo_qywx_external_user_list left join w_users
                  on uo_qywx_external_user_list.follow_user_id=w_users.qywx_follow_user_id
                   and uo_qywx_external_user_list.external_userid=w_users.qywx_user_id
-            where lower(follow_user_id)=#{followUserId}  and external_userid=#{externalUserId}
+            where follow_user_id=#{followUserId}  and external_userid=#{externalUserId}
     </select>
 
 </mapper>

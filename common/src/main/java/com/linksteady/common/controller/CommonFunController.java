@@ -64,7 +64,7 @@ public class CommonFunController extends BaseController {
     @ResponseBody
     public boolean checkPassword(String password) {
         UserBo userBo = super.getCurrentUser();
-        String newPass = MD5Utils.encrypt(userBo.getUsername().toLowerCase(), password);
+        String newPass = MD5Utils.encrypt(userBo.getUsername(), password);
         return commonFunService.checkPassword(userBo.getUserId(),newPass);
     }
 

@@ -41,7 +41,7 @@ public class LogServiceImpl extends BaseService<SysLog> implements LogService {
             Example example = new Example(SysLog.class);
             Criteria criteria = example.createCriteria();
             if (StringUtils.isNotBlank(sysLog.getUsername())) {
-                criteria.andCondition("username=", sysLog.getUsername().toLowerCase());
+                criteria.andCondition("username=", sysLog.getUsername());
             }
             if (StringUtils.isNotBlank(sysLog.getOperation())) {
                 criteria.andCondition("operation like", "%" + sysLog.getOperation() + "%");

@@ -176,7 +176,7 @@ public class QywxClientController {
                 startDt = start.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
                 endDt = end.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
             }
-            log.info("导购运行结果，参数为{},{},{}",during,startDt,endDt);
+            log.info("导购运行结果，参数为{},{},{},{}",followUserId,during,startDt,endDt);
             //查询当前企业微信的总用户数
             int totalCnt=guideResultService.getTotalCnt(followUserId,Integer.parseInt(endDt));
             //查询当前企业微信在给定时间段内的添加用户数
