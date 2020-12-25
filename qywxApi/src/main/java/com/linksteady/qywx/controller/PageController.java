@@ -83,6 +83,15 @@ public class PageController  extends BaseController {
         return "qywx/contactWay/list";
     }
 
+
+    /**
+     * 新增渠道渠道活码
+     */
+    @RequestMapping("/contactWay/add")
+    public String addContactWay() {
+        return "qywx/contactWay/add";
+    }
+
     /**
      * 拉新效果监控
      */

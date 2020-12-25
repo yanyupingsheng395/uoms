@@ -77,11 +77,6 @@ public class CustomerBaseController {
     @RequestMapping("/getTagGroupList")
     public ResponseBo getTagGroupList(){
         List<QywxTagGroup> list=new ArrayList<>();
-        list.add(new QywxTagGroup(1,"任务1","群名称1","邀请成员1",new Date(),1,1,1,1));
-        list.add(new QywxTagGroup(1,"任务2","群名称2","邀请成员2",new Date(),1,1,1,1));
-        list.add(new QywxTagGroup(1,"任务3","群名称3","邀请成员3",new Date(),1,1,1,1));
-        list.add(new QywxTagGroup(1,"任务4","群名称4","邀请成员4",new Date(),1,1,1,1));
-        list.add(new QywxTagGroup(1,"任务5","群名称5","邀请成员5",new Date(),1,1,1,1));
         return ResponseBo.okOverPaging(null,5,list);
     }
 

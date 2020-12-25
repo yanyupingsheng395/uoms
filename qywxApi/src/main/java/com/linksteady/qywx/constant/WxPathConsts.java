@@ -125,5 +125,6 @@ public final class WxPathConsts {
     public static final String SEND_WELCOME_MESSAGE = "/cgi-bin/externalcontact/send_welcome_msg?access_token=";
 
     public static final String GET_CORP_TAG_LIST = "/cgi-bin/externalcontact/get_corp_tag_list";
+    public static final String ADD_CORP_TAG="/cgi-bin/externalcontact/add_corp_tag";
   }
 }

@@ -169,12 +169,13 @@ $( "#btn_edit" ).click( function () {
  * 新增按钮
  */
 $( "#btn_add" ).click( function () {
-    $( "#myLargeModalLabel" ).html( '新增渠道活码' );
-    $( "#state" ).removeAttr( "readOnly" );
-    $( "#qrCodeDiv" ).hide();
-    $( "#longUrl" ).val( "" );
-    $( "#shortUrl" ).val( "" );
-    createUserTree();
+    window.location.href="/page/contactWay/add";
+    // $( "#myLargeModalLabel" ).html( '新增渠道活码' );
+    // $( "#state" ).removeAttr( "readOnly" );
+    // $( "#qrCodeDiv" ).hide();
+    // $( "#longUrl" ).val( "" );
+    // $( "#shortUrl" ).val( "" );
+    // createUserTree();
 } );
 
 $( "#btn_delete" ).click( function () {
@@ -332,96 +333,6 @@ function modifyUrlValidateRule() {
     } );
 }
 
-function createUserTree() {
-    $.post( "/contactWay/getDept", {}, function (r) {
-        deptData = r.data;
-        var html="";
-        if (r.code === 200) {
-          for(var i=0;i<deptData.length;i++){
-             html= html+"<option value='"+deptData[i].id+"'>"+deptData[i].name+"</option>";
-          }
-          $("#region1").html(html);
-        } else {
-            $MB.n_warning( r.msg );
-        }
-    } );
-
-    $.post( "/contactWay/getUser", {}, function (r) {
-        userData = r.data;
-        var html="";
-        if (r.code === 200) {
-            for(var i=0;i<userData.length;i++){
-                html= html+"<option value='"+userData[i].user_id+"'>"+userData[i].name+"</option>";
-            }
-            $("#region2").html(html);
-        } else {
-            $MB.n_warning( r.msg );
-        }
-    } );
-    $( '#add_modal' ).modal( 'show' );
-}
-
-/**
- * 添加标签
- * @param selid
- */
-function addRegion(selid) {
-    var id = $( "#" + selid ).find( "option:selected" ).val();
-    var name = $( "#" + selid ).find( "option:selected" ).text();
-    if(id!=""&&id!=null){
-        if(selid=="region1"){
-                id=parseInt(id);
-                if(dept_list.indexOf(id)==-1){
-                    dept_list.push(id);
-                    $( "#alllist" ).append( "<span class=\"tag\"><span>" + name + "&nbsp;&nbsp;</span><a style=\"color: #fff;cursor: pointer;\" onclick=\"regionRemove(this, \'" + id + "\', \'" + selid + "\')\">x</a></span>" );
-                }
-        }else if(selid=="region2"){
-            if(user_list.indexOf(id)==-1){
-                user_list.push(id);
-                $( "#alllist" ).append( "<span class=\"tag\"><span>" + name + "&nbsp;&nbsp;</span><a style=\"color: #fff;cursor: pointer;\" onclick=\"regionRemove(this, \'" + id + "\', \'" + selid + "\')\">x</a></span>" );
-            }
-        }
-    }
-}
-
-function rebuildData(usersList, deptLis) {
-    if(usersList!=""&&usersList!=null){
-        usersList=usersList.split(',');
-        var selid2="region2";
-        for(var i=0;i<userData.length;i++){
-            for (var j=0;j<usersList.length;j++){
-                if(userData[i].user_id==usersList[j]){
-                    user_list.push(userData[i].user_id);
-                    $( "#alllist" ).append( "<span class=\"tag\"><span>" + userData[i].name + "&nbsp;&nbsp;</span><a style=\"color: #fff;cursor: pointer;\" onclick=\"regionRemove(this, \'" + userData[i].user_id + "\', \'" + selid2 + "\')\">x</a></span>" );
-                }
-            }
-        }
-    }
-    if(deptLis!=""&&deptLis!=null){
-        deptLis=deptLis.split(',');
-        var selid="region1";
-        for(var i=0;i<deptData.length;i++){
-            for (var j=0;j<deptLis.length;j++){
-                if(deptData[i].id==deptLis[j]){
-                    dept_list.push(deptData[i].id);
-                    $( "#alllist" ).append( "<span class=\"tag\"><span>" + deptData[i].name + "&nbsp;&nbsp;</span><a style=\"color: #fff;cursor: pointer;\" onclick=\"regionRemove(this, \'" + deptData[i].id + "\', \'" + selid + "\')\">x</a></span>" );
-                }
-            }
-        }
-
-    }
-}
-
-// 移除region数据
-function regionRemove(dom, id, selid) {
-    $( dom ).parent().remove();
-   if(selid=="region1"){
-       id=parseInt(id);
-       dept_list.splice( dept_list.indexOf( id ), 1 );
-   }else if(selid=="region2"){
-       user_list.splice( user_list.indexOf( id ), 1 );
-   }
-}
 
 
 function getDeptAndUserId() {

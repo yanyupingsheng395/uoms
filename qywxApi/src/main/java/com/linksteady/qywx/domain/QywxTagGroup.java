@@ -6,46 +6,33 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class QywxTagGroup {
     /**
-     * 标签ID
+     * 标签组ID
      */
-    private long tagId;
+    private String  groupId;
     /**
-     * 任务名称
-     */
-    private String taskName;
-    /**
-     * 群名称
+     * 标签组名称
      */
     private String groupName;
+
     /**
-     * 发送邀请成员
+     * 标签组次序
      */
-    private String sendInviteMembers;
+    private long groupOrder;
     /**
      * 创建时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
-    private Date insertDt;
+    private Date createTime;
     /**
-     * 已邀请客户
+     * 标签组集合
      */
-    private long inviteMembers;
-    /**
-     * 以入群客户
-     */
-    private long joinMembers;
-    /**
-     * 未发送成员
-     */
-    private long NoSendMembers;
-    /**
-     * 未邀请成员
-     */
-    private long noInviteMembers;
+    private List<QywxTag> tagList;
+
 }

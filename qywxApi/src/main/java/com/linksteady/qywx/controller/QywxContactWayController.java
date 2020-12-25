@@ -5,6 +5,7 @@ import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.Tree;
+import com.linksteady.common.util.Base64Img;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.qywx.domain.QywxContactWay;
 import com.linksteady.qywx.domain.QywxDeptUser;
@@ -15,12 +16,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -247,6 +246,26 @@ public class QywxContactWayController extends BaseController {
             return ResponseBo.error("未获取到可联系成员，请先完成组织架构数据的上传！");
         }
         return ResponseBo.okWithData(null, userlist);
+    }
+
+    /**
+     * 上传图片
+     * @param
+     * @return
+     */
+    @PostMapping("/contactWay/uploadQrcode")
+    @ResponseBody
+    public ResponseBo uploadQrcode(String base64Code)  {
+        try {
+            String fileSuffix = base64Code.substring("data:image/".length(), base64Code.lastIndexOf(";base64,"));
+            String fileName= System.currentTimeMillis()+"_qrcode." + fileSuffix;
+            File file = Base64Img.base64ToFile(base64Code, fileName);
+            String path = file.getPath();
+            return ResponseBo.okWithData(null,path);
+        } catch (Exception e) {
+            log.error("上传二维码（图片）报错！");
+            return ResponseBo.error();
+        }
     }
 
 }
