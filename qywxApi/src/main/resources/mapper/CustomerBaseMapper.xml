@@ -25,6 +25,12 @@
         <result column="join_scene" jdbcType="VARCHAR" property="joinScene"/>
         <result column="user_name" jdbcType="VARCHAR" property="userName"/>
     </resultMap>
+    <delete id="deleteChatBase">
+        delete from uo_qywx_chat_base where chat_id=#{chatId}
+    </delete>
+    <delete id="deleteChatDetail">
+        delete from uo_qywx_chat_detail where chat_id=#{chatId}
+    </delete>
 
     <select id="getCount" resultType="int">
         select count(*) from uo_qywx_chat_base

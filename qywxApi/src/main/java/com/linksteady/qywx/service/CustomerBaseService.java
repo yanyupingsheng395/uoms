@@ -36,4 +36,23 @@ public interface CustomerBaseService {
      * @throws WxErrorException
      */
     void getQywxChatList( String cursor) throws WxErrorException;
+
+    /**
+     * 新建客户群，同步数据
+     * @param chatId   客户群ID
+     * @param flag      是否需要单独存主表
+     */
+    QywxChatBase saveChatBase(String chatId,boolean flag) throws WxErrorException;
+
+    /**
+     * 客户群解散，删除数据库中uo_qywx_chat_detail 和uo_qywx_chat_base数据
+     * @param chatId
+     */
+    void deleChatBase(String chatId);
+
+    /**
+     * 客户群变更
+     * @param chatId
+     */
+    void updateChat(String chatId) throws WxErrorException;
 }

@@ -6,6 +6,7 @@ import com.linksteady.qywx.service.*;
 import com.linksteady.qywx.vo.WxXmlMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,9 @@ public class EventServiceImpl implements EventService {
 
     @Autowired
     MappingService mappingService;
+
+    @Autowired
+    CustomerBaseService customerBaseService;
 
     @Override
     public void handlerEvent(WxXmlMessage inMessage) throws WxErrorException {
@@ -67,17 +71,28 @@ public class EventServiceImpl implements EventService {
 
                //删除匹配信息
                mappingService.deleteMappingInfo(inMessage.getUserId(),inMessage.getExternalUserId());
-           }else if("transfer_fail".equals(inMessage.getChangeType()))
-           {
+           }else if("transfer_fail".equals(inMessage.getChangeType())){
               //todo 客户接替失败事件
 
-           }else
-           {
+           }else{
                log.info("未处理的外部联系人事件，事件类型{}",inMessage.getChangeType());
            }
-       }else if("event".equals(inMessage.getMsgType())&&"change_external_chat".equals(inMessage.getEvent()))
-       {
-           //客户群变更事件
+       }else if("event".equals(inMessage.getMsgType())&&"change_external_chat".equals(inMessage.getEvent())){
+           log.info("客户群变更事件");
+           String chatId = inMessage.getChatId();
+           if(StringUtils.equalsAnyIgnoreCase(inMessage.getChangeType(),"create")){
+               log.info("客户群创建");
+               customerBaseService.saveChatBase(chatId,true);
+
+           }else if(StringUtils.equalsAnyIgnoreCase(inMessage.getChangeType(),"update")){
+               log.info("客户群变更");
+               //客户群变更，先删除，后从企微处获取
+               customerBaseService.updateChat(chatId);
+
+           }else if(StringUtils.equalsAnyIgnoreCase(inMessage.getChangeType(),"dismiss")){
+               log.info("客户群解散");
+               customerBaseService.deleChatBase(chatId);
+           }
        }
     }
 }

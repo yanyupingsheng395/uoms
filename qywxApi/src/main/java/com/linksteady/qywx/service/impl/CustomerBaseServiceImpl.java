@@ -25,7 +25,7 @@ import java.util.List;
 @Service
 public class CustomerBaseServiceImpl implements CustomerBaseService {
 
-    @Autowired
+    @Autowired(required = false)
     private CustomerBaseMapper customerBaseMapper;
     @Autowired
     private QywxService qywxService;
@@ -79,19 +79,10 @@ public class CustomerBaseServiceImpl implements CustomerBaseService {
             for (int i = 0; i < array.size(); i++) {
                 JSONObject js=array.getJSONObject(i);
                 if(js!=null){
-                    QywxChatBase contractList = new QywxChatBase();
-                    String chatid = js.getString("chat_id");
-                    JSONObject detail = getChatDetail(chatid);
-                    if(detail!=null){
-                        contractList.setOwner(detail.getString("owner"));
-                        contractList.setGroupName(detail.getString("name"));
-                        contractList.setCreateTime(new Date(Long.parseLong(detail.getString("createTime"))));
-                        contractList.setNotice(detail.getString("notice"));
-                        contractList.setGroupNumber(detail.getIntValue("groupNumber"));
-                    }
-                    contractList.setChatId(chatid);
-                    contractList.setStatus(js.getString("status"));
-                    list.add(contractList);
+                    //根据chatid，获取客户群信息
+                    QywxChatBase qywxChatBase=saveChatBase(js.getString("chat_id"),false);
+                    qywxChatBase.setStatus(js.getString("status"));
+                    list.add(qywxChatBase);
                 }
             }
         }
@@ -104,6 +95,46 @@ public class CustomerBaseServiceImpl implements CustomerBaseService {
         if(StringUtils.isNotEmpty(cursor)){
             getQywxChatList(cursor);
         }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public QywxChatBase saveChatBase(String chatid,boolean flag) throws WxErrorException {
+        QywxChatBase qywxChatBase = new QywxChatBase();
+        JSONObject detail = getChatDetail(chatid);
+        if(detail!=null){
+            qywxChatBase.setOwner(detail.getString("owner"));
+            qywxChatBase.setGroupName(detail.getString("name"));
+            qywxChatBase.setCreateTime(new Date(Long.parseLong(detail.getString("createTime"))));
+            qywxChatBase.setNotice(detail.getString("notice"));
+            qywxChatBase.setGroupNumber(detail.getIntValue("groupNumber"));
+        }
+        qywxChatBase.setChatId(chatid);
+        /**
+         * 应对事件中客户群创建。
+         */
+        if(flag){
+            List<QywxChatBase> list= Lists.newArrayList();
+            list.add(qywxChatBase);
+            customerBaseMapper.insertChatBase(list);
+        }
+        return qywxChatBase;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleChatBase(String chatId) {
+        customerBaseMapper.deleteChatBase(chatId);
+        customerBaseMapper.deleteChatDetail(chatId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateChat(String chatId) throws WxErrorException {
+        //先删除数据库原来的数据
+        this.deleChatBase(chatId);
+        //然后重新获取
+        this.saveChatBase(chatId,true);
     }
 
     /**

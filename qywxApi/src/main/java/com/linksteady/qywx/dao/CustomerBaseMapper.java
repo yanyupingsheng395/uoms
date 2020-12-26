@@ -20,4 +20,8 @@ public interface CustomerBaseMapper {
 
     void insertDetail(@Param("chatDetailList") List<QywxChatDetail> list);
     void insertChatBase(@Param("chatBaseList") List<QywxChatBase> list);
+
+    void deleteChatBase(String chatId);
+
+    void deleteChatDetail(String chatId);
 }
