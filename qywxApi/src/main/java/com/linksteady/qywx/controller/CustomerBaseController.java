@@ -3,6 +3,7 @@ package com.linksteady.qywx.controller;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.qywx.domain.*;
+import com.linksteady.qywx.exception.WxErrorException;
 import com.linksteady.qywx.service.CustomerBaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +32,7 @@ public class CustomerBaseController {
         int limit = request.getLimit();
         int offset = request.getOffset();
         int count = customerBaseService.getCount();
-        List<QywxContractList> lists= customerBaseService.getDataList(limit, offset);
+        List<QywxChatBase> lists= customerBaseService.getDataList(limit, offset);
         return ResponseBo.okOverPaging(null,count,lists);
     }
 
@@ -41,8 +42,17 @@ public class CustomerBaseController {
         int limit = request.getLimit();
         int offset = request.getOffset();
         int count = customerBaseService.getCustomerListCount(chatId);
-        List<QywxContractDetail> lists= customerBaseService.getCustomerList(limit, offset,chatId);
+        List<QywxChatDetail> lists= customerBaseService.getCustomerList(limit, offset,chatId);
         return ResponseBo.okOverPaging(null,count,lists);
+    }
+
+
+    /**
+     * 从微信段获取所有群聊，并存入数据库
+     */
+    @RequestMapping("/getQywxChatList")
+    public void getQywxChatList() throws WxErrorException {
+        customerBaseService.getQywxChatList("");
     }
 
 
@@ -93,7 +103,7 @@ public class CustomerBaseController {
 
     @RequestMapping("/getGroupChat")
     public ResponseBo getGroupChat(){
-        List<QywxContractList> lists=new ArrayList<>();
+        List<QywxChatBase> lists=new ArrayList<>();
         return ResponseBo.okOverPaging(null,5,lists);
     }
 

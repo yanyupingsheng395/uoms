@@ -10,7 +10,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class QywxContractList {
+public class QywxChatBase {
     /**
      * 群公告
      */

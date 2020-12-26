@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.qywx.dao.CustomerBaseMapper">
-    <resultMap id="contractBase" type="com.linksteady.qywx.domain.QywxContractList">
+    <resultMap id="contractBase" type="com.linksteady.qywx.domain.QywxChatBase">
         <result column="chat_id" jdbcType="VARCHAR" property="chatId"/>
         <result column="status" jdbcType="VARCHAR" property="status"/>
         <result column="insert_dt" jdbcType="TIMESTAMP" property="insertDt"/>
@@ -15,7 +15,7 @@
         <result column="notice" jdbcType="VARCHAR" property="notice"/>
     </resultMap>
 
-    <resultMap id="custractDetail" type="com.linksteady.qywx.domain.QywxContractDetail">
+    <resultMap id="custractDetail" type="com.linksteady.qywx.domain.QywxChatDetail">
         <result column="detail_id" jdbcType="DECIMAL" property="detailId"/>
         <result column="chat_id" jdbcType="VARCHAR" property="chatId"/>
         <result column="userid" jdbcType="VARCHAR" property="userId"/>
@@ -31,7 +31,9 @@
     </select>
 
     <select id="getDataList" resultMap="contractBase">
-        select chat_id,status,insert_dt,insert_by,group_number,group_join,group_out,group_name,owner,notice,create_time from uo_qywx_chat_base  order by insert_dt desc limit #{limit} offset #{offset}
+        select a.chat_id,a.status,a.insert_dt,a.insert_by,
+       a.group_number,a.group_join,a.group_out,a.group_name,b.name as owner,a.notice,a.create_time
+from uo_qywx_chat_base a join uo_qywx_follower_user_list b on a.owner=b.user_id order by a.insert_dt desc limit #{limit} offset #{offset}
     </select>
     <select id="getCustomerListCount" resultType="int">
         select count(*) from uo_qywx_chat_detail where chat_id=#{chatId}
@@ -44,9 +46,28 @@
         union ALL
         select a.userid,a.user_type,a.join_scene,a.join_time, c.name as user_name
         from uo_qywx_chat_detail a,uo_qywx_follower_user_list c
-        where a.userid=c.user_id and a.chat_id=#{chatId} and a.user_type='1')bse limit 100 offset 1;
+        where a.userid=c.user_id and a.chat_id=#{chatId} and a.user_type='1')bse limit #{limit} offset #{offset}
     </select>
     <select id="getFollowUser" resultType="com.linksteady.qywx.domain.FollowUser">
         select user_id,name from uo_qywx_follower_user_list
     </select>
+
+    <insert id="insertDetail">
+        insert into uo_qywx_chat_detail( userid, user_type, join_time, join_scene, chat_id)values
+        <foreach collection="chatDetailList" item="item" separator=",">
+        (#{item.userId},#{item.userType},#{item.joinTime},#{item.joinScene},#{item.chatId})
+        </foreach>
+    </insert>
+    <insert id="insertChatBase">
+        insert into uo_qywx_chat_base(chat_id,
+        status,
+        group_name,
+        owner,
+        notice,
+        create_time,
+        group_number)values
+        <foreach collection="chatBaseList" item="item" separator=",">
+            (#{item.chatId},#{item.status},#{item.groupName},#{item.owner},#{item.notice},#{item.createTime},#{item.groupNumber})
+        </foreach>
+    </insert>
 </mapper>

@@ -126,5 +126,7 @@ public final class WxPathConsts {
 
     public static final String GET_CORP_TAG_LIST = "/cgi-bin/externalcontact/get_corp_tag_list";
     public static final String ADD_CORP_TAG="/cgi-bin/externalcontact/add_corp_tag";
+    public static final String GET_GROUPCHAT_LIST="/cgi-bin/externalcontact/groupchat/list";
+    public static final String GET_GROUPCHAT_GET="/cgi-bin/externalcontact/groupchat/get";
   }
 }

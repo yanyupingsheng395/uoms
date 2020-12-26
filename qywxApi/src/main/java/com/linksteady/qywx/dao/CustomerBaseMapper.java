@@ -1,20 +1,23 @@
 package com.linksteady.qywx.dao;
 
 import com.linksteady.qywx.domain.FollowUser;
-import com.linksteady.qywx.domain.QywxContractDetail;
-import com.linksteady.qywx.domain.QywxContractList;
+import com.linksteady.qywx.domain.QywxChatDetail;
+import com.linksteady.qywx.domain.QywxChatBase;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 public interface CustomerBaseMapper {
     int getCount();
 
-    List<QywxContractList> getDataList(int limit, int offset);
+    List<QywxChatBase> getDataList(int limit, int offset);
 
     int getCustomerListCount(String chatId);
 
-    List<QywxContractDetail> getCustomerList(int limit, int offset, String chatId);
+    List<QywxChatDetail> getCustomerList(int limit, int offset, String chatId);
 
     List<FollowUser> getFollowUser();
 
+    void insertDetail(@Param("chatDetailList") List<QywxChatDetail> list);
+    void insertChatBase(@Param("chatBaseList") List<QywxChatBase> list);
 }

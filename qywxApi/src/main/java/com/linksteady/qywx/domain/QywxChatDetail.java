@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
-public class QywxContractDetail {
+public class QywxChatDetail {
     /**
      * 详情ID
      */

@@ -41,7 +41,7 @@ $(function () {
                 title: '今日退群',
                 align: 'center'
             }, {
-                field: 'insertDt',
+                field: 'createTime',
                 title: '创建时间',
                 align: 'center'
             }
