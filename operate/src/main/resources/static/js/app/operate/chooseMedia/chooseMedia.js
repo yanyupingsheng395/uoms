@@ -109,7 +109,7 @@ function saveData() {
         $MB.n_warning("请先选择一条记录！");
     }else {
        var mediaID=selected[0]['mediaId'];
-        $("#add_modal").modal('show');
+        $("#add_modal").show();
         $("#chooseMedia").modal('hide');
         $("#mediaId").val(mediaID);
     }
