@@ -31,13 +31,13 @@ public class CustomerBaseServiceImpl implements CustomerBaseService {
     private QywxService qywxService;
 
     @Override
-    public int getCount() {
-        return customerBaseMapper.getCount();
+    public int getCount(String owner,String status) {
+        return customerBaseMapper.getCount(owner,status);
     }
 
     @Override
-    public List<QywxChatBase> getDataList(int limit, int offset) {
-        return customerBaseMapper.getDataList(limit, offset);
+    public List<QywxChatBase> getDataList(int limit, int offset,String owner,String status) {
+        return customerBaseMapper.getDataList(limit, offset,owner,status);
     }
 
     @Override

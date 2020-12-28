@@ -1,4 +1,12 @@
 $(function () {
+    getFollower();
+    getTable();
+});
+
+/**
+ * 获取页面列表数据
+ */
+function getTable(){
     var settings = {
         url: "/qywxCustomer/getContractList",
         cache: false,
@@ -11,44 +19,73 @@ $(function () {
         queryParams: function (params) {
             return {
                 pageSize: params.limit,
-                pageNum: (params.offset / params.limit) + 1
+                pageNum: (params.offset / params.limit) + 1,
+                param: {owner: $( "#followUser" ).val(), status: $( "#status" ).val()}
             };
         },
         columns: [ {
-                checkbox: true,
-            },{
-                field: 'chatId',
-                title: 'ID',
-                visible: false
-            },{
-                field: 'groupName',
-                title: '群名称',
-                align: 'center'
-            }, {
-                field: 'owner',
-                title: '群主',
-                align: 'center'
-            }, {
-                field: 'groupNumber',
-                title: '群人数',
-                align: 'center'
-            }, {
-                field: 'groupJoin',
-                title: '今日入群',
-                align: 'center'
-            }, {
-                field: 'groupOut',
-                title: '今日退群',
-                align: 'center'
-            }, {
-                field: 'createTime',
-                title: '创建时间',
-                align: 'center'
+            checkbox: true,
+        },{
+            field: 'chatId',
+            title: 'ID',
+            visible: false
+        },{
+            field: 'groupName',
+            title: '群名称',
+            align: 'center',
+            formatter: function (value, row, index) {
+                if(value==='')
+                {
+                    return '群聊';
+                } else{
+                    return value;
+                }
             }
+        }, {
+            field: 'owner',
+            title: '群主',
+            align: 'center'
+        }, {
+            field: 'groupNumber',
+            title: '群人数',
+            align: 'center'
+        }, {
+            field: 'createTime',
+            title: '创建时间',
+            align: 'center'
+        }
         ]
     };
     $MB.initTable( 'baseTable', settings );
-});
+}
+
+/**
+ * 获取群主列表
+ */
+function getFollower(){
+    $.get( "/qywxCustomer/getFollower?limit=100&offset=0", {}, function (r) {
+        var resultdata=r.data;
+        var html="<option value=''>全部</option>";
+        if (r.code === 200) {
+            for(var i=0;i<resultdata.length;i++){
+                html= html+"<option value='"+resultdata[i].userId+"'>"+resultdata[i].name+"</option>";
+            }
+            $("#followUser").html(html);
+        } else {
+            $MB.n_warning( r.msg );
+        }
+    } );
+}
+
+function searchActivity(){
+    $MB.refreshTable( 'baseTable' );
+}
+
+function resetActivity(){
+    $( "#followUser" ).find( 'option:selected' ).removeAttr( 'selected' );
+    $( "#status" ).find( 'option:selected' ).removeAttr( 'selected' );
+    $MB.refreshTable( 'baseTable' );
+}
 
 
 $( "#btn_Details" ).click( function () {

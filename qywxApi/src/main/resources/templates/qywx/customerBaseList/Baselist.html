@@ -38,9 +38,25 @@
                             <div class="select-list">
                                 <ul>
                                     <li>
-                                        &nbsp群名称：<input type="text" name="baseName" id="name"/>
+                                        群主：
+                                        <select id="followUser" name="followUser">
+                                            <option value="">所有</option>
+                                            <option value="edit">待计划</option>
+                                            <option value="todo">待执行</option>
+                                            <option value="doing">执行中</option>
+                                            <option value="done">已完成</option>
+                                        </select>
                                     </li>
-                                    <li class="pull-left">
+                                    <li>
+                                        状态：
+                                        <select id="status" name="status">
+                                            <option value="0">正常</option>
+                                            <option value="1">跟进人离职</option>
+                                            <option value="2">离职继承中</option>
+                                            <option value="3">离职继承完成</option>
+                                        </select>
+                                    </li>
+                                    <li class="pull-right">
                                         <a class="btn btn-primary btn-rounded btn-sm" onclick="searchActivity()"><i class="fa fa-search"></i>&nbsp;搜索</a>
                                         <a class="btn btn-warning btn-rounded btn-sm" onclick="resetActivity()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
                                     </li>

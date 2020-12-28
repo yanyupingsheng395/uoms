@@ -33,13 +33,26 @@
     </delete>
 
     <select id="getCount" resultType="int">
-        select count(*) from uo_qywx_chat_base
+        select count(*) from uo_qywx_chat_base where 1=1
+        <if test="owner != '' and owner != null">
+            and owner=#{owner}
+        </if>
+        <if test="status != '' and status != null">
+            and status=#{status}
+        </if>
     </select>
 
     <select id="getDataList" resultMap="contractBase">
         select a.chat_id,a.status,a.insert_dt,a.insert_by,
        a.group_number,a.group_join,a.group_out,a.group_name,b.name as owner,a.notice,a.create_time
-from uo_qywx_chat_base a join uo_qywx_follower_user_list b on a.owner=b.user_id order by a.insert_dt desc limit #{limit} offset #{offset}
+from uo_qywx_chat_base a join uo_qywx_follower_user_list b on a.owner=b.user_id where 1=1
+        <if test="owner != '' and owner != null">
+            and a.owner=#{owner}
+        </if>
+        <if test="status != '' and status != null">
+            and a.status=#{status}
+        </if>
+order by a.insert_dt desc limit #{limit} offset #{offset}
     </select>
     <select id="getCustomerListCount" resultType="int">
         select count(*) from uo_qywx_chat_detail where chat_id=#{chatId}

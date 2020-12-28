@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface CustomerBaseService {
 
-    int getCount();
+    int getCount(String owner,String status);
 
     /**
      * 获取客户群列表
@@ -17,7 +17,7 @@ public interface CustomerBaseService {
      * @param offset
      * @return
      */
-    List<QywxChatBase> getDataList(int limit, int offset);
+    List<QywxChatBase> getDataList(int limit, int offset,String owner,String status);
 
     /**
      * 获取客户群人数

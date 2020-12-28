@@ -89,7 +89,7 @@ function smsContentValid() {
  *进入新增消息界面
  */
 $("#btn_save").click(function () {
-    window.location.href="/page/goBaseMsg";
+    window.location.href="/page/goChatMsgList/add";
 });
 
 var validator_coupon;

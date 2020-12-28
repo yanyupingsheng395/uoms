@@ -6,10 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="edge" />
     <title>用户成长系统</title>
-    <th:block th:include="common/include :: common-css" />
+    <th:block th:include="common/include::common-css" />
     <th:block th:include="common/include::jstree-css" />
     <th:block th:include="common/include::bootstrap-table-css" />
-    <th:block th:include="common/include::bootstrap-select-css" />
     <th:block th:include="common/include::jquery-confirm-css" />
     <script data-th-src="@{/plugins/clipboard.min.js}"></script>
     <style>
@@ -47,15 +46,6 @@
             margin: 40px auto;
         }
 
-        #addBut {
-            font-size: 20px;
-            height:36px;
-            width: 125px;
-            background-color: cornflowerblue;
-            color: #fff;
-            border: 4px cornflowerblue solid;
-            border-radius: 5px;
-        }
 
         #newLabel {
             width: 200px;
@@ -92,27 +82,27 @@
                             <div class="col-sm-12">
                                 <form   class="form-horizontal" method="post" id="contactWay_edit">
                                     <div class="form-group">
-                                        <label  class="col-sm-1 control-label">名称：</label>
+                                        <label  class="col-sm-2 control-label">名称：</label>
                                         <div class="col-sm-6">
                                             <input type="text" class="form-control" name="qrcodeName"/>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="col-md-1 control-label">职员：</label>
+                                        <label class="col-md-2 control-label">成员：</label>
                                         <div class="col-sm-6 ">
                                             <select class="form-control" id="region2"></select>
                                         </div>
                                         <a onclick="addRegion('region2')">&nbsp;<i class="fa fa-plus-circle"></i></a>
                                     </div>
                                     <div class="form-group">
-                                        <label class="col-md-1 control-label">部门：</label>
+                                        <label class="col-md-2 control-label">部门：</label>
                                         <div class="col-md-6">
                                             <select class="form-control" id="region1"></select>
                                         </div>
                                         <a onclick="addRegion('region1')" style="cursor: pointer;">&nbsp;<i class="fa fa-plus-circle"></i></a>
                                     </div>
                                     <div class="form-group">
-                                        <label class="col-md-1 control-label">选择部门职员列表：</label>
+                                        <label class="col-md-2 control-label">选择部门职员列表：</label>
                                         <div class="col-md-6 col-md-offset-2" id="alllist" style="border: dashed 1px #e7eaec;margin-left:1%"></div>
                                         <div class="col-md-8 input-group">
                                             <input type="hidden" name="usersList">
@@ -121,67 +111,80 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label  class="col-sm-1 control-label">渠道：</label>
+                                        <label  class="col-sm-2 control-label">渠道：</label>
                                         <div class="col-sm-6">
                                             <input class="form-control" type="text" id="state" name="state"/>
                                         </div>
                                     </div>
                                     <div class="form-group" >
-                                        <label  class="col-sm-1 control-label">标签：</label>
+                                        <label  class="col-sm-2 control-label">标签：</label>
                                         <div class="col-sm-7" style="border: dashed 1px #e7eaec;margin-left:1%">
                                             <div id="allTag" style="margin-top: 5px;">
 
                                             </div>
                                             <div class="col-sm-8">
-                                                <div style="margin-top: 15px;margin-bottom: 5px">
-                                                    <a id="addBut" onClick="addTagList()">新增标签组</a>
-                                                </div>
+                                                    <span class="labelSpan labelS"  id="addBut" onclick="addTagList()"><i class="glyphicon glyphicon-edit"></i>新增标签组 </span>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label  class="col-sm-1 control-label">是否关联群聊：</label>
+                                        <label  class="col-sm-2 control-label">是否关联群聊：</label>
                                         <div class="col-sm-6" style="margin-top: 5px;">
                                             <label class="lyear-radio radio-inline radio-primary" >
-                                                <input type="radio" name="related" value="Y"><span>是</span>
+                                                <input type="radio" name="related" value="Y" checked="checked" onclick="relatedVal('Y')"><span>是</span>
                                              </label>
                                             <label class="lyear-radio radio-inline radio-primary" >
-                                                <input type="radio" name="related" value="N"><span>否</span>
+                                                <input type="radio" name="related" value="N" onclick="relatedVal('N')"><span>否</span>
                                             </label>
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label  class="col-sm-1 control-label">群码关联：</label>
-                                        <div>
-                                            <div  class="col-md-10" style="color: cornflowerblue" ><span onclick="addGroupChat()" class="labelSpan labelS" ><i class="glyphicon glyphicon-user"></i>选择群聊 </span></div>
-                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label  class="col-sm-1 control-label">群码关联列表：</label>
-                                        <div class="col-sm-7" style="border: dashed 1px #e7eaec;margin-left:1%">
-                                            <table id="contactWayTable" class="table  table-striped table-bordered table-hover">
-                                                <thead>
-                                                    <tr>
-                                                        <th style="text-align: center; " data-field="qrCode" tabindex="0"><div class="th-inner ">二维码样式</div><div class="fht-cell"></div></th>
-                                                        <th style="text-align: center; " data-field="shortUrl" tabindex="0"><div class="th-inner ">群聊名称</div><div class="fht-cell"></div></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="addtr">
-                                                    <tr data-index="0">
-                                                        <td style="text-align: center; ">
-                                                            <img style="width:120px;height:120px" src="https://wework.qpic.cn/wwpic/771873_BnEihD6MQO-zKi1_1608679484/0">
-                                                        </td>
-                                                        <td style="text-align: center; ">
-                                                            <a href="http://" target="_blank">123123</a>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
+                                    <div id="groupCode">
+                                        <div class="form-group">
+                                            <label  class="col-sm-2 control-label">群码关联：</label>
+                                            <div>
+                                                <div  class="col-md-10" style="color: cornflowerblue" ><span onclick="addGroupChat()" class="labelSpan labelS" ><i class="glyphicon glyphicon-user"></i>选择群聊 </span></div>
+                                             </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label  class="col-sm-2 control-label">引导进群欢迎语：</label>
+                                            <div class="col-md-7">
+                                                <textarea name="smsContent" id="smsContent" cols="30" rows="4" class="form-control"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label  class="col-sm-2 control-label">群码关联列表：</label>
+                                            <div class="col-sm-7" style="border: dashed 1px #e7eaec;margin-left:1%">
+                                                <table id="contactWayTable" class="table  table-striped table-bordered table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="text-align: center; " data-field="qrCode" tabindex="0"><div class="th-inner ">二维码样式</div><div class="fht-cell"></div></th>
+                                                            <th style="text-align: center; " data-field="shortUrl" tabindex="0"><div class="th-inner ">群聊名称</div><div class="fht-cell"></div></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="addtr">
+                                                        <tr data-index="0">
+                                                            <td style="text-align: center; ">
+                                                                <img style="width:120px;height:120px" src="https://wework.qpic.cn/wwpic/771873_BnEihD6MQO-zKi1_1608679484/0">
+                                                            </td>
+                                                            <td style="text-align: center; ">
+                                                                <a href="http://" target="_blank">123123</a>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
                                 </form>
                             </div>
-                            <a class="btn btn-primary btn-sm" role="button" onclick="pushMessage()" style="margin-left: 390px;width: 15%">创建活码</a>
+                            <div class="row m-t-15">
+                                <div class="col-md-12 text-right">
+                                    <a id='creatPreheat' class="btn btn-sm btn-secondary" onclick="addContactWay()" type="button"><i class="fa fa-arrow-right"></i>保存</a>
+                                    <a class="btn btn-secondary btn-sm" href="/page/contactWay" style="margin-right:10px;">
+                                        <i class="fa fa-backward"></i>&nbsp;返回
+                                    </a>
+                                </div>
+                            </div>
                        </div>
                     </div>
                 </div>
@@ -278,12 +281,12 @@
 </div>
 
 <th:block th:include="common/include::footer" />
+<th:block th:include="common/include::datepicker-js" />
 <th:block th:include="common/include::perfect-scrollbar" />
 <th:block th:include="common/include::jquery-validate-js" />
 <th:block th:include="common/include::common-js" />
 <th:block th:include="common/include::jstree-js" />
 <th:block th:include="common/include::bootstrap-table-js" />
-<th:block th:include="common/include::bootstrap-select-js" />
 <th:block th:include="common/include::jquery-confirm-js" />
 <script data-th-src="@{/plugins/imageUpload/cupload.js}"></script>
 <script data-th-src="@{/js/app/qywx/common/template.js}"></script>

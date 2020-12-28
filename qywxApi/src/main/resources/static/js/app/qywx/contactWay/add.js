@@ -1,9 +1,16 @@
 var dept_list=[] ;//添加部门的集合
 var user_list =[];//添加人员的集合
 var tagCount=0;//标签组总数
+var userData;
+var deptData;
+var Single=false;//在更新时，判断当前活吗是不是单人的。如果是单人的，就不能转成多人。
+var $contactWayForm = $( "#contactWay_edit" );
+var userSelect = $contactWayForm.find( "select[name='userSelect']" );
+var $usersList = $contactWayForm.find( "input[name='usersList']" );
 $( function () {
     createUserTree();
     showAllTag();
+    validateRule();
 } );
 
 /**
@@ -201,7 +208,7 @@ function addGroupChat() {
         var html="";
         if (r.code === 200) {
             for(var i=0;i<deptData.length;i++){
-                html= html+"<option value='"+deptData[i].chatId+"'>"+deptData[i].groupName+"</option>";
+                html= html+"<option value='"+deptData[i].chatId+"'>"+deptData[i].name+"</option>";
             }
             $("#chatList").html(html);
         } else {
@@ -298,41 +305,114 @@ function rebuildData(usersList, deptLis) {
     }
 }
 
+function getDeptAndUserId() {
+    $( "input[name='usersList']" ).val( user_list.join( "," ) );
+    $( "input[name='deptList']" ).val( dept_list.join( "," ) );
+    $( "input[name='validUser']" ).val( user_list.join( "," ) + dept_list.join( "," ));
+}
+
+/**
+ * 新增渠道活吗
+ */
+function addContactWay() {
+    var name = $( this ).attr( "name" );
+    getDeptAndUserId();
+    var validator = $contactWayForm.validate();
+    var flag = validator.form();
+    if(Single){
+        if(user_list.length>1){
+            $MB.n_danger( "该渠道活吗初始类型是单人，不能添加多人！");
+            return;
+        }
+    }
+    if (flag) {
+        //打开遮罩层
+        $MB.loadingDesc('show', '保存中，请稍候...');
+            $.post("/contactWay/save", $("#contactWay_edit").serialize(), function (r) {
+                if (r.code === 200) {
+                    $MB.closeAndRestModal( "add_modal" );
+                    $MB.n_success(r.msg);
+                    $MB.refreshTable("contactWayTable");
+                    clearData();
+                    window.location.href="/page/contactWay";
+                } else {
+                    $MB.n_danger(r.msg);
+                };
+                $MB.loadingDesc('hide');
+            });
+    }
+}
+
+/**
+ * 清空数据
+ */
+function clearData(){
+    userData=null;
+    deptData=null;
+    Single=false;
+    $("#alllist").html("");
+    $( "#btn_save" ).attr( "name", "save" );
+    dept_list=[];
+    user_list=[];
+    $contactWayForm.validate().resetForm();
+    $contactWayForm.find( "input[name='contactWayId']" ).val( "" );
+    $contactWayForm.find( "input[name='configId']" ).val( "" );
+    $contactWayForm.find( "input[name='state']" ).val( "" );
+    $contactWayForm.find( "input[name='usersList']" ).val( "" );
+    $contactWayForm.find( "input[name='deptList']" ).val( "" );
+    $contactWayForm.find( "input[name='validUser']" ).val( "" );
+}
+
+function relatedVal(flag) {
+    if(flag=="Y"){
+        $("#groupCode").show();
+    }else{
+        $("#groupCode").hide();
+    }
+}
+
+// 表单验证规则
+function validateRule() {
+    var icon = "<i class='zmdi zmdi-close-circle zmdi-hc-fw'></i> ";
+    validator = $contactWayForm.validate( {
+        rules: {
+            state: {
+                required: true,
+                maxlength: 30
+            },
+            validUser: {
+                required: true
+            },
+            qrcodeName: {
+                required: true
+            }
+        },
+        errorPlacement: function (error, element) {
+            if (element.is( ":checkbox" ) || element.is( ":radio" )) {
+                error.appendTo( element.parent().parent() );
+            } else {
+                error.insertAfter( element );
+            }
+        },
+        messages: {
+            state: {
+                required: icon + "请输入渠道",
+                maxlength: icon + "最大长度不能超过30个字符"
+            },
+            validUser: {
+                required: icon + "请选择可联系成员"
+            },
+            qrcodeName: {
+                required: icon + "请输入名称"
+            }
+        }
+    } );
+}
+
 
 
 
 function hex(x) {
     return ("0" + parseInt(x).toString(16)).slice(-2);
 }
-var labelId = 0;
 
-function submitDiyLabel() {
-    var labelName = $("#newLabel").val();
-
-    $("#newLabel").val("");
-    var str = '<span id="' + String.fromCharCode((65 + labelId)) + '" class="diyLabelSpan labelS" style="border-color:#599bff;background-color:#599bff30">' + labelName + ' </span>';
-    $("#diyLabelDiv").append(str);
-    appendStr2 = '<input id="diyLabel' + String.fromCharCode((65 + labelId)) + '" type="hidden" name="labelName" class="form-control" value="' + labelName + '">';
-    $("#diyLabelDiv").prepend(appendStr2);
-
-    $(".diyLabelSpan").on("click", function () {
-        var rgb = $(this).css("borderColor");
-        rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-        rgb = "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]) + "30";
-
-        if ($(this).css("backgroundColor") != null && $(this).css("backgroundColor") != "rgba(0, 0, 0, 0)") {
-
-            $(this).css("backgroundColor", "rgba(0, 0, 0, 0)");
-
-            var inputId = "diyLabel" + $(this).attr("id");
-
-            $("#" + inputId).remove();
-
-        } else {
-            $(this).css("backgroundColor", rgb);
-            appendStr2 = '<input id="diyLabel' + $(this).attr("id") + '" type="hidden" name="labelName" class="form-control" value="' + $(this).html() + '">';
-            $("#diyLabelDiv").prepend(appendStr2);
-        }
-    });
-    labelId++;
-}

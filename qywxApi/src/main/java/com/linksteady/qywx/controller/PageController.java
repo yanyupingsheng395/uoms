@@ -78,7 +78,7 @@ public class PageController  extends BaseController {
      * 渠道活码
      */
     @Log(value = "渠道活码", location = "用户成长系统")
-    @RequestMapping("/contactWay/list")
+    @RequestMapping("/contactWay")
     public String contactWayList() {
         return "qywx/contactWay/list";
     }
@@ -306,7 +306,7 @@ public class PageController  extends BaseController {
      * 进入群发消息
      * @return
      */
-    @RequestMapping("/goBaseMsg")
+    @RequestMapping("/goChatMsgList/add")
     public String goBaseMsg(Model model){
        List<FollowUser> foll= customerBaseService.getFollowUser();
        model.addAttribute("foll",foll);

@@ -8,9 +8,9 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface CustomerBaseMapper {
-    int getCount();
+    int getCount(String owner,String status);
 
-    List<QywxChatBase> getDataList(int limit, int offset);
+    List<QywxChatBase> getDataList(int limit, int offset,String owner,String status);
 
     int getCustomerListCount(String chatId);
 

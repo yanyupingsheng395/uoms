@@ -6,10 +6,7 @@ import com.linksteady.qywx.domain.*;
 import com.linksteady.qywx.exception.WxErrorException;
 import com.linksteady.qywx.service.CustomerBaseService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,13 +23,15 @@ public class CustomerBaseController {
      * 获取客户群列表
      *
      */
-    @RequestMapping("/getContractList")
+    @GetMapping("/getContractList")
     @ResponseBody
     public ResponseBo getContractList(QueryRequest request){
         int limit = request.getLimit();
         int offset = request.getOffset();
-        int count = customerBaseService.getCount();
-        List<QywxChatBase> lists= customerBaseService.getDataList(limit, offset);
+        String owner = request.getParam().get("owner");
+        String status = request.getParam().get("status");
+        int count = customerBaseService.getCount(owner,status);
+        List<QywxChatBase> lists= customerBaseService.getDataList(limit, offset,owner,status);
         return ResponseBo.okOverPaging(null,count,lists);
     }
 
@@ -53,6 +52,13 @@ public class CustomerBaseController {
     @RequestMapping("/getQywxChatList")
     public void getQywxChatList() throws WxErrorException {
         customerBaseService.getQywxChatList("");
+    }
+
+    @RequestMapping("/getFollower")
+    @ResponseBody
+    public ResponseBo getFollower(){
+        List<FollowUser> user = customerBaseService.getFollowUser();
+        return ResponseBo.okWithData(null,user);
     }
 
 

@@ -1,18 +1,8 @@
 var validator;
-var $contactWayForm = $( "#contactWay_edit" );
 var modifyUrlValidator;
-var userSelect = $contactWayForm.find( "select[name='userSelect']" );
-var $usersList = $contactWayForm.find( "input[name='usersList']" );
-var userData;
-var deptData;
-var dept_list=[] ;//添加部门的集合
-var user_list =[];//添加人员的集合
-var Single=false;//在更新时，判断当前活吗是不是单人的。如果是单人的，就不能转成多人。
 $( function () {
-    validateRule();
     modifyUrlValidateRule();
     initTable();
-
     let clipboard1 = new ClipboardJS( '.copy_btn' );
     clipboard1.on( 'success', function (e) {
         $MB.n_success( "成功复制到粘贴板！" );
@@ -44,13 +34,6 @@ function initTable() {
             formatter: function (value, row, index) {
                 return "<img style='width:120px;height:120px' src='" + value + "'><a href='/contactWay/download?configId=" + row.configId + "' style='font-size: 12px;' target='_blank'>下载</a>" +
                     "&nbsp;&nbsp;<a style='font-size: 12px;cursor: pointer;' data-clipboard-text='" + value + "' class='copy_btn'>复制二维码地址</a>";
-            }
-        }, {
-            field: 'shortUrl',
-            title: '海报短链接',
-            align: 'center',
-            formatter: function (value, row, indx) {
-                return "<a href=http://" + value + " target='_blank'>" + value + "</a>";
             }
         }, {
             field: 'usersList',
@@ -275,37 +258,7 @@ $( "#btn_save" ).click( function () {
     }
 } );
 
-// 表单验证规则
-function validateRule() {
-    var icon = "<i class='zmdi zmdi-close-circle zmdi-hc-fw'></i> ";
-    validator = $contactWayForm.validate( {
-        rules: {
-            state: {
-                required: true,
-                maxlength: 30
-            },
-            validUser: {
-                required: true
-            }
-        },
-        errorPlacement: function (error, element) {
-            if (element.is( ":checkbox" ) || element.is( ":radio" )) {
-                error.appendTo( element.parent().parent() );
-            } else {
-                error.insertAfter( element );
-            }
-        },
-        messages: {
-            state: {
-                required: icon + "请输入渠道",
-                maxlength: icon + "最大长度不能超过30个字符"
-            },
-            validUser: {
-                required: icon + "请选择可联系成员"
-            }
-        }
-    } );
-}
+
 
 // 表单验证规则
 function modifyUrlValidateRule() {
@@ -331,15 +284,6 @@ function modifyUrlValidateRule() {
             }
         }
     } );
-}
-
-
-
-function getDeptAndUserId() {
-    $( "input[name='usersList']" ).val( user_list.join( "," ) );
-    $( "input[name='deptList']" ).val( dept_list.join( "," ) );
-    $( "input[name='validUser']" ).val( user_list.join( "," ) + dept_list.join( "," ));
-
 }
 
 function closeModal() {
