@@ -66,7 +66,7 @@ public class QywxActivityPlanServiceImpl implements QywxActivityPlanService {
         //更新活动头的状态
         qywxActivityHeadService.updateStatus(headId, "todo", type);
 
-        List<ActivityPlan> planList = Lists.newArrayList();
+        List<QywxActivityPlan> planList = Lists.newArrayList();
         ActivityHead activityHead =qywxActivityHeadService.findById(headId);
 
         //正式开始时间
@@ -80,7 +80,7 @@ public class QywxActivityPlanServiceImpl implements QywxActivityPlanService {
 
         //写入正式的提醒记录
         if(ActivityPlanTypeEnum.Notify.getPlanTypeCode().equalsIgnoreCase(type)) {
-            planList.add(new ActivityPlan(Long.valueOf(headId),
+            planList.add(new QywxActivityPlan(Long.valueOf(headId),
                     DateUtil.strToLocalDate(formalNotifyDt,"yyyy-MM-dd"),
                     ActivityPlanTypeEnum.Notify.getPlanTypeCode()));
         }else if(ActivityPlanTypeEnum.During.getPlanTypeCode().equalsIgnoreCase(type)) {
@@ -88,13 +88,13 @@ public class QywxActivityPlanServiceImpl implements QywxActivityPlanService {
             LocalDate formalEnd = DateUtil.strToLocalDate(formalEndDt,"yyyy-MM-dd");
             //写入正式的记录
             while(formalStart.isBefore(formalEnd)) {
-                planList.add(new ActivityPlan(Long.valueOf(headId),
+                planList.add(new QywxActivityPlan(Long.valueOf(headId),
                         formalStart,
                         ActivityPlanTypeEnum.During.getPlanTypeCode()));
 
                 formalStart = formalStart.plusDays(1);
             }
-            planList.add(new ActivityPlan(Long.valueOf(headId),
+            planList.add(new QywxActivityPlan(Long.valueOf(headId),
                     formalEnd,
                     ActivityPlanTypeEnum.During.getPlanTypeCode()));
         }
@@ -105,7 +105,7 @@ public class QywxActivityPlanServiceImpl implements QywxActivityPlanService {
     }
 
     @Override
-    public List<ActivityPlan> getPlanList(Long headId) {
+    public List<QywxActivityPlan> getPlanList(Long headId) {
         return qywxActivityPlanMapper.getPlanList(headId);
     }
 

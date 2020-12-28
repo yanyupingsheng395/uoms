@@ -54,7 +54,7 @@ public class QywxActivityPlanController {
      */
     @RequestMapping("/getPlanList")
     public ResponseBo getPlanList(@RequestParam Long headId) {
-        List<ActivityPlan> planList = qywxActivityPlanService.getPlanList(headId);
+        List<QywxActivityPlan> planList = qywxActivityPlanService.getPlanList(headId);
         return ResponseBo.okWithData(null, planList);
     }
 

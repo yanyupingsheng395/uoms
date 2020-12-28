@@ -15,9 +15,9 @@ import java.util.List;
  */
 public interface QywxActivityPlanMapper {
 
-    void savePlanList(List<ActivityPlan> planList);
+    void savePlanList(List<QywxActivityPlan> planList);
 
-    List<ActivityPlan> getPlanList(Long headId);
+    List<QywxActivityPlan> getPlanList(Long headId);
 
     QywxActivityPlan getPlanInfo(Long planId);
 

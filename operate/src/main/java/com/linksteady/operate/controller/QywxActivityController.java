@@ -218,8 +218,8 @@ public class QywxActivityController {
     @PostMapping("/submitActivity")
     public ResponseBo submitActivity(@RequestParam Long headId, @RequestParam String type) {
         //生成计划明细数据
-        List<ActivityPlan> planList = qywxActivityPlanService.getPlanList(headId);
-        List<ActivityPlan> filterPlanList = planList.stream().filter(y -> y.getPlanType().equalsIgnoreCase(type)).collect(Collectors.toList());
+        List<QywxActivityPlan> planList = qywxActivityPlanService.getPlanList(headId);
+        List<QywxActivityPlan> filterPlanList = planList.stream().filter(y -> y.getPlanType().equalsIgnoreCase(type)).collect(Collectors.toList());
         if(filterPlanList.size() == 0) {
             qywxActivityPlanService.savePlanList(headId,type);
         }

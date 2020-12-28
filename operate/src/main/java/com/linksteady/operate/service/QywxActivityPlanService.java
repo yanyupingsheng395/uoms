@@ -25,7 +25,7 @@ public interface QywxActivityPlanService {
      * @param headId
      * @return
      */
-    List<ActivityPlan> getPlanList(Long headId);
+    List<QywxActivityPlan> getPlanList(Long headId);
 
     /**
      * 获取群组的统计信息
