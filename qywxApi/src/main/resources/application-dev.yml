@@ -4,7 +4,7 @@ server:
 spring:
   datasource:
     druid:
-      url: jdbc:postgresql://39.98.78.201:5432/dapu_test?currentSchema=dapu_test
+      url: jdbc:postgresql://127.0.0.1:5432/dapu_test?currentSchema=dapu_test
       username: dapu_test
       password: daputest123
 
