@@ -34,7 +34,7 @@ public class SyncQywxMsgExecThread implements Runnable{
 
             if(StringUtils.isEmpty(syncFlag)||"N".equals(syncFlag))
             {
-                log.info("同步企业微信消息执行结果已关闭");
+                log.info("同步企业微信消息执行结果已关闭,获取到的syncFlag的值为:{}",syncFlag);
                 continue;
             }
 

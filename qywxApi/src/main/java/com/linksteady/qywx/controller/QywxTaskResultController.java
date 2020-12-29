@@ -1,6 +1,8 @@
 package com.linksteady.qywx.controller;
 
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.common.domain.enums.ConfigEnum;
+import com.linksteady.common.service.ConfigService;
 import com.linksteady.qywx.exception.WxErrorException;
 import com.linksteady.qywx.service.QywxTaskResultService;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,9 @@ public class QywxTaskResultController {
 
     @Autowired
     private QywxTaskResultService qywxTaskResultService;
+
+    @Autowired
+    ConfigService configService;
 
     /**
      * 同步推送任务的执行结果
@@ -49,6 +54,20 @@ public class QywxTaskResultController {
             return ResponseBo.ok();
         } catch (Exception e) {
             log.error("同步企业微信消息执行结果失败，失败原因为{}，错误原因为{}",e);
+            return ResponseBo.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 获取是否开启自动同步企业微信消息结果的开关
+     */
+    @RequestMapping("/getSyncStatus")
+    public ResponseBo getSyncStatus() {
+        try {
+            String syncFlag=configService.getValueByName(ConfigEnum.qywxSyncMsgResult.getKeyCode());
+            return ResponseBo.ok(syncFlag);
+        } catch (Exception e) {
+            log.error("获取同步开关标记失败,{}",e);
             return ResponseBo.error(e.getMessage());
         }
     }

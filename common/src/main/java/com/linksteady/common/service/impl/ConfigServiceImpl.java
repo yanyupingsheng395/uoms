@@ -9,9 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -101,7 +100,6 @@ public class ConfigServiceImpl implements ConfigService {
             {
                 hashOperations.put(CONFIG_KEY_NAME,tconfig.getName(),tconfig);
             }
-
         }
 
         Tconfig tconfig=hashOperations.get(CONFIG_KEY_NAME,name);
