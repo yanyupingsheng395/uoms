@@ -137,6 +137,11 @@ public class CustomerBaseServiceImpl implements CustomerBaseService {
         this.saveChatBase(chatId,true);
     }
 
+    @Override
+    public QywxChatBase getChatBaseDetail(String chatId) {
+        return customerBaseMapper.getChatBaseDetail(chatId);
+    }
+
     /**
      * 根据客户群ID，获取客户群详情，以及客户群列表人员
      * @param chatid

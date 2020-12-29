@@ -55,4 +55,11 @@ public interface CustomerBaseService {
      * @param chatId
      */
     void updateChat(String chatId) throws WxErrorException;
+
+    /**
+     * 根据客户群ID获取客户群详细信息
+     * @param chatId
+     * @return
+     */
+    QywxChatBase getChatBaseDetail(String chatId);
 }

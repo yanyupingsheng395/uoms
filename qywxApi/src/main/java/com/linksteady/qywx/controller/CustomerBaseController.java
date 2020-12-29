@@ -5,6 +5,7 @@ import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.qywx.domain.*;
 import com.linksteady.qywx.exception.WxErrorException;
 import com.linksteady.qywx.service.CustomerBaseService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,6 +44,19 @@ public class CustomerBaseController {
         int count = customerBaseService.getCustomerListCount(chatId);
         List<QywxChatDetail> lists= customerBaseService.getCustomerList(limit, offset,chatId);
         return ResponseBo.okOverPaging(null,count,lists);
+    }
+
+    @RequestMapping("/getChatBaseDetail")
+    @ResponseBody
+    public ResponseBo getChatBaseDetail(@RequestParam String chatId){
+        QywxChatBase chatBase= customerBaseService.getChatBaseDetail(chatId);
+        if(StringUtils.isEmpty( chatBase.getGroupName())){
+            chatBase.setGroupName("群聊");
+        }
+        if(StringUtils.isEmpty(chatBase.getNotice())){
+            chatBase.setNotice("无");
+        }
+        return ResponseBo.okWithData(null,chatBase);
     }
 
 

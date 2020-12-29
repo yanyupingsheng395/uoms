@@ -95,12 +95,14 @@ $( "#btn_Details" ).click( function () {
         $MB.n_warning( '请选择要查看的群！' );
         return;
     }
-    var chatId = selected[0].chatId;
-    $("#customDetail").modal('show');
-    $("#groupName").val(selected[0].groupName);
-    $("#owner").val(selected[0].owner);
-    $("#notice").val(selected[0].notice);
-    getCustomerList(chatId);
+    var chatId = selected[0].chatId
+    window.location.href="/page/goCustomerBase/goChatDetail/"+chatId;
+    // var chatId = selected[0].chatId;
+    // $("#customDetail").modal('show');
+    // $("#groupName").val(selected[0].groupName);
+    // $("#owner").val(selected[0].owner);
+    // $("#notice").val(selected[0].notice);
+    // getCustomerList(chatId);
 } );
 
 function getCustomerList(chatId) {

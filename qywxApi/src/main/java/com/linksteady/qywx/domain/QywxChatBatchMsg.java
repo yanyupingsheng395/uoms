@@ -97,4 +97,29 @@ public class QywxChatBatchMsg {
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
     private Date execDate;
+    /**
+     * 群主数
+     */
+    private long chatOwnerSize;
+    /**
+     * 群聊数
+     */
+    private long chatSize;
+    /**
+     * 需要推送用户数
+     */
+    private long userSize;
+    /**
+     * 实际执行群主数
+     */
+    private long execChatOwnerSize;
+    /**
+     * 成功推送群数
+     */
+    private long execChatSize;
+    /**
+     * 成功推送用户数
+     */
+    private long execUserSize;
+
 }

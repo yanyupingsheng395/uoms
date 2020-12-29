@@ -23,6 +23,12 @@
         <result column="update_dt" jdbcType="TIMESTAMP" property="updateDt"/>
         <result column="exec_by" jdbcType="VARCHAR" property="execBy"/>
         <result column="exec_date" jdbcType="TIMESTAMP" property="execDate"/>
+        <result column="chat_owner_size" jdbcType="DECIMAL" property="chatOwnerSize"/>
+        <result column="chat_size" jdbcType="DECIMAL" property="chatSize"/>
+        <result column="user_size" jdbcType="DECIMAL" property="userSize"/>
+        <result column="exec_chat_owner_size" jdbcType="DECIMAL" property="execChatOwnerSize"/>
+        <result column="exec_chat_size" jdbcType="DECIMAL" property="execChatSize"/>
+        <result column="exec_user_size" jdbcType="DECIMAL" property="execUserSize"/>
     </resultMap>
     <insert id="saveData">
         insert into uo_qywx_chat_batchmsg(batch_msg_name,
@@ -51,7 +57,7 @@
 
     <select id="getDataList" resultMap="chatBatchMsg">
         select batch_msg_id,batch_msg_name,chat_owner_list,text_content,img_url,link_title,link_pic_url,link_desc,link_url,mp_title,mp_url,mp_media_id,
-            send_type,fix_date,status,insert_by,update_by,insert_dt,update_dt,exec_by,exec_date
+            send_type,fix_date,status,insert_by,update_by,insert_dt,update_dt,exec_by,exec_date,chat_owner_size,chat_size,user_size,exec_chat_owner_size,exec_chat_size,exec_user_size
          from uo_qywx_chat_batchmsg  order by insert_dt desc limit #{limit} offset #{offset}
     </select>
 </mapper>

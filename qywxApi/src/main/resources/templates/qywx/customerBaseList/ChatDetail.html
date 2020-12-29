@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <title>客户群详情</title>
+    <th:block th:include="common/include :: common-css" />
+    <th:block th:include="common/include::jstree-css" />
+    <th:block th:include="common/include::bootstrap-table-css" />
+    <th:block th:include="common/include::bootstrap-select-css" />
+    <th:block th:include="common/include::jquery-confirm-css" />
+    <th:block th:include="common/include :: datepicker-css" />
+    <th:block th:include="common/include :: datetimepicker-css" />
+    <link rel="stylesheet" th:href="@{/css/choosestyle.css}" type="text/css">
+</head>
+
+<body class="gray-bg">
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-div ui-layout-center">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                      <!--  <div class="row">
+                            <h5 class="navbar-page-title">客户群详情</h5>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <hr class="hr m-t-0 m-b-5"/>
+                            </div>
+                        </div>-->
+                        <div class="row">
+                            <div class="col-md-12 table-striped">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div style="margin-top:10px;margin-bottom: 10px;">
+                                            <div class="col-sm-3 text-center">
+                                                <div class="btn-group-sm" role="group">
+                                                    <a class="btn btn-info" id="groupName_btn" style="width: 100%">
+                                                        <i class="glyphicon glyphicon-home"></i> <span id="groupName">群名称</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 text-center">
+                                                <div class="btn-group-sm" role="group">
+                                                    <a class="btn btn-info" id="owner_btn" style="width: 100%">
+                                                        <i class="glyphicon glyphicon-user"></i> <span id="owner">群主</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 text-center">
+                                                <div class="btn-group-sm" role="group">
+                                                    <a class="btn btn-info" id="notice_btn" style="width: 100%">
+                                                        <i class="glyphicon glyphicon-file"></i> <span id="notice">群公告</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 text-center">
+                                                <div class="btn-group-sm" role="group">
+                                                    <a class="btn btn-info" id="createTime_btn" style="width: 100%">
+                                                        <i class="glyphicon glyphicon-dashboard"></i> <span id="createTime">创建时间</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 select-table table-striped">
+                        <div class="row">
+                            <p class="navbar-page-title">条件查询</p>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <hr class="hr m-t-0 m-b-5"/>
+                            </div>
+                        </div>
+                        <form id="user-form">
+                            <div class="select-list">
+                                <ul>
+                                    <li>
+                                        周期：<select name="" id="datePeriod" onchange="gradeChange()">
+                                        <option value="A" selected>全部</option>
+                                        <option value="B" >昨日</option>
+                                        <option value="C">近七日</option>
+                                        <option value="D">自定义</option>
+                                    </select>
+                                    </li>
+                                    <li style="display: none" id="st_li">
+                                        开始时间：<input type="text" name="startDt" class="js-datepicker" id="startDt" />
+                                    </li>
+                                    <li style="display: none" id="ed_li">
+                                        结束时间：<input type="text" name="endDt" class="js-datepicker" id="endDt" />
+                                    </li>
+                                    <li>
+                                        <a class="btn btn-primary btn-rounded btn-sm" id="btn_query" onclick="search_data()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                        <a class="btn btn-warning btn-rounded btn-sm" onclick="reset_data()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-12 select-table table-striped">
+                        <div class="row">
+                            <p class="navbar-page-title">群人数说明</p>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <hr class="hr m-t-0 m-b-5"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class=" col-md-12">
+                                <div class="wareSort clearfix">
+                                    <ul id="sort1"></ul>
+                                    <ul id="sort2" style="display: none;"></ul>
+                                    <ul id="sort3" style="display: none;"></ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 select-table table-striped">
+                        <div class="row">
+                            <p class="navbar-page-title">群人数变化图</p>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <hr class="hr m-t-0 m-b-5"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div id="chart1" style="height: 350px;"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <div id="chart2" style="height: 350px;"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <div id="chart3" style="height: 350px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<div data-th-include="qywx/customerBaseList/customerDetail"></div>
+<th:block th:include="common/include::footer" />
+<th:block th:include="common/include::perfect-scrollbar" />
+<th:block th:include="common/include::jquery-validate-js" />
+<th:block th:include="common/include::datepicker-js" />
+<th:block th:include="common/include::common-js" />
+<th:block th:include="common/include::jstree-js" />
+<th:block th:include="common/include::bootstrap-table-js" />
+<th:block th:include="common/include::bootstrap-select-js" />
+<th:block th:include="common/include::jquery-confirm-js" />
+<th:block th:include="common/include::echarts" />
+<script>
+    var date = new Date();
+    var chatId = '[[${chatId}]]';
+    init_date_begin( 'startDt', 'endDt', 'yyyy-mm-dd', 0, 2, 0 );
+    init_date_end( 'startDt', 'endDt', 'yyyy-mm-dd', 0, 2, 0 );
+    $( "#startDt" ).datepicker( 'setStartDate', date );
+    $( "#endDt" ).datepicker( 'setStartDate', date);
+</script>
+<script data-th-src="@{/js/app/qywx/common/template.js}"></script>
+<script data-th-src="@{/js/app/qywx/CustomerBaseList/chatDetail.js}"></script>
+<script data-th-src="@{/js/app/qywx/CustomerBaseList/jquery.sort.js}"></script>
+</body>
+</html>

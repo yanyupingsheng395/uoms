@@ -27,30 +27,37 @@ function getMessageList() {
             visible: false
         },{
             field: 'batchMsgName',
-            title: '群发消息名称',
+            title: '名称',
             align: 'center'
         }, {
-            field: 'status',
-            title: '状态',
-            align: 'center',
-            formatter: function (value, row, index) {
-                if (value == 'todo') {
-                    return "草稿";
-                } else if (value == 'done') {
-                    return "已执行";
-                }else {
-                    return "-";
-                }
-            }
-        }, {
-            field: 'insertBy',
-            title: '创建人',
+            field: 'chatOwnerSize',
+            title: '群主数',
             align: 'center'
         }, {
+            field: 'chatSize',
+            title: '群聊数',
+            align: 'center'
+        }, {
+            field: 'userSize',
+            title: '需要推送用户数',
+            align: 'center'
+        }, {
+            field: 'execChatOwnerSize',
+            title: '实际执行的群主数',
+            align: 'center'
+        }, {
+            field: 'execChatSize',
+            title: '成功推送的群数',
+            align: 'center'
+        }, {
+            field: 'execUserSize',
+            title: '成功推送的用户数',
+            align: 'center'
+        },{
             field: 'insertDt',
             title: '创建时间',
             align: 'center'
-        }]
+        } ]
     };
     $MB.initTable( 'baseTable', settings );
 }

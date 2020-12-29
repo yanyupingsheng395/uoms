@@ -24,4 +24,6 @@ public interface CustomerBaseMapper {
     void deleteChatBase(String chatId);
 
     void deleteChatDetail(String chatId);
+
+    QywxChatBase getChatBaseDetail(String chatId);
 }

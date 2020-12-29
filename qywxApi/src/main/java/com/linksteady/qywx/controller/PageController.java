@@ -3,19 +3,19 @@ package com.linksteady.qywx.controller;
 import com.linksteady.common.annotation.Log;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.service.ConfigService;
-import com.linksteady.qywx.domain.AddUserHead;
-import com.linksteady.qywx.domain.FollowUser;
-import com.linksteady.qywx.domain.QywxParam;
-import com.linksteady.qywx.domain.QywxWelcome;
+import com.linksteady.qywx.domain.*;
 import com.linksteady.qywx.service.*;
 import com.linksteady.qywx.vo.SmsConfigVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -290,6 +290,16 @@ public class PageController  extends BaseController {
     @RequestMapping("/goCustomerBase")
     public String goCustomerBase(){
         return  "qywx/customerBaseList/Baselist";
+    }
+
+    /**
+     * 进入客户群详情页
+     * @return
+     */
+    @RequestMapping("/goCustomerBase/goChatDetail/{chatId}")
+    public String goChatDetail(Model model, @PathVariable(name = "chatId") String chatId){
+        model.addAttribute("chatId",chatId);
+        return  "qywx/customerBaseList/ChatDetail";
     }
 
 

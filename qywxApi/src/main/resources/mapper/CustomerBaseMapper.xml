@@ -45,14 +45,14 @@
     <select id="getDataList" resultMap="contractBase">
         select a.chat_id,a.status,a.insert_dt,a.insert_by,
        a.group_number,a.group_join,a.group_out,a.group_name,b.name as owner,a.notice,a.create_time
-from uo_qywx_chat_base a join uo_qywx_follower_user_list b on a.owner=b.user_id where 1=1
+        from uo_qywx_chat_base a join uo_qywx_follower_user_list b on a.owner=b.user_id where 1=1
         <if test="owner != '' and owner != null">
             and a.owner=#{owner}
         </if>
         <if test="status != '' and status != null">
             and a.status=#{status}
         </if>
-order by a.insert_dt desc limit #{limit} offset #{offset}
+            order by a.insert_dt desc limit #{limit} offset #{offset}
     </select>
     <select id="getCustomerListCount" resultType="int">
         select count(*) from uo_qywx_chat_detail where chat_id=#{chatId}
@@ -69,6 +69,10 @@ order by a.insert_dt desc limit #{limit} offset #{offset}
     </select>
     <select id="getFollowUser" resultType="com.linksteady.qywx.domain.FollowUser">
         select user_id,name from uo_qywx_follower_user_list
+    </select>
+    <select id="getChatBaseDetail" resultMap="contractBase">
+        select a.notice,b.name as owner,a.create_time,a.group_name from uo_qywx_chat_base a join uo_qywx_follower_user_list b on a.owner=b.user_id
+        where a.chat_id=#{chatId}
     </select>
 
     <insert id="insertDetail">
