@@ -12,6 +12,47 @@
     <th:block th:include="common/include::bootstrap-select-css" />
     <th:block th:include="common/include::jquery-confirm-css" />
     <script data-th-src="@{/plugins/clipboard.min.js}"></script>
+    <style>
+        .tag {
+            border: none;
+            -moz-border-radius: 2px;
+            -webkit-border-radius: 2px;
+            display: block;
+            float: left;
+            padding: 2px 5px;
+            text-decoration: none;
+            background: #33cabb;
+            color: #fff;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            font-family: 'Microsoft yahei', Roboto, sans-serif;
+            font-size: 13px;
+            line-height: 18px;
+        }
+        .labelS {
+            padding: 5px 10px;
+            margin-right: 10px;
+            margin-bottom: 5px;
+            border: 1px solid;
+            border-radius: 5px;
+            float: left;
+            cursor: pointer;
+            background-color: rgba(0, 0, 0, 0);
+        }
+
+        #labelDiv {
+            width: 500px;
+            height: 100%;
+            position: relative;
+            margin: 40px auto;
+        }
+        #newLabel {
+            width: 200px;
+            height: 34px;
+            border-radius: 5px;
+            border: cornflowerblue 2px solid;
+        }
+    </style>
 </head>
 
 <body class="gray-bg">
@@ -94,39 +135,7 @@
         </main>
     </div>
 </div>
-
-<div class="modal fade" id="lableModal" data-keyboard="false" data-backdrop="static" tabindex="-1">
-    <div class="modal-dialog" style="width: 41%;">
-        <div class="modal-content">
-            <div class="panel panel-primary" style="text-align: center">
-                <div class="panel-heading">
-                    <h3 class="panel-title">批量打标签</h3>
-                </div>
-                <div class="panel-body">
-                    将给群内3个客户批量打标签，请选择标签
-                </div>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <form id="lableList">
-                            <span class="label label-default" onclick="chooseLable(this)">购物群</span>
-                            <span class="label label-default" onclick="chooseLable(this)">聊天群</span>
-                            <span class="label label-default" onclick="chooseLable(this)">娱乐群</span>
-                            <span class="label label-default" onclick="chooseLable(this)">交流群</span>
-                            <span class="label label-default" onclick="chooseLable(this)">面膜群</span>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary btn-save btn-sm" onclick="saveMaterial()" name="save">保存</button>
-                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div data-th-include="qywx/customerBaseList/customerDetail"></div>
+<div data-th-include="qywx/customerBaseList/chatLable"></div>
 <th:block th:include="common/include::footer" />
 <th:block th:include="common/include::perfect-scrollbar" />
 <th:block th:include="common/include::jquery-validate-js" />
@@ -137,5 +146,6 @@
 <th:block th:include="common/include::jquery-confirm-js" />
 <script data-th-src="@{/js/app/qywx/common/template.js}"></script>
 <script data-th-src="@{/js/app/qywx/CustomerBaseList/Baselist.js}"></script>
+<script data-th-src="@{/js/app/qywx/CustomerBaseList/chatLable.js}"></script>
 </body>
 </html>

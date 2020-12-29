@@ -171,6 +171,7 @@ $("#btn_lable").click(function () {
         return;
     }
     $("#lableModal").modal('show');
+    showAllTag();
 });
 
 function chooseLable(dom) {
@@ -180,4 +181,17 @@ function chooseLable(dom) {
 
 function saveMaterial() {
     $("#lableModal").modal('hide');
+}
+
+
+
+
+//展示父界面
+function showParent() {
+    $("#lableModal").show();
+}
+
+//展示父界面
+function hideParent() {
+    $("#lableModal").hide();
 }

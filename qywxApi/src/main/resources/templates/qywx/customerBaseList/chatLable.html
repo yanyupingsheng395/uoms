@@ -1,0 +1,81 @@
+<div class="modal fade" id="lableModal" data-keyboard="false" data-backdrop="static" tabindex="-1">
+    <div class="modal-dialog" style="width: 41%;">
+        <div class="modal-content">
+            <div class="panel panel-primary" style="text-align: center">
+                <div class="panel-heading">
+                    <h3 class="panel-title">批量打标签</h3>
+                </div>
+                <div class="panel-body">
+                    将给群内3个客户批量打标签，请选择标签
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="allTag" style="margin-top: 5px;"></div>
+                        <div class="col-sm-8">
+                            <span class="labelSpan labelS"  id="addBut" onclick="addTagList()"><i class="glyphicon glyphicon-edit"></i>新增标签组 </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-save btn-sm" onclick="saveMaterial()" name="save">保存</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="add_tag_group" data-backdrop="static" style="margin-top: 15%">
+    <div class="modal-dialog" role="document" style="width: 30%;">
+        <div class="modal-content">
+            <div class="modal-body">
+                <form class="form-horizontal" id="addTagGroup">
+                    <div class="form-group mg-stop">
+                        <label class="col-md-3 control-label">标签组名称：</label>
+                        <div class="col-md-8 input-group">
+                            <input class="form-control" type="text" id="groupName" name="groupName"/>
+                        </div>
+                    </div>
+                    <div style="border: solid 1px #ebebeb;background-color: #FFEE99;" class="form-control">
+                        <p style="color:#EE7700;">提示：在创建标签组的同时，必须创建一个标签</p>
+                    </div>
+                    <div class="form-group mg-stop" style="margin-top: 10px;">
+                        <label class="col-md-3 control-label">标签名称：</label>
+                        <div class="col-md-8 input-group">
+                            <input class="form-control" type="text" id="group_tag_name" name="group_tag_name"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" id="tag_group_save" name="save">确定</button>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal" id="tag_group_close">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="add_tag" data-backdrop="static" style="margin-top: 15%">
+    <div class="modal-dialog" role="document" style="width: 30%;">
+        <div class="modal-content">
+            <div class="modal-body">
+                <form class="form-horizontal" id="addTag">
+                    <div class="form-group mg-stop">
+                        <label class="col-md-3 control-label">标签名称：</label>
+                        <input type="hidden" id="tagflag" name="tagflag">
+                        <input type="hidden" id="tagGroupid" name="tagGroupid">
+                        <div class="col-md-8 input-group">
+                            <input class="form-control" type="text" id="tagName" name="tagName"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" id="tag_save" name="save">确定</button>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal" id="tag_close">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
