@@ -63,8 +63,8 @@ public class QywxChatBatchMsg {
     /**
      * 定时执行的时间  当send_type为B时，此字段有值。
      */
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
     private Date fixDate;
     /**
      * 状态 'todo' 草稿 'done' 已执行

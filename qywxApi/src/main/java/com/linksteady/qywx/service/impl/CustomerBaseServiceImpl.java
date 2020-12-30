@@ -14,11 +14,14 @@ import com.linksteady.qywx.domain.WxError;
 import com.linksteady.qywx.exception.WxErrorException;
 import com.linksteady.qywx.service.CustomerBaseService;
 import com.linksteady.qywx.service.QywxService;
+import com.linksteady.qywx.utils.TimeStampUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.postgresql.jdbc.TimestampUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -105,7 +108,8 @@ public class CustomerBaseServiceImpl implements CustomerBaseService {
         if(detail!=null){
             qywxChatBase.setOwner(detail.getString("owner"));
             qywxChatBase.setGroupName(detail.getString("name"));
-            qywxChatBase.setCreateTime(new Date(Long.parseLong(detail.getString("createTime"))));
+
+            qywxChatBase.setCreateTime(TimeStampUtils.timeStampToDate(detail.getString("createTime")));
             qywxChatBase.setNotice(detail.getString("notice"));
             qywxChatBase.setGroupNumber(detail.getIntValue("groupNumber"));
         }
@@ -180,7 +184,7 @@ public class CustomerBaseServiceImpl implements CustomerBaseService {
                     detail.setUserType(object.getString("type"));
                     detail.setChatId(chatid);
                     detail.setJoinScene(object.getString("join_scene"));
-                    detail.setJoinTime(new Date(Long.parseLong(object.getString("join_time"))));
+                    detail.setJoinTime(TimeStampUtils.timeStampToDate(object.getString("join_time")));
                     list.add(detail);
                 }
             }

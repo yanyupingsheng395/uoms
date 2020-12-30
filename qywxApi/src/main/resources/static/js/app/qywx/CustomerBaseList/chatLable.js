@@ -1,13 +1,3 @@
-$("#btn_lable").click(function () {
-    var selected = $( "#baseTable" ).bootstrapTable( 'getSelections' );
-    var selected_length = selected.length;
-    if (!selected_length) {
-        $MB.n_warning( '请选择需要打标签的群！' );
-        return;
-    }
-    $("#lableModal").modal('show');
-    showAllTag();
-});
 
 function saveMaterial() {
     $("#lableModal").modal('hide');

@@ -42,6 +42,8 @@ public class QywxChatBatchMsgController  extends BaseController {
      */
     @PostMapping("/saveData")
     public ResponseBo saveData(QywxChatBatchMsg qywxChatBatchMsg) {
+        String[] chatArray = qywxChatBatchMsg.getChatOwnerList().split(",");
+        qywxChatBatchMsg.setChatOwnerSize(chatArray.length);
         qywxChatBatchMsg.setInsertBy(getCurrentUser().getUsername());
         qywxChatBatchMsg.setInsertDt(new Date());
         qywxChatBatchMsgService.saveData(qywxChatBatchMsg);

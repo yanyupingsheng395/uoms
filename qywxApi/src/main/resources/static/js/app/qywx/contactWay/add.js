@@ -203,12 +203,17 @@ function clearTag() {
  * 弹出群聊列表界面，并查询群聊
  */
 function addGroupChat() {
-    $.get( "/qywxCustomer/getContractList?limit=100&offset=0", {}, function (r) {
+    var params={param: {owner:'', status: ''}};
+    $.get( "/qywxCustomer/getContractList?limit=100&offset=0", params, function (r) {
         deptData = r.rows;
         var html="";
         if (r.code === 200) {
             for(var i=0;i<deptData.length;i++){
-                html= html+"<option value='"+deptData[i].chatId+"'>"+deptData[i].name+"</option>";
+                if(deptData[i].groupName==""||deptData[i].groupName==null){
+                    html= html+"<option value='"+deptData[i].chatId+"'>群聊</option>";
+                }else{
+                    html= html+"<option value='"+deptData[i].chatId+"'>"+deptData[i].groupName+"</option>";
+                }
             }
             $("#chatList").html(html);
         } else {
@@ -246,10 +251,10 @@ function saveChatImg() {
             console.log(r.data);
             var html=" <tr data-index=\"0\">\n" +
                 "                                                        <td style=\"text-align: center; \">\n" +
-                "                                                            <img style=\"width:120px;height:120px\" src="+code+">\n" +
+                "                                                            <a href=\"http://\" target=\"_blank\">"+text+"</a>\n" +
                 "                                                        </td>\n" +
                 "                                                        <td style=\"text-align: center; \">\n" +
-                "                                                            <a href=\"http://\" target=\"_blank\">"+text+"</a>\n" +
+                "                                                            <img style=\"width:120px;height:120px\" src="+code+">\n" +
                 "                                                        </td>\n" +
                 "                                                    </tr>";
             $("#addtr").append(html);

@@ -45,8 +45,9 @@
                                   send_type,
                                   fix_date,
                                   insert_by,
-                                  insert_dt)values (#{batchMsgName},#{chatOwnerList},#{textContent},#{imgUrl},#{linkTitle},#{linkPicUrl},#{linkDesc},#{linkUrl},#{mpTitle},#{mpUrl},#{mpMediaId}
-                                  ,#{sendType},#{fixDate},#{insertBy},#{insertDt})
+                                  insert_dt,
+                                  chat_owner_size)values (#{batchMsgName},#{chatOwnerList},#{textContent},#{imgUrl},#{linkTitle},#{linkPicUrl},#{linkDesc},#{linkUrl},#{mpTitle},#{mpUrl},#{mpMediaId}
+                                  ,#{sendType},#{fixDate},#{insertBy},#{insertDt},#{chatOwnerSize})
     </insert>
     <delete id="deleteById">
         delete from  uo_qywx_chat_batchmsg where batch_msg_id=#{id}

@@ -70,14 +70,6 @@ function closeSendTime() {
     $("#sendDT").val("");
 }
 
-layui.use('laydate', function(){
-    var laydate = layui.laydate;
-    //日期时间选择器
-    laydate.render({
-        elem: '#test5'
-        ,type: 'datetime'
-    });
-});
 
 /**
  *键盘键入事件
@@ -109,6 +101,9 @@ function validCoupon() {
             },
             textContent: {
                 required: true
+            },
+            chatOwnerList:{
+                required: true
             }
         },
         messages: {
@@ -117,6 +112,9 @@ function validCoupon() {
             },
             textContent: {
                 required: icon + "请输入群发消息内容"
+            },
+            chatOwnerList: {
+                required: icon + "请选择群主"
             }
         }
     };
@@ -124,6 +122,7 @@ function validCoupon() {
 }
 
 function saveCouponData() {
+    getOwner();
     var flag = validator_coupon.form();
     if(flag) {
         $.post("/qywxChatMsg/saveData", $("#smsTemplateAddForm").serialize(), function (r) {
@@ -135,6 +134,10 @@ function saveCouponData() {
             }
         });
     }
+}
+
+function getOwner(){
+    $( "input[name='chatOwnerList']" ).val( user_list.join( "," ) );
 }
 
 //删除
@@ -157,3 +160,26 @@ $("#btn_delete").click(function () {
     }
 
 });
+
+/**
+ * 添加渠道和职员选项
+ * @param selid
+ */
+var user_list =[];//添加人员的集合
+function addRegion(selid) {
+    var id = $( "#" + selid ).find( "option:selected" ).val();
+    var name = $( "#" + selid ).find( "option:selected" ).text();
+    if(id!=""&&id!=null){
+        if(user_list.indexOf(id)==-1){
+            user_list.push(id);
+            $( "#alllist" ).append( "<span class=\"tag\"><span>" + name + "&nbsp;&nbsp;</span><a style=\"color: #fff;cursor: pointer;\" onclick=\"regionRemove(this, \'" + id + "\', \'" + selid + "\')\">x</a></span>" );
+        }
+    }
+}
+
+// 移除region数据
+function regionRemove(dom, id, selid) {
+    $( dom ).parent().remove();
+    id=parseInt(id);
+    user_list.splice( user_list.indexOf( id ), 1 );
+}

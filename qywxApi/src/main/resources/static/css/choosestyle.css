@@ -17,7 +17,7 @@ a { text-decoration: none; color: #333; }
 .crumbNav font { padding: 0 2px; font-family: simsun; }
 /**选择商品分类**/
 .wareSort { padding: 15px 8px 15px 7px; border: 1px solid #ddd; background-color: #f6f6f6; }
-.wareSort ul { float: left; width: 32%; padding: 10px; border: 1px solid #ddd; margin-right: 7px; margin-left: 8px; background-color: #fff; }
+.wareSort ul { float: left; width: 30%; padding: 10px; border: 1px solid #ddd; margin-right: 7px; margin-left: 8px; background-color: #fff; }
 .wareSort ul li a { display: block; padding-right: 25px; padding-left: 10px; border: 1px solid #fff; line-height: 28px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .wareSort ul li a:hover { color: #52bea6; }
 .wareSort ul li.active a { border-color: #52bea6; background: #cefff4 url(../images/arrow.png) no-repeat right center; color: #52bea6; }

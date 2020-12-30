@@ -11,10 +11,28 @@
     <th:block th:include="common/include::bootstrap-table-css" />
     <th:block th:include="common/include::bootstrap-select-css" />
     <th:block th:include="common/include::jquery-confirm-css" />
+    <th:block th:include="common/include::datetimepicker-css" />
+    <th:block th:include="common/include::datepicker-css" />
     <script data-th-src="@{/plugins/clipboard.min.js}"></script>
-    <link rel="stylesheet" th:href="@{/css/fullcalendar.css}" type="text/css">
-    <link rel="stylesheet" th:href="@{/css/index.css}" type="text/css">
-    <link rel="stylesheet" th:href="@{/css/layui.css}" type="text/css">
+    <style>
+        .tag {
+            border: none;
+            -moz-border-radius: 2px;
+            -webkit-border-radius: 2px;
+            display: block;
+            float: left;
+            padding: 2px 5px;
+            text-decoration: none;
+            background: #33cabb;
+            color: #fff;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            font-family: 'Microsoft yahei', Roboto, sans-serif;
+            font-size: 13px;
+            line-height: 18px;
+        }
+
+    </style>
 </head>
 
 <body class="gray-bg">
@@ -39,33 +57,36 @@
                                 <div class="row">
                                     <div class="col-md-8">
                                         <div class="form-group">
-                                            <label class="col-xs-12" style="font-weight: bold;">基础信息：</label>
-                                            <div class="col-md-12">
-                                                <div class="example-box">
-                                                    <label class="control-label">群发名称：</label>
-                                                    <label class="radio-inline radio-primary">
-                                                        <input  type="text" class="form-control"  name="batchMsgName" id="batchMsgName" style="width: 432px;">
-                                                    </label>
-                                                </div>
-                                                <div class="example-box" style="margin-top: 10px;">
-                                                    <label class="control-label">选择群主：</label>
-                                                    <label class="radio-inline radio-primary">
-                                                        <select name="chatOwnerList" id="selectOwner"  class="form-control valid" style="width: 432px;">
-                                                            <option value="" th:each="user,FollowUser : ${foll}" th:text="${user.name}" th:value="${user.userId}"></option>
-                                                        </select>
-                                                    </label>
-                                                </div>
+                                            <label  class="col-sm-2 control-label">群发名称：</label>
+                                            <div class="col-sm-6">
+                                                <input  type="text" class="form-control"  name="batchMsgName" id="batchMsgName" >
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="col-xs-12" style="font-weight: bold;">群发消息1：</label>
-                                            <label class="radio-inline radio-primary">
-                                                <textarea class="form-control" id="textContent" name="textContent" style="height: 102px;width:520px;border: solid 1px #ebebeb;" oninput="smsContentValid()"></textarea>
-                                            </label>
+                                            <label class="col-md-2 control-label">选择群主：</label>
+                                            <div class="col-sm-6 ">
+                                                <select class="form-control" id="selectOwner">
+                                                    <option value="" th:each="user,FollowUser : ${foll}" th:text="${user.name}" th:value="${user.userId}"></option>
+                                                </select>
+                                            </div>
+                                            <a onclick="addRegion('selectOwner')">&nbsp;<i class="fa fa-plus-circle"></i></a>
                                         </div>
                                         <div class="form-group">
-                                            <label class="col-xs-12" style="font-weight: bold;">群发消息2：</label>
-                                            <div class="col-md-12">
+                                            <label class="col-md-2 control-label">选择群主列表：</label>
+                                            <div class="col-md-6 col-md-offset-2" id="alllist" style="border: dashed 1px #e7eaec;margin-left:1%"></div>
+                                            <div class="col-md-8 input-group">
+                                                <input type="hidden" name="chatOwnerList">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-2 control-label">群发消息1：</label>
+                                            <div class="col-sm-6 ">
+                                                <textarea class="form-control" id="textContent" name="textContent" style="height: 102px;border: solid 1px #ebebeb;" oninput="smsContentValid()"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="col-md-2 control-label" >群发消息2：</label>
+                                            <div class="col-md-10 control-label">
                                                 <ul id="myTabs" class="nav nav-tabs" role="tablist">
                                                     <li class="active"><a href="#image" id="image-tab" role="tab" data-toggle="tab"><i class="fa fa-image"></i>&nbsp;图片</a>
                                                     </li>
@@ -81,8 +102,8 @@
                                                             <div class="col-md-12">
                                                                 <div class="form-horizontal">
                                                                     <div class="form-group" style="margin-bottom: 2px;">
-                                                                        <label class="col-md-1 control-label">图片地址：</label>
-                                                                        <div class="col-md-10">
+                                                                        <label class="col-md-2 control-label">图片地址：</label>
+                                                                        <div class="col-md-9">
                                                                             <input class="form-control" name="imgUrl" id="imgUrl"/>
                                                                         </div>
                                                                     </div>
@@ -93,26 +114,26 @@
                                                     <div class="tab-pane fade" id="web">
                                                         <div class="form-horizontal">
                                                             <div class="form-group">
-                                                                <label class="col-md-1 control-label">消息标题：</label>
-                                                                <div class="col-md-11">
+                                                                <label class="col-md-2 control-label">消息标题：</label>
+                                                                <div class="col-md-9">
                                                                     <input class="form-control" name="linkTitle" id="linkTitle">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group">
-                                                                <label class="col-md-1 control-label">消息描述：</label>
-                                                                <div class="col-md-11">
+                                                                <label class="col-md-2 control-label">消息描述：</label>
+                                                                <div class="col-md-9">
                                                                     <input class="form-control" name="linkDesc" id="linkDesc">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group">
-                                                                <label class="col-md-1 control-label">消息地址：</label>
-                                                                <div class="col-md-11">
+                                                                <label class="col-md-2 control-label">消息地址：</label>
+                                                                <div class="col-md-9">
                                                                     <input class="form-control" name="linkUrl" id="linkUrl">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group" style="margin-bottom: 2px;">
-                                                                <label class="col-md-1 control-label">封面地址：</label>
-                                                                <div class="col-md-11">
+                                                                <label class="col-md-2 control-label">封面地址：</label>
+                                                                <div class="col-md-9">
                                                                     <input class="form-control" name="linkPicUrl" id="linkPicUrl">
                                                                 </div>
                                                             </div>
@@ -121,23 +142,23 @@
                                                     <div class="tab-pane fade" id="miniprogram">
                                                         <div class="form-horizontal">
                                                             <div class="form-group">
-                                                                <label class="col-md-1 control-label">小程序标题：</label>
-                                                                <div class="col-md-11">
+                                                                <label class="col-md-2 control-label">小程序标题：</label>
+                                                                <div class="col-md-9">
                                                                     <input class="form-control" name="mpTitle" id="mpTitle">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group" >
-                                                                <label class="col-md-1 control-label">小程序地址：</label>
-                                                                <div class="col-md-11">
+                                                                <label class="col-md-2 control-label">小程序地址：</label>
+                                                                <div class="col-md-9">
                                                                     <input class="form-control" name="mpUrl" id="mpUrl">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group" >
-                                                                <label class="col-md-1 control-label">小程序MediaID：</label>
-                                                                <div class="col-md-10">
+                                                                <label class="col-md-2 control-label">小程序MediaID：</label>
+                                                                <div class="col-md-9">
                                                                     <input class="form-control" name="mpMediaId" id="mediaId" readonly="readonly">
                                                                 </div>
-                                                                <a id='addShopDiscountBtn' style="cursor:pointer;color: #409eff !important;" onclick="chooseMedia()"><i class="fa fa-plus-circle"></i>添加</a>
+                                                                <a id='addShopDiscountBtn' style="cursor:pointer;color: #409eff !important;left: 0px;" onclick="chooseMedia()"><i class="fa fa-plus-circle"></i>添加</a>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -145,24 +166,25 @@
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label class="col-xs-12" style="font-weight: bold;">群发时间：</label>
-                                            <div class="col-md-12">
-                                                <label class="lyear-radio radio-inline radio-primary" onclick="closeSendTime()" style="padding-top: 0px;">
+                                            <label class="col-md-2 control-label">群发时间：</label>
+                                            <div class="col-sm-6 " style="padding-top: 7px;">
+                                                <label class="lyear-radio radio-inline radio-primary" onclick="$('#pushDateDiv').hide()" style="padding-top: 0px;">
                                                     <input type="radio" name="sendType" value="A" checked="checked"><span>立即发送</span>
                                                 </label>
-                                                <label class="lyear-radio radio-inline radio-primary" onclick="showSendTime()" style="padding-top: 0px;">
+                                                <label class="lyear-radio radio-inline radio-primary" onclick="$('#pushDateDiv').show()" style="padding-top: 0px;">
                                                     <input type="radio" name="sendType" value="B" ><span>定时发送</span>
                                                 </label>
                                             </div>
                                         </div>
-                                        <div class="form-group" id="sendtime" style="display: none">
-                                            <div class="col-md-4">
-                                                发送时间：<input  class="layui-input" id="test5" name="fixDate">
+                                        <div class="form-group" id="pushDateDiv" hidden>
+                                            <label class="col-md-3 control-label">定时执行时间：</label>
+                                            <div class="col-md-7">
+                                                <input type="text" id="fixDate" name="fixDate" class="form-control"/>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <div style="position:absolute;height: 470px;width:100%;background:url(/images/app_content_01.png) no-repeat -23px -39px;}"></div>
+                                        <div style="position:absolute;height: 420px;width:100%;background:url(/images/app_content_01.png) no-repeat -23px -39px;}"></div>
                                         <div class="bubble" style="position: relative;margin-top: 140px;width: 233px;">
                                             <div class="demo clearfix">
                                                 <div class="article" id="article" style="margin-left: 95px;">请输入发送内容</div>
@@ -187,6 +209,8 @@
 <div data-th-include="qywx/chooseMedia/chooseMedia"></div>
 <th:block th:include="common/include::footer" />
 <th:block th:include="common/include::perfect-scrollbar" />
+<th:block th:include="common/include::datepicker-js" />
+<th:block th:include="common/include::datetimepicker-js" />
 <th:block th:include="common/include::jquery-validate-js" />
 <th:block th:include="common/include::common-js" />
 <th:block th:include="common/include::jstree-js" />
@@ -196,10 +220,23 @@
 <th:block th:include="common/include::jquery-confirm-js" />
 <script data-th-src="@{/plugins/imageUpload/cupload.js}"></script>
 <script data-th-src="@{/js/app/qywx/common/template.js}"></script>
-<script data-th-src="@{/plugins/fullCalendar/moment.min.js}"></script>
-<script data-th-src="@{/plugins/fullCalendar/fullcalendar.min.js}"></script>
-<script data-th-src="@{/plugins/fullCalendar/layui.all.js}"></script>
 <script data-th-src="@{/js/app/qywx/CustomerBaseSend/BaseSendMsg.js}"></script>
 <script data-th-src="@{/js/app/qywx/chooseMedia/chooseMedia.js}"></script>
+<script>
+
+    $("#fixDate").datetimepicker({
+        locale: 'zh-CN',
+        format: 'YYYY-MM-DD HH:mm',
+        minDate: new Date(),
+        inline: false,
+        sideBySide: true,
+        icons: {
+            up: "fa fa-chevron-up",
+            down: "fa fa-chevron-down",
+            previous: "fa fa-chevron-left",
+            next: "fa fa-chevron-right"
+        }
+    });
+</script>
 </body>
 </html>

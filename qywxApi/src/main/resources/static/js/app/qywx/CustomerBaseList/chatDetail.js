@@ -1,11 +1,11 @@
-var chartX_1=["202001","202002","202003","202004","202005","202006","202007","202008","202009","202010","202011","202012"];
-var chaty_1=["10","3","34","23","11","1","6","33","64","24","13","6"];
-var xdata_2=["202001","202002","202003","202004","202005","202006","202007","202008","202009","202010","202011","202012"];
-var ydata1_2=["10","3","34","23","11","1","6","33","64","24","13","6"];
-var ydata2_2=["1","0","2","0","0","3","4","1","0","0","4","5"];
-var xdata_3=["202001","202002","202003","202004","202005","202006","202007","202008","202009","202010","202011","202012"];
-var ydata1_3=["10","3","34","23","11","1","6","33","64","24","13","6"];
-var ydata2_3=["1","0","2","0","0","3","4","1","0","0","4","5"];
+var chartX_1=["周一","周二","周三","周四","周五","周六","周日"];
+var chaty_1=["10","3","34","23","11","1","6"];
+var xdata_2=["周一","周二","周三","周四","周五","周六","周日"];
+var ydata1_2=["10","3","34","23","11","1","6"];
+var ydata2_2=["1","0","2","0","0","3","4"];
+var xdata_3=["周一","周二","周三","周四","周五","周六","周日"];
+var ydata1_3=["10","3","34","23","11","1","6"];
+var ydata2_3=["1","0","2","0","0","3","4"];
 $(function () {
     chart1(chartX_1,chaty_1);
     chart2(xdata_2,ydata1_2,ydata2_2);
@@ -17,10 +17,11 @@ function getChatBaseDetail() {
     $.get( "/qywxCustomer/getChatBaseDetail?chatId="+chatId, {}, function (r) {
         if (r.code === 200) {
             var redata=r.data;
-            document.getElementById("groupName").innerHTML="群名称:"+redata.groupName;
+            document.getElementById("groupName").innerHTML="该群创建于（"+redata.createTime+"),群主是（"+redata.groupName+"),群名称是（"+redata.groupName+")";
+           /* document.getElementById("groupName").innerHTML="群名称:"+redata.groupName;
             document.getElementById("owner").innerHTML="群主:"+redata.owner;
             document.getElementById("notice").innerHTML="群公告:"+redata.notice;
-            document.getElementById("createTime").innerHTML="创建时间:"+redata.createTime;
+            document.getElementById("createTime").innerHTML="创建时间:"+redata.createTime;*/
         }
     } );
 }
