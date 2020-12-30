@@ -18,10 +18,6 @@ function getChatBaseDetail() {
         if (r.code === 200) {
             var redata=r.data;
             document.getElementById("groupName").innerHTML="该群创建于（"+redata.createTime+"),群主是（"+redata.groupName+"),群名称是（"+redata.groupName+")";
-           /* document.getElementById("groupName").innerHTML="群名称:"+redata.groupName;
-            document.getElementById("owner").innerHTML="群主:"+redata.owner;
-            document.getElementById("notice").innerHTML="群公告:"+redata.notice;
-            document.getElementById("createTime").innerHTML="创建时间:"+redata.createTime;*/
         }
     } );
 }
