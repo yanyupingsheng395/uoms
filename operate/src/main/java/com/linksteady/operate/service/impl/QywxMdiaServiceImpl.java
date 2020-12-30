@@ -8,6 +8,7 @@ import com.linksteady.common.domain.SysInfoBo;
 import com.linksteady.common.service.CommonFunService;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.common.util.crypto.SHA1;
+import com.linksteady.operate.constant.QywxApiPathConstants;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.QywxMdiaService;
 import lombok.extern.slf4j.Slf4j;
@@ -43,7 +44,7 @@ public class QywxMdiaServiceImpl implements QywxMdiaService {
         String identityType="PRODUCT";
         String signature= SHA1.gen(timestamp,identityType,productId);
         //调用http请求
-        String url=qywxUrl+"/api/getMpMediaId";
+        String url=qywxUrl+ QywxApiPathConstants.GET_MEDIA_ID;
 
         Map<String,String> param= Maps.newHashMap();
         param.put("timestamp",timestamp);

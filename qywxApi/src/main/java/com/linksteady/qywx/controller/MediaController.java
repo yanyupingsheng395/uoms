@@ -73,7 +73,7 @@ public class MediaController extends BaseController {
     public ResponseBo getMediaImgList(QueryRequest request) {
         int limit = request.getLimit();
         int offset = request.getOffset();
-        int count=mediaService.getMediaImageCount();
+        int count=mediaService.getMediaImgCount();
         List<QywxMediaImg> qywxImageList = mediaService.getMediaImgList(limit,offset);
         return ResponseBo.okOverPaging(null, count, qywxImageList);
     }

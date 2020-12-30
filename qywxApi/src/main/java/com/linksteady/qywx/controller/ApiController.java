@@ -86,15 +86,15 @@ public class ApiController {
 
 
     /**
-     * 获取临时素材图片列表
+     * 获取临时素材图片列表(有效)
      * @param request
      * @return
      */
-    @RequestMapping("/getMediaImgList")
-    public ResponseBo getMediaImgList(HttpServletRequest request,
+    @RequestMapping("/getValidMediaImgList")
+    public ResponseBo getValidMediaImgList(HttpServletRequest request,
                                       @RequestParam("limit")int limit,
                                       @RequestParam("offset")int offset) {
-        List<QywxMediaImg> qywxImageList = mediaService.getMediaImgList(limit,offset);
+        List<QywxMediaImg> qywxImageList = mediaService.getValidMediaImgList(limit,offset);
         try {
             return ResponseBo.okWithData(null,qywxImageList);
         } catch (Exception e) {
@@ -103,13 +103,12 @@ public class ApiController {
     }
 
     /**
-     * 获取临时素材数量
-     * @param request
+     * 获取临时素材数量(有效)
      * @return
      */
-    @RequestMapping("/getMediaImgCount")
-    public ResponseBo getMediaImgCount(HttpServletRequest request) {
-        int count=mediaService.getMediaImageCount();
+    @RequestMapping("/getValidMediaImgCount")
+    public ResponseBo getMediaImgCount() {
+        int count=mediaService.getValidMediaImgCount();
         try {
             return ResponseBo.okWithData(null,count);
         } catch (Exception e) {

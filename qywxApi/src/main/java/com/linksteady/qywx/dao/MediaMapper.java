@@ -51,7 +51,31 @@ public interface MediaMapper {
 
     void saveMediaImg(String title,String url,String insertBy,String fileName);
 
-    int getMediaImageCount();
+    /**
+     * 获取所有的临时素材
+     * @return
+     */
+    int getMediaImgCount();
 
+    /**
+     * 获取所有的临时素材明细
+     * @param limit
+     * @param offset
+     * @return
+     */
     List<QywxMediaImg> getMediaImgList(int limit, int offset);
+
+    /**
+     * 获取有效的临时素材
+     * @return
+     */
+    int getValidMediaImgCount();
+
+    /**
+     * 获取有效的临时素材明细
+     * @param limit
+     * @param offset
+     * @return
+     */
+    List<QywxMediaImg> getValidMediaImgList(int limit, int offset);
 }

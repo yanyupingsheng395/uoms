@@ -254,14 +254,23 @@ public class MediaServiceImpl implements MediaService {
     }
 
     @Override
-    public int getMediaImageCount() {
-        return mediaMapper.getMediaImageCount();
+    public int getMediaImgCount() {
+        return mediaMapper.getMediaImgCount();
     }
 
     @Override
     public List<QywxMediaImg> getMediaImgList(int limit, int offset) {
-
         return mediaMapper.getMediaImgList(limit,offset);
+    }
+
+    @Override
+    public int getValidMediaImgCount() {
+        return mediaMapper.getValidMediaImgCount();
+    }
+
+    @Override
+    public List<QywxMediaImg> getValidMediaImgList(int limit, int offset) {
+        return mediaMapper.getValidMediaImgList(limit,offset);
     }
 
     /**

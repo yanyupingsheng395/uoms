@@ -8,6 +8,7 @@ import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.SysInfoBo;
 import com.linksteady.common.service.CommonFunService;
 import com.linksteady.common.util.OkHttpUtil;
+import com.linksteady.operate.constant.QywxApiPathConstants;
 import com.linksteady.operate.domain.QywxMediaImg;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class QywxChooseMediaController {
             throw new Exception("企业微信模块尚未配置");
         }
         String qywxUrl=sysInfoBo.getSysDomain();
-        String url=qywxUrl+"/api/getMediaImgList";
+        String url=qywxUrl+ QywxApiPathConstants.GET_VALID_MEDIA_LIST;
         Map<String,String> param=new HashMap<>();
         param.put("limit",request.getLimit()+"");
         param.put("offset",request.getOffset()+"");
@@ -50,7 +51,7 @@ public class QywxChooseMediaController {
         JSONObject jsonObject = JSON.parseObject(result);
         List<QywxMediaImg> qywxImageList = new ArrayList<>();
         int count=0;
-        String res = OkHttpUtil.getRequest(qywxUrl+"/api/getMediaImgCount");
+        String res = OkHttpUtil.getRequest(qywxUrl+QywxApiPathConstants.GET_VALID_MEDIA_COUNT);
         JSONObject jscount = JSON.parseObject(res);
         if(null==jsonObject||200!=jsonObject.getIntValue("code")||null==jscount||200!=jscount.getIntValue("code")){
             return ResponseBo.error();
@@ -78,7 +79,7 @@ public class QywxChooseMediaController {
                 throw new Exception("企业微信模块尚未配置");
             }
             String qywxUrl=sysInfoBo.getSysDomain();
-            String url=qywxUrl+"/api/uploadQywxMaterial";
+            String url=qywxUrl+QywxApiPathConstants.UPDATE_QYWX_MEDIA;
             Map<String,String> param=new HashMap<>();
             param.put("title",title);
             param.put("base64Code",base64Code);
