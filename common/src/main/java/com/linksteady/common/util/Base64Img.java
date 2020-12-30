@@ -17,14 +17,13 @@ public class Base64Img {
      * @return
      * @throws Exception
      */
-    public static File base64ToFile(String base64, String fileName) throws Exception {
+    public static File base64ToFile(String base64, String fileName,String filePath) throws Exception {
         if (base64.contains("data:image")) {
             base64 = base64.substring(base64.indexOf(",") + 1);
         }
         base64 = base64.toString().replace("\r\n", "");
         File file = null;
-        //创建文件目录
-        String filePath = "file/";
+
         File dir = new File(filePath);
         if (!dir.exists() && !dir.isDirectory()) {
             dir.mkdirs();

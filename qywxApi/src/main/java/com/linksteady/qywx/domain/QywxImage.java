@@ -18,4 +18,6 @@ public class QywxImage {
     private String insertBy;
 
     private String imgTitle;
+
+    private String fileName;
 }

@@ -419,16 +419,25 @@ public class QywxClientController {
         }
     }
 
+    /**
+     * 获取临时素材的mediaId
+     * @param identityId
+     * @param identityType
+     * @param request
+     * @return
+     * @throws URISyntaxException
+     */
     @RequestMapping("/getMediaId")
-    public Map<String, Object> getMediaId(@RequestParam Long identityId,@RequestParam String identityType, HttpServletRequest request) throws URISyntaxException {
+    public ResponseBo getMediaId(@RequestParam Long identityId,@RequestParam String identityType, HttpServletRequest request) throws URISyntaxException {
         UserBo user =(UserBo) SecurityUtils.getSubject().getPrincipal();
         if(user==null){
             throw new IllegalArgumentException("未获取到登录会话！");
         }
-        if (user.getUserId()==0) {
+        try {
             return ResponseBo.okWithData(null,mediaService.getMpMediaId(identityType,identityId));
-        } else {
-            return null;
+        } catch (Exception e) {
+            log.error("获取临时素材ID错误，原因为{}",e);
+            return ResponseBo.error("获取临时素材ID错误");
         }
     }
 

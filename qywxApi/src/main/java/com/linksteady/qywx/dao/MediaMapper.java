@@ -32,24 +32,24 @@ public interface MediaMapper {
      * @param mediaId
      * @param expreDt
      */
-    void updateQywxMediaImgBymediaId(Long identityId,String identityType,String mediaId, LocalDateTime expreDt,byte[] mediaContent);
+    void updateQywxMediaImgBymediaId(String fileName,Long identityId,String identityType,String mediaId, LocalDateTime expreDt);
 
     /**
      * 新增uo_qywx_media_img数据
-     * @param mediaContent
+     * @param fileName
      * @param nowtime
      * @param mediaId
      * @param expreDt
      * @param identityId
      * @param identityType
      */
-    void saveQywxMediaImg(byte[] mediaContent, String title,LocalDateTime nowtime, String mediaId, LocalDateTime expreDt, Long identityId, String identityType);
+    void saveQywxMediaImg(String fileName, String title,LocalDateTime nowtime, String mediaId, LocalDateTime expreDt, Long identityId, String identityType);
 
     int getImageCount();
 
     List<QywxImage> getImageList(int limit, int offset);
 
-    void saveMediaImg(String title,String url,String insertBy);
+    void saveMediaImg(String title,String url,String insertBy,String fileName);
 
     int getMediaImageCount();
 

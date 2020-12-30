@@ -24,7 +24,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/wxMedia")
-public class QywxChooseMedia {
+public class QywxChooseMediaController {
     @Autowired
     CommonFunService commonFunService;
 
@@ -65,7 +65,7 @@ public class QywxChooseMedia {
     }
 
     /**
-     * 上传图片
+     * 上传图片(临时素材)
      * @param
      * @return
      */

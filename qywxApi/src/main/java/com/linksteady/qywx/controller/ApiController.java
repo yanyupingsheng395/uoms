@@ -3,6 +3,8 @@ package com.linksteady.qywx.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.Base64Img;
+import com.linksteady.common.util.MD5Utils;
+import com.linksteady.qywx.constant.FilePathConsts;
 import com.linksteady.qywx.domain.QywxMediaImg;
 import com.linksteady.qywx.exception.WxErrorException;
 import com.linksteady.qywx.service.MediaService;
@@ -116,7 +118,7 @@ public class ApiController {
     }
 
     /**
-     * 上传图片
+     * 上传图片(临时素材)
      * @param
      * @return
      */
@@ -126,8 +128,10 @@ public class ApiController {
                                          @RequestParam("base64Code") String base64Code)  {
         try {
             String fileSuffix = base64Code.substring("data:image/".length(), base64Code.lastIndexOf(";base64,"));
-            String fileName="tmp." + fileSuffix;
-            File file = Base64Img.base64ToFile(base64Code, fileName);
+            //生成文件名 md5(title+时间戳.fileSuffix)
+            String timestamp= String.valueOf(System.currentTimeMillis());
+            String fileName= MD5Utils.encrypt(title+"_"+timestamp+"."+fileSuffix);
+            File file = Base64Img.base64ToFile(base64Code, fileName, FilePathConsts.TEMP_IMAGE_PATH);
             mediaService.uploadQywxMaterial(title,file,"");
             return ResponseBo.ok();
         } catch (Exception e) {

@@ -3,6 +3,7 @@ package com.linksteady.qywx.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.linksteady.common.util.OkHttpUtil;
+import com.linksteady.qywx.constant.FilePathConsts;
 import com.linksteady.qywx.constant.WxPathConsts;
 import com.linksteady.qywx.dao.MediaMapper;
 import com.linksteady.qywx.domain.QywxImage;
@@ -16,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -46,6 +48,7 @@ public class MediaServiceImpl implements MediaService {
     }
 
     @Override
+    @Transactional
     public void uploadImage(String title, File file,String opUserName) throws Exception {
         StringBuffer requestUrl = new StringBuffer(qywxService.getRedisConfigStorage().getApiUrl(WxPathConsts.Media.IMG_UPLOAD));
         requestUrl.append("?access_token=" + qywxService.getAccessToken());
@@ -62,7 +65,7 @@ public class MediaServiceImpl implements MediaService {
         }else
         {
             String imgUrl=jsonObject.getString("url");
-            mediaMapper.saveMediaImg(title,imgUrl,opUserName);
+            mediaMapper.saveMediaImg(title,imgUrl,opUserName,file.getName());
         }
     }
 
@@ -75,10 +78,12 @@ public class MediaServiceImpl implements MediaService {
      * @return
      */
     @Override
-    public String getMpMediaId(String identityType,Long identityId) {
+    @Transactional
+    public String getMpMediaId(String identityType,Long identityId) throws Exception{
         String mediaId="";
         QywxMediaImg qywxMediaImg=mediaMapper.getQywxMediaImg(identityId,identityType);
 
+        //根据标记类型、标记ID 判断是否能找到文件内容
         if(null!=qywxMediaImg)
         {
             long now= Timestamp.valueOf(LocalDateTime.now()).getTime();
@@ -86,15 +91,15 @@ public class MediaServiceImpl implements MediaService {
             long expireTime= null==qywxMediaImg.getMediaExpireDate()?0l:Timestamp.valueOf(qywxMediaImg.getMediaExpireDate()).getTime();
             if(now>expireTime|| StringUtils.isEmpty(qywxMediaImg.getMediaId())){
                 //如果失效，那么就重新生成。
-                byte[] mediaContent = getMediaContent(identityType, identityId);
-                if(mediaContent==null){
+               File mediaFile = getMediaContent(identityType, identityId);
+                if(mediaFile==null){
                     log.error("mediaContent未获取到值，请检查数据。");
                     return null;
                 }
-                JSONObject object = getMediaId(mediaContent);
+                JSONObject object = getMediaId(mediaFile);
                 mediaId=(String)object.get("mediaId");
                 LocalDateTime expreDt= (LocalDateTime) object.get("expreDt");
-                mediaMapper.updateQywxMediaImgBymediaId(identityId,identityType,mediaId,expreDt,mediaContent);
+                mediaMapper.updateQywxMediaImgBymediaId(mediaFile.getName(),identityId,identityType,mediaId,expreDt);
             }else{
                 mediaId=qywxMediaImg.getMediaId();
             }
@@ -102,12 +107,12 @@ public class MediaServiceImpl implements MediaService {
         }else
         {
            //找不到，调用生成逻辑
-            byte[] mediaContent = getMediaContent(identityType, identityId);
-            JSONObject object = getMediaId(mediaContent);
+            File mediaFile = getMediaContent(identityType, identityId);
+            JSONObject object = getMediaId(mediaFile);
             mediaId=(String)object.get("mediaId");
             LocalDateTime expreDt= (LocalDateTime) object.get("expreDt");
             LocalDateTime nowtime = LocalDateTime.now();//新增时间
-            mediaMapper.saveQywxMediaImg(mediaContent,"",nowtime,mediaId,expreDt,identityId,identityType);
+            mediaMapper.saveQywxMediaImg(mediaFile.getName(),"",nowtime,mediaId,expreDt,identityId,identityType);
 
         }
         return mediaId;
@@ -120,7 +125,7 @@ public class MediaServiceImpl implements MediaService {
      *
      *  identityType 可选的值有 PRODUCT表示商品 COUPON表示优惠券
      */
-    private synchronized byte[] getMediaContent(String identityType,Long identityId){
+    private synchronized File getMediaContent(String identityType,Long identityId) throws Exception{
         if(StringUtils.isEmpty(identityType)||identityId==null){
             log.error("传入数据有误，请查看数据是否正常！");
             return null;
@@ -131,26 +136,33 @@ public class MediaServiceImpl implements MediaService {
             //获取商品对应的图片地址
             String url=mediaMapper.getProductMediaContent(identityId);
             if(StringUtils.isNoneEmpty(url)){
+                //todo 此处需要重构
                 mediaContent=getImageByte(url);
             }else{
+                //从默认的配置表获取图片内容
                 qywxParam=mediaMapper.getMediaContent("PRODUCT");
                 mediaContent=qywxParam.getMediaContent();
             }
         }else if("COUPON".equals(identityType)){
+            //从默认的配置表获取
             qywxParam=mediaMapper.getMediaContent("COUPON");
             mediaContent=qywxParam.getCouponMediaContent();
         }else{
             log.error("错误类型，请检查数据是否正确！");
             return null;
         }
-        return  mediaContent;
+
+        String fileName=identityType+"_"+identityId+"_"+System.currentTimeMillis()+".png";
+        //生成文件
+        File file = byteArrayToFile(mediaContent,fileName, FilePathConsts.TEMP_IMAGE_PATH);
+        return  file;
     };
 
     /**
      * 拿到图片内容，调用企业微信媒体素材接口，接口会返回mediaId和expire_date, 拿到以后更新uo_qywx_media_img
      * @return
      */
-    private  JSONObject  getMediaId(byte[] mediaContent){
+    private  JSONObject  getMediaId(File mediaFile){
             //调用企业微信接口，完成临时素材的上传
             String token="";
             try {
@@ -164,18 +176,7 @@ public class MediaServiceImpl implements MediaService {
             requestUrl.append("&access_token=" + token);
             log.info("上传临时素材的请求url:{}", requestUrl.toString());
 
-            File file= null;
-            try {
-                String fileName="miniprogram_"+System.currentTimeMillis()+".png";
-                file = byteArrayToFile(mediaContent,fileName);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            if(file==null){
-                return null;
-            }
-
-            String tempMediaResult= OkHttpUtil.postUploadMedia(requestUrl.toString(),file);
+            String tempMediaResult= OkHttpUtil.postUploadMedia(requestUrl.toString(),mediaFile);
             JSONObject resultObject = JSON.parseObject(tempMediaResult);
             if (null==resultObject||resultObject.getIntValue("errcode")!= 0) {
                 log.error("上传小程序卡片图片到临时素材失败");
@@ -193,10 +194,8 @@ public class MediaServiceImpl implements MediaService {
     /**
      * base64字符串转化成图片
      */
-    private File byteArrayToFile(byte[] content, String fileName) throws Exception {
+    private File byteArrayToFile(byte[] content, String fileName,String filePath) throws Exception {
         File file = null;
-        //创建文件目录
-        String filePath = "file/";
         File dir = new File(filePath);
         if (!dir.exists() && !dir.isDirectory()) {
             dir.mkdirs();
@@ -265,35 +264,20 @@ public class MediaServiceImpl implements MediaService {
         return mediaMapper.getMediaImgList(limit,offset);
     }
 
+    /**
+     * 手工上传临时素材图片
+     * @param title
+     * @param file
+     * @param username
+     */
     @Override
     public void uploadQywxMaterial(String title, File file, String username) {
-        byte[] mediaContent = fileConvertToByteArray(file);
-        JSONObject object = getMediaId(mediaContent);
+        //生成文件名
+        String fileName="MANUAL_-1_"+System.currentTimeMillis()+".png";
+        JSONObject object = getMediaId(file);
         String mediaId=(String)object.get("mediaId");
         LocalDateTime expreDt= (LocalDateTime) object.get("expreDt");
         LocalDateTime nowtime = LocalDateTime.now();
-        mediaMapper.saveQywxMediaImg(mediaContent,title,nowtime,mediaId,expreDt,-1l,"MANUAL");
+        mediaMapper.saveQywxMediaImg(fileName,title,nowtime,mediaId,expreDt,-1l,"MANUAL");
     }
-
-    private byte[] fileConvertToByteArray(File file) {
-        byte[] data = null;
-        try {
-            FileInputStream fis = new FileInputStream(file);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-            int len;
-            byte[] buffer = new byte[1024];
-            while ((len = fis.read(buffer)) != -1) {
-                baos.write(buffer, 0, len);
-            }
-            data = baos.toByteArray();
-            fis.close();
-            baos.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return data;
-    }
-
-
 }

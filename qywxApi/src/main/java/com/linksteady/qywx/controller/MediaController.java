@@ -4,6 +4,8 @@ import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.Base64Img;
+import com.linksteady.common.util.MD5Utils;
+import com.linksteady.qywx.constant.FilePathConsts;
 import com.linksteady.qywx.domain.QywxImage;
 import com.linksteady.qywx.domain.QywxMediaImg;
 import com.linksteady.qywx.service.MediaService;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -27,12 +30,12 @@ public class MediaController extends BaseController {
     MediaService mediaService;
 
     /**
-     * 获取图片列表
+     * 获取图片列表(永久)
      * @param request
      * @return
      */
-    @RequestMapping("/getDataList")
-    public ResponseBo getDataList(QueryRequest request) {
+    @RequestMapping("/getImageList")
+    public ResponseBo getImageList(QueryRequest request) {
         int limit = request.getLimit();
         int offset = request.getOffset();
         int count=mediaService.getImageCount();
@@ -41,17 +44,18 @@ public class MediaController extends BaseController {
     }
 
     /**
-     * 上传图片
+     * 上传图片(永久)
      * @param
      * @return
      */
-    @PostMapping("/uploadMaterial")
+    @PostMapping("/uploadImage")
     public ResponseBo saveData(String title,String base64Code)  {
         try {
             String fileSuffix = base64Code.substring("data:image/".length(), base64Code.lastIndexOf(";base64,"));
-            String fileName="tmp." + fileSuffix;
-            File file = Base64Img.base64ToFile(base64Code, fileName);
-
+            //生成文件名 md5(title+时间戳.fileSuffix)
+            String timestamp= String.valueOf(System.currentTimeMillis());
+            String fileName=MD5Utils.encrypt(title+"_"+timestamp+"."+fileSuffix);
+            File file = Base64Img.base64ToFile(base64Code, fileName, FilePathConsts.FOREVER_IMAGE_PATH);
             mediaService.uploadImage(title,file,getCurrentUser().getUsername());
             return ResponseBo.ok();
         } catch (Exception e) {
@@ -61,7 +65,7 @@ public class MediaController extends BaseController {
     }
 
     /**
-     * 获取图片列表
+     * 获取图片列表(临时素材)
      * @param request
      * @return
      */
@@ -75,7 +79,7 @@ public class MediaController extends BaseController {
     }
 
     /**
-     * 上传图片
+     * 上传图片(临时素材)
      * @param
      * @return
      */
@@ -83,13 +87,15 @@ public class MediaController extends BaseController {
     public ResponseBo uploadQywxMaterial(String title,String base64Code)  {
         try {
             String fileSuffix = base64Code.substring("data:image/".length(), base64Code.lastIndexOf(";base64,"));
-            String fileName="tmp." + fileSuffix;
-            File file = Base64Img.base64ToFile(base64Code, fileName);
+            //生成文件名 md5(title+时间戳.fileSuffix)
+            String timestamp= String.valueOf(System.currentTimeMillis());
+            String fileName=MD5Utils.encrypt(title+"_"+timestamp+"."+fileSuffix);
+            File file = Base64Img.base64ToFile(base64Code, fileName,FilePathConsts.TEMP_IMAGE_PATH);
 
             mediaService.uploadQywxMaterial(title,file,getCurrentUser().getUsername());
             return ResponseBo.ok();
         } catch (Exception e) {
-            log.error("上传素材（图片）报错！");
+            log.error("上传临时素材（图片）报错！");
             return ResponseBo.error();
         }
     }
