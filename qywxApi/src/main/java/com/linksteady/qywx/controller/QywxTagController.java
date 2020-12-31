@@ -136,14 +136,27 @@ public class QywxTagController {
     }
 
     /**
+     * 在删除标签之前，先查一下这个标签组下的标签数量。
+     * 企微API说明：如果一个标签组下所有的标签均被删除，则标签组会被自动删除。
+     * @param groupId
+     * @return
+     */
+    @RequestMapping("/getTagCount")
+    public ResponseBo getTagCount(@RequestParam String groupId){
+        int count = qywxTagService.getTagCount(groupId);
+        return ResponseBo.okWithData(null,count);
+    }
+
+    /**
      * 删除标签组或者标签
      * @param id   标签组ID/标签ID
      * @param flag  G：修改标签组/T:修改标签
+     * @param groupId  这个groutId为了判断标签组下的标签是否均被删除，如果都被删除，那么也删除该标签组
      * @return
      */
     @RequestMapping("/delGroupTag")
-    public ResponseBo delGroupTag(@RequestParam String id,@RequestParam String flag) throws Exception {
-        qywxTagService.delGroupTag(id,flag);
+    public ResponseBo delGroupTag(@RequestParam String id,@RequestParam String flag,@RequestParam String groupId) throws Exception {
+        qywxTagService.delGroupTag(id,flag,groupId);
         return ResponseBo.ok();
     }
 

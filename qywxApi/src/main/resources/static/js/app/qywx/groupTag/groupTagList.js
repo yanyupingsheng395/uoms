@@ -131,7 +131,8 @@ $("#group_del").click(function () {
         title: '提示：',
         content: '确认删除当前标签组？'
     }, function () {
-        $.post( "/qywxtag/delGroupTag", {id:groupId,flag:"G"}, function (r) {
+                                                //后面的groupId参数为了兼容删除标签功能
+        $.post( "/qywxtag/delGroupTag", {id:groupId,flag:"G",groupId:""}, function (r) {
             if (r.code === 200) {
                 $MB.n_success( "删除标签组成功" );
                 $MB.refreshTable( 'baseTable' );
@@ -215,6 +216,8 @@ function getTagGroupDetail(groupId) {
  * 关闭查看所有标签的弹窗
  */
 function closeChoose() {
+    //重新刷新标签组列表
+    $MB.refreshTable( 'baseTable' );
     $("#chooseTag").modal('hide');
 }
 
@@ -320,20 +323,35 @@ $("#tag_del").click(function () {
         $MB.n_warning( '请选择一个标签！' );
         return;
     }
-    var tagId=selected[0]['tagId'];
-    $MB.confirm({
-        title: '提示：',
-        content: '确认删除当前标签？'
-    }, function () {
-        $.post( "/qywxtag/delGroupTag", {id:tagId,flag:"T"}, function (r) {
-            if (r.code === 200) {
-                $MB.n_success( "删除标签成功" );
-                $MB.refreshTable( 'TagTable' );
-            } else {
-                $MB.n_danger( r.msg );
+
+    var confirmContent="";
+    var groupId=$("#groupId").val();
+    $.post( "/qywxtag/getTagCount", {groupId:groupId}, function (r) {
+        if (r.code === 200) {
+            var count=r.data;
+            if(count==1){
+                confirmContent="标签组下所有的标签被删除，则标签组会被自动删除。确认删除当前标签？";
+            }else{
+                confirmContent="确认删除当前标签？";
             }
-        } );
-    });
+            var tagId=selected[0]['tagId'];
+            $MB.confirm({
+                title: '提示：',
+                content: confirmContent
+            }, function () {
+                $.post( "/qywxtag/delGroupTag", {id:tagId,flag:"T",groupId:groupId}, function (r) {
+                    if (r.code === 200) {
+                        $MB.n_success( "删除标签成功" );
+                        $MB.refreshTable( 'TagTable' );
+                    } else {
+                        $MB.n_danger( r.msg );
+                    }
+                } );
+            });
+        } else {
+            $MB.n_danger( r.msg );
+        }
+    } );
 });
 
 

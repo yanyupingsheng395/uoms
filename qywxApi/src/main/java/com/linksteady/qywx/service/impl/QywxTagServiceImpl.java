@@ -172,7 +172,7 @@ public class QywxTagServiceImpl implements QywxTagService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public synchronized void delGroupTag(String id, String flag) throws Exception {
+    public synchronized void delGroupTag(String id, String flag,String groupId) throws Exception {
         if("G".equals(flag)){
             //删除标签组
             qywxTagMapper.delGroupTag(id);
@@ -181,6 +181,11 @@ public class QywxTagServiceImpl implements QywxTagService {
         }else if("T".equals(flag)){
             //根据标签ID，删除
             qywxTagMapper.delTagByTagId(id);
+            int count = qywxTagMapper.getTagCount(groupId);
+            if(count==0){
+                //如果一个标签组下所有的标签均被删除，则标签组会被自动删除。
+                qywxTagMapper.delGroupTag(groupId);
+            }
         }else{
             throw  new Exception("错误类型，不能更新数据库");
         }
