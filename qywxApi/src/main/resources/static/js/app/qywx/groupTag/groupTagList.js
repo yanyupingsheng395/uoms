@@ -209,7 +209,7 @@ function getTagGroupDetail(groupId) {
 
         }]
     };
-    $MB.initTable( 'TagTable', settings );
+    $("#TagTable").bootstrapTable('destroy').bootstrapTable(settings);
 }
 
 /**
