@@ -46,7 +46,7 @@ function getMediaId(){
             if(r.data!=null){
                 sendImg(r.data);
             }else{
-                $.toast("<font style='font-size: 14px;'><span class='icon icon-73'></span>&nbsp;未获取到图片ID！</font>", "text");
+                $.toast("<font style='font-size: 14px;'><span class='icon icon-73'></span>&nbsp;未获取到临时素材ID！</font>", "text");
                 return;
             }
         }

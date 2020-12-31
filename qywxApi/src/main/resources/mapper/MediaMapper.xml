@@ -10,7 +10,7 @@
         <result column="media_expire_date" jdbcType="TIMESTAMP" property="mediaExpireDate"/>
         <result column="identity_id" jdbcType="DECIMAL" property="identityId"/>
         <result column="identity_type" jdbcType="VARCHAR" property="indetityType"/>
-        <result column="img_content" property="imgContent" typeHandler="org.apache.ibatis.type.ByteArrayTypeHandler"/>
+        <result column="file_name" jdbcType="VARCHAR" property="fileName"/>
     </resultMap>
     <resultMap id="getProductMedia" type="com.linksteady.qywx.domain.WxProductMedia">
         <result column="product_id" jdbcType="DECIMAL" property="productId"/>
@@ -24,6 +24,7 @@
         <result property="insertDt" jdbcType="TIMESTAMP" column="insert_dt"/>
         <result property="insertBy" jdbcType="VARCHAR" column="insert_by"/>
         <result property="imgTitle" jdbcType="VARCHAR" column="img_title"/>
+        <result column="file_name" jdbcType="VARCHAR" property="fileName"/>
     </resultMap>
 
     <resultMap id="paramMap" type="com.linksteady.qywx.domain.QywxParam">
@@ -42,7 +43,8 @@
                media_id,
                media_expire_date,
                identity_id,
-               identity_type
+               identity_type,
+               file_name
                from uo_qywx_media_img
                where identity_id=#{identityId} and identity_type=#{identityType}
     </select>
@@ -61,11 +63,11 @@
          from uo_qywx_param
     </select>
     <update id="updateQywxMediaImgBymediaId">
-        update uo_qywx_media_img set media_id=#{mediaId} ,media_expire_date=#{expreDt},img_content=#{mediaContent} where identity_id=#{identityId} and identity_type=#{identityType}
+        update uo_qywx_media_img set media_id=#{mediaId} ,media_expire_date=#{expreDt},file_name=#{fileName} where identity_id=#{identityId} and identity_type=#{identityType}
     </update>
     <insert id="saveQywxMediaImg">
-        insert  into uo_qywx_media_img(img_content,img_title,insert_dt,media_id, media_expire_date, identity_id, identity_type)
-        values (#{mediaContent},#{title},#{nowtime},#{mediaId},#{expreDt},#{identityId},#{identityType})
+        insert  into uo_qywx_media_img(file_name,img_title,insert_dt,media_id, media_expire_date, identity_id, identity_type)
+        values (#{fileName},#{title},#{nowtime},#{mediaId},#{expreDt},#{identityId},#{identityType})
     </insert>
 
     <select id="getImageCount" resultType="int">
@@ -77,16 +79,24 @@
     </select>
 
     <insert id="saveMediaImg">
-        insert into uo_qywx_images(img_title,img_url,insert_dt,insert_by) values(
-           #{title},#{url},now(),#{insertBy}
+        insert into uo_qywx_images(img_title,img_url,insert_dt,insert_by,file_name) values(
+           #{title},#{url},now(),#{insertBy},#{fileName}
         )
     </insert>
 
-    <select id="getMediaImageCount" resultType="int">
-        select count(*) from uo_qywx_media_img where media_expire_date::date>=current_date and identity_type='MANUAL'
+    <select id="getMediaImgCount" resultType="int">
+        select count(*) from uo_qywx_media_img where identity_type='MANUAL'
     </select>
 
     <select id="getMediaImgList" resultMap="getMediaImgMap">
-        select img_id,img_title,insert_dt,insert_by,media_id,media_expire_date,identity_type from uo_qywx_media_img where media_expire_date::date>=current_date and identity_type='MANUAL' order by insert_dt desc limit #{limit} offset #{offset}
+        select img_id,img_title,insert_dt,insert_by,media_id,media_expire_date,identity_type,file_name from uo_qywx_media_img where  identity_type='MANUAL' order by insert_dt desc limit #{limit} offset #{offset}
+    </select>
+
+    <select id="getValidMediaImgCount" resultType="int">
+        select count(*) from uo_qywx_media_img where media_expire_date::date>=current_date and identity_type='MANUAL'
+    </select>
+
+    <select id="getValidMediaImgList" resultMap="getMediaImgMap">
+        select img_id,img_title,insert_dt,insert_by,media_id,media_expire_date,identity_type,file_name from uo_qywx_media_img where media_expire_date::date>=current_date and identity_type='MANUAL' order by insert_dt desc limit #{limit} offset #{offset}
     </select>
 </mapper>

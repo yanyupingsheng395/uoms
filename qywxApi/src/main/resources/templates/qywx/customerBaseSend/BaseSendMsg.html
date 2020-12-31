@@ -72,7 +72,7 @@
                                             <a onclick="addRegion('selectOwner')">&nbsp;<i class="fa fa-plus-circle"></i></a>
                                         </div>
                                         <div class="form-group">
-                                            <label class="col-md-2 control-label">选择群主列表：</label>
+                                            <label class="col-md-2 control-label">已选群主：</label>
                                             <div class="col-md-6 col-md-offset-2" id="alllist" style="border: dashed 1px #e7eaec;margin-left:1%"></div>
                                             <div class="col-md-8 input-group">
                                                 <input type="hidden" name="chatOwnerList">
@@ -102,7 +102,7 @@
                                                             <div class="col-md-12">
                                                                 <div class="form-horizontal">
                                                                     <div class="form-group" style="margin-bottom: 2px;">
-                                                                        <label class="col-md-2 control-label">图片地址：</label>
+                                                                        <label class="col-md-3 control-label">图片链接：</label>
                                                                         <div class="col-md-9">
                                                                             <input class="form-control" name="imgUrl" id="imgUrl"/>
                                                                         </div>
@@ -114,25 +114,25 @@
                                                     <div class="tab-pane fade" id="web">
                                                         <div class="form-horizontal">
                                                             <div class="form-group">
-                                                                <label class="col-md-2 control-label">消息标题：</label>
+                                                                <label class="col-md-3 control-label">网页标题：</label>
                                                                 <div class="col-md-9">
                                                                     <input class="form-control" name="linkTitle" id="linkTitle">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group">
-                                                                <label class="col-md-2 control-label">消息描述：</label>
+                                                                <label class="col-md-3 control-label">网页描述：</label>
                                                                 <div class="col-md-9">
                                                                     <input class="form-control" name="linkDesc" id="linkDesc">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group">
-                                                                <label class="col-md-2 control-label">消息地址：</label>
+                                                                <label class="col-md-3 control-label">网页链接：</label>
                                                                 <div class="col-md-9">
                                                                     <input class="form-control" name="linkUrl" id="linkUrl">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group" style="margin-bottom: 2px;">
-                                                                <label class="col-md-2 control-label">封面地址：</label>
+                                                                <label class="col-md-3 control-label">封面图片链接：</label>
                                                                 <div class="col-md-9">
                                                                     <input class="form-control" name="linkPicUrl" id="linkPicUrl">
                                                                 </div>
@@ -142,23 +142,24 @@
                                                     <div class="tab-pane fade" id="miniprogram">
                                                         <div class="form-horizontal">
                                                             <div class="form-group">
-                                                                <label class="col-md-2 control-label">小程序标题：</label>
+                                                                <label class="col-md-3 control-label">标题：</label>
                                                                 <div class="col-md-9">
                                                                     <input class="form-control" name="mpTitle" id="mpTitle">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group" >
-                                                                <label class="col-md-2 control-label">小程序地址：</label>
+                                                                <label class="col-md-3 control-label">页面路径：</label>
                                                                 <div class="col-md-9">
                                                                     <input class="form-control" name="mpUrl" id="mpUrl">
                                                                 </div>
                                                             </div>
                                                             <div class="form-group" >
-                                                                <label class="col-md-2 control-label">小程序MediaID：</label>
+                                                                <label class="col-md-3 control-label">封面MediaID：</label>
                                                                 <div class="col-md-9">
                                                                     <input class="form-control" name="mpMediaId" id="mediaId" readonly="readonly">
+                                                                    <a id='addShopDiscountBtn' style="cursor:pointer;color: #409eff !important;left: 0px;" onclick="chooseMedia()"><i class="fa fa-plus-circle"></i>选择</a>
                                                                 </div>
-                                                                <a id='addShopDiscountBtn' style="cursor:pointer;color: #409eff !important;left: 0px;" onclick="chooseMedia()"><i class="fa fa-plus-circle"></i>添加</a>
+
                                                             </div>
                                                         </div>
                                                     </div>
@@ -196,7 +197,7 @@
                         </form>
                         <div class="row m-t-15" >
                             <div class="col-md-12 text-right" style="margin-top: 30px;">
-                                <a id='creatPreheat' class="btn btn-sm btn-secondary" onclick="saveCouponData()" type="button"><i class="fa fa-arrow-right"></i>保存</a>
+                                <a id='creatPreheat' class="btn btn-sm btn-primary" onclick="saveCouponData()" type="button"><i class="fa fa-arrow-right"></i>保存</a>
                                 <a class="btn btn-secondary btn-sm" href="/page/goChatMsgList" style="margin-right:10px;"><i class="fa fa-backward"></i>&nbsp;返回</a>
                             </div>
                         </div>

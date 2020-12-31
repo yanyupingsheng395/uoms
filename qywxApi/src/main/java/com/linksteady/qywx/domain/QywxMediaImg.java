@@ -14,10 +14,6 @@ public class QywxMediaImg implements Serializable {
      */
     private long imgId;
     /**
-     * 图片内容
-     */
-    private byte[] imgContent;
-    /**
      * 新增时间
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
@@ -47,4 +43,9 @@ public class QywxMediaImg implements Serializable {
      * 业务标记类型，prod表示商品，coupon表示优惠券
      */
     private String  indetityType;
+
+    /**
+     * 文件存储的名称
+     */
+    private String fileName;
 }

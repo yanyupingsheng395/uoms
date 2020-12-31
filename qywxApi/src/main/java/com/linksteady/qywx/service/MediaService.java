@@ -11,7 +11,7 @@ public interface MediaService {
     /**
      * 获取欢迎语小程序卡片封面mediaId
      */
-    String getMpMediaId(String identityType, Long identityId);
+    String getMpMediaId(String identityType, Long identityId) throws Exception;
 
     int getImageCount();
 
@@ -20,18 +20,32 @@ public interface MediaService {
     void uploadImage(String title, File file, String opUserName) throws Exception;
 
     /**
-     * 获取小程序封面列表数量
+     * 获取临时素材数量
      * @return
      */
-    int getMediaImageCount();
+    int getMediaImgCount();
 
     /**
-     * 获取小程序封面列表
+     * 获取临时素材列表
      * @param limit
      * @param offset
      * @return
      */
     List<QywxMediaImg> getMediaImgList(int limit, int offset);
+
+    /**
+     * 获取临时素材数量(有效)
+     * @return
+     */
+    int getValidMediaImgCount();
+
+    /**
+     * 获取临时素材列表(有效)
+     * @param limit
+     * @param offset
+     * @return
+     */
+    List<QywxMediaImg> getValidMediaImgList(int limit, int offset);
 
     /**
      *上传图片

@@ -60,7 +60,7 @@ public class PageController  extends BaseController {
      */
     @RequestMapping("/qywxMediaImage")
     public String qywxMediaImage() {
-        return "qywx/media/imgList";
+        return "qywx/image/imgList";
     }
 
 
@@ -275,7 +275,7 @@ public class PageController  extends BaseController {
     }
 
     /**
-     * 企业微信上传图片列表
+     * 企业微信上传图片列表(临时)
      * @return
      */
     @RequestMapping("/qywxMedia")

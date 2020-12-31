@@ -4,7 +4,7 @@ $( function () {
 
 function getDataList(tableId) {
     let settings = {
-        url: "/wxMedia/getDataList",
+        url: "/wxMedia/getImageList",
         cache: false,
         pagination: true,
         singleSelect: true,
@@ -71,7 +71,7 @@ function saveMaterial() {
         return false;
     }
 
-    $.post( "/wxMedia/uploadMaterial", {
+    $.post( "/wxMedia/uploadImage", {
         title: title,
         mediaType: 'image',
         base64Code: code

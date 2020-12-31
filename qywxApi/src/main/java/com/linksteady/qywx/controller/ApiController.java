@@ -3,6 +3,8 @@ package com.linksteady.qywx.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.Base64Img;
+import com.linksteady.common.util.MD5Utils;
+import com.linksteady.qywx.constant.FilePathConsts;
 import com.linksteady.qywx.domain.QywxMediaImg;
 import com.linksteady.qywx.exception.WxErrorException;
 import com.linksteady.qywx.service.MediaService;
@@ -84,15 +86,15 @@ public class ApiController {
 
 
     /**
-     * 获取临时素材图片列表
+     * 获取临时素材图片列表(有效)
      * @param request
      * @return
      */
-    @RequestMapping("/getMediaImgList")
-    public ResponseBo getMediaImgList(HttpServletRequest request,
+    @RequestMapping("/getValidMediaImgList")
+    public ResponseBo getValidMediaImgList(HttpServletRequest request,
                                       @RequestParam("limit")int limit,
                                       @RequestParam("offset")int offset) {
-        List<QywxMediaImg> qywxImageList = mediaService.getMediaImgList(limit,offset);
+        List<QywxMediaImg> qywxImageList = mediaService.getValidMediaImgList(limit,offset);
         try {
             return ResponseBo.okWithData(null,qywxImageList);
         } catch (Exception e) {
@@ -101,13 +103,12 @@ public class ApiController {
     }
 
     /**
-     * 获取临时素材数量
-     * @param request
+     * 获取临时素材数量(有效)
      * @return
      */
-    @RequestMapping("/getMediaImgCount")
-    public ResponseBo getMediaImgCount(HttpServletRequest request) {
-        int count=mediaService.getMediaImageCount();
+    @RequestMapping("/getValidMediaImgCount")
+    public ResponseBo getMediaImgCount() {
+        int count=mediaService.getValidMediaImgCount();
         try {
             return ResponseBo.okWithData(null,count);
         } catch (Exception e) {
@@ -116,7 +117,7 @@ public class ApiController {
     }
 
     /**
-     * 上传图片
+     * 上传图片(临时素材)
      * @param
      * @return
      */
@@ -126,8 +127,10 @@ public class ApiController {
                                          @RequestParam("base64Code") String base64Code)  {
         try {
             String fileSuffix = base64Code.substring("data:image/".length(), base64Code.lastIndexOf(";base64,"));
-            String fileName="tmp." + fileSuffix;
-            File file = Base64Img.base64ToFile(base64Code, fileName);
+            //生成文件名 md5(title+时间戳.fileSuffix)
+            String timestamp= String.valueOf(System.currentTimeMillis());
+            String fileName= MD5Utils.encrypt(title+"_"+timestamp+"."+fileSuffix);
+            File file = Base64Img.base64ToFile(base64Code, fileName, FilePathConsts.TEMP_IMAGE_PATH);
             mediaService.uploadQywxMaterial(title,file,"");
             return ResponseBo.ok();
         } catch (Exception e) {

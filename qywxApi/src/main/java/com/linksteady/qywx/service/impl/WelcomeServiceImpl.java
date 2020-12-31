@@ -38,7 +38,7 @@ public class WelcomeServiceImpl implements WelcomeService {
      * @return
      */
     @Override
-    public QywxMessage getValidWelcomeMessage() {
+    public QywxMessage getValidWelcomeMessage() throws Exception{
         //获取一个有效的欢迎语方案
         QywxWelcome qywxWelcome=welcomeMapper.getValidWelcome();
         if(qywxWelcome==null)
@@ -69,6 +69,7 @@ public class WelcomeServiceImpl implements WelcomeService {
             if(!org.springframework.util.StringUtils.isEmpty(qywxWelcome.getMiniprogramTitle()))
             {
                 qywxMessage.setMpAppid(qywxService.getMpAppId());
+                //获取小程序卡片的mediaId
                 qywxMessage.setMpPicMediaId(getWelcomeMpMediaId(qywxWelcome));
                 qywxMessage.setMpTitle(qywxWelcome.getMiniprogramTitle());
                 qywxMessage.setMpPage(qywxWelcome.getMiniprogramPage());
@@ -90,7 +91,7 @@ public class WelcomeServiceImpl implements WelcomeService {
         }
     }
 
-    private String getWelcomeMpMediaId( QywxWelcome qywxWelcome)
+    private String getWelcomeMpMediaId( QywxWelcome qywxWelcome) throws Exception
     {
         String policyType=qywxWelcome.getPolicyType();
         if("PRODUCT".equals(policyType))

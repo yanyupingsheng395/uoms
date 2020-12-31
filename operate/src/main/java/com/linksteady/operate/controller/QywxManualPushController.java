@@ -147,11 +147,7 @@ public class QywxManualPushController {
         String fileName = "manual_template_s.csv";
         String realFileName = fileName.substring(fileName.indexOf('_') + 1);
         Resource resource =  new ClassPathResource("excel/" + fileName);
-        File file = resource.getFile();
-        if (!file.exists()) {
-            throw new Exception("模板文件不存在");
-        }
-        InputStream in = new FileInputStream(file);
+        InputStream in = resource.getInputStream();
         response.setHeader("Content-Disposition", "inline;fileName=" + java.net.URLEncoder.encode(realFileName, "utf-8"));
         response.setContentType("application/vnd.ms-excel");
         response.setCharacterEncoding("utf-8");

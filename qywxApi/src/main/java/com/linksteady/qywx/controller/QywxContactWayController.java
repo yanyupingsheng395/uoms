@@ -6,6 +6,7 @@ import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.Base64Img;
 import com.linksteady.common.util.OkHttpUtil;
+import com.linksteady.qywx.constant.FilePathConsts;
 import com.linksteady.qywx.domain.QywxContactWay;
 import com.linksteady.qywx.domain.QywxContactWayChat;
 import com.linksteady.qywx.service.QywxBaseDataService;
@@ -259,9 +260,8 @@ public class QywxContactWayController extends BaseController {
         try {
             String fileSuffix = base64Code.substring("data:image/".length(), base64Code.lastIndexOf(";base64,"));
             String fileName= System.currentTimeMillis()+"_qrcode." + fileSuffix;
-            File file = Base64Img.base64ToFile(base64Code, fileName);
-            String path = file.getPath();
-            return ResponseBo.okWithData(null,path);
+            File file = Base64Img.base64ToFile(base64Code, fileName, FilePathConsts.CONTACT_WAY_IMAGE_PATH);
+            return ResponseBo.okWithData(null,fileName);
         } catch (Exception e) {
             log.error("上传二维码（图片）报错！");
             return ResponseBo.error();

@@ -9,7 +9,7 @@ import com.linksteady.common.domain.SysInfoBo;
 import com.linksteady.common.service.CommonFunService;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.common.util.OkHttpUtil;
-import com.linksteady.operate.exception.LinkSteadyException;
+import com.linksteady.operate.constant.QywxApiPathConstants;
 import com.linksteady.operate.service.QywxMessageService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -25,7 +25,6 @@ import java.util.List;
 @Service
 public class QywxMessageServiceImpl implements QywxMessageService {
     private static final int maxRetryTimes=3;
-    private static final String addMsg="/api/addMsgTemplate";
 
     @Autowired
     ConfigService configService;
@@ -107,7 +106,7 @@ public class QywxMessageServiceImpl implements QywxMessageService {
               return result;
             }
             StringBuffer url=new StringBuffer(sysInfoBo.getSysDomain());
-            url.append(addMsg);
+            url.append(QywxApiPathConstants.SEND_QYWX_MESSAGE);
             try {
                 result= OkHttpUtil.postRequestByJson(url.toString(),param.toJSONString());
                 log.info("微信返回接口数据【{}】",result);
@@ -143,7 +142,7 @@ public class QywxMessageServiceImpl implements QywxMessageService {
         {
             return "";
         }
-        String url=sysInfoBo.getSysDomain()+"/api/getCorpId";
+        String url=sysInfoBo.getSysDomain()+QywxApiPathConstants.GET_CORP_ID;
         String result= OkHttpUtil.getRequest(url);
         return result;
     }
@@ -155,7 +154,7 @@ public class QywxMessageServiceImpl implements QywxMessageService {
         {
             return "";
         }
-        String url=sysInfoBo.getSysDomain()+"/api/getMpAppId";
+        String url=sysInfoBo.getSysDomain()+QywxApiPathConstants.GET_MP_APPID;
         String result= OkHttpUtil.getRequest(url);
         return result;
     }
