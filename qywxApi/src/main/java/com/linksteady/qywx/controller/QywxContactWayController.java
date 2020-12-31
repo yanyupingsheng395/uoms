@@ -1,14 +1,13 @@
 package com.linksteady.qywx.controller;
 
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSON;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
-import com.linksteady.common.domain.Tree;
 import com.linksteady.common.util.Base64Img;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.qywx.domain.QywxContactWay;
-import com.linksteady.qywx.domain.QywxDeptUser;
+import com.linksteady.qywx.domain.QywxContactWayChat;
 import com.linksteady.qywx.service.QywxBaseDataService;
 import com.linksteady.qywx.service.QywxContactWayService;
 import lombok.extern.slf4j.Slf4j;
@@ -125,9 +124,10 @@ public class QywxContactWayController extends BaseController {
     @RequestMapping("/contactWay/save")
     @ResponseBody
     public ResponseBo save(QywxContactWay qywxContactWay) {
+        List<QywxContactWayChat> list =JSON.parseArray(qywxContactWay.getWatChatList(),QywxContactWayChat.class);
         String userName = getCurrentUser().getUsername();
         try {
-            qywxContactWayService.saveContactWay(qywxContactWay, userName);
+            qywxContactWayService.saveContactWay(qywxContactWay, userName,list);
             return ResponseBo.ok();
         } catch (Exception e) {
             String message = e.getMessage();

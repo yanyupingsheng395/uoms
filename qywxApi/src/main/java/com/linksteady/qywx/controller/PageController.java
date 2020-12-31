@@ -386,5 +386,14 @@ public class PageController  extends BaseController {
         return "qywx/groupCalendar/addGroupCalendar";
     }
 
+    /**
+     * 进入标签组管理界面
+     * @return
+     */
+    @RequestMapping("/groupTag")
+    public String groupTag(){
+        return "qywx/groupTag/groupTagList";
+    }
+
 
 }

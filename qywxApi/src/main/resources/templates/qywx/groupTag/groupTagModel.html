@@ -1,0 +1,133 @@
+<!--新增标签组-->
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="add_tag_group" data-backdrop="static" style="margin-top: 15%">
+    <div class="modal-dialog" role="document" style="width: 30%;">
+        <div class="modal-content">
+            <div class="modal-body">
+                <form class="form-horizontal" id="addTagGroup">
+                    <div class="form-group mg-stop">
+                        <label class="col-md-3 control-label">标签组名称：</label>
+                        <div class="col-md-8 input-group">
+                            <input class="form-control" type="text" id="groupName" name="groupName"/>
+                        </div>
+                    </div>
+                    <div style="border: solid 1px #ebebeb;background-color: #FFEE99;" class="form-control">
+                        <p style="color:#EE7700;">提示：在创建标签组的同时，必须创建一个标签</p>
+                    </div>
+                    <div class="form-group mg-stop" style="margin-top: 10px;">
+                        <label class="col-md-3 control-label">标签名称：</label>
+                        <div class="col-md-8 input-group">
+                            <input class="form-control" type="text" id="group_tag_name" name="group_tag_name"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" id="tag_group_save" name="save">确定</button>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal" id="tag_group_close">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--修改标签组名称-->
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="up_tag_group" data-backdrop="static" style="margin-top: 15%">
+    <div class="modal-dialog" role="document" style="width: 30%;">
+        <div class="modal-content">
+            <div class="modal-body">
+                <form class="form-horizontal" id="upTagGroup">
+                    <div class="form-group mg-stop">
+                        <label class="col-md-3 control-label">标签组名称：</label>
+                        <input type="hidden" id="groupTagid" name="groupTagid">
+                        <div class="col-md-8 input-group">
+                            <input class="form-control" type="text" id="groupTagName" name="groupTagName"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" id="tag_update" name="save">确定</button>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal" id="group_close">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--查看标签组内标签列表-->
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="chooseTag" data-backdrop="static" >
+    <div class="modal-dialog" role="document" style="width: 50%;">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 table-striped">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="btn-group-sm" id="tagUp" role="group">
+                                    <a class="btn btn-primary btn-edit" id="tag_add" >新增</a>
+                                    <a class="btn btn-primary btn-edit" id="tag_up" >修改</a>
+                                    <a class="btn btn-danger btn-edit" id="tag_del"> 删除</a>
+                                    <input type="hidden" id="groupId" name="groupId">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row m-t-10">
+                            <div class="col-sm-12">
+                                <table id="TagTable" class="table  table-striped table-bordered text-nowrap"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-primary" onclick="closeChoose()"><i class="fa fa-close"></i> 关闭</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--新增标签-->
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="add_tag" data-backdrop="static" style="margin-top: 15%">
+    <div class="modal-dialog" role="document" style="width: 30%;">
+        <div class="modal-content">
+            <div class="modal-body">
+                <form class="form-horizontal" id="addTag">
+                    <div class="form-group mg-stop">
+                        <label class="col-md-3 control-label">标签名称：</label>
+                        <input type="hidden" id="tagGroupid" name="tagGroupid">
+                        <div class="col-md-8 input-group">
+                            <input class="form-control" type="text" id="tagName" name="tagName"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" id="tag_save" name="save">确定</button>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal" id="tag_close">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--修改标签-->
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel3" id="update_tag" data-backdrop="static" style="margin-top: 15%">
+    <div class="modal-dialog" role="document" style="width: 30%;">
+        <div class="modal-content">
+            <div class="modal-body">
+                <form class="form-horizontal" id="updateTag">
+                    <div class="form-group mg-stop">
+                        <label class="col-md-3 control-label">标签名称：</label>
+                        <input type="hidden" id="updateTagId" name="updateTagId">
+                        <div class="col-md-8 input-group">
+                            <input class="form-control" type="text" id="updateTagName" name="updateTagName"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm" id="tag_update_save" name="save">确定</button>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal" id="tag_update_close">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>

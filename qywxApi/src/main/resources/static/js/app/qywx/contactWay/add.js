@@ -235,7 +235,7 @@ function image() {
     } );
 }
 
-var chatMap={};
+var chatMap=[];
 function saveChatImg() {
     console.log(chatMap);
    var text= $("#chatList  option:selected").text();
@@ -259,7 +259,11 @@ function saveChatImg() {
                 "                                                    </tr>";
             $("#addtr").append(html);
             $("#addGroupChat").modal('hide');
-            chatMap[val]=r.data;
+            var wayChat = new Object();
+            wayChat.chatId=val;
+            wayChat.chatName=text;
+            wayChat.chatQrimgUrl=r.data;
+            chatMap.push(wayChat);
         }
     } );
 
@@ -314,6 +318,7 @@ function getDeptAndUserId() {
     $( "input[name='usersList']" ).val( user_list.join( "," ) );
     $( "input[name='deptList']" ).val( dept_list.join( "," ) );
     $( "input[name='validUser']" ).val( user_list.join( "," ) + dept_list.join( "," ));
+    $( "input[name='watChatList']" ).val(JSON.stringify(chatMap));
 }
 
 /**
@@ -333,7 +338,7 @@ function addContactWay() {
     if (flag) {
         //打开遮罩层
         $MB.loadingDesc('show', '保存中，请稍候...');
-            $.post("/contactWay/save", $("#contactWay_edit").serialize(), function (r) {
+            $.post("/contactWay/save",$("#contactWay_edit").serialize(), function (r) {
                 if (r.code === 200) {
                     $MB.closeAndRestModal( "add_modal" );
                     $MB.n_success(r.msg);

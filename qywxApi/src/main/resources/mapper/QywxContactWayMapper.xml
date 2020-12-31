@@ -188,6 +188,13 @@
         </foreach>
     </insert>
 
+    <insert id="insertContactWayChat">
+        insert into uo_qywx_contact_way_chat(contact_way_id, chat_id, chat_name, chat_qrimg_url, insert_dt, insert_by) VALUES
+        <foreach collection="list" separator="," item="item">
+        (#{item.contactWayId},#{item.chatId},#{item.chatName},#{item.chatQrimgUrl},#{item.insertDt},#{item.insertBy})
+        </foreach>
+    </insert>
+
     <delete id="deleteContactWayDetail">
         delete from uo_qywx_contact_way_detail where contactway_id=(select contactway_id from uo_qywx_contact_way where config_id=#{configId})
     </delete>

@@ -3,32 +3,26 @@ package com.linksteady.qywx.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
-public class QywxTag {
+public class QywxContactWayChat {
     /**
-     * 标签ID
+     * 渠道活码ID
      */
-    private String tagId;
+    private long contactWayId;
     /**
-     * 标签名称
+     * 群聊ID
      */
-    private String tagName;
+    private String chatId;
     /**
-     * 标签创建时间
+     * 群聊名称
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
-    private Date tagCreateTime;
+    private String chatName;
     /**
-     * 标签次序
+     * 入群二维码图片地址
      */
-    private long tagOrder;
-    /**
-     * 标签组ID
-     */
-    private String groupId;
+    private String chatQrimgUrl;
     /**
      * 新增时间
      */

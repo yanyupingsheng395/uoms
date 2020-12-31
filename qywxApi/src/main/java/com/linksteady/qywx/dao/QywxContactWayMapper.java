@@ -1,6 +1,7 @@
 package com.linksteady.qywx.dao;
 
 import com.linksteady.qywx.domain.QywxContactWay;
+import com.linksteady.qywx.domain.QywxContactWayChat;
 import com.linksteady.qywx.domain.QywxContactWayDetail;
 import org.apache.ibatis.annotations.Param;
 
@@ -49,4 +50,6 @@ public interface QywxContactWayMapper {
     void insertContactWayDetail(List<QywxContactWayDetail> list);
 
     void deleteContactWayDetail(String configId);
+
+    void insertContactWayChat(List<QywxContactWayChat> list);
 }

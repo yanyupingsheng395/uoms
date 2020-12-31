@@ -10,6 +10,7 @@ import com.linksteady.qywx.constant.WxPathConsts;
 import com.linksteady.qywx.dao.QywxBaseDataMapper;
 import com.linksteady.qywx.dao.QywxContactWayMapper;
 import com.linksteady.qywx.domain.QywxContactWay;
+import com.linksteady.qywx.domain.QywxContactWayChat;
 import com.linksteady.qywx.domain.QywxContactWayDetail;
 import com.linksteady.qywx.domain.QywxDeptUser;
 import com.linksteady.qywx.service.QywxContactWayService;
@@ -49,7 +50,7 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void saveContactWay(QywxContactWay qywxContactWay, String userName) throws Exception{
+    public void saveContactWay(QywxContactWay qywxContactWay, String userName,List<QywxContactWayChat> list) throws Exception{
         //渠道码类型 单人 or 多人
         String usersListStr = qywxContactWay.getUsersList();//选择人
         String deptListStr = qywxContactWay.getDeptList();//选择部门
@@ -124,8 +125,15 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
             }
             String shortUrl="";
             qywxContactWayMapper.updateContactWayFullInfo(contactWayId,configId,qrCode,shortUrl,qywxContactWay.getUpdateBy());
-        }else
-        {
+
+            //处理群聊逻辑
+            list.stream().forEach((sm) -> {
+                sm.setContactWayId(contactWayId);
+                sm.setInsertBy(userName);
+                sm.setInsertDt(new Date());
+            });
+            qywxContactWayMapper.insertContactWayChat(list);
+        }else{
             throw new Exception("新增渠道活码失败！");
         }
     }

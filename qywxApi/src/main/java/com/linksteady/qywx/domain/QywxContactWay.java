@@ -57,6 +57,10 @@ public class QywxContactWay implements Comparable<QywxContactWay>{
      * 对应的短链接
      */
     private String shortUrl;
+    /**
+     * 用于接收前端传过来的群码关联列表集合
+     */
+    private String watChatList;
 
     public QywxContactWay()
     {
@@ -64,7 +68,7 @@ public class QywxContactWay implements Comparable<QywxContactWay>{
     }
 
     public QywxContactWay(Long contactWayId, String qrCode, String contactType, String state,
-                          String usersList, String shortUrl, int externalUserNum, String createDt, String remark)
+                          String usersList, String shortUrl, int externalUserNum, String createDt, String remark,String watChatList)
     {
          this.contactWayId=contactWayId;
          this.qrCode=qrCode;
@@ -73,6 +77,7 @@ public class QywxContactWay implements Comparable<QywxContactWay>{
          this.usersList=usersList;
          this.shortUrl=shortUrl;
          this.externalUserNum=externalUserNum;
+         this.watChatList=watChatList;
         try {
             this.createDt=new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(createDt);
         } catch (ParseException e) {

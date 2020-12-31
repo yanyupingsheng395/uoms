@@ -1,12 +1,14 @@
 package com.linksteady.qywx.service;
 
+import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.qywx.domain.QywxTag;
 import com.linksteady.qywx.domain.QywxTagGroup;
 import com.linksteady.qywx.exception.WxErrorException;
 
 import java.util.List;
 
 public interface QywxTagService {
-    List<QywxTagGroup> getTagList();
+    List<QywxTagGroup> getTagList(int limit,int offset);
 
     /**
      * 查看标签组ID合标签名称是否存在
@@ -36,4 +38,35 @@ public interface QywxTagService {
      * @param groupid
      */
     void addTag(String tagName, String groupid) throws WxErrorException;
+    /**
+     *修改标签或者标签组名称，都可调用这一个方法
+     * @param id   标签ID/标签组ID
+     * @param name  新标签名称/新标签组名称
+     * @param flag  G：修改标签组/T:修改标签
+     */
+    void updateGroupTagName(String id, String name,String flag) throws Exception;
+
+    /**
+     * 获取标签组的数量
+     * @return
+     */
+    int getGroupTagCount();
+
+    /**
+     * 获取该标签组下的标签数量
+     * @param groupId
+     * @return
+     */
+    int getTagCount(String groupId);
+
+    /**
+     * 分页获取该标签组下的所有标签
+     * @param limit
+     * @param offset
+     * @param groupId
+     * @return
+     */
+    List<QywxTag> getTagGroupDetail(int limit, int offset, String groupId);
+
+    void delGroupTag(String id, String flag) throws Exception;
 }

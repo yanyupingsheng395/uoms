@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -34,5 +35,14 @@ public class QywxTagGroup {
      * 标签组集合
      */
     private List<QywxTag> tagList;
+    /**
+     * 新增时间
+     */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date insertDt;
+    /**
+     * 新增人
+     */
+    private String insertBy;
 
 }
