@@ -206,7 +206,6 @@ function getTagGroupDetail(groupId) {
                     return value;
                 }
             }
-
         }]
     };
     $("#TagTable").bootstrapTable('destroy').bootstrapTable(settings);

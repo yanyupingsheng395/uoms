@@ -17,7 +17,7 @@ function image() {
 
 function getDataList(tableId) {
     var settings = {
-        url: "/wxMedia/getMediaImgList",
+        url: "/wxMedia/getValidMediaImgList",
         cache: false,
         pagination: true,
         singleSelect: true,

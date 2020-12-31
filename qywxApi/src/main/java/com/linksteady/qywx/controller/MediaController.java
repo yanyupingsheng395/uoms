@@ -99,4 +99,18 @@ public class MediaController extends BaseController {
             return ResponseBo.error();
         }
     }
+
+    /**
+     * 获取图片列表(临时素材 所有有效的)
+     * @param request
+     * @return
+     */
+    @RequestMapping("/getValidMediaImgList")
+    public ResponseBo getValidMediaImgList(QueryRequest request) {
+        int limit = request.getLimit();
+        int offset = request.getOffset();
+        int count=mediaService.getValidMediaImgCount();
+        List<QywxMediaImg> qywxImageList = mediaService.getValidMediaImgList(limit,offset);
+        return ResponseBo.okOverPaging(null, count, qywxImageList);
+    }
 }
