@@ -236,11 +236,15 @@ function image() {
 }
 
 var chatMap=[];
+var checkChatID=[];
 function saveChatImg() {
-    console.log(chatMap);
    var text= $("#chatList  option:selected").text();
    var val=$("#chatList  option:selected").val();
    var code=$( "input[name='image[]']" ).val();
+   if(checkChatID.indexOf(val)>-1){
+       $MB.n_warning( "请勿重复选择群聊！" );
+       return;
+   }
     $MB.loadingDesc("show", "图片正在上传中，请稍候...");
     $.post( "/contactWay/uploadQrcode", {
         mediaType: 'image',
@@ -248,7 +252,6 @@ function saveChatImg() {
     }, function (r) {
         $MB.loadingDesc("hide");
         if (r.code === 200) {
-            console.log(r.data);
             var html=" <tr data-index=\"0\">\n" +
                 "                                                        <td style=\"text-align: center; \">\n" +
                 "                                                            <a href=\"http://\" target=\"_blank\">"+text+"</a>\n" +
@@ -264,6 +267,11 @@ function saveChatImg() {
             wayChat.chatName=text;
             wayChat.chatQrimgUrl=r.data;
             chatMap.push(wayChat);
+            //校验是否重复选择群聊
+            checkChatID.push(val);
+            //清除所选图片
+            $("#cupload-create").html("");
+            image();
         }
     } );
 
