@@ -7,11 +7,117 @@ var Single=false;//在更新时，判断当前活吗是不是单人的。如果�
 var $contactWayForm = $( "#contactWay_edit" );
 var userSelect = $contactWayForm.find( "select[name='userSelect']" );
 var $usersList = $contactWayForm.find( "input[name='usersList']" );
+var chatMap=[];//选择群聊对象集合
+var checkChatID=[];//校验是否重复选择群聊
 $( function () {
     createUserTree();
     showAllTag();
     validateRule();
+    if(contactWayId!=null&&contactWayId!=""){
+        $("#creatPreheatEdit").show();
+        $("#creatPreheat").hide();
+        editContact(contactWayId);
+        editChat(contactWayId);
+    }
 } );
+
+/**
+ * 点击更新按钮，填充页面数据
+ */
+function editContact(contactWayId) {
+    //获取数据 并进行填充
+    $.post( "/contactWay/getContactWayById", {"contactWayId": contactWayId}, function (r) {
+        if (r.code === 200) {
+            var $form = $( '#contactWay_edit' );
+            var d = r.data;
+            $( "#myLargeModalLabel" ).html( '修改渠道活码' );
+            $form.find( "input[name='contactWayId']" ).val( d.contactWayId );
+            $form.find( "input[name='configId']" ).val( d.configId );
+            $form.find( "input[name='state']" ).val( d.state ).attr( "readOnly", "readOnly" );
+            $form.find( "input[name='usersList']" ).val(d.usersList);
+            $form.find( "input[name='deptList']" ).val(d.party);
+            $form.find( "input[name='shortUrl']" ).val( d.shortUrl );
+            $form.find( "input[name='contactName']" ).val( d.contactName );
+            $form.find( "textarea[name='chatText']" ).val( d.chatText );
+            $(":radio[name='relateChat'][value='" + d.relateChat + "']").prop("checked", "checked");
+            if(d.relateChat =='N'){
+                $("#groupCode").hide();
+            }
+            if(d.contactType==1){
+                Single=true;
+            }
+            rebuildData(d.usersList,d.party);
+        } else {
+            $MB.n_danger( r['msg'] );
+        }
+    } );
+}
+
+/**
+ * 填充群聊
+ * @param contactWayId
+ */
+function editChat(contactWayId) {
+    $.post( "/contactWay/getContactChatById", {"contactWayId": contactWayId}, function (r) {
+        if(r.code==200){
+            var d=r.data;
+            var html="";
+            for (var i=0;i<d.length;i++){
+                var chatID=d[i].chatId;
+                var chatName=d[i].chatName;
+                var chatQrimgUrl=host+"/contactWay/getImage?filePath="+d[i].chatQrimgUrl;
+                var wayChat = new Object();
+                wayChat.chatId=chatID;
+                wayChat.chatName=chatName;
+                wayChat.chatQrimgUrl=chatQrimgUrl;
+                chatMap.push(wayChat);
+                //校验是否重复选择群聊
+                checkChatID.push(chatID);
+
+                 html+=" <tr data-index=\"0\">\n" +
+                    "                                                        <td style=\"text-align: center; \">\n" +
+                    "                                                            <a href=\"http://\" target=\"_blank\">"+chatName+"</a>\n" +
+                    "                                                        </td>\n" +
+                    "                                                        <td style=\"text-align: center; \">\n" +
+                    "                                                            <img style=\"width:120px;height:120px\" src="+chatQrimgUrl+">\n" +
+                    "                                                        </td>\n" +
+                    "                                                    </tr>";
+            }
+            $("#addtr").append(html);
+        }
+    })
+}
+
+
+function upContactWay() {
+    getDeptAndUserId();
+    var validator = $contactWayForm.validate();
+    var flag = validator.form();
+    if(Single){
+        if(user_list.length>1||dept_list.length>0){
+            $MB.n_danger( "该渠道活吗初始类型是单人，不能添加多人或部门！");
+            return;
+        }
+    }
+    if (flag) {
+        //打开遮罩层
+        $MB.loadingDesc('show', '保存中，请稍候...');
+        $.post("/contactWay/update",$("#contactWay_edit").serialize(), function (r) {
+            if (r.code === 200) {
+                $MB.closeAndRestModal( "add_modal" );
+                $MB.n_success(r.msg);
+                $MB.refreshTable("contactWayTable");
+                clearData();
+                window.location.href="/page/contactWay";
+            } else {
+                $MB.n_danger(r.msg);
+            };
+            $MB.loadingDesc('hide');
+        });
+    }
+}
+
+
 
 /**
  * 添加渠道和职员选项
@@ -235,8 +341,6 @@ function image() {
     } );
 }
 
-var chatMap=[];
-var checkChatID=[];
 function saveChatImg() {
    var text= $("#chatList  option:selected").text();
    var val=$("#chatList  option:selected").val();
@@ -252,12 +356,13 @@ function saveChatImg() {
     }, function (r) {
         $MB.loadingDesc("hide");
         if (r.code === 200) {
+            var imgurl=host+"/contactWay/getImage?filePath="+r.data;
             var html=" <tr data-index=\"0\">\n" +
                 "                                                        <td style=\"text-align: center; \">\n" +
                 "                                                            <a href=\"http://\" target=\"_blank\">"+text+"</a>\n" +
                 "                                                        </td>\n" +
                 "                                                        <td style=\"text-align: center; \">\n" +
-                "                                                            <img style=\"width:120px;height:120px\" src="+code+">\n" +
+                "                                                            <img style=\"width:120px;height:120px\" src="+imgurl+">\n" +
                 "                                                        </td>\n" +
                 "                                                    </tr>";
             $("#addtr").append(html);
@@ -333,7 +438,6 @@ function getDeptAndUserId() {
  * 新增渠道活吗
  */
 function addContactWay() {
-    var name = $( this ).attr( "name" );
     getDeptAndUserId();
     var validator = $contactWayForm.validate();
     var flag = validator.form();
@@ -401,7 +505,7 @@ function validateRule() {
             validUser: {
                 required: true
             },
-            qrcodeName: {
+            contactName: {
                 required: true
             }
         },
@@ -420,7 +524,7 @@ function validateRule() {
             validUser: {
                 required: icon + "请选择可联系成员"
             },
-            qrcodeName: {
+            contactName: {
                 required: icon + "请输入名称"
             }
         }

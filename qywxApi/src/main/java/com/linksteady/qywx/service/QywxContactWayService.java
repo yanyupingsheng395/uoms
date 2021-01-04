@@ -14,7 +14,7 @@ public interface QywxContactWayService {
 
     void saveContactWay(QywxContactWay qywxContactWay, String userName,List<QywxContactWayChat> list) throws Exception;
 
-    void updateContractWay(QywxContactWay qywxContactWay)  throws Exception;
+    void updateContractWay(QywxContactWay qywxContactWay,List<QywxContactWayChat> list)  throws Exception;
 
     int getContactWayCount(String qstate);
 
@@ -30,7 +30,9 @@ public interface QywxContactWayService {
 
     void updateShortUrl(Long contactWayId, String shortUrl, String updateBy);
 
-    void deleteContactWay(String configId) throws Exception;
+    void deleteContactWay(String configId,Long contactWayId) throws Exception;
 
     QywxContactWay getQrcodeByConfigId(String configId);
+
+    List<QywxContactWayChat> getContactChatById(Long contactWayId);
 }

@@ -81,10 +81,12 @@
                         <div class="row">
                             <div class="col-sm-12">
                                 <form   class="form-horizontal" method="post" id="contactWay_edit">
+                                    <input type="hidden" id="contactWayId" name="contactWayId"/>
+                                    <input type="hidden" id="configId" name="configId"/>
                                     <div class="form-group">
                                         <label  class="col-sm-2 control-label">名称：</label>
                                         <div class="col-sm-6">
-                                            <input type="text" class="form-control" name="qrcodeName"/>
+                                            <input type="text" class="form-control" name="contactName"/>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -131,10 +133,10 @@
                                         <label  class="col-sm-2 control-label">是否关联群聊：</label>
                                         <div class="col-sm-6" style="margin-top: 5px;">
                                             <label class="lyear-radio radio-inline radio-primary" >
-                                                <input type="radio" name="related" value="Y" checked="checked" onclick="relatedVal('Y')"><span>是</span>
+                                                <input type="radio" name="relateChat" value="Y" checked="checked" onclick="relatedVal('Y')"><span>是</span>
                                              </label>
                                             <label class="lyear-radio radio-inline radio-primary" >
-                                                <input type="radio" name="related" value="N" onclick="relatedVal('N')"><span>否</span>
+                                                <input type="radio" name="relateChat" value="N" onclick="relatedVal('N')"><span>否</span>
                                             </label>
                                         </div>
                                     </div>
@@ -148,7 +150,7 @@
                                         <div class="form-group">
                                             <label  class="col-sm-2 control-label">引导进群欢迎语：</label>
                                             <div class="col-md-6">
-                                                <textarea name="smsContent" id="smsContent" cols="30" rows="4" class="form-control"></textarea>
+                                                <textarea name="chatText" id="chatText" cols="30" rows="4" class="form-control"></textarea>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -161,16 +163,7 @@
                                                             <th style="text-align: center; " data-field="qrCode" tabindex="0"><div class="th-inner ">二维码样式</div><div class="fht-cell"></div></th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody id="addtr">
-                                                      <!--  <tr data-index="0">
-                                                            <td style="text-align: center; ">
-                                                                <a href="http://" target="_blank">123123</a>
-                                                            </td>
-                                                            <td style="text-align: center; ">
-                                                                <img style="width:120px;height:120px" src="https://wework.qpic.cn/wwpic/771873_BnEihD6MQO-zKi1_1608679484/0">
-                                                            </td>
-                                                        </tr>-->
-                                                    </tbody>
+                                                    <tbody id="addtr"></tbody>
                                                 </table>
                                             </div>
                                         </div>
@@ -181,9 +174,8 @@
                             <div class="row m-t-15">
                                 <div class="col-md-12 text-right">
                                     <a id='creatPreheat' class="btn btn-sm btn-primary" onclick="addContactWay()" type="button"><i class="fa fa-arrow-right"></i>保存</a>
-                                    <a class="btn btn-secondary btn-sm" href="/page/contactWay" style="margin-right:10px;">
-                                        <i class="fa fa-backward"></i>&nbsp;返回
-                                    </a>
+                                    <a id='creatPreheatEdit' style="display: none" class="btn btn-sm btn-primary" onclick="upContactWay()" type="button"><i class="fa fa-arrow-right"></i>更新</a>
+                                    <a class="btn btn-secondary btn-sm" href="/page/contactWay" style="margin-right:10px;"><i class="fa fa-backward"></i>&nbsp;返回</a>
                                 </div>
                             </div>
                        </div>
@@ -289,6 +281,10 @@
 <th:block th:include="common/include::jstree-js" />
 <th:block th:include="common/include::bootstrap-table-js" />
 <th:block th:include="common/include::jquery-confirm-js" />
+<script>
+    var contactWayId = '[[${contactWayId}]]';
+    var host="http://"+window.location.host;
+</script>
 <script data-th-src="@{/plugins/imageUpload/cupload.js}"></script>
 <script data-th-src="@{/js/app/qywx/common/template.js}"></script>
 <script data-th-src="@{/js/app/qywx/contactWay/add.js}"></script>

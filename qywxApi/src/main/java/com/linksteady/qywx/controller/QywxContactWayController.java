@@ -19,10 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
@@ -93,6 +90,18 @@ public class QywxContactWayController extends BaseController {
     }
 
     /**
+     * 根据contactWayId查询群码关联列表
+     * @param contactWayId
+     * @return
+     */
+    @RequestMapping("/contactWay/getContactChatById")
+    @ResponseBody
+    public ResponseBo getContactChatById(Long contactWayId){
+        List<QywxContactWayChat> chat=qywxContactWayService.getContactChatById(contactWayId);
+        return ResponseBo.okWithData(null, chat);
+    }
+
+    /**
      * 更新
      */
     @RequestMapping("/contactWay/update")
@@ -104,8 +113,9 @@ public class QywxContactWayController extends BaseController {
         qywxContactWay.setScene("2");
         //外部客户添加时是否无需验证，默认为true
         qywxContactWay.setSkipVerify(true);
+        List<QywxContactWayChat> list =JSON.parseArray(qywxContactWay.getWatChatList(),QywxContactWayChat.class);
         try {
-            qywxContactWayService.updateContractWay(qywxContactWay);
+            qywxContactWayService.updateContractWay(qywxContactWay,list);
             return ResponseBo.ok();
         } catch (Exception e) {
             String message = e.getMessage();
@@ -163,9 +173,9 @@ public class QywxContactWayController extends BaseController {
      */
     @RequestMapping("/contactWay/delete")
     @ResponseBody
-    public ResponseBo deleteContactWay(String configId) {
+    public ResponseBo deleteContactWay(String configId,Long contactWayId) {
         try {
-            qywxContactWayService.deleteContactWay(configId);
+            qywxContactWayService.deleteContactWay(configId,contactWayId);
             return ResponseBo.ok("删除成功！");
         } catch (Exception e) {
             log.debug("删除渠道活码失败，{}", e);
@@ -261,11 +271,41 @@ public class QywxContactWayController extends BaseController {
             String fileSuffix = base64Code.substring("data:image/".length(), base64Code.lastIndexOf(";base64,"));
             String fileName= System.currentTimeMillis()+"_qrcode." + fileSuffix;
             File file = Base64Img.base64ToFile(base64Code, fileName, FilePathConsts.CONTACT_WAY_IMAGE_PATH);
-            return ResponseBo.okWithData(null,fileName);
+            return ResponseBo.okWithData(null,FilePathConsts.CONTACT_WAY_IMAGE_PATH+fileName);
         } catch (Exception e) {
             log.error("上传二维码（图片）报错！");
             return ResponseBo.error();
         }
     }
 
+    @RequestMapping("/contactWay/getImage")
+    @ResponseBody
+    public void getImagesId(HttpServletResponse rp,String filePath) {
+        File imageFile = new File(filePath);
+        if (imageFile.exists()) {
+            FileInputStream fis = null;
+            OutputStream os = null;
+            try {
+                fis = new FileInputStream(imageFile);
+                os = rp.getOutputStream();
+                int count = 0;
+                byte[] buffer = new byte[1024 * 8];
+                while ((count = fis.read(buffer)) != -1) {
+                    os.write(buffer, 0, count);
+                    os.flush();
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    fis.close();
+                    os.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+    }
 }

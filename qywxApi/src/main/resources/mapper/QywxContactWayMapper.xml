@@ -19,6 +19,9 @@
         <result property="updateBy" jdbcType="VARCHAR" column="update_by"/>
         <result property="externalUserNum" jdbcType="DECIMAL" column="externaluser_num"/>
         <result property="shortUrl" jdbcType="VARCHAR" column="short_url"/>
+        <result property="chatText" jdbcType="VARCHAR" column="chat_text"/>
+        <result property="relateChat" jdbcType="VARCHAR" column="relate_chat"/>
+        <result property="contactName" jdbcType="VARCHAR" column="contact_name"/>
     </resultMap>
 
     <resultMap id="contactWayDetail" type="com.linksteady.qywx.domain.QywxContactWayDetail">
@@ -28,6 +31,15 @@
         <result property="objName" jdbcType="VARCHAR" column="obj_name"/>
         <result property="objType" jdbcType="VARCHAR" column="obj_type"/>
         <result property="insertDt" jdbcType="VARCHAR" column="insert_dt"/>
+    </resultMap>
+
+    <resultMap id="contactwaychat" type="com.linksteady.qywx.domain.QywxContactWayChat">
+        <result property="contactWayId" jdbcType="DECIMAL" column="contactway_id"/>
+        <result property="chatId" jdbcType="VARCHAR" column="chat_id"/>
+        <result property="chatName" jdbcType="VARCHAR" column="chat_name"/>
+        <result property="chatQrimgUrl" jdbcType="VARCHAR" column="chat_qrimg_url"/>
+        <result property="insertDt" jdbcType="TIMESTAMP" column="insert_dt"/>
+        <result property="insertBy" jdbcType="VARCHAR" column="insert_by"/>
     </resultMap>
 
     <delete id="deleteContactWay">
@@ -43,7 +55,7 @@
 
     <select id="getContactWayById" resultMap="BaseResultMap">
         select contactway_id,qrcode,contact_type,scene,style,skip_verify,state,user_list,party,party,
-                config_id,create_dt,update_dt,create_by,update_by,externaluser_num,short_url
+                config_id,create_dt,update_dt,create_by,update_by,externaluser_num,short_url,chat_text,relate_chat,contact_name
         from uo_qywx_contact_way where  contactway_id=#{contactWayId}
     </select>
 
@@ -113,7 +125,10 @@
                 update_dt=#{updateDt},
                 update_by=#{updateBy},
                 qrcode = #{qrCode},
-                short_url = #{shortUrl}
+                short_url = #{shortUrl},
+                chat_text=#{chatText},
+                relate_chat=#{relateChat},
+                contact_name=#{contactName}
          where contactway_id=#{contactWayId}
     </update>
 
@@ -130,7 +145,10 @@
              create_dt,
              update_dt,
              create_by,
-             update_by
+             update_by,
+             chat_text,
+             relate_chat,
+             contact_name
          ) values(
             #{contactType},
             #{scene},
@@ -143,7 +161,10 @@
             #{createDt},
             #{updateDt},
             #{createBy},
-            #{updateBy}
+            #{updateBy},
+            #{chatText},
+            #{relateChat},
+            #{contactName}
          );
     </insert>
 
@@ -180,6 +201,9 @@
             #{item}
         </foreach>
     </select>
+    <select id="getContactChatById" resultMap="contactwaychat">
+        select chat_id,chat_name,chat_qrimg_url from uo_qywx_contact_way_chat where contact_way_id=#{contactWayId}
+    </select>
 
     <insert id="insertContactWayDetail">
         insert into uo_qywx_contact_way_detail( contactway_id, obj_id, obj_name, obj_type,insert_dt) values
@@ -197,5 +221,8 @@
 
     <delete id="deleteContactWayDetail">
         delete from uo_qywx_contact_way_detail where contactway_id=(select contactway_id from uo_qywx_contact_way where config_id=#{configId})
+    </delete>
+    <delete id="deleteContactWayChat">
+         delete from uo_qywx_contact_way_chat where contact_way_id=#{contactWayId}
     </delete>
 </mapper>

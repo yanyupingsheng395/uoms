@@ -116,49 +116,22 @@ $( "#btn_query" ).click( function () {
  * 编辑按钮
  */
 $( "#btn_edit" ).click( function () {
-    $( "#qrCodeDiv" ).show();
-    $( "#btn_save" ).attr( "name", "update" );
-    let selected = $( "#contactWayTable" ).bootstrapTable( 'getSelections' );
-    let selected_length = selected.length;
+    var selected = $( "#contactWayTable" ).bootstrapTable( 'getSelections' );
+    var selected_length = selected.length;
     if (!selected_length) {
         $MB.n_warning( '请选择需要编辑的渠道活码！' );
         return;
     }
-    createUserTree();
-    let contactWayId = selected[0].contactWayId;
-    //获取数据 并进行填充
-    $.post( "/contactWay/getContactWayById", {"contactWayId": contactWayId}, function (r) {
-        if (r.code === 200) {
-            var $form = $( '#contactWay_edit' );
-            let d = r.data;
-            $( "#myLargeModalLabel" ).html( '修改渠道活码' );
-            $form.find( "input[name='contactWayId']" ).val( d.contactWayId );
-            $form.find( "input[name='configId']" ).val( d.configId );
-            $form.find( "input[name='state']" ).val( d.state ).attr( "readOnly", "readOnly" );
-            $form.find( "input[name='usersList']" ).val(d.usersList);
-            $form.find( "input[name='deptList']" ).val(d.party);
-            $form.find( "input[name='shortUrl']" ).val( d.shortUrl );
-            if(d.contactType==1){
-                Single=true;
-            }
-            rebuildData(d.usersList,d.party);
-        } else {
-            $MB.n_danger( r['msg'] );
-        }
-    } );
-} );
+    var contactWayId = selected[0].contactWayId;
+    window.location.href="/page/contactWay/add?contactWayId="+contactWayId;
+})
+
 
 /**
  * 新增按钮
  */
 $( "#btn_add" ).click( function () {
     window.location.href="/page/contactWay/add";
-    // $( "#myLargeModalLabel" ).html( '新增渠道活码' );
-    // $( "#state" ).removeAttr( "readOnly" );
-    // $( "#qrCodeDiv" ).hide();
-    // $( "#longUrl" ).val( "" );
-    // $( "#shortUrl" ).val( "" );
-    // createUserTree();
 } );
 
 $( "#btn_delete" ).click( function () {
@@ -169,13 +142,14 @@ $( "#btn_delete" ).click( function () {
         $MB.n_warning( '请选择需要删除的渠道活码！' );
         return;
     }
-    let configId = selected[0].configId;
+    var configId = selected[0].configId;
+    var contactWayId = selected[0].contactWayId;
 
     $MB.confirm( {
         title: "<i class='mdi mdi-alert-outline'></i>提示：",
         content: "确定删除选中的渠道活码?"
     }, function () {
-        $.post( '/contactWay/delete', {"configId": configId}, function (r) {
+        $.post( '/contactWay/delete', {"configId": configId,"contactWayId":contactWayId}, function (r) {
             if (r.code === 200) {
                 $MB.n_success( r.msg );
                 $MB.refreshTable( "contactWayTable" );

@@ -58,6 +58,19 @@ public class QywxContactWay implements Comparable<QywxContactWay>{
      */
     private String shortUrl;
     /**
+     * 引导进群欢迎语
+     */
+    private String chatText;
+    /**
+     * 是否关联群聊
+     */
+    private String relateChat;
+    /**
+     * 渠道活码名称
+     */
+    private String contactName;
+
+    /**
      * 用于接收前端传过来的群码关联列表集合
      */
     private String watChatList;

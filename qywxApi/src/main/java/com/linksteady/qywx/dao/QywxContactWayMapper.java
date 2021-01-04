@@ -52,4 +52,8 @@ public interface QywxContactWayMapper {
     void deleteContactWayDetail(String configId);
 
     void insertContactWayChat(List<QywxContactWayChat> list);
+
+    List<QywxContactWayChat> getContactChatById(Long contactWayId);
+
+    void deleteContactWayChat(Long contactWayId);
 }

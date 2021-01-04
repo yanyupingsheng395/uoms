@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Splitter;
+import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.qywx.constant.WxPathConsts;
@@ -17,6 +18,7 @@ import com.linksteady.qywx.service.QywxContactWayService;
 import com.linksteady.qywx.service.QywxService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -126,13 +128,15 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
             String shortUrl="";
             qywxContactWayMapper.updateContactWayFullInfo(contactWayId,configId,qrCode,shortUrl,qywxContactWay.getUpdateBy());
 
-            //处理群聊逻辑
-            list.stream().forEach((sm) -> {
-                sm.setContactWayId(contactWayId);
-                sm.setInsertBy(userName);
-                sm.setInsertDt(new Date());
-            });
-            qywxContactWayMapper.insertContactWayChat(list);
+            if(list.size()>0){
+                //处理群聊逻辑
+                list.stream().forEach((sm) -> {
+                    sm.setContactWayId(contactWayId);
+                    sm.setInsertBy(userName);
+                    sm.setInsertDt(new Date());
+                });
+                qywxContactWayMapper.insertContactWayChat(list);
+            }
         }else{
             throw new Exception("新增渠道活码失败！");
         }
@@ -163,7 +167,7 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateContractWay(QywxContactWay qywxContactWay) throws Exception{
+    public void updateContractWay(QywxContactWay qywxContactWay,List<QywxContactWayChat> list) throws Exception{
         JSONObject param=new JSONObject();
         param.put("type",qywxContactWay.getContactType());
         param.put("scene",qywxContactWay.getScene());
@@ -199,12 +203,30 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
             {
                 qrCode=contactDetail.getString("qr_code");
             }
+            //如果“是否关联群聊，选择否，那么进群引导语为空，群码关联列表为空”
+            if("N".equals(qywxContactWay.getRelateChat())){
+                list=Arrays.asList();
+                qywxContactWay.setChatText("");
+            }
+
             qywxContactWayMapper.deleteContactWayDetail(qywxContactWay.getConfigId());
             insertContactWayDetail(qywxContactWay.getDeptList(),qywxContactWay.getUsersList(),qywxContactWay.getContactWayId());
             //更新数据库
             qywxContactWayMapper.updateContractWay(qywxContactWay);
             qywxContactWayMapper.updateContactWayQrCode(qywxContactWay.getContactWayId(),qrCode,qywxContactWay.getUpdateBy());
 
+            //更新步骤，先删除群聊，然后再插入
+            qywxContactWayMapper.deleteContactWayChat(qywxContactWay.getContactWayId());
+            if(list.size()>0){
+                //处理群聊逻辑
+                list.stream().forEach((sm) -> {
+                    sm.setContactWayId(qywxContactWay.getContactWayId());
+                    sm.setInsertBy(((UserBo) SecurityUtils.getSubject().getPrincipal()).getUsername());
+                    sm.setInsertDt(new Date());
+                });
+                //重新插入
+                qywxContactWayMapper.insertContactWayChat(list);
+            }
         }else
         {
             throw new Exception("更新失败！");
@@ -297,7 +319,7 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
 
     @Override
     @Transactional
-    public void deleteContactWay(String configId) throws Exception{
+    public void deleteContactWay(String configId,Long contactWayId) throws Exception{
         log.info("删除渠道活码，接收到的configId为{}",configId);
         if(qywxContactWayMapper.getRefrenceCount(configId)>0)
         {
@@ -321,6 +343,8 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
             qywxContactWayMapper.deleteContactWayDetail(configId);
             //从数据库进行删除
             qywxContactWayMapper.deleteContactWay(configId);
+            //删除群聊关联的内容
+            qywxContactWayMapper.deleteContactWayChat(contactWayId);
 
         }else
         {
@@ -331,6 +355,11 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
     @Override
     public QywxContactWay getQrcodeByConfigId(String configId) {
         return qywxContactWayMapper.getQrcodeByConfigId(configId);
+    }
+
+    @Override
+    public List<QywxContactWayChat> getContactChatById(Long contactWayId) {
+        return qywxContactWayMapper.getContactChatById(contactWayId);
     }
 
 

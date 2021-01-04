@@ -88,7 +88,8 @@ public class PageController  extends BaseController {
      * 新增渠道渠道活码
      */
     @RequestMapping("/contactWay/add")
-    public String addContactWay() {
+    public String addContactWay(Model model,String contactWayId) {
+        model.addAttribute("contactWayId",contactWayId);
         return "qywx/contactWay/add";
     }
 
