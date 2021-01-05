@@ -22,6 +22,7 @@
         <result property="chatText" jdbcType="VARCHAR" column="chat_text"/>
         <result property="relateChat" jdbcType="VARCHAR" column="relate_chat"/>
         <result property="contactName" jdbcType="VARCHAR" column="contact_name"/>
+        <result property="tagIds" jdbcType="VARCHAR" column="tag_ids"/>
     </resultMap>
 
     <resultMap id="contactWayDetail" type="com.linksteady.qywx.domain.QywxContactWayDetail">
@@ -55,7 +56,7 @@
 
     <select id="getContactWayById" resultMap="BaseResultMap">
         select contactway_id,qrcode,contact_type,scene,style,skip_verify,state,user_list,party,party,
-                config_id,create_dt,update_dt,create_by,update_by,externaluser_num,short_url,chat_text,relate_chat,contact_name
+                config_id,create_dt,update_dt,create_by,update_by,externaluser_num,short_url,chat_text,relate_chat,contact_name,tag_ids
         from uo_qywx_contact_way where  contactway_id=#{contactWayId}
     </select>
 
@@ -128,7 +129,8 @@
                 short_url = #{shortUrl},
                 chat_text=#{chatText},
                 relate_chat=#{relateChat},
-                contact_name=#{contactName}
+                contact_name=#{contactName},
+                tag_ids=#{tagIds}
          where contactway_id=#{contactWayId}
     </update>
 
@@ -148,7 +150,8 @@
              update_by,
              chat_text,
              relate_chat,
-             contact_name
+             contact_name,
+             tag_ids
          ) values(
             #{contactType},
             #{scene},
@@ -164,7 +167,8 @@
             #{updateBy},
             #{chatText},
             #{relateChat},
-            #{contactName}
+            #{contactName},
+            #{tagIds}
          );
     </insert>
 

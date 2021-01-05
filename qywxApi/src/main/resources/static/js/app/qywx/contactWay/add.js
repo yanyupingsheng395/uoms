@@ -9,6 +9,7 @@ var userSelect = $contactWayForm.find( "select[name='userSelect']" );
 var $usersList = $contactWayForm.find( "input[name='usersList']" );
 var chatMap=[];//选择群聊对象集合
 var checkChatID=[];//校验是否重复选择群聊
+var tagIds=[];//选择标签集合
 $( function () {
     createUserTree();
     showAllTag();
@@ -40,6 +41,7 @@ function editContact(contactWayId) {
             $form.find( "input[name='contactName']" ).val( d.contactName );
             $form.find( "textarea[name='chatText']" ).val( d.chatText );
             $(":radio[name='relateChat'][value='" + d.relateChat + "']").prop("checked", "checked");
+            var tagid=d.tagIds;
             if(d.relateChat =='N'){
                 $("#groupCode").hide();
             }
@@ -47,11 +49,22 @@ function editContact(contactWayId) {
                 Single=true;
             }
             rebuildData(d.usersList,d.party);
+            if(tagid!=null&&tagid!=""){
+                tagIds=tagid.split(",");
+            }
         } else {
             $MB.n_danger( r['msg'] );
         }
     } );
 }
+
+//选中标签展示
+function rebulidTag() {
+    for (var i=0;i<tagIds.length;i++){
+        addCss( document.getElementById(tagIds[i]));
+    }
+}
+
 
 /**
  * 填充群聊
@@ -187,7 +200,7 @@ function showAllTag() {
             var groupName=data[i].groupName;
             var tagList=data[i].tagList;
             html+= " <div class=\"col-sm-12\">\n";
-            html+="    <label class=\"col-md-2 control-label\" style=\"text-align:left\">"+groupName+":</label>\n";
+            html+="    <label class=\"col-md-2 control-label\" style=\"text-align:left;text-align: right\">"+groupName+":</label>\n";
             html+= "    <div id=\"SelectLabelDiv"+i+"\" class=\"col-md-10\">" ;
                 for(var j=0;j<tagList.length;j++){
                     var tagId=tagList[j].tagId;
@@ -198,14 +211,12 @@ function showAllTag() {
             html+= "   </div>";
         }
         $("#allTag").html(html);
+        rebulidTag();
     } );
 }
 
-/**
- * 选择标签，增加样式
- * @param dom
- */
-function chooseThis(dom) {
+//增加样式
+function addCss(dom) {
     var rgb = $(dom).css("borderColor");
     rgb = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
     rgb = "#" + hex(rgb[1]) + hex(rgb[2]) + hex(rgb[3]) + "30";
@@ -215,9 +226,25 @@ function chooseThis(dom) {
         $("#" + inputId).remove();
     } else {
         $(dom).css("backgroundColor", rgb);
-        appendStr2 = '<input id="label' + $(dom).attr("id") + '" name="labelID" type="hidden" class="form-control" value="' + $(dom).attr("id") + '">';
-        $("#SelectLabelDiv").prepend(appendStr2);
     }
+}
+
+/**
+ * 选择标签，增加样式
+ * @param dom
+ */
+function chooseThis(dom) {
+    var id=$(dom).attr("id");
+    if ($(dom).css("backgroundColor") != null && $(dom).css("backgroundColor") != "rgba(0, 0, 0, 0)") {
+        for (var i = 0; i < tagIds.length; i++) {
+            if (tagIds[i] == id) {
+                tagIds.splice(i, 1);
+            }
+        }
+    } else {
+        tagIds.push(id);
+    }
+    addCss(dom);
 }
 
 /**
@@ -400,6 +427,43 @@ function regionRemove(dom, id, selid) {
  * @param deptLis
  */
 function rebuildData(usersList, deptLis) {
+    //此处为了防止，在点击更新时，userDate和deptData从后端请求数据还没请求过来。
+    if(userData==null||userData==""||deptData==null||deptData==""){
+        $.post( "/contactWay/getDept", {}, function (r) {
+            deptData = r.data;
+            if(deptLis!=""&&deptLis!=null){
+                deptLis=deptLis.split(',');
+                var selid="region1";
+                for(var i=0;i<deptData.length;i++){
+                    for (var j=0;j<deptLis.length;j++){
+                        if(deptData[i].id==deptLis[j]){
+                            dept_list.push(deptData[i].id);
+                            $( "#alllist" ).append( "<span class=\"tag\"><span>" + deptData[i].name + "&nbsp;&nbsp;</span><a style=\"color: #fff;cursor: pointer;\" onclick=\"regionRemove(this, \'" + deptData[i].id + "\', \'" + selid + "\')\">x</a></span>" );
+                        }
+                    }
+                }
+            }
+        } );
+        $.post( "/contactWay/getUser", {}, function (r) {
+            userData = r.data;
+            if(usersList!=""&&usersList!=null){
+                usersList=usersList.split(',');
+                var selid2="region2";
+                for(var i=0;i<userData.length;i++){
+                    for (var j=0;j<usersList.length;j++){
+                        if(userData[i].user_id==usersList[j]){
+                            user_list.push(userData[i].user_id);
+                            $( "#alllist" ).append( "<span class=\"tag\"><span>" + userData[i].name + "&nbsp;&nbsp;</span><a style=\"color: #fff;cursor: pointer;\" onclick=\"regionRemove(this, \'" + userData[i].user_id + "\', \'" + selid2 + "\')\">x</a></span>" );
+                        }
+                    }
+                }
+            }
+        } );
+    }else{
+        assemblyData(usersList, deptLis,userData,deptData);
+    }
+}
+function assemblyData(usersList, deptLis,userData,deptData) {
     if(usersList!=""&&usersList!=null){
         usersList=usersList.split(',');
         var selid2="region2";
@@ -423,7 +487,6 @@ function rebuildData(usersList, deptLis) {
                 }
             }
         }
-
     }
 }
 
@@ -432,6 +495,7 @@ function getDeptAndUserId() {
     $( "input[name='deptList']" ).val( dept_list.join( "," ) );
     $( "input[name='validUser']" ).val( user_list.join( "," ) + dept_list.join( "," ));
     $( "input[name='watChatList']" ).val(JSON.stringify(chatMap));
+    $( "input[name='tagIds']" ).val(tagIds.toString());
 }
 
 /**

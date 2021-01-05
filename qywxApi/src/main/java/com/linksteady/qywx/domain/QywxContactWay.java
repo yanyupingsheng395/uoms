@@ -69,6 +69,10 @@ public class QywxContactWay implements Comparable<QywxContactWay>{
      * 渠道活码名称
      */
     private String contactName;
+    /**
+     * 标签集合
+     */
+    private String tagIds;
 
     /**
      * 用于接收前端传过来的群码关联列表集合
