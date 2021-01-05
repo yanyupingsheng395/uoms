@@ -69,7 +69,7 @@ function editChat(contactWayId) {
                 var wayChat = new Object();
                 wayChat.chatId=chatID;
                 wayChat.chatName=chatName;
-                wayChat.chatQrimgUrl=chatQrimgUrl;
+                wayChat.chatQrimgUrl=d[i].chatQrimgUrl;
                 chatMap.push(wayChat);
                 //校验是否重复选择群聊
                 checkChatID.push(chatID);
