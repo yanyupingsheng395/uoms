@@ -83,6 +83,8 @@ function saveMaterial() {
             $("#materialModal").modal('hide');
             //刷新表格
             $MB.refreshTable('imageTable');
+            $("#chooseMedia").show();
+            clearImg();
         }
     } );
 }
@@ -91,6 +93,7 @@ function saveMaterial() {
 function closeMaterial() {
     $("#materialModal").modal('hide');
     $("#chooseMedia").show();
+    clearImg();
 }
 
 function showUpImg() {
@@ -115,3 +118,10 @@ function saveData() {
     }
 }
 
+//上传成功后，将弹窗内容清除
+function clearImg() {
+    $("#title").val("");
+    //清除所选图片
+    $("#cupload-create").html("");
+    image();
+}
