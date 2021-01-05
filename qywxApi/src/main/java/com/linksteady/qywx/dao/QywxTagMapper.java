@@ -2,6 +2,7 @@ package com.linksteady.qywx.dao;
 
 import com.linksteady.qywx.domain.QywxTag;
 import com.linksteady.qywx.domain.QywxTagGroup;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -32,4 +33,12 @@ public interface QywxTagMapper {
     void delTagByGroupId(String id);
 
     void delTagByTagId(String id);
+
+    void addTagList(@Param("tagList") List<QywxTag> list);
+
+    void addTagGroupList(@Param("tagGroupList")List<QywxTagGroup> list);
+
+    void delAllTagGroup();
+
+    void delAllTag();
 }

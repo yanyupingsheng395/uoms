@@ -26,6 +26,18 @@
     <insert id="addTag">
         insert into uo_qywx_tag(tag_id, tag_name, tag_create_time, tag_order, group_id,insert_by,insert_dt) values(#{tagId},#{tagName},#{tagCreateTime},#{tagOrder},#{groupId},#{insertBy},#{insertDt})
     </insert>
+    <insert id="addTagList">
+        insert into uo_qywx_tag(tag_id, tag_name, tag_create_time, tag_order, group_id,insert_by,insert_dt) values
+        <foreach collection="tagList" item="item" separator=",">
+        (#{item.tagId},#{item.tagName},#{item.tagCreateTime},#{item.tagOrder},#{item.groupId},#{item.insertBy},#{item.insertDt})
+        </foreach>
+    </insert>
+    <insert id="addTagGroupList">
+        insert into uo_qywx_tag_group(group_id, group_name, group_order, create_time,insert_by,insert_dt) values
+        <foreach collection="tagGroupList" item="item" separator=",">
+        (#{item.groupId},#{item.groupName},#{item.groupOrder},#{item.createTime},#{item.insertBy},#{item.insertDt})
+        </foreach>
+    </insert>
     <update id="updateTagGroup">
         update uo_qywx_tag_group set group_name=#{name} where group_id=#{id}
     </update>
@@ -40,6 +52,12 @@
     </delete>
     <delete id="delTagByTagId">
         delete from uo_qywx_tag where tag_id=#{id}
+    </delete>
+    <delete id="delAllTagGroup">
+        delete from uo_qywx_tag_group
+    </delete>
+    <delete id="delAllTag">
+        delete from uo_qywx_tag
     </delete>
     <select id="getTagGroup" resultMap="tagGroup">
         select group_id,group_name,group_order,create_time,insert_dt,insert_by from uo_qywx_tag_group order by create_time desc

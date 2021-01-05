@@ -15,6 +15,7 @@ import com.linksteady.qywx.domain.WxError;
 import com.linksteady.qywx.exception.WxErrorException;
 import com.linksteady.qywx.service.QywxService;
 import com.linksteady.qywx.service.QywxTagService;
+import com.linksteady.qywx.utils.TimeStampUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -205,5 +206,68 @@ public class QywxTagServiceImpl implements QywxTagService {
         if (error.getErrorCode() != 0) {
             throw new WxErrorException(error);
         }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void getQywxTagList() throws WxErrorException {
+        StringBuffer requestUrl = new StringBuffer(qywxService.getRedisConfigStorage().getApiUrl(WxPathConsts.ExternalContacts.GET_CORP_TAG_LIST));
+        requestUrl.append("?access_token=" + qywxService.getAccessToken());
+        List<String> list= Arrays.asList();
+        JSONObject param= new JSONObject();
+        param.put("tag_id",list);
+        String resultData = OkHttpUtil.postRequestByJson(requestUrl.toString(),JSON.toJSONString(param));
+        JSONObject jsonObject = JSON.parseObject(resultData);
+        WxError error = WxError.fromJsonObject(jsonObject);
+        if (error.getErrorCode() != 0) {
+            throw new WxErrorException(error);
+        }
+        //清空标签组和标签的所有数据
+        qywxTagMapper.delAllTagGroup();
+        qywxTagMapper.delAllTag();
+        //组织数据
+        JSONArray jsonArray = JSON.parseArray(jsonObject.getString("tag_group"));
+        List<QywxTagGroup> tagGroupList=Lists.newArrayList();
+        if(jsonArray.size()>0){
+            for (int i = 0; i < jsonArray.size(); i++) {
+                JSONObject object = jsonArray.getJSONObject(i);
+                //组装标签组数据
+                QywxTagGroup qywxTagGroup=new QywxTagGroup();
+                if(object!=null){
+                    qywxTagGroup.setGroupId(object.getString("group_id"));
+                    qywxTagGroup.setGroupName(object.getString("group_name"));
+                    qywxTagGroup.setGroupOrder(object.getIntValue("order"));
+                    qywxTagGroup.setCreateTime(TimeStampUtils.timeStampToDate(object.getString("create_time")));
+                    qywxTagGroup.setInsertDt(new Date());
+                    qywxTagGroup.setInsertBy((((UserBo) SecurityUtils.getSubject().getPrincipal()).getUsername()));
+
+                    //获取标签组下面标签内容
+                    JSONArray tagArray = JSON.parseArray(object.getString("tag"));
+                    List<QywxTag> tagList=Lists.newArrayList();
+                    if(tagArray.size()>0){
+                        for (int j = 0; j < tagArray.size(); j++) {
+                            JSONObject tagObject = tagArray.getJSONObject(j);
+                            if(tagObject!=null){
+                                QywxTag qywxTag=new QywxTag();
+                                qywxTag.setInsertBy(((UserBo) SecurityUtils.getSubject().getPrincipal()).getUsername());
+                                qywxTag.setInsertDt(new Date());
+                                qywxTag.setTagOrder(tagObject.getIntValue("order"));
+                                qywxTag.setTagName(tagObject.getString("name"));
+                                qywxTag.setTagCreateTime(TimeStampUtils.timeStampToDate(object.getString("create_time")));
+                                qywxTag.setGroupId(object.getString("group_id"));
+                                qywxTag.setTagId(tagObject.getString("id"));
+                                tagList.add(qywxTag);
+                            }
+                        }
+                    }
+                    //将子标签的数据插入数据库
+                    qywxTagMapper.addTagList(tagList);
+                    //将标签组的信息，存进集合中
+                    tagGroupList.add(qywxTagGroup);
+                }
+            }
+            qywxTagMapper.addTagGroupList(tagGroupList);
+        }
+
     }
 }

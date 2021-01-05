@@ -71,8 +71,14 @@ public interface QywxTagService {
      * 删除标签组或者标签
      * @param id   标签组ID/标签ID
      * @param flag  G：修改标签组/T:修改标签
-     * @param groutId  这个groutId为了判断标签组下的标签是否均被删除，如果都被删除，那么也删除该标签组
+     * @param groupId  这个groutId为了判断标签组下的标签是否均被删除，如果都被删除，那么也删除该标签组
      * @return
      */
     void delGroupTag(String id, String flag,String groupId) throws Exception;
+
+    /**
+     * 从微信端获取所有标签信息
+     */
+    void getQywxTagList() throws WxErrorException;
+
 }

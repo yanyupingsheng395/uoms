@@ -160,4 +160,12 @@ public class QywxTagController {
         return ResponseBo.ok();
     }
 
+    /**
+     * 从微信段获取所有群聊，并存入数据库
+     */
+    @RequestMapping("/getQywxTagList")
+    public void getQywxTagList() throws WxErrorException {
+        qywxTagService.getQywxTagList();
+    }
+
 }
