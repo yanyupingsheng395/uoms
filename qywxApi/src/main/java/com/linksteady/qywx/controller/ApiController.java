@@ -129,8 +129,9 @@ public class ApiController {
             String fileSuffix = base64Code.substring("data:image/".length(), base64Code.lastIndexOf(";base64,"));
             //生成文件名 md5(title+时间戳.fileSuffix)
             String timestamp= String.valueOf(System.currentTimeMillis());
-            String fileName= MD5Utils.encrypt(title+"_"+timestamp+"."+fileSuffix);
+            String fileName= MD5Utils.encrypt(title)+"_"+timestamp+"."+fileSuffix;
             File file = Base64Img.base64ToFile(base64Code, fileName, FilePathConsts.TEMP_IMAGE_PATH);
+            //TODO 此处需要获取当前用户的名称，由调用方提供
             mediaService.uploadQywxMaterial(title,file,"");
             return ResponseBo.ok();
         } catch (Exception e) {

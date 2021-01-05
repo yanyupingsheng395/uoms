@@ -43,21 +43,6 @@ function getDataList(tableId) {
                 field: 'insertDt',
                 title: '创建时间',
                 align: 'center'
-            },{
-                field: 'indetityType',
-                title: '业务标记类型',
-                align: 'center',
-                formatter: function (value, row, index) {
-                    if (value == 'PRODUCT') {
-                        return "商品类型";
-                    } else if (value == 'COUPON') {
-                        return "优惠券类型";
-                    } else if (value == 'MANUAL') {
-                        return "推送测试";
-                    } else {
-                        return "-";
-                    }
-                }
             }]
     };
     $MB.initTable( tableId, settings );

@@ -63,11 +63,11 @@
          from uo_qywx_param
     </select>
     <update id="updateQywxMediaImgBymediaId">
-        update uo_qywx_media_img set media_id=#{mediaId} ,media_expire_date=#{expreDt},file_name=#{fileName} where identity_id=#{identityId} and identity_type=#{identityType}
+        update uo_qywx_media_img set media_id=#{mediaId} ,media_expire_date=#{expreDt},file_name=#{fileName},update_dt=now() where identity_id=#{identityId} and identity_type=#{identityType}
     </update>
     <insert id="saveQywxMediaImg">
-        insert  into uo_qywx_media_img(file_name,img_title,insert_dt,media_id, media_expire_date, identity_id, identity_type)
-        values (#{fileName},#{title},#{nowtime},#{mediaId},#{expreDt},#{identityId},#{identityType})
+        insert  into uo_qywx_media_img(file_name,img_title,insert_dt,insert_by,update_dt,update_by,media_id, media_expire_date, identity_id, identity_type)
+        values (#{fileName},#{title},#{nowtime},#{userName},#{nowtime},#{userName},#{mediaId},#{expreDt},#{identityId},#{identityType})
     </insert>
 
     <select id="getImageCount" resultType="int">

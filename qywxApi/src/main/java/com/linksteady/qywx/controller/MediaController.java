@@ -54,7 +54,7 @@ public class MediaController extends BaseController {
             String fileSuffix = base64Code.substring("data:image/".length(), base64Code.lastIndexOf(";base64,"));
             //生成文件名 md5(title+时间戳.fileSuffix)
             String timestamp= String.valueOf(System.currentTimeMillis());
-            String fileName=MD5Utils.encrypt(title+"_"+timestamp+"."+fileSuffix);
+            String fileName=MD5Utils.encrypt(title)+"_"+timestamp+"."+fileSuffix;
             File file = Base64Img.base64ToFile(base64Code, fileName, FilePathConsts.FOREVER_IMAGE_PATH);
             mediaService.uploadImage(title,file,getCurrentUser().getUsername());
             return ResponseBo.ok();
@@ -89,7 +89,7 @@ public class MediaController extends BaseController {
             String fileSuffix = base64Code.substring("data:image/".length(), base64Code.lastIndexOf(";base64,"));
             //生成文件名 md5(title+时间戳.fileSuffix)
             String timestamp= String.valueOf(System.currentTimeMillis());
-            String fileName=MD5Utils.encrypt(title+"_"+timestamp+"."+fileSuffix);
+            String fileName=MD5Utils.encrypt(title)+"_"+timestamp+"."+fileSuffix;
             File file = Base64Img.base64ToFile(base64Code, fileName,FilePathConsts.TEMP_IMAGE_PATH);
 
             mediaService.uploadQywxMaterial(title,file,getCurrentUser().getUsername());

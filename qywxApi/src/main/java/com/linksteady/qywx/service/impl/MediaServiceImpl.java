@@ -90,7 +90,7 @@ public class MediaServiceImpl implements MediaService {
             // 判断media_expire_date是否失效，如果未失效，则直接返回找到的mediaId 如果失效，则调用生成的逻辑(内容来自于当前表)
             long expireTime= null==qywxMediaImg.getMediaExpireDate()?0l:Timestamp.valueOf(qywxMediaImg.getMediaExpireDate()).getTime();
             if(now>expireTime|| StringUtils.isEmpty(qywxMediaImg.getMediaId())){
-                //如果失效，那么就重新生成。
+                //如果失效，那么就重新生成
                File mediaFile = getMediaContent(identityType, identityId);
                 if(mediaFile==null){
                     log.error("mediaContent未获取到值，请检查数据。");
@@ -98,8 +98,8 @@ public class MediaServiceImpl implements MediaService {
                 }
                 JSONObject object = getMediaId(mediaFile);
                 mediaId=(String)object.get("mediaId");
-                LocalDateTime expreDt= (LocalDateTime) object.get("expreDt");
-                mediaMapper.updateQywxMediaImgBymediaId(mediaFile.getName(),identityId,identityType,mediaId,expreDt);
+                LocalDateTime expireDt= (LocalDateTime) object.get("expreDt");
+                mediaMapper.updateQywxMediaImgBymediaId(mediaFile.getName(),identityId,identityType,mediaId,expireDt);
             }else{
                 mediaId=qywxMediaImg.getMediaId();
             }
@@ -112,7 +112,7 @@ public class MediaServiceImpl implements MediaService {
             mediaId=(String)object.get("mediaId");
             LocalDateTime expreDt= (LocalDateTime) object.get("expreDt");
             LocalDateTime nowtime = LocalDateTime.now();//新增时间
-            mediaMapper.saveQywxMediaImg(mediaFile.getName(),"",nowtime,mediaId,expreDt,identityId,identityType);
+            mediaMapper.saveQywxMediaImg(mediaFile.getName(),"",nowtime,mediaId,expreDt,identityId,identityType,"");
 
         }
         return mediaId;
@@ -281,12 +281,10 @@ public class MediaServiceImpl implements MediaService {
      */
     @Override
     public void uploadQywxMaterial(String title, File file, String username) {
-        //生成文件名
-        String fileName="MANUAL_-1_"+System.currentTimeMillis()+".png";
         JSONObject object = getMediaId(file);
         String mediaId=(String)object.get("mediaId");
         LocalDateTime expreDt= (LocalDateTime) object.get("expreDt");
         LocalDateTime nowtime = LocalDateTime.now();
-        mediaMapper.saveQywxMediaImg(fileName,title,nowtime,mediaId,expreDt,-1l,"MANUAL");
+        mediaMapper.saveQywxMediaImg(file.getName(),title,nowtime,mediaId,expreDt,-1l,"MANUAL",username);
     }
 }

@@ -43,7 +43,7 @@ public interface MediaMapper {
      * @param identityId
      * @param identityType
      */
-    void saveQywxMediaImg(String fileName, String title,LocalDateTime nowtime, String mediaId, LocalDateTime expreDt, Long identityId, String identityType);
+    void saveQywxMediaImg(String fileName, String title,LocalDateTime nowtime, String mediaId, LocalDateTime expreDt, Long identityId, String identityType,String userName);
 
     int getImageCount();
 
