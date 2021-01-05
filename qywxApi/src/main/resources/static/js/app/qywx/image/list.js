@@ -88,6 +88,12 @@ function saveMaterial() {
     } );
 }
 
+function closeimgModel() {
+    clearImg();
+    //关闭弹出框
+    $("#materialModal").modal('hide');
+}
+
 //上传成功后，将弹窗内容清除
 function clearImg() {
     $("#title").val("");
