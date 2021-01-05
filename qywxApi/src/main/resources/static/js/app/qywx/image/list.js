@@ -70,19 +70,29 @@ function saveMaterial() {
         $MB.n_warning("图片不能为空！");
         return false;
     }
-
+    $MB.loadingDesc('show', '保存中，请稍候...');
     $.post( "/wxMedia/uploadImage", {
         title: title,
         mediaType: 'image',
         base64Code: code
     }, function (r) {
+        $MB.loadingDesc( 'hide' );
         if (r.code === 200) {
             $MB.n_success( "保存成功！" );
             //关闭弹出框
             $("#materialModal").modal('hide');
            //刷新表格
             $MB.refreshTable('imageTable');
+            clearImg();
         }
     } );
+}
+
+//上传成功后，将弹窗内容清除
+function clearImg() {
+    $("#title").val("");
+    //清除所选图片
+    $("#cupload-create").html("");
+    image();
 }
 
