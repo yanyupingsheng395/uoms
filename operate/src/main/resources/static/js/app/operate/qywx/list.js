@@ -36,12 +36,7 @@ function initTable() {
         }, {
             field: 'taskDateStr',
             title: '推送日期'
-        }
-        // , {
-        //     field: 'qywxMessageCount',
-        //     title: '个性化消息数（条）'
-        // }
-        ,{
+        },{
             field: 'totalNum',
             title: '消息所覆盖的用户数（人）'
         }, {
@@ -170,9 +165,7 @@ $("#btn_insight").click(function () {
 
             //加载当前任务所涉及的成员
             getAllFollowUserList(headId);
-
             getUserStrategyList(headId);
-
             //打开modal
             $("#viewPush_modal").modal('show');
         }else {
@@ -280,6 +273,22 @@ let currDay=getNowFormatDate();
 function setStep(status,taskDate) {
     current_status = status;
     current_taskDt=taskDate;
+
+    //如果是演示环境
+    if(isDemoEnvironment=='true'||isDemoEnvironment=='True')
+    {
+        //临时修改
+        stepObj=steps({
+            el: "#pushSteps",
+            data: [
+                { title: "今日成长用户详情",description:""},
+                { title: "向成员派发推送任务",description:""}
+            ],
+            center: true,
+            dataOrder: ["title", "line", "description"]
+        });
+        return;
+    }
     //如果状态为todo 且 任务为当前日期，则显示 推送页
     if(status === 'todo'&&current_taskDt==currDay) {
         stepObj=steps({
@@ -292,17 +301,7 @@ function setStep(status,taskDate) {
             dataOrder: ["title", "line", "description"]
         });
     }else {
-        //临时修改
-        // stepObj=steps({
-        //     el: "#pushSteps",
-        //     data: [
-        //         { title: "今日成长用户详情",description:""},
-        //         { title: "向成员派发推送任务",description:""}
-        //     ],
-        //     center: true,
-        //     dataOrder: ["title", "line", "description"]
-        // });
-       $("#nextStepBtn").attr("style", "display:none;");
+      $("#nextStepBtn").attr("style", "display:none;");
     }
 }
 

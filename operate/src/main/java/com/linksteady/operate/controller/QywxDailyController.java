@@ -6,9 +6,10 @@ import com.linksteady.common.domain.QywxMessage;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.operate.config.PushConfig;
+import com.linksteady.common.config.SystemProperties;
 import com.linksteady.operate.domain.QywxDailyDetail;
 import com.linksteady.operate.domain.QywxDailyHeader;
-import com.linksteady.operate.domain.QywxDailyPersonal;
+import com.linksteady.operate.domain.QywxDailyPersonalEffect;
 import com.linksteady.operate.domain.QywxDailyStaffEffect;
 import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.exception.PushQywxMessageException;
@@ -69,6 +70,9 @@ public class QywxDailyController {
     @Autowired
     QywxMdiaService qywxMdiaService;
 
+    @Autowired
+    private SystemProperties systemProperties;
+
     /**
      * 获取每日成长任务分页列表
      *
@@ -103,6 +107,12 @@ public class QywxDailyController {
      */
     @GetMapping("/getTaskOverViewData")
     public ResponseBo getTaskOverViewData(Long headId) {
+        //判断如果是演示环境，直接返回ok
+        if(systemProperties.isDemoEnvironment())
+        {
+            return ResponseBo.ok();
+        }
+
         // 首先判断状态和任务日期 如果任务是待执行及当天的任务，则执行文案、优惠券匹配
         QywxDailyHeader qywxDailyHeader = qywxDailyService.getHeadInfo(headId);
         if (null == qywxDailyHeader) {
@@ -180,51 +190,69 @@ public class QywxDailyController {
      */
     @GetMapping("/submitTask")
     public ResponseBo submitTask(Long headId, Long effectDays) {
-        if (null == effectDays || effectDays < 1 || effectDays > 10) {
-            return ResponseBo.error("参数错误，请通过系统界面进行操作！");
-        }
-
-        //进行一次状态的判断
-        QywxDailyHeader qywxDailyHeader = qywxDailyService.getHeadInfo(headId);
-        //进行一次时间的判断 (调度修改状态有一定的延迟)
-        if (!DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now()).equals(qywxDailyHeader.getTaskDateStr())) {
-            return ResponseBo.error("已过期的任务无法再执行!");
-        }
-
-        if (null == qywxDailyHeader || !qywxDailyHeader.getStatus().equalsIgnoreCase("todo")) {
-            return ResponseBo.error("当前任务非待执行状态，请返回刷新后重试！");
-        }
-
-        String validateLabel = (String) dailyConfigService.validUserGroupForQywx().get("flag");
-        if (validateLabel.equalsIgnoreCase("未通过")) {
-            return ResponseBo.error("成长组配置验证未通过！");
-        }
-
-        try {
-            qywxDailyService.push(qywxDailyHeader, effectDays);
-
-            //获取是否有推送失败的情况
-            int count = qywxDailyService.getPushErrorCount(headId);
-
-            if (count > 0) {
-                throw new PushQywxMessageException("推送企业微信消息存在错误");
-            } else {
+        //判断如果是演示环境，推送测试文案
+        if(systemProperties.isDemoEnvironment())
+        {
+            try {
+                String title="测试活动商品";
+                String messageTest="哈喽，上次购买的东西还满意吗？40元专属券已放入您的账户，别忘记来小程序使用呀~";
+                String pathAddress=" pages/about/about";
+                String senderId="brandonz";
+                String externalContact="wmXfFiDwAAIoOS6g8UB2tHo2pZKT0zfQ,wmXfFiDwAArXVAgKadY0lv9LZ3FISz8w";
+                String mediaId = qywxMdiaService.getMpMediaId("100");
+                testPush(title, pathAddress, senderId, externalContact, messageTest,mediaId);
                 return ResponseBo.ok();
+            } catch (Exception e) {
+                return ResponseBo.error("推送错误，原因为:"+e.getMessage());
             }
-        } catch (Exception e) {
-            log.error("企业微信每日运营推送错误，错误堆栈为", e);
-            if (e instanceof OptimisticLockException) {
-                return ResponseBo.error(e.getMessage());
-            } else if (e instanceof SendCouponException) {
-                //标记
-                qywxDailyService.updateStatusToDoneCouponError(headId);
-                return ResponseBo.error("发送优惠券失败，请联系系统运维人员!");
-            } else if (e instanceof PushQywxMessageException) {
-                //标记
-                qywxDailyService.updateStatusToDonePushError(headId);
-                return ResponseBo.error("发送企业微信消息失败，请联系系统运维人员!");
-            } else {
-                return ResponseBo.error("推送出现未知错误，请联系系统运维人员!");
+        }else
+        {
+            if (null == effectDays || effectDays < 1 || effectDays > 10) {
+                return ResponseBo.error("参数错误，请通过系统界面进行操作！");
+            }
+
+            //进行一次状态的判断
+            QywxDailyHeader qywxDailyHeader = qywxDailyService.getHeadInfo(headId);
+            //进行一次时间的判断 (调度修改状态有一定的延迟)
+            if (!DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now()).equals(qywxDailyHeader.getTaskDateStr())) {
+                return ResponseBo.error("已过期的任务无法再执行!");
+            }
+
+            if (null == qywxDailyHeader || !qywxDailyHeader.getStatus().equalsIgnoreCase("todo")) {
+                return ResponseBo.error("当前任务非待执行状态，请返回刷新后重试！");
+            }
+
+            String validateLabel = (String) dailyConfigService.validUserGroupForQywx().get("flag");
+            if (validateLabel.equalsIgnoreCase("未通过")) {
+                return ResponseBo.error("成长组配置验证未通过！");
+            }
+
+            try {
+                qywxDailyService.push(qywxDailyHeader, effectDays);
+
+                //获取是否有推送失败的情况
+                int count = qywxDailyService.getPushErrorCount(headId);
+
+                if (count > 0) {
+                    throw new PushQywxMessageException("推送企业微信消息存在错误");
+                } else {
+                    return ResponseBo.ok();
+                }
+            } catch (Exception e) {
+                log.error("企业微信每日运营推送错误，错误堆栈为", e);
+                if (e instanceof OptimisticLockException) {
+                    return ResponseBo.error(e.getMessage());
+                } else if (e instanceof SendCouponException) {
+                    //标记
+                    qywxDailyService.updateStatusToDoneCouponError(headId);
+                    return ResponseBo.error("发送优惠券失败，请联系系统运维人员!");
+                } else if (e instanceof PushQywxMessageException) {
+                    //标记
+                    qywxDailyService.updateStatusToDonePushError(headId);
+                    return ResponseBo.error("发送企业微信消息失败，请联系系统运维人员!");
+                } else {
+                    return ResponseBo.error("推送出现未知错误，请联系系统运维人员!");
+                }
             }
         }
     }
@@ -338,11 +366,9 @@ public class QywxDailyController {
         qywxMessage.setMpTitle(title);
 
         String appId =qywxMessageService.getMpAppId();
-
         qywxMessage.setMpPicMediaId(mediaId);
         qywxMessage.setMpAppid(appId);
         qywxMessage.setMpPage(pathAddress);
-
         List<String> externalContactList = asList(externalContact);
         String result = qywxMessageService.pushQywxMessage(qywxMessage, senderId, externalContactList);
 
@@ -382,7 +408,7 @@ public class QywxDailyController {
         int offset = request.getOffset();
         Long headId = Long.parseLong(request.getParam().get("headId"));
 
-        List<QywxDailyPersonal> qywxDailyPersonalList = qywxDailyService.getConvertDetailData(limit, offset, headId);
+        List<QywxDailyPersonalEffect> qywxDailyPersonalList = qywxDailyService.getConvertDetailData(limit, offset, headId);
         int count = qywxDailyService.getConvertDetailCount(headId);
         return ResponseBo.okOverPaging(null, count, qywxDailyPersonalList);
     }
