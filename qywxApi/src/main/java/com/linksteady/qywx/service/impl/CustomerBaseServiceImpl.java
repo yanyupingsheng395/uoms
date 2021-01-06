@@ -104,6 +104,7 @@ public class CustomerBaseServiceImpl implements CustomerBaseService {
     @Transactional(rollbackFor = Exception.class)
     public QywxChatBase saveChatBase(String chatid,boolean flag) throws WxErrorException {
         QywxChatBase qywxChatBase = new QywxChatBase();
+        //根据chatid，处理客户群详细内容
         JSONObject detail = getChatDetail(chatid);
         if(detail!=null){
             qywxChatBase.setOwner(detail.getString("owner"));

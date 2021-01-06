@@ -8,10 +8,6 @@ import java.util.Date;
 @Data
 public class QywxChatDetail {
     /**
-     * 详情ID
-     */
-    private long detailId;
-    /**
      * 用户ID
      */
     private String userId;

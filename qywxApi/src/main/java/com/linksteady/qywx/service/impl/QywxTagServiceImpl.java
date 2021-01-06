@@ -222,9 +222,6 @@ public class QywxTagServiceImpl implements QywxTagService {
         if (error.getErrorCode() != 0) {
             throw new WxErrorException(error);
         }
-        //清空标签组和标签的所有数据
-        qywxTagMapper.delAllTagGroup();
-        qywxTagMapper.delAllTag();
         //组织数据
         JSONArray jsonArray = JSON.parseArray(jsonObject.getString("tag_group"));
         List<QywxTagGroup> tagGroupList=Lists.newArrayList();
