@@ -66,6 +66,14 @@ public class WxXmlMessage implements Serializable {
     @XStreamConverter(value = XStreamCDataConverter.class)
     private String ChatId;
 
+    @XStreamAlias("TagType")
+    @XStreamConverter(value = XStreamCDataConverter.class)
+    private String TagType;
+
+    @XStreamAlias("Id")
+    @XStreamConverter(value = XStreamCDataConverter.class)
+    private String Id;
+
 
     protected static WxXmlMessage fromXml(String xml) {
         //修改微信变态的消息内容格式，方便解析
