@@ -74,7 +74,7 @@ public class User implements Serializable {
 	 * 用户类型 默认为 PASS 用户名密码登录  其余值： QYWX 使用企业微信扫码登录 ALL 两者皆可登录
 	 */
 	@Column(name = "USER_TYPE")
-	private String userType ="PASS";
+	private String userType;
 
 	/**
 	 * 用户所拥有的菜单 key:sysCode

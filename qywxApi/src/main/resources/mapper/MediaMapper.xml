@@ -36,7 +36,6 @@
 
     <select id="getQywxMediaImg" resultMap="getMediaImgMap">
         select img_id,
-               img_content,
                insert_dt,
                insert_by,
                img_title,

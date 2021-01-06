@@ -21,7 +21,7 @@
   </resultMap>
   <select id="findUsers" resultType="com.linksteady.common.domain.User" parameterType="com.linksteady.common.domain.User">
   		select u.user_id userId,u.username,u.email,u.mobile,u.status,u.create_dt createDt,u.update_dt updateDt,
-  		u.expire_date expireDate, u.user_type from t_user u
+  		u.expire_date expireDate, u.user_type userType from t_user u
   		where 1=1
   		<if test="username != null and username != ''">
 			and u.username like concat('%', #{username}, '%')
