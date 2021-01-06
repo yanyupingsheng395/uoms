@@ -9,7 +9,7 @@ import com.linksteady.common.util.FileUtils;
 import com.linksteady.operate.config.PushConfig;
 import com.linksteady.operate.domain.DailyDetail;
 import com.linksteady.operate.domain.DailyHead;
-import com.linksteady.operate.domain.DailyPersonal;
+import com.linksteady.operate.domain.DailyPersonalEffect;
 import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.service.DailyConfigService;
 import com.linksteady.operate.service.DailyDetailService;
@@ -295,7 +295,7 @@ public class DailyTaskController {
         dailyPersonalVo.setUserValue(userValue);
         dailyPersonalVo.setPathActive(pathActive);
 
-        List<DailyPersonal> personals = dailyService.getDailyPersonalEffect(dailyPersonalVo, limit, offset, headId);
+        List<DailyPersonalEffect> personals = dailyService.getDailyPersonalEffect(dailyPersonalVo, limit, offset, headId);
         int count = dailyService.getDailyPersonalEffectCount(dailyPersonalVo, headId);
         return ResponseBo.okOverPaging(null, count, personals);
     }
@@ -309,8 +309,8 @@ public class DailyTaskController {
      */
     @PostMapping("/downloadExcel")
     public ResponseBo excel(@RequestParam("headId") String headId) throws InterruptedException {
-        List<DailyPersonal> list = Lists.newLinkedList();
-        List<Callable<List<DailyPersonal>>> tmp = Lists.newLinkedList();
+        List<DailyPersonalEffect> list = Lists.newLinkedList();
+        List<Callable<List<DailyPersonalEffect>>> tmp = Lists.newLinkedList();
         int count = dailyService.getDailyPersonalEffectCount(new DailyPersonalVO(), headId);
         ExecutorService service = Executors.newFixedThreadPool(10);
         int pageSize = 1000;
@@ -324,7 +324,7 @@ public class DailyTaskController {
             });
         }
 
-        List<Future<List<DailyPersonal>>> futures = service.invokeAll(tmp);
+        List<Future<List<DailyPersonalEffect>>> futures = service.invokeAll(tmp);
         futures.stream().forEach(x -> {
             try {
                 list.addAll(x.get());
@@ -335,7 +335,7 @@ public class DailyTaskController {
             }
         });
         try {
-            return FileUtils.createExcelByPOIKit("每日运营个体结果表", list, DailyPersonal.class);
+            return FileUtils.createExcelByPOIKit("每日运营个体结果表", list, DailyPersonalEffect.class);
         } catch (Exception e) {
             log.error("导出每日运营个体结果表失败", e);
             return ResponseBo.error("导出每日运营个体结果表失败，请联系网站管理员！");

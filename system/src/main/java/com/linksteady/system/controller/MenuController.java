@@ -1,13 +1,13 @@
 package com.linksteady.system.controller;
 
 import com.linksteady.common.annotation.Log;
+import com.linksteady.common.config.SystemProperties;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.system.domain.Menu;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.domain.Tree;
 import com.linksteady.common.service.CommonFunService;
 import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
-import com.linksteady.system.config.SystemProperties;
 import com.linksteady.system.service.MenuService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;

@@ -6,13 +6,13 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 企业微信每日运营--个体效果结果类
+ * 每日运营--个体效果结果类
  *
  * @author hxcao
  * @date 2019-10-28
  */
 @Data
-public class QywxDailyPersonal implements Serializable {
+public class DailyPersonalEffect implements Serializable {
     // 用户ID
     @ExportConfig(value = "用户ID")
     private String userId;
@@ -23,6 +23,14 @@ public class QywxDailyPersonal implements Serializable {
       */
     @ExportConfig(value = "是否转化", convert = "s:1=是,0=否")
     private String isConvert;
+
+    // 推送时段
+    @ExportConfig(value = "推送时段")
+    private String pushPeriod;
+
+    // 转化时段
+    @ExportConfig(value = "转化时段")
+    private String convertPeriod;
 
     // 转化间隔(天)
     @ExportConfig(value = "转化间隔（天）")
@@ -48,17 +56,15 @@ public class QywxDailyPersonal implements Serializable {
     @ExportConfig(value = "用户活跃度", convert = "s:UAC_01=高度活跃,UAC_02=中度活跃,UAC_03=流失预警,UAC_04=弱流失,UAC_05=强流失,UAC_06=沉睡")
     private String pathActive;
 
+    // 用户名
+    private String userName;
+
+    // 手机号
+    private String mobile;
+
     // 推送日期
     private String pushDate;
 
     // 转化日期
     private String convertDate;
-
-    private String followUserId;
-
-    private String followUserName;
-
-    private String qywxContractId;
-
-    private String qywxContactName;
 }

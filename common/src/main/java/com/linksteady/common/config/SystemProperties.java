@@ -1,4 +1,4 @@
-package com.linksteady.operate.config;
+package com.linksteady.common.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 @Data
 @Component
-@Configuration
 @ConfigurationProperties(prefix = "sys")
 public class SystemProperties {
 
@@ -16,4 +15,6 @@ public class SystemProperties {
     private boolean openAopLog = true;
 
     private boolean validateThrift = false;
+
+    private boolean demoEnvironment = false;
 }

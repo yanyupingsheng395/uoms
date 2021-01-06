@@ -27,6 +27,8 @@ sys:
   smpDomain: http://localhost:9063
   #是否开启错误日志上报
   openExceptionNotice: false
+  #是否是演示环境
+  demoEnvironment: false
 
 shiro:
   # 登录 url

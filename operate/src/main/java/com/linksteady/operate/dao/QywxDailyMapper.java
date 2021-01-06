@@ -54,7 +54,7 @@ public interface QywxDailyMapper {
     List<QywxDailyStatis> getQywxDailyStatisList(Long headId);
 
 
-    List<QywxDailyPersonal> getConvertDetailData(int limit, int offset, long headId);
+    List<QywxDailyPersonalEffect> getConvertDetailData(int limit, int offset, long headId);
 
     int getConvertDetailCount(long headId);
 

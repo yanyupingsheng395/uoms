@@ -3,6 +3,7 @@ package com.linksteady.qywx.controller;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.bo.UserBo;
+import com.linksteady.common.config.SystemProperties;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.ArithUtil;
 import com.linksteady.common.util.crypto.SHA1;
@@ -49,6 +50,9 @@ public class QywxClientController {
 
     @Autowired
     MediaService mediaService;
+
+    @Autowired
+    SystemProperties systemProperties;
 
     /**
      * 请求首页
@@ -452,6 +456,12 @@ public class QywxClientController {
         //获取当前页数、每页数量
         int count=0;
         List<FriendsGuide> list= Lists.newArrayList();
+
+        if(systemProperties.isDemoEnvironment())
+        {
+            list.add(new FriendsGuide("20210106","20210106-01","阿瓦提长绒棉浴巾,纯棉超柔婴儿浴巾","浴巾",""));
+        }
+
         return ResponseBo.okOverPaging(null, count, list);
     }
 

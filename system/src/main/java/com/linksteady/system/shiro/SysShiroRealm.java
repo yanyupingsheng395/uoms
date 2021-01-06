@@ -100,7 +100,7 @@ public class SysShiroRealm extends UoShiroRealm {
         return new SimpleAuthenticationInfo(
                 userBo,
                 user.getPassword(),
-                ByteSource.Util.bytes(userBo.getUsername().toLowerCase() + SALT),
+                ByteSource.Util.bytes(userBo.getUsername() + SALT),
                 getName());
 
     }

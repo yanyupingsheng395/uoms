@@ -58,7 +58,7 @@
         <result column="CONVERSION_DATE_STR" jdbcType="VARCHAR" property="conversionDateStr"></result>
     </resultMap>
 
-    <resultMap id="convertDetailMap" type="com.linksteady.operate.domain.QywxDailyPersonal">
+    <resultMap id="convertDetailMap" type="com.linksteady.operate.domain.QywxDailyPersonalEffect">
         <result property="userId" jdbcType="VARCHAR" column="USER_ID"></result>
         <result property="isConvert" jdbcType="VARCHAR" column="IS_CONVERT"></result>
         <result property="convertInterval" jdbcType="VARCHAR" column="CONVERT_INTERVAL"></result>
@@ -67,7 +67,7 @@
         <result property="spuIsConvert" jdbcType="VARCHAR" column="SPU_IS_CONVERT"></result>
         <result property="userValue" jdbcType="VARCHAR" column="USER_VALUE"></result>
         <result property="pathActive" jdbcType="VARCHAR" column="PATH_ACTIVE"></result>
-        <result property="pushDate" jdbcType="VARCHAR" column="PUSH_DATE"></result>
+        <result property="execDate" jdbcType="VARCHAR" column="exec_date"></result>
         <result property="convertDate" jdbcType="VARCHAR" column="CONVERT_DATE"></result>
 
         <result property="followUserId" jdbcType="VARCHAR" column="follow_user_id"></result>
@@ -203,10 +203,10 @@
         t2.qywx_contact_name,
         t.path_active, --活跃度
         t.user_value, --用户价值
-        t.push_date, --推送日期
+        t.exec_date, --推送日期
         t.conversion_date convert_date, --转化日期
-        round((extract(day from t.conversion_date::timestamp-t.push_date::timestamp) * 24 + extract(hour from
-        t.conversion_date::timestamp-t.push_date::timestamp))::numeric/24::numeric, 1)::varchar CONVERT_INTERVAL, --转换间隔
+        round((extract(day from t.conversion_date::timestamp-t.exec_date::timestamp) * 24 + extract(hour from
+        t.conversion_date::timestamp-t.exec_date::timestamp))::numeric/24::numeric, 1)::varchar CONVERT_INTERVAL, --转换间隔
         t.spu_consistent, --推荐SPU与购买SPU是否一致 Y表示是 N表示否
         t.rec_spu_name PUSH_SPU, --推荐SPU名称
         t.IS_CONVERSION IS_CONVERT,

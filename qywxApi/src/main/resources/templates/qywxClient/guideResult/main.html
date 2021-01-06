@@ -30,7 +30,7 @@
                     <a href="javascript:;" class="weui-payselect-a weui-payselect-on">所有</a>
                 </li>
                 <li class="weui-payselect-li" style="padding-bottom: 0">
-                    <a href="javascript:;" class="weui-payselect-a weui-payselect-on">昨日</a>
+                    <a href="javascript:;" class="weui-payselect-a">昨日</a>
                 </li>
                 <li class="weui-payselect-li" style="padding-bottom: 0">
                     <a href="javascript:;" class="weui-payselect-a">近7日</a>
@@ -212,7 +212,7 @@
 </div>
 
 <script>
-    getOperateResultData("0", "", "");
+    getOperateResultData("-1", "", "");
     $(function(){
         var lastDay = new Date();
         lastDay.setDate(lastDay.getDate()-1);

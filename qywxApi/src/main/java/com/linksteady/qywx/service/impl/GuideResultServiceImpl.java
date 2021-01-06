@@ -19,8 +19,7 @@ public class GuideResultServiceImpl implements GuideResultService {
 
     @Override
     public GuideResult getResultData(String followUserId, int startDt, int endDt) {
-
-        return null;
+        return guideResultMapper.getResultData(followUserId,startDt,endDt);
     }
 
     /**

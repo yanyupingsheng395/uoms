@@ -33,7 +33,7 @@
     </resultMap>
 
     <!--每日运营个体效果-->
-    <resultMap id="personalResult" type="com.linksteady.operate.domain.DailyPersonal">
+    <resultMap id="personalResult" type="com.linksteady.operate.domain.DailyPersonalEffect">
         <result property="userId" jdbcType="VARCHAR" column="USER_ID"></result>
         <result property="isConvert" jdbcType="VARCHAR" column="IS_CONVERT"></result>
         <result property="pushPeriod" jdbcType="VARCHAR" column="PUSH_PERIOD"></result>

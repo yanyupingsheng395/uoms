@@ -73,8 +73,8 @@
     </div>
 </div>
 <div th:include="operate/qywx/viewPush"></div>
-<input id="errormsg"  type="hidden"  th:value="${errormsg}" />
 <input id="headId"  type="hidden" />
+
 
 <th:block th:include="common/include::footer" />
 <th:block th:include="common/include::perfect-scrollbar" />
@@ -86,8 +86,10 @@
 <th:block th:include="common/include::rangeslider-js" />
 <th:block th:include="common/include::step-js" />
 <th:block th:include="common/include::datepicker-js" />
+<script>
+    const isDemoEnvironment = "[[${isDemoEnvironment}]]";
+</script>
 <script data-th-src="@{/js/app/operate/common/template.js}"></script>
-<!--<script data-th-src="@{/js/app/operate/daily/task/userStats.js}"></script>-->
 <script data-th-src="@{/js/app/operate/qywx/list.js}"></script>
 </body>
 </html>

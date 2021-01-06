@@ -1,6 +1,7 @@
 package com.linksteady.system.service.impl;
 
 import com.linksteady.common.bo.UserBo;
+import com.linksteady.common.config.SystemProperties;
 import com.linksteady.common.domain.LogTypeEnum;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.SysLog;
@@ -11,7 +12,6 @@ import com.linksteady.common.util.HttpContextUtils;
 import com.linksteady.common.util.IPUtils;
 import com.linksteady.common.util.MD5Utils;
 import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
-import com.linksteady.system.config.SystemProperties;
 import com.linksteady.system.dao.UserMapper;
 import com.linksteady.system.dao.UserRoleMapper;
 import com.linksteady.system.domain.UserRole;
@@ -67,7 +67,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     public User findByName(String userName,Long userId) {
         Example example = new Example(User.class);
         Example.Criteria criteria=example.createCriteria();
-        criteria.andLike("username","%"+userName.toLowerCase()+"%");
+        criteria.andLike("username","%"+userName+"%");
 
         if(null!=userId)
         {
@@ -81,7 +81,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     public User findByName(String userName) {
         Example example = new Example(User.class);
         Example.Criteria criteria=example.createCriteria();
-        criteria.andCondition("username=",userName.toLowerCase());
+        criteria.andCondition("username=",userName);
         List<User> list = this.selectByExample(example);
         return list.isEmpty() ? null : list.get(0);
     }
@@ -180,7 +180,7 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateLoginTime(String userName) {
-        this.userMapper.updateLastLoginTime(userName.toLowerCase());
+        this.userMapper.updateLastLoginTime(userName);
     }
 
     /**

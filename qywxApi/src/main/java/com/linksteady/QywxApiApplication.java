@@ -1,4 +1,6 @@
 package com.linksteady;
+import com.linksteady.common.config.SystemProperties;
+import com.linksteady.common.util.SpringContextUtils;
 import com.linksteady.smp.starter.annotation.EnableExceptionNotice;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
@@ -20,6 +22,8 @@ import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
 public class QywxApiApplication {
     public static void main(String[] args) {
         SpringApplication.run(QywxApiApplication.class, args);
+        SystemProperties systemProperties= (SystemProperties) SpringContextUtils.getBean(SystemProperties.class);
+        log.info("企业微信模块.[{}]",systemProperties.isDemoEnvironment()==true?"演示环境":"非演示环境");
     }
 
     /**

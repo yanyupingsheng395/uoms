@@ -1,6 +1,7 @@
 package com.linksteady.system.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.linksteady.common.config.SystemProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

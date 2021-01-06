@@ -39,7 +39,7 @@ public interface DailyMapper {
      * @param headId
      * @return
      */
-    List<DailyPersonal> getDailyPersonalEffect(DailyPersonalVO dailyPersonalVo, int limit, int offset, String headId);
+    List<DailyPersonalEffect> getDailyPersonalEffect(DailyPersonalVO dailyPersonalVo, int limit, int offset, String headId);
 
     /**
      * 个体结果只获取已经转化的结果

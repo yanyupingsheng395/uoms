@@ -74,7 +74,7 @@ public interface QywxDailyService {
      */
     String manualSubmitMessage(long headId);
 
-    List<QywxDailyPersonal> getConvertDetailData(int limit, int offset, long headId);
+    List<QywxDailyPersonalEffect> getConvertDetailData(int limit, int offset, long headId);
 
     int getConvertDetailCount(long headId);
 

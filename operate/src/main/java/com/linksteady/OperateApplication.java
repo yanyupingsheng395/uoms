@@ -1,6 +1,7 @@
 package com.linksteady;
 
-import com.linksteady.operate.config.SystemProperties;
+import com.linksteady.common.config.SystemProperties;
+import com.linksteady.common.util.SpringContextUtils;
 import com.linksteady.smp.starter.annotation.EnableExceptionNotice;
 import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
@@ -18,7 +19,6 @@ import org.springframework.web.servlet.resource.ResourceUrlEncodingFilter;
 @EnableTransactionManagement
 @EnableAspectJAutoProxy(exposeProxy = true)
 @MapperScan("com.linksteady.**.dao")
-@EnableConfigurationProperties({SystemProperties.class})
 @EnableCaching
 @EnableAsync
 @EnableExceptionNotice
@@ -27,7 +27,8 @@ public class OperateApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(OperateApplication.class, args);
-		log.info("用户成长系统启动成功.");
+		SystemProperties systemProperties= (SystemProperties) SpringContextUtils.getBean(SystemProperties.class);
+		log.info("用户成长模块.[{}]",systemProperties.isDemoEnvironment()==true?"演示环境":"非演示环境");
 	}
 
 	/**

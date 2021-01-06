@@ -431,7 +431,7 @@ public class QywxDailyServiceImpl implements QywxDailyService {
     }
 
     @Override
-    public List<QywxDailyPersonal> getConvertDetailData(int limit, int offset, long headId) {
+    public List<QywxDailyPersonalEffect> getConvertDetailData(int limit, int offset, long headId) {
         return qywxDailyMapper.getConvertDetailData(limit,offset,headId);
     }
 

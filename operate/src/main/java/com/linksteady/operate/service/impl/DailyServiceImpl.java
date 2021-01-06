@@ -144,7 +144,7 @@ public class DailyServiceImpl implements DailyService {
 
 
     @Override
-    public List<DailyPersonal> getDailyPersonalEffect(DailyPersonalVO dailyPersonalVo, int limit, int offset, String headId) {
+    public List<DailyPersonalEffect> getDailyPersonalEffect(DailyPersonalVO dailyPersonalVo, int limit, int offset, String headId) {
         return dailyMapper.getDailyPersonalEffect(dailyPersonalVo, limit, offset, headId);
     }
 

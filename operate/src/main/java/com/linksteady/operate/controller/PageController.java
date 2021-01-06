@@ -1,6 +1,7 @@
 package com.linksteady.operate.controller;
 
 import com.linksteady.common.annotation.Log;
+import com.linksteady.common.config.SystemProperties;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.enums.ConfigEnum;
 import com.linksteady.common.service.ConfigService;
@@ -47,6 +48,9 @@ public class PageController extends BaseController {
 
     @Autowired
     PushConfig pushConfig;
+
+    @Autowired
+    SystemProperties systemProperties;
 
     @Log(value = "用户成长监控", location = "用户成长系统")
     @RequestMapping("/operator/user")
@@ -391,7 +395,8 @@ public class PageController extends BaseController {
      */
     @Log(value = "每日用户运营(企业微信)", location = "用户成长系统")
     @RequestMapping("/qywxDaily/list")
-    public String qywxDailyList() {
+    public String qywxDailyList(Model model) {
+        model.addAttribute("isDemoEnvironment",systemProperties.isDemoEnvironment());
         return "operate/qywx/list";
     }
 

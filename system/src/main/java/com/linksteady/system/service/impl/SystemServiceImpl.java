@@ -94,7 +94,7 @@ public class SystemServiceImpl extends BaseService<SysInfo> implements SystemSer
         Example example = new Example(SysInfo.class);
         Example.Criteria criteria=example.createCriteria();
 
-        criteria.andCondition("lower(name)=", name.toLowerCase());
+        criteria.andCondition("name=", name);
 
         if(null!=id)
         {

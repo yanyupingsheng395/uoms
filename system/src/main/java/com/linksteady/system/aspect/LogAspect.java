@@ -2,11 +2,11 @@ package com.linksteady.system.aspect;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.linksteady.common.bo.UserBo;
+import com.linksteady.common.config.SystemProperties;
 import com.linksteady.common.domain.SysLog;
 import com.linksteady.common.service.LogService;
 import com.linksteady.common.util.HttpContextUtils;
 import com.linksteady.common.util.IPUtils;
-import com.linksteady.system.config.SystemProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.aspectj.lang.ProceedingJoinPoint;

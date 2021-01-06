@@ -116,7 +116,7 @@ public class MenuServiceImpl extends BaseService<Menu> implements MenuService {
     public Menu findByNameAndType(String menuName, String type,Long menuId) {
         Example example = new Example(Menu.class);
         Example.Criteria criteria=example.createCriteria();
-        criteria.andCondition("lower(menu_name)=", menuName.toLowerCase())
+        criteria.andCondition("menu_name=", menuName)
                 .andEqualTo("type",type);
 
         if(null!=menuId)

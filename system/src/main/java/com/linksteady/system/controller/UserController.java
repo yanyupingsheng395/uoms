@@ -159,7 +159,7 @@ public class UserController extends BaseController {
         UserBo userBo = super.getCurrentUser();
         User user = this.userService.findUserProfile(userBo.getUserId());
 
-        String encrypt = MD5Utils.encrypt(userBo.getUsername().toLowerCase(), password);
+        String encrypt = MD5Utils.encrypt(userBo.getUsername(), password);
         return user.getPassword().equals(encrypt);
     }
 

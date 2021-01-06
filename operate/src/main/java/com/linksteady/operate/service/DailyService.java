@@ -1,7 +1,7 @@
 package com.linksteady.operate.service;
 
 import com.linksteady.operate.domain.DailyHead;
-import com.linksteady.operate.domain.DailyPersonal;
+import com.linksteady.operate.domain.DailyPersonalEffect;
 import com.linksteady.operate.vo.DailyPersonalVO;
 
 import java.util.List;
@@ -34,7 +34,7 @@ public interface DailyService {
     Map<String, Object> getPushData(Long headId);
 
 
-    List<DailyPersonal> getDailyPersonalEffect(DailyPersonalVO dailyPersonalVo, int limit, int offset, String headId);
+    List<DailyPersonalEffect> getDailyPersonalEffect(DailyPersonalVO dailyPersonalVo, int limit, int offset, String headId);
 
     int getDailyPersonalEffectCount(DailyPersonalVO dailyPersonalVo, String headId);
 

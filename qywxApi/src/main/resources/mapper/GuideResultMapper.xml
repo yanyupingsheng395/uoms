@@ -26,7 +26,7 @@
     <select id="getTotalCnt" resultType="int">
         select count(*) from uo_qywx_external_user_list
          where follow_user_id=#{followUserId}
-         and to_char(to_timestamp(createtime::int8),'yyyyMMdd')::int8 &gt;=#{dayWid}
+         and to_char(to_timestamp(createtime::int8),'yyyyMMdd')::int8 &lt;=#{dayWid}
     </select>
 
     <select id="getAddCnt" resultType="int">

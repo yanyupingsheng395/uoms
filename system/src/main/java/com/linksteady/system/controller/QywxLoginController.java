@@ -152,17 +152,16 @@ public class QywxLoginController extends BaseController {
                 }else {
                     //获取UserId(企业微信的userId就是t_user表里的username)
                     String username = object.getString("UserId");
+                    log.info("企业微信登录，从企业获取到的用户名为{}",username);
                     if (StringUtils.isEmpty(username)) {
                         throw new QywxLoginException("您非当前企业的企业成员!");
                     } else {
                         //判断用户是否已经存在
                         User user = userService.findByName(username);
-
                         //当前用户不存在
                         if (null == user) {
                             //写入用户表
                             User newUser = new User();
-                            //备注：用户名需要进行小写处理 因为 用户名:密码登录方式是做了这样处理的
                             newUser.setUsername(username);
                             String defaultPwd = userService.getDefaultPwd();
                             newUser.setPassword(MD5Utils.encrypt(username,defaultPwd));
@@ -296,7 +295,6 @@ public class QywxLoginController extends BaseController {
                     if (null == user) {
                         //写入用户表
                         User newUser = new User();
-                        //备注：用户名需要进行小写处理 因为 用户名:密码登录方式是做了这样处理的
                         newUser.setUsername(username);
                         newUser.setCreateBy("qywxClientLogin");
                         newUser.setUpdateBy("qywxClientLogin");
