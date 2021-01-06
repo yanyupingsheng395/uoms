@@ -79,6 +79,6 @@ public interface QywxTagService {
     /**
      * 从微信端获取所有标签信息
      */
-    void getQywxTagList() throws WxErrorException;
+    void syncQywxTagList() throws WxErrorException;
 
 }

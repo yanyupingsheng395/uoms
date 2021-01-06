@@ -2,12 +2,15 @@ package com.linksteady.system.controller;
 
 import com.linksteady.common.annotation.Log;
 import com.linksteady.common.bo.UserBo;
+import com.linksteady.common.constant.CommonConstant;
 import com.linksteady.common.controller.BaseController;
+import com.linksteady.common.domain.SysInfoBo;
 import com.linksteady.common.service.CommonFunService;
 import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
 import com.linksteady.common.domain.User;
 import com.linksteady.system.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,7 +41,19 @@ public class PageController extends BaseController {
         // 登录成后，即可通过 Subject 获取登录的用户信息
         UserBo userBo = super.getCurrentUser();
         model.addAttribute("user", userBo);
-        return "index";
+        //转跳到用户成长系统的 用户洞察界面
+        SysInfoBo sysInfoBo=commonFunService.getSysInfoByCode(CommonConstant.OP_CODE);
+        log.info("获取系统列表:{},{}",sysInfoBo,sysInfoBo.getSysDomain());
+        if(null!=sysInfoBo&& StringUtils.isNotEmpty(sysInfoBo.getSysDomain()))
+        {
+            log.info("redirect:"+sysInfoBo.getSysDomain()+"/page/insight");
+            return "redirect:"+sysInfoBo.getSysDomain()+"/page/insight";
+        }else
+        {
+            return "index";
+        }
+
+
     }
 
     @Log("重置密码")

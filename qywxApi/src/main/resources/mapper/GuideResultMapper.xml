@@ -48,7 +48,7 @@
     </select>
 
     <select id="getTotalOrderAmount" resultType="double">
-        select sum(real_fee) from w_orders where order_dt_wid &gt;=#{startDt} and order_dt_wid &lt;=#{endDt} and valid_status='1'
+        select coalesce(sum(real_fee),0) from w_orders where order_dt_wid &gt;=#{startDt} and order_dt_wid &lt;=#{endDt} and valid_status='1'
     </select>
 
     <select id="getMinDayWid" resultType="string">

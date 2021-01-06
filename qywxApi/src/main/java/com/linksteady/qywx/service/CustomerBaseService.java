@@ -35,7 +35,7 @@ public interface CustomerBaseService {
      * @param cursor   下一次查询的游标，第一次查询不用
      * @throws WxErrorException
      */
-    void getQywxChatList( String cursor) throws WxErrorException;
+    void syncQywxChatList( String cursor) throws WxErrorException;
 
     /**
      * 新建客户群，同步数据

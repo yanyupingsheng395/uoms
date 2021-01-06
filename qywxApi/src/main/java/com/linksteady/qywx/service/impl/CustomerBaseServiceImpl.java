@@ -60,7 +60,7 @@ public class CustomerBaseServiceImpl implements CustomerBaseService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void getQywxChatList( String cursor) throws WxErrorException {
+    public void syncQywxChatList( String cursor) throws WxErrorException {
         StringBuffer requestUrl = new StringBuffer(qywxService.getRedisConfigStorage().getApiUrl(WxPathConsts.ExternalContacts.GET_GROUPCHAT_LIST));
         requestUrl.append("?access_token=" + qywxService.getAccessToken());
 
@@ -96,7 +96,7 @@ public class CustomerBaseServiceImpl implements CustomerBaseService {
         cursor=jsonObject.getString("next_cursor");
         //如果分页游标有值，那么接着往下查。
         if(StringUtils.isNotEmpty(cursor)){
-            getQywxChatList(cursor);
+            syncQywxChatList(cursor);
         }
     }
 

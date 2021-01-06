@@ -63,9 +63,14 @@ public class CustomerBaseController {
     /**
      * 从微信段获取所有群聊，并存入数据库
      */
-    @RequestMapping("/getQywxChatList")
-    public void getQywxChatList() throws WxErrorException {
-        customerBaseService.getQywxChatList("");
+    @RequestMapping("/syncQywxChatList")
+    public ResponseBo syncQywxChatList() {
+        try {
+            customerBaseService.syncQywxChatList("");
+            return ResponseBo.ok();
+        } catch (WxErrorException e) {
+            return ResponseBo.error(e.getMessage());
+        }
     }
 
     @RequestMapping("/getFollower")

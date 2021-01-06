@@ -1,8 +1,11 @@
 package com.linksteady.system.controller;
 
 import com.linksteady.common.config.ShiroProperties;
+import com.linksteady.common.constant.CommonConstant;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.ResponseBo;
+import com.linksteady.common.domain.SysInfoBo;
+import com.linksteady.common.service.CommonFunService;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.common.shiro.UoShiroRealm;
 import com.linksteady.system.service.UserService;
@@ -52,6 +55,9 @@ public class LoginController extends BaseController {
 
     @Autowired
     UoShiroRealm uoShiroRealm;
+
+    @Autowired
+    CommonFunService commonFunService;
 
     @GetMapping("/login")
     public String login(Model model, HttpServletRequest request, HttpServletResponse response) {

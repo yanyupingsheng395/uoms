@@ -210,7 +210,7 @@ public class QywxTagServiceImpl implements QywxTagService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void getQywxTagList() throws WxErrorException {
+    public void syncQywxTagList() throws WxErrorException {
         StringBuffer requestUrl = new StringBuffer(qywxService.getRedisConfigStorage().getApiUrl(WxPathConsts.ExternalContacts.GET_CORP_TAG_LIST));
         requestUrl.append("?access_token=" + qywxService.getAccessToken());
         List<String> list= Arrays.asList();
