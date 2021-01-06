@@ -131,7 +131,6 @@ public class QywxDailyController {
                 if (qywxDailyService.getTransContentLock(String.valueOf(headId))) {
                     try {
                         qywxDailyDetailService.generate(headId);
-
                         //直接返回
                         return ResponseBo.ok();
                     } catch (Exception e) {
@@ -187,7 +186,6 @@ public class QywxDailyController {
 
         //进行一次状态的判断
         QywxDailyHeader qywxDailyHeader = qywxDailyService.getHeadInfo(headId);
-
         //进行一次时间的判断 (调度修改状态有一定的延迟)
         if (!DateTimeFormatter.ofPattern("yyyyMMdd").format(LocalDate.now()).equals(qywxDailyHeader.getTaskDateStr())) {
             return ResponseBo.error("已过期的任务无法再执行!");
