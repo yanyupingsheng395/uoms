@@ -10,8 +10,6 @@
         <result property="readFlag" column="READ_FLAG" jdbcType="VARCHAR"></result>
         <result property="readBy" column="READ_BY" jdbcType="VARCHAR"></result>
         <result property="readDt" column="READ_DT" jdbcType="VARCHAR"></result>
-        <result property="typeName" column="TYPE_NAME" jdbcType="VARCHAR"></result>
-        <result property="warnFlag" column="WARN_FLAG" jdbcType="VARCHAR"></result>
         <result property="msgLevelDesc" column="MSG_LEVEL_DESC" jdbcType="VARCHAR"></result>
     </resultMap>
 
@@ -23,16 +21,13 @@
             to_char(t1.CREATE_DT, 'yyyy-mm-dd hh:mm') CREATE_DT,
             t1.CREATE_BY,
             t1.READ_FLAG,
-            t2.TYPE_NAME,
-            t1.WARN_FLAG,
             case t1.MSG_LEVEL when 1 then '一般'  when 2 then '警告' when 3 then '严重' else '' end MSG_LEVEL_DESC
-        from T_MSG_LIST t1 , T_MSG_TYPE t2 where t1.MSG_TYPE = t2.TYPE_CODE and module_name='operate'
+        from T_MSG_LIST t1
         order by t1.MSG_ID desc
     </select>
 
     <select id="getDataCount" resultType="int">
-        select count(1) from T_MSG_LIST t1 , T_MSG_TYPE t2
-        where t1.MSG_TYPE = t2.TYPE_CODE and module_name='operate'
+        select count(1) from T_MSG_LIST t1
         <if test="msgLevel != '' and msgLevel != null">
             and t1.MSG_LEVEL = #{msgLevel}::int4
         </if>
@@ -49,11 +44,9 @@
         to_char(t1.CREATE_DT, 'yyyy-mm-dd hh:mm') CREATE_DT,
         t1.CREATE_BY,
         t1.READ_FLAG,
-        t2.TYPE_NAME,
-        t1.WARN_FLAG,
         case t1.MSG_LEVEL when 1 then '一般'  when 2 then '警告' when 3 then '严重' else '' end MSG_LEVEL_DESC
-        from T_MSG_LIST t1 , T_MSG_TYPE t2
-        where t1.MSG_TYPE = t2.TYPE_CODE and module_name='operate'
+        from T_MSG_LIST t1
+        where 1=1
         <if test="msgLevel != '' and msgLevel != null">
             and t1.MSG_LEVEL = #{msgLevel}::int4
         </if>
@@ -71,8 +64,6 @@
 
     <update id="updateAllMsgRead">
         update T_MSG_LIST set READ_FLAG = '1', READ_BY = #{userName}, READ_DT = now()
-        where READ_FLAG='0' AND MSG_TYPE IN (
-              SELECT MSG_TYPE FROM T_MSG_TYPE WHERE module_name='operate'
-            )
+        where READ_FLAG='0'
     </update>
 </mapper>

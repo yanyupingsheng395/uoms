@@ -24,6 +24,10 @@ public class MsgController extends BaseController {
     @Autowired
     private MsgService msgService;
 
+    /**
+     * 获取最近的10条消息列表
+     * @return
+     */
     @RequestMapping("/getMsgList")
     public ResponseBo getMsgList() {
         Map<String, Object> result = Maps.newHashMap();
@@ -42,6 +46,11 @@ public class MsgController extends BaseController {
         return ResponseBo.okWithData(null, result);
     }
 
+    /**
+     * 分页获取消息列表
+     * @param request
+     * @return
+     */
     @RequestMapping("/getMsgPageList")
     public ResponseBo getMsgPageList(QueryRequest request) {
         int limit = request.getLimit();
@@ -53,6 +62,11 @@ public class MsgController extends BaseController {
         return ResponseBo.okOverPaging(null, count, msgInfos);
     }
 
+    /**
+     * 更改消息为已读
+     * @param msgId
+     * @return
+     */
     @GetMapping("/updateMsgRead")
     public ResponseBo updateMsgRead(Long msgId) {
         if(msgId==null)
@@ -65,6 +79,10 @@ public class MsgController extends BaseController {
         return ResponseBo.ok();
     }
 
+    /**
+     * 更新所有消息为已读
+     * @return
+     */
     @GetMapping("/updateMsgAllRead")
     public ResponseBo updateMsgAllRead() {
         msgService.updateAllMsgRead();

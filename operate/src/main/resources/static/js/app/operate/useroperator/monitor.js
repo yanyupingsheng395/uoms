@@ -159,9 +159,14 @@ function searchKpiInfo() {
 
 $("#navTabs1").find('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
     var startDt = $("#startDt").val();
+    var endDt = $("#endDt").val();
     if (startDt == "") {
-        $MB.n_warning("请选择时间！");
-    } else {
+        $MB.n_warning("请选择开始时间！");
+    }else if(endDt == "")
+    {
+        $MB.n_warning("请选择结束时间！");
+    }
+    else {
         if (!e.target.href.endWith("#overview") && !e.target.href.endWith("#retention")) {
             $("#selectCondition1").show();
             $("#selectCondition2").hide();

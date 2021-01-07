@@ -44,7 +44,7 @@ function tab1Click(idx) {
 
 function searchData() {
     if($("#startDateOfRetention").val() == "") {
-        $MB.n_warning("请输入起始时间！");
+        $MB.n_warning("请选择日期！");
     }else {
         $("#tabs02").find("li[class='active']").find("a").click();
         $("#tabs03").find("li[class='active']").find("a").click();
