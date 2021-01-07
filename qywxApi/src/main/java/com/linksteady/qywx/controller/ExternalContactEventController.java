@@ -61,10 +61,6 @@ public class ExternalContactEventController {
                                @RequestParam("timestamp") String timestamp,
                                @RequestParam("nonce") String nonce,
                                @RequestParam("msg_signature") String msgSignature) {
-        log.debug(
-                "\n接收企业微信系统事件：[msgSignature=[{}],"
-                        + " timestamp=[{}], nonce=[{}], requestBody=[\n{}\n] ", msgSignature, timestamp, nonce, requestBody);
-
         // 对消息进行解密
         WxXmlMessage inMessage =EventCryptUtils.decrypt(
                 qywxService.getEcEventToken(),
@@ -74,7 +70,6 @@ public class ExternalContactEventController {
                 nonce,
                 requestBody
         );
-        log.info("接收消息:{}", inMessage.toString());
         try {
             eventService.handlerEvent(inMessage);
         }catch (Exception e){

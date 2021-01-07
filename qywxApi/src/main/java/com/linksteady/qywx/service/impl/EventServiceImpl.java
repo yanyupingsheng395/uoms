@@ -6,7 +6,6 @@ import com.linksteady.qywx.service.*;
 import com.linksteady.qywx.vo.WxXmlMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,12 +33,13 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public void handlerEvent(WxXmlMessage inMessage) throws WxErrorException {
+        log.info("事件消息内容:{}", inMessage.toString());
        if("event".equals(inMessage.getMsgType())&&"change_external_contact".equals(inMessage.getEvent()))
        {
-           log.info("外部联系人事件");
+           log.info("");
            if(StringUtils.equalsAnyIgnoreCase(inMessage.getChangeType(),"add_external_contact","edit_external_contact","add_half_external_contact"))
            {
-               log.info("新增、编辑外部联系人");
+               log.info("外部联系人事件-新增、编辑外部联系人");
                 //添加联系人事件
                //更新外部联系人信息 并持久化到数据库
                ExternalContact externalContact=externalContactService.getExternalContractDetail(inMessage.getUserId(),inMessage.getExternalUserId());
@@ -66,7 +66,7 @@ public class EventServiceImpl implements EventService {
                }
            }else if(StringUtils.equalsAnyIgnoreCase(inMessage.getChangeType(),"del_external_contact","del_follow_user"))
            {
-               log.info("删除外部联系人");
+               log.info("外部联系人事件-删除外部联系人");
                //删除外部联系人 删除跟进成员 则从本地库中进行删除。
                externalContactService.deleteExternalContract(
                        inMessage.getUserId(),
@@ -81,14 +81,13 @@ public class EventServiceImpl implements EventService {
                log.info("未处理的外部联系人事件，事件类型{}",inMessage.getChangeType());
            }
        }else if("event".equals(inMessage.getMsgType())&&"change_external_chat".equals(inMessage.getEvent())){
-           log.info("客户群变更事件");
            String chatId = inMessage.getChatId();
            if(StringUtils.equalsAnyIgnoreCase(inMessage.getChangeType(),"create")){
-               log.info("客户群创建");
+               log.info("群事件-客户群创建");
                customerBaseService.saveChatBase(chatId,true);
 
            }else if(StringUtils.equalsAnyIgnoreCase(inMessage.getChangeType(),"update")){
-               log.info("客户群变更");
+               log.info("群事件-客户群变更");
                //客户群变更，先删除，后从企微处获取
                customerBaseService.updateChat(chatId);
 
@@ -98,21 +97,20 @@ public class EventServiceImpl implements EventService {
            }
        }else if("event".equals(inMessage.getMsgType())&&"change_external_tag".equals(inMessage.getEvent())){
            // TODO: 2021/1/6 标签事件只维护了标签的增删改查。标签组的事件操作未维护，原因是微信端未提供根据标签组ID去查标签组信息的接口
-           log.info("企业标签变更事件");
            String id=inMessage.getId();
             if(StringUtils.equalsAnyIgnoreCase(inMessage.getChangeType(),"create")){
                 if("tag".equals(inMessage.getTagType())){
-                    log.info("标签创建");
+                    log.info("标签事件-标签创建");
                     qywxTagService.saveTag(id);
                 }
             }else if(StringUtils.equalsAnyIgnoreCase(inMessage.getChangeType(),"update")){
                 if("tag".equals(inMessage.getTagType())) {
-                    log.info("标签更新");
+                    log.info("标签事件-标签更新");
                     qywxTagService.updateTag(id);
                 }
             }else if(StringUtils.equalsAnyIgnoreCase(inMessage.getChangeType(),"delete")){
                 if("tag".equals(inMessage.getTagType())){
-                    log.info("标签删除");
+                    log.info("标签事件-标签删除");
                     qywxTagService.delTagGroupData(id,"T");
                 }
             }

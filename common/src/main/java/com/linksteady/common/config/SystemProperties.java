@@ -17,4 +17,8 @@ public class SystemProperties {
     private boolean validateThrift = false;
 
     private boolean demoEnvironment = false;
+
+    private String thriftServerHost ="127.0.0.1";
+
+    private int thriftServerPort = 7778;
 }

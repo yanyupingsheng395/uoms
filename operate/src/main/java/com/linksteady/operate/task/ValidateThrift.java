@@ -1,7 +1,7 @@
 package com.linksteady.operate.task;
 
-import com.linksteady.operate.thrift.RetentionData;
-import com.linksteady.operate.thrift.ThriftClient;
+import com.linksteady.common.thrift.RetentionData;
+import com.linksteady.common.thrift.ThriftClient;
 import com.linksteady.smp.starter.annotation.JobHandler;
 import com.linksteady.smp.starter.domain.ResultInfo;
 import com.linksteady.smp.starter.jobclient.service.IJobHandler;

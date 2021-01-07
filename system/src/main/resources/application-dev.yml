@@ -1,6 +1,3 @@
-server:
-  port: 9091
-
 spring:
   datasource:
     druid:
@@ -28,21 +25,40 @@ sys:
   smpDomain: http://localhost:9063
   #是否开启错误日志上报
   openExceptionNotice: false
+  #是否是演示环境
+  demoEnvironment: false
+  # 是否开启 AOP 日志，默认开启
+  openAopLog: true
+  #thrift服务的参数
+  thriftServerHost: 192.168.0.116
+  thriftServerPort: 7778
 
 #权限相关配置
 shiro:
+  # shiro redis缓存时长，默认1800秒
+  expireIn: 1800
+  # session 超时时间，默认1800000毫秒
+  sessionTimeout: 1800000
+  # rememberMe cookie有效时长，默认86400秒，即一天
+  cookieTimeout: 86400
+  # 免认证的路径配置，如静态资源，druid监控页面，注册页面，验证码请求等
+  anonUrl: /smpclient/**,/plugins/**,/**/css/**,/**/js/**,/**/fonts/**,/img/**,/images/**,/druid/**,/actuator/**,/test/**,/qw/**,/login,/gifCode,/contractEvent/**,/api/**
+  # 未授权跳转 url
+  unauthorizedUrl: /403
+  #首次登陆是否强制要求修改密码
+  allowResetPassword: false
   # 登录 url
-  loginUrl: /login
+  loginUrl: http://localhost:9091/login
   # 登录成功后跳转的 url
-  successUrl: /main
+  successUrl: http://localhost:9091/main
   # 登出 url
-  logoutUrl: /logout
+  logoutUrl: http://localhost:9091/logout
   #强制修改密码的url
-  resetPasswordUrl: /resetPass
+  resetPasswordUrl: http://localhost:9091/resetPass
   #设置cookie所在的域名，所有业务子系统必须和权限管理系统配置一致方可共享session
   cookieDomain: localhost
 
 logging:
   level:
-    com.linksteady.system.dao: debug
+    com.linksteady.*.dao: debug
 

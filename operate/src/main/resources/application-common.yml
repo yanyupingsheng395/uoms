@@ -1,6 +1,6 @@
 app:
   name: "UOMS"
-  description: "link steady 诊断&运营系统-用户成长模块"
+  description: "link steady 诊断&运营系统"
   spring-boot-version: "2.0.4.RELEASE"
   version: @project.version@
   build:
@@ -60,7 +60,7 @@ spring:
         reset-enable: false
         # 需要账号密码才能访问控制台
         login-username: druid
-        login-password: druid!@#
+        login-password: druid!@#121313
 
       # 配置StatFilter
       filter:
@@ -132,23 +132,4 @@ pagehelper:
   supportMethodsArguments: true
   params: count=countSql
 
-sys:
-  # 时间类型参数在前端页面的展示格式，默认格式为 yyyy-MM-dd HH:mm:ss
-  timeFormat: yyyy-MM-dd HH:mm:ss
-  # 是否开启 AOP 日志，默认开启
-  openAopLog: true
-
-shiro:
-  # shiro redis缓存时长，默认1800秒  7200
-  expireIn: 1800
-  # session 超时时间，默认1800000毫秒 7200000
-  sessionTimeout: 1800000
-  # rememberMe cookie有效时长，默认86400秒，即一天
-  cookieTimeout: 86400
-  # 免认证的路径配置，如静态资源，druid监控页面，注册页面，验证码请求等
-  anonUrl: /smpclient/**,/plugins/**,/**/css/**,/**/js/**,/**/fonts/**,/img/**,/images/**,/druid/**,/actuator/**,/test/**,/login
-  #首次登陆是否强制要求修改密码
-  allowResetPassword: false
-  # 未授权跳转 url
-  unauthorizedUrl: /403
 

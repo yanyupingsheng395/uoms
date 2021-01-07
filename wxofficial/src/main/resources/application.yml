@@ -1,3 +1,6 @@
+server:
+  port: 9095
+
 # 启用的配置文件
 spring:
   profiles:

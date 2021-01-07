@@ -116,24 +116,3 @@ pagehelper:
   reasonable: true
   supportMethodsArguments: true
   params: count=countSql
-
-# system 配置
-sys:
-  # 时间类型参数在前端页面的展示格式，默认格式为 yyyy-MM-dd HH:mm:ss
-  timeFormat: yyyy-MM-dd HH:mm:ss
-  # 是否开启 AOP 日志，默认开启
-  openAopLog: true
-
-shiro:
-  # shiro redis缓存时长，默认1800秒
-  expireIn: 1800
-  # session 超时时间，默认1800000毫秒
-  sessionTimeout: 1800000
-  # rememberMe cookie有效时长，默认86400秒，即一天
-  cookieTimeout: 86400
-  # 免认证的路径配置，如静态资源，druid监控页面，注册页面，验证码请求等
-  anonUrl: /smpclient/**,/plugins/**,/**/css/**,/**/js/**,/**/fonts/**,/img/**,/images/**,/druid/**,/actuator/**,/qw/**,/login,/gifCode
-  # 未授权跳转 url
-  unauthorizedUrl: /403
-  #首次登陆是否强制要求修改密码
-  allowResetPassword: false

@@ -1,4 +1,4 @@
-package com.linksteady.operate.thrift;
+package com.linksteady.common.thrift;
 
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.transport.TSocket;
