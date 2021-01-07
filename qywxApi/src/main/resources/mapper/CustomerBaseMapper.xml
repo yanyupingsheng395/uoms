@@ -16,7 +16,6 @@
     </resultMap>
 
     <resultMap id="custractDetail" type="com.linksteady.qywx.domain.QywxChatDetail">
-        <result column="detail_id" jdbcType="DECIMAL" property="detailId"/>
         <result column="chat_id" jdbcType="VARCHAR" property="chatId"/>
         <result column="userid" jdbcType="VARCHAR" property="userId"/>
         <result column="user_type" jdbcType="VARCHAR" property="userType"/>
@@ -80,6 +79,10 @@
         <foreach collection="chatDetailList" item="item" separator=",">
         (#{item.userId},#{item.userType},#{item.joinTime},#{item.joinScene},#{item.chatId})
         </foreach>
+        ON CONFLICT(chat_id,userid) do update set
+        user_type=excluded.user_type,
+        join_time=excluded.join_time,
+        join_scene=excluded.join_scene
     </insert>
     <insert id="insertChatBase">
         insert into uo_qywx_chat_base(chat_id,
@@ -92,5 +95,12 @@
         <foreach collection="chatBaseList" item="item" separator=",">
             (#{item.chatId},#{item.status},#{item.groupName},#{item.owner},#{item.notice},#{item.createTime},#{item.groupNumber})
         </foreach>
+        ON CONFLICT(chat_id) do update set
+        status=excluded.status,
+        group_name=excluded.group_name,
+        owner=excluded.owner,
+        notice=excluded.notice,
+        create_time=excluded.create_time,
+        group_number=excluded.group_number
     </insert>
 </mapper>

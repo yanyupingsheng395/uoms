@@ -29,6 +29,9 @@ public class EventServiceImpl implements EventService {
     @Autowired
     CustomerBaseService customerBaseService;
 
+    @Autowired
+    QywxTagService qywxTagService;
+
     @Override
     public void handlerEvent(WxXmlMessage inMessage) throws WxErrorException {
        if("event".equals(inMessage.getMsgType())&&"change_external_contact".equals(inMessage.getEvent()))
@@ -93,6 +96,26 @@ public class EventServiceImpl implements EventService {
                log.info("客户群解散");
                customerBaseService.deleChatBase(chatId);
            }
+       }else if("event".equals(inMessage.getMsgType())&&"change_external_tag".equals(inMessage.getEvent())){
+           // TODO: 2021/1/6 标签事件只维护了标签的增删改查。标签组的事件操作未维护，原因是微信端未提供根据标签组ID去查标签组信息的接口
+           log.info("企业标签变更事件");
+           String id=inMessage.getId();
+            if(StringUtils.equalsAnyIgnoreCase(inMessage.getChangeType(),"create")){
+                if("tag".equals(inMessage.getTagType())){
+                    log.info("标签创建");
+                    qywxTagService.saveTag(id);
+                }
+            }else if(StringUtils.equalsAnyIgnoreCase(inMessage.getChangeType(),"update")){
+                if("tag".equals(inMessage.getTagType())) {
+                    log.info("标签更新");
+                    qywxTagService.updateTag(id);
+                }
+            }else if(StringUtils.equalsAnyIgnoreCase(inMessage.getChangeType(),"delete")){
+                if("tag".equals(inMessage.getTagType())){
+                    log.info("标签删除");
+                    qywxTagService.delTagGroupData(id,"T");
+                }
+            }
        }
     }
 }

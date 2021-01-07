@@ -213,7 +213,7 @@ public class QywxTagServiceImpl implements QywxTagService {
     public void syncQywxTagList() throws WxErrorException {
         StringBuffer requestUrl = new StringBuffer(qywxService.getRedisConfigStorage().getApiUrl(WxPathConsts.ExternalContacts.GET_CORP_TAG_LIST));
         requestUrl.append("?access_token=" + qywxService.getAccessToken());
-        List<String> list= Arrays.asList();
+        List<String> list= Lists.newArrayList();
         JSONObject param= new JSONObject();
         param.put("tag_id",list);
         String resultData = OkHttpUtil.postRequestByJson(requestUrl.toString(),JSON.toJSONString(param));
@@ -222,9 +222,6 @@ public class QywxTagServiceImpl implements QywxTagService {
         if (error.getErrorCode() != 0) {
             throw new WxErrorException(error);
         }
-        //清空标签组和标签的所有数据
-        qywxTagMapper.delAllTagGroup();
-        qywxTagMapper.delAllTag();
         //组织数据
         JSONArray jsonArray = JSON.parseArray(jsonObject.getString("tag_group"));
         List<QywxTagGroup> tagGroupList=Lists.newArrayList();
@@ -270,4 +267,78 @@ public class QywxTagServiceImpl implements QywxTagService {
         }
 
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void delTagGroupData(String id, String flag) throws WxErrorException {
+        //根据标签ID，删除
+        qywxTagMapper.delTagByTagId(id);
+        QywxTag qywxTag = getTagDetails(id);
+        if(qywxTag!=null){
+            String groupId = qywxTag.getGroupId();
+            int count = qywxTagMapper.getTagCount(groupId);
+            if(count==0){
+                //如果一个标签组下所有的标签均被删除，则标签组会被自动删除。
+                qywxTagMapper.delGroupTag(groupId);
+            }
+        }
+    }
+
+    /**
+     * 通过tagID查询当前标签信息，用于应对事件变更回调微信端只返回tagdid
+     * @param tagid
+     * @throws WxErrorException
+     */
+    @Override
+    public QywxTag getTagDetails(String tagid) throws WxErrorException {
+        StringBuffer requestUrl = new StringBuffer(qywxService.getRedisConfigStorage().getApiUrl(WxPathConsts.ExternalContacts.GET_CORP_TAG_LIST));
+        requestUrl.append("?access_token=" + qywxService.getAccessToken());
+        List<String> list= Lists.newArrayList();
+        list.add(tagid);
+        JSONObject param= new JSONObject();
+        param.put("tag_id",list);
+        String resultData = OkHttpUtil.postRequestByJson(requestUrl.toString(),JSON.toJSONString(param));
+        JSONObject jsonObject = JSON.parseObject(resultData);
+        WxError error = WxError.fromJsonObject(jsonObject);
+        if (error.getErrorCode() != 0) {
+            throw new WxErrorException(error);
+        }
+        //组织数据
+        JSONArray jsonArray = JSON.parseArray(jsonObject.getString("tag_group"));
+        QywxTag qywxTag=new QywxTag();
+        if(jsonArray.size()>0){
+            JSONObject object = jsonArray.getJSONObject(0);
+            if(object!=null){
+                JSONObject tagObject = object.getJSONArray("tag").getJSONObject(0);
+                if(tagObject!=null){
+                    qywxTag.setTagId(tagid);
+                    qywxTag.setTagName(tagObject.getString("name"));
+                    qywxTag.setTagCreateTime(TimeStampUtils.timeStampToDate(tagObject.getString("create_time")));
+                    qywxTag.setTagOrder(tagObject.getIntValue("order"));
+                    qywxTag.setGroupId(object.getString("group_id"));
+                }
+            }
+        }
+        return qywxTag;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateTag(String id) throws WxErrorException {
+        QywxTag qywxTag = getTagDetails(id);
+        if(qywxTag!=null){
+            qywxTagMapper.updateTag(id,qywxTag.getTagName());
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void saveTag(String id) throws WxErrorException {
+        QywxTag qywxTag = getTagDetails(id);
+        if (qywxTag != null) {
+            qywxTagMapper.addTag(qywxTag);
+        }
+    }
+
+
 }

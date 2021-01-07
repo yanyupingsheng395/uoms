@@ -81,4 +81,27 @@ public interface QywxTagService {
      */
     void syncQywxTagList() throws WxErrorException;
 
+    /**
+     *删除标签或者标签组
+     */
+    void delTagGroupData(String id, String flag) throws WxErrorException;
+
+    /**
+     *通过tagID查询当前标签信息
+     * @param tagid
+     * @return
+     */
+    QywxTag getTagDetails(String tagid) throws WxErrorException;
+
+    /**
+     * 根据事件返回过来的tagid，更新标签
+     * @param id
+     */
+    void updateTag(String id) throws WxErrorException;
+
+    /**
+     * 据事件返回过来的tagid，保存标签
+     * @param id
+     */
+    void saveTag(String id) throws WxErrorException;
 }

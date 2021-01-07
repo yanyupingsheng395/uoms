@@ -38,7 +38,7 @@ public interface QywxTagMapper {
 
     void addTagGroupList(@Param("tagGroupList")List<QywxTagGroup> list);
 
-    void delAllTagGroup();
+/*    void delAllTagGroup();
 
-    void delAllTag();
+    void delAllTag();*/
 }
