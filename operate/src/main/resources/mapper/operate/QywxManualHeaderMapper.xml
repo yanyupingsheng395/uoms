@@ -18,6 +18,13 @@
         <result column="mp_url" jdbcType="VARCHAR" property="mpUrl"/>
         <result column="mp_title" jdbcType="VARCHAR" property="mpTitle"/>
         <result column="mp_mediald" jdbcType="VARCHAR" property="mpMediald"/>
+        <result column="push_success_cnt" jdbcType="DECIMAL" property="pushSuccessCnt"/>
+        <result column="push_success_rate" jdbcType="DECIMAL" property="pushSuccessRate"/>
+        <result column="cov_cnt" jdbcType="DECIMAL" property="covCnt"/>
+        <result column="cov_rate" jdbcType="DECIMAL" property="covRate"/>
+        <result column="cov_amount" jdbcType="DECIMAL" property="covAmount"/>
+
+
     </resultMap>
 
     <resultMap id="baseDetail" type="com.linksteady.operate.domain.QywxManualDetail">
@@ -187,4 +194,15 @@
     <select id="getPushDetailStatus" resultType="int">
         select  count(1) from uo_qywx_push_list b join uo_qywx_manual_detail a on a.push_id=b.push_id where a.head_id=#{headId} and b.push_status !='S'
     </select>
+
+    <select id="getManualPushById" resultMap="baseDetail">
+        select 1 total_num,
+          1 push_success_cnt,
+           1 push_success_rate,
+           1 cov_cnt,
+            1 cov_rate,
+            1 cov_amount
+ from uo_qywx_manual_header where head_id=1 and 'A'='A'
+    </select>
+
 </mapper>

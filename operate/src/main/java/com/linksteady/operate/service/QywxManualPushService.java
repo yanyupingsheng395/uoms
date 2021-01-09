@@ -53,4 +53,11 @@ public interface QywxManualPushService {
      * @return
      */
     QywxManualHeader getManualHeader(Long headId);
+
+    /**
+     * 获取活动效果详细信息
+     * @param headId
+     * @return
+     */
+    QywxManualHeader getManualPushById(Long headId,String status);
 }

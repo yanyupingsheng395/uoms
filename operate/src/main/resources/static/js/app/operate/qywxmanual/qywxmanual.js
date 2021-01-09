@@ -301,3 +301,14 @@ $("#add_modal").on('hidden.bs.modal', function () {
 $("#send_modal").on('hidden.bs.modal', function () {
     $('#phoneNum').val("");
 });
+
+$("#btn_effect").click(function () {
+    let selected = $("#dataTable").bootstrapTable('getSelections');
+    let selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择需要查看效果的记录！');
+        return;
+    }
+    let headId = selected[0].headId;
+    window.location.href="/page/qywxManual/effect?headId="+headId;
+});

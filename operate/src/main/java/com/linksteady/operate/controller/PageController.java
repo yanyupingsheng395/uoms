@@ -343,6 +343,18 @@ public class PageController extends BaseController {
         return "operate/qywxmanual/qywxmanual";
     }
 
+
+    /**
+     * 手动短信推送查看效果
+     *
+     */
+    @RequestMapping("/qywxManual/effect")
+    public String qywxManualEffect(Model model, @RequestParam("headId") Long headId) {
+        model.addAttribute("headId",headId);
+        return "operate/qywxmanual/effect";
+    }
+
+
     /**
      * 单一用户的成长洞察
      */

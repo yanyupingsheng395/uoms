@@ -48,4 +48,6 @@ public interface QywxManualHeaderMapper {
     List<String> getNotExistsContact(long headId);
 
     int getPushDetailStatus(long headId);
+
+    QywxManualHeader getManualPushById(Long headId, String status);
 }

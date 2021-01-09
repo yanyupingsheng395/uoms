@@ -353,4 +353,9 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
     public QywxManualHeader getManualHeader(Long headId) {
         return qywxManualHeaderMapper.getQywxManualHeader(headId);
     }
+
+    @Override
+    public QywxManualHeader getManualPushById(Long headId,String status) {
+        return qywxManualHeaderMapper. getManualPushById(headId,status);
+    }
 }

@@ -161,4 +161,15 @@ public class QywxManualPushController {
             log.error("文件下载失败", e);
         }
     }
+
+    /**
+     * 获取效果的详细信息
+     *
+     * @param headId
+     * @return
+     */
+    @GetMapping("/getOverAllInfo")
+    public ResponseBo getOverAllInfo(@RequestParam Long headId,@RequestParam String status) {
+        return ResponseBo.okWithData(null, qywxManualPushService.getManualPushById(headId,status ));
+    }
 }
