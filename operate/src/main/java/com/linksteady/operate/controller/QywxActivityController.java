@@ -8,6 +8,7 @@ import com.linksteady.common.util.FileUtils;
 import com.linksteady.operate.domain.*;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.*;
+import com.linksteady.operate.vo.FollowUserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -380,4 +381,60 @@ public class QywxActivityController {
         qywxActivityUserGroupService.validUserGroup(headId);
         return ResponseBo.ok();
     }
+
+    /**
+     * 获取企业微信成员列表
+     *
+     * @return
+     */
+    @GetMapping("/getFollowUserList")
+    public ResponseBo getFollowUserList(Long headId) {
+        List<FollowUserVO> dataList = qywxActivityHeadService.getAllFollowUserList(headId);
+        return ResponseBo.okWithData(null, dataList);
+    }
+
+    /**
+     * 获取任务的详细信息
+     *
+     * @param headId
+     * @return
+     */
+    @GetMapping("/getOverAllInfo")
+    public ResponseBo getOverAllInfo(@RequestParam Long headId) {
+        return ResponseBo.okWithData(null, qywxActivityHeadService.getActivityHeadById(headId));
+    }
+
+    /**
+     * 获取推送变化数据
+     *
+     * @return
+     */
+    @GetMapping("/getPushEffectChange")
+    public ResponseBo getPushEffectChange(@RequestParam("headId") Long headId) {
+        return ResponseBo.okWithData(null, qywxActivityHeadService.getPushEffectChange(headId));
+    }
+
+    /**
+     * 获取转化的明细数据
+     * @param
+     * @return
+     */
+    @GetMapping("/getConvertDetailData")
+    public ResponseBo getConvertDetailData(QueryRequest request) {
+        int limit = request.getLimit();
+        int offset = request.getOffset();
+        Long headId = Long.parseLong(request.getParam().get("headId"));
+
+        List<QywxActivityConvertDetail> qywxActivityConverDailyList = qywxActivityHeadService.getConvertDetailData(limit, offset, headId);
+        int count = qywxActivityHeadService.getConvertDetailCount(headId);
+        return ResponseBo.okOverPaging(null, count, qywxActivityConverDailyList);
+    }
+
+    @GetMapping("/getUserStatics")
+    public ResponseBo getUserStatics(Long headId, String followUserId) {
+        QywxActivityStaffEffect qywxActivityStaffEffect = qywxActivityHeadService.getActivityStaffEffect(headId, followUserId);
+        return ResponseBo.okWithData(null, qywxActivityStaffEffect);
+    }
+
+
 }

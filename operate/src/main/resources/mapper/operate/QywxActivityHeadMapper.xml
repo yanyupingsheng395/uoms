@@ -16,6 +16,20 @@
         <result property="shopDiscount" jdbcType="VARCHAR" column="shop_discount"></result>
         <result property="platThreshold" jdbcType="VARCHAR" column="plat_threshold"></result>
         <result property="platDeno" jdbcType="VARCHAR" column="plat_deno"></result>
+        <result property="staffCnt" jdbcType="DECIMAL" column="staff_cnt"></result>
+        <result property="executeStaffCnt" jdbcType="DECIMAL" column="execute_staff_cnt"></result>
+        <result property="executeRate" jdbcType="DECIMAL" column="execute_rate"></result>
+        <result property="successNum" jdbcType="DECIMAL" column="success_num"></result>
+        <result property="effectDays" jdbcType="DECIMAL" column="effect_days"></result>
+        <result property="totalNum" jdbcType="DECIMAL" column="total_num"></result>
+        <result property="pushSuccessRate" jdbcType="DECIMAL" column="push_success_rate"></result>
+        <result property="convertNum" jdbcType="DECIMAL" column="CONVERT_NUM"></result>
+        <result property="convertRate" jdbcType="DECIMAL" column="convert_rate"></result>
+        <result property="convertAmount" jdbcType="DECIMAL" column="convert_amount"></result>
+        <result property="convertSpuNum" jdbcType="DECIMAL" column="convert_spu_num"></result>
+        <result property="convertSpuRate" jdbcType="DECIMAL" column="convert_spu_rate"></result>
+        <result property="convertSpuAmount" jdbcType="DECIMAL" column="convert_spu_amount"></result>
+
     </resultMap>
 
     <resultMap id="couponMap" type="com.linksteady.operate.domain.ActivityCoupon">
@@ -26,6 +40,103 @@
         <result property="couponType" jdbcType="VARCHAR" column="coupon_type"></result>
         <result property="addFlag" jdbcType="VARCHAR" column="add_flag"></result>
     </resultMap>
+
+    <resultMap id="followUserResult" type="com.linksteady.operate.vo.FollowUserVO">
+        <result column="FOLLOW_USER_ID" jdbcType="VARCHAR" property="followUserId"></result>
+        <result column="FOLLOW_USER_NAME" jdbcType="VARCHAR" property="followUserName"></result>
+    </resultMap>
+
+    <resultMap id="convertDetail" type="com.linksteady.operate.domain.QywxActivityConvertDetail">
+        <result property="activityHeaderId" jdbcType="DECIMAL" column="activity_header_id"></result>
+        <result property="qywxDetailId" jdbcType="DECIMAL" column="qywx_detail_id"></result>
+        <result property="userId" jdbcType="VARCHAR" column="user_id"></result>
+        <result property="pathActive" jdbcType="VARCHAR" column="path_active"></result>
+        <result property="userValue" jdbcType="VARCHAR" column="user_value"></result>
+        <result property="isConversion" jdbcType="VARCHAR" column="is_conversion"></result>
+        <result property="execDate" jdbcType="TIMESTAMP" column="exec_date"/>
+        <result property="conversionDate" jdbcType="TIMESTAMP" column="conversion_date"/>
+        <result property="pushPeriod" jdbcType="VARCHAR" column="push_period"></result>
+        <result property="conversionPeriod" jdbcType="VARCHAR" column="conversion_period"></result>
+        <result property="recProdId" jdbcType="DECIMAL" column="rec_prod_id"></result>
+        <result property="recProdName" jdbcType="VARCHAR" column="rec_prod_name"></result>
+        <result property="recSpuName" jdbcType="VARCHAR" column="rec_spu_name"></result>
+        <result property="recSeriesName" jdbcType="VARCHAR" column="rec_series_name"></result>
+        <result property="covAmount" jdbcType="DECIMAL" column="cov_amount"></result>
+        <result property="prodConsistent" jdbcType="VARCHAR" column="prod_consistent"></result>
+        <result property="spuConsistent" jdbcType="VARCHAR" column="spu_consistent"></result>
+        <result property="seriesConsistent" jdbcType="VARCHAR" column="series_consistent"></result>
+        <result property="covNum" jdbcType="DECIMAL" column="cov_num"></result>
+        <result property="covSpuAmount" jdbcType="DECIMAL" column="cov_spu_amount"></result>
+        <result property="covSeriesAmount" jdbcType="DECIMAL" column="cov_series_amount"></result>
+        <result property="covMultiAmount" jdbcType="DECIMAL" column="cov_multi_amount"></result>
+        <result property="covInterval" jdbcType="DECIMAL" column="cov_interval"></result>
+        <result property="multiConsistent" jdbcType="VARCHAR" column="multi_consistent"></result>
+        <result property="spuContribute" jdbcType="DECIMAL" column="spu_contribute"></result>
+        <result property="spuContributeNormal" jdbcType="DECIMAL" column="spu_contribute_normal"></result>
+        <result property="userContribute" jdbcType="DECIMAL" column="user_contribute"></result>
+        <result property="contributeLevel" jdbcType="VARCHAR" column="contribute_level"></result>
+        <result property="priceLevel" jdbcType="DECIMAL" column="price_level"></result>
+        <result property="spuDiscount" jdbcType="DECIMAL" column="spu_discount"></result>
+        <result property="spuPriceSenseNormal" jdbcType="DECIMAL" column="spu_price_sense_normal"></result>
+        <result property="priceSenseLevel" jdbcType="VARCHAR" column="price_sense_level"></result>
+        <result property="orginOrderfee" jdbcType="DECIMAL" column="orgin_orderfee"></result>
+        <result property="orginGrowthspeed" jdbcType="DECIMAL" column="orgin_growthspeed"></result>
+        <result property="limitTimes" jdbcType="DECIMAL" column="limit_times"></result>
+        <result property="valuePotentialNormal" jdbcType="DECIMAL" column="value_potential_normal"></result>
+        <result property="valuePotentialLevel" jdbcType="VARCHAR" column="value_potential_level"></result>
+        <result property="highActiveDual" jdbcType="DECIMAL" column="high_active_dual"></result>
+        <result property="moderateActive1Dual" jdbcType="DECIMAL" column="moderate_active1_dual"></result>
+        <result property="moderateActive2Dual" jdbcType="DECIMAL" column="moderate_active2_dual"></result>
+        <result property="lossWarningDual" jdbcType="DECIMAL" column="loss_warning_dual"></result>
+        <result property="actualJoint" jdbcType="DECIMAL" column="actual_joint"></result>
+        <result property="joinRate" jdbcType="DECIMAL" column="join_rate"></result>
+        <result property="insertDt" jdbcType="TIMESTAMP" column="insert_dt"/>
+        <result property="groupId" jdbcType="DECIMAL" column="group_id"></result>
+        <result property="isMain" jdbcType="DECIMAL" column="is_main"></result>
+        <result property="activityStage" jdbcType="VARCHAR" column="activity_stage"></result>
+        <result property="planDt" jdbcType="DECIMAL" column="plan_dt"></result>
+        <result property="bProductType" jdbcType="DECIMAL" column="b_product_type"></result>
+        <result property="epbProductId" jdbcType="VARCHAR" column="epb_product_id"></result>
+        <result property="epbProductName" jdbcType="VARCHAR" column="epb_product_name"></result>
+        <result property="planId" jdbcType="DECIMAL" column="plan_id"></result>
+        <result property="pushId" jdbcType="DECIMAL" column="push_id"></result>
+        <result property="msgId" jdbcType="VARCHAR" column="msg_id"></result>
+        <result property="execStatus" jdbcType="DECIMAL" column="exec_status"></result>
+        <result property="pushStatus" jdbcType="VARCHAR" column="push_status"></result>
+        <result property="qywxContractId" jdbcType="VARCHAR" column="qywx_contract_id"></result>
+        <result property="qywxContactName" jdbcType="VARCHAR" column="qywx_contact_name"></result>
+        <result property="followUserId" jdbcType="VARCHAR" column="follow_user_id"></result>
+        <result property="followUserName" jdbcType="VARCHAR" column="follow_user_name"></result>
+    </resultMap>
+
+    <resultMap id="staffEffect" type="com.linksteady.operate.domain.QywxActivityStaffEffect">
+        <result property="activityHeadId" jdbcType="DECIMAL" column="activity_head_id"></result>
+        <result property="followUserId" jdbcType="VARCHAR" column="follow_user_id"></result>
+        <result property="msgNum" jdbcType="DECIMAL" column="msg_num"></result>
+        <result property="executeMsgNum" jdbcType="DECIMAL" column="execute_msg_num"></result>
+        <result property="coverNum" jdbcType="DECIMAL" column="cover_num"></result>
+        <result property="executeCoverNum" jdbcType="DECIMAL" column="execute_cover_num"></result>
+        <result property="convertNum" jdbcType="DECIMAL" column="convert_num"></result>
+        <result property="convertAmount" jdbcType="DECIMAL" column="convert_amount"></result>
+        <result property="convertRate" jdbcType="DECIMAL" column="convert_rate"></result>
+        <result property="convertSpuNum" jdbcType="DECIMAL" column="convert_spu_num"></result>
+        <result property="convertSpuAmount" jdbcType="DECIMAL" column="convert_spu_amount"></result>
+        <result property="convertSpuRate" jdbcType="DECIMAL" column="convert_spu_rate"></result>
+        <result property="statDate" jdbcType="TIMESTAMP" column="stat_date"/>
+    </resultMap>
+
+    <resultMap id="activityStatis" type="com.linksteady.operate.domain.QywxActivityStatis">
+        <result property="activityHeadId" jdbcType="DECIMAL" column="activity_head_id"></result>
+        <result property="convertRate" jdbcType="DECIMAL" column="convert_rate"></result>
+        <result property="touchDate" jdbcType="DECIMAL" column="touch_date"></result>
+        <result property="convertNum" jdbcType="DECIMAL" column="convert_num"></result>
+        <result property="convertSpuNum" jdbcType="DECIMAL" column="convert_spu_num"></result>
+        <result property="convertSpuRate" jdbcType="DECIMAL" column="convert_spu_rate"></result>
+        <result property="insertDt" jdbcType="TIMESTAMP" column="insert_dt"/>
+        <result property="conversionDate" jdbcType="TIMESTAMP" column="conversion_date"/>
+        <result column="CONVERSION_DATE_STR" jdbcType="VARCHAR" property="conversionDateStr"></result>
+    </resultMap>
+
 
     <select id="getDataListOfPage" resultMap="baseResult">
         select HEAD_ID,
@@ -77,7 +188,11 @@
            plat_discount,
            plat_threshold,
            plat_deno,
-           shop_discount
+           shop_discount,
+           staff_cnt,
+           success_num,
+           execute_staff_cnt,
+           execute_rate
         from UO_QYWX_ACTIVITY_HEADER
         where head_id = #{headId}::int4
     </select>
@@ -168,5 +283,78 @@
 
     <select id="getActivityCouponList" resultMap="couponMap">
         select * from uo_qywx_activity_coupon where head_id = #{headId} order by coupon_threshold asc
+    </select>
+
+    <select id="getAllFollowUserList" resultMap="followUserResult">
+        select follow_user_id,coalesce(name,'未知') follow_user_name from
+            (select distinct follow_user_id from uo_qywx_activity_convert_detail where activity_header_id=#{headId}) t1 left join
+            uo_qywx_follower_user_list on t1.follow_user_id=uo_qywx_follower_user_list.user_id
+            order by follow_user_id asc
+    </select>
+
+    <select id="getActivityHeadById" resultMap="baseResult">
+        SELECT HEAD_ID, TOTAL_NUM, SUCCESS_NUM, CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, EFFECT_DAYS,push_success_rate,convert_spu_num,convert_rate,convert_spu_amount,insert_dt
+         FROM uo_qywx_activity_header WHERE HEAD_ID =#{headId}
+    </select>
+
+    <select id="getQywxActivityStatisList" resultMap="activityStatis">
+         select CONVERT_SPU_RATE,
+               CONVERT_RATE,
+               CONVERT_SPU_NUM,
+               CONVERT_NUM,
+               to_char(CONVERSION_DATE, 'yyyymmdd') CONVERSION_DATE_STR
+        from UO_QYWX_DAILY_STATIS
+        where HEAD_ID = #{headId} order by CONVERSION_DATE asc
+    </select>
+
+    <select id="getConvertDetailData" resultMap="convertDetail">
+         select
+        t.user_id, --用户ID
+        t.follow_user_id,
+        t.qywx_contract_id,
+        t2.follow_user_name,
+        t2.qywx_contact_name,
+        t.path_active, --活跃度
+        t.user_value, --用户价值
+        t.exec_date, --推送日期
+        t.conversion_date convert_date, --转化日期
+        round((extract(day from t.conversion_date::timestamp-t.exec_date::timestamp) * 24 + extract(hour from
+        t.conversion_date::timestamp-t.exec_date::timestamp))::numeric/24::numeric, 1)::varchar COV_INTERVAL, --转换间隔
+        t.spu_consistent, --推荐SPU与购买SPU是否一致 Y表示是 N表示否
+        t.rec_spu_name, --推荐SPU名称
+        t.IS_CONVERSION IS_CONVERT,
+        t.SPU_CONSISTENT SPU_IS_CONVERT
+        --转化的SPU名称
+        from uo_qywx_activity_convert_detail t left join
+              (
+                    select  uo_qywx_external_user_list.follow_user_id,
+                            uo_qywx_external_user_list.external_userid,
+                            uo_qywx_follower_user_list.name follow_user_name,
+                            uo_qywx_external_user_list.name qywx_contact_name
+                    from uo_qywx_external_user_list join uo_qywx_follower_user_list
+                    on uo_qywx_external_user_list.follow_user_id=uo_qywx_follower_user_list.user_id
+              ) t2 on t.follow_user_id= t2.follow_user_id
+                and t.qywx_contract_id=t2.external_userid
+        where  t.activity_header_id=#{headId} and t.IS_CONVERSION = '1' order by t.activity_header_id asc
+        limit #{limit} offset #{offset}
+    </select>
+    <select id="getConvertDetailCount" resultType="int">
+        select count(1) from uo_qywx_activity_convert_detail t where  t.activity_header_id=#{headId} and t.IS_CONVERSION = '1'
+    </select>
+    <select id="getActivityStaffEffect" resultMap="staffEffect">
+     select activity_head_id,
+                   follow_user_id,
+                   msg_num,
+                   execute_msg_num,
+                   cover_num,
+                   execute_cover_num,
+                   convert_num,
+                   convert_amount,
+                   convert_rate,
+                   convert_spu_num,
+                   convert_spu_amount,
+                   convert_spu_rate,
+                   stat_date
+            from uo_qywx_activity_staff_effect where activity_head_id =  #{headId} and follow_user_id =#{followUserId}
     </select>
 </mapper>

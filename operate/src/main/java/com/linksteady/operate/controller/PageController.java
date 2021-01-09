@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -461,6 +460,21 @@ public class PageController extends BaseController {
     public String qywxActivity() {
         return "operate/qywxactivity/list";
     }
+
+    /**
+     * 每日运营[企业微信]-效果跟踪
+     *
+     * @return
+     */
+    @Log(value = "活动运营[企业微信]-任务效果", location = "用户成长系统")
+    @RequestMapping("/qywxActivity/effect")
+    public String qywxActivityEffect(Model model, @RequestParam("headId") Long headId) {
+        ActivityHead activityHead = qywxActivityHeadService.findById(headId);
+        model.addAttribute("headId", headId);
+        model.addAttribute("activityHead", activityHead);
+        return "operate/qywxactivity/effect";
+    }
+
 
     @Log(value = "企业微信活动用户运营-编辑", location = "用户成长系统")
     @RequestMapping("/qywxActivity/edit")

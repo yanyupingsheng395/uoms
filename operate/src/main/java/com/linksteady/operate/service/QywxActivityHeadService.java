@@ -1,7 +1,7 @@
 package com.linksteady.operate.service;
 
-import com.linksteady.operate.domain.ActivityCoupon;
-import com.linksteady.operate.domain.ActivityHead;
+import com.linksteady.operate.domain.*;
+import com.linksteady.operate.vo.FollowUserVO;
 
 import java.util.List;
 import java.util.Map;
@@ -73,4 +73,47 @@ public interface QywxActivityHeadService {
     void expireActivityHead();
 
     List<ActivityCoupon> findCouponList(Long headId);
+    /**
+     * 获取企业微信成员列表
+     *
+     * @return
+     */
+    List<FollowUserVO> getAllFollowUserList(Long headId);
+
+    /**
+     * 根据headID,获取ActivityHead表数据
+     * @param headId
+     * @return
+     */
+    ActivityHead getActivityHeadById(Long headId);
+    /**
+     * 获取推送变化数据
+     * @param headId
+     * @return
+     */
+    Map<String, Object> getPushEffectChange(Long headId);
+
+    /**
+     *获取个体明细
+     * @param limit
+     * @param offset
+     * @param headId
+     * @return
+     */
+    List<QywxActivityConvertDetail> getConvertDetailData(int limit, int offset, Long headId);
+
+    /**
+     * 获取个体明细数量
+     * @param headId
+     * @return
+     */
+    int getConvertDetailCount(Long headId);
+
+    /**
+     *
+     * @param headId
+     * @param followUserId
+     * @return
+     */
+    QywxActivityStaffEffect getActivityStaffEffect(Long headId, String followUserId);
 }

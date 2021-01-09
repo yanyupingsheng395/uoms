@@ -104,4 +104,56 @@ public class ActivityHead {
     private String platThreshold;
     private String platDeno;
     private String shopDiscount;
+    /**
+     * 对应企业成员数量(需要推送消息的成员数)
+     */
+    private Long staffCnt;
+    /**
+     * 执行推送任务的成员数（人）
+     */
+    private Long executeStaffCnt;
+    /**
+     * 执行推送成员占比（%）
+     */
+    private Long executeRate;
+    /**
+     * 推送成功用户数
+     */
+    private Long successNum;
+    /**
+     * 效果计算天数
+     */
+    private Long effectDays;
+    /**
+     * 建议推送人数(消息所覆盖的用户数)
+     */
+    private Long totalNum;
+    /**
+     * 推送成功率
+     */
+    private Long pushSuccessRate;
+    /**
+     * 全部执行推送预计覆盖用户数
+     */
+    private Long convertNum;
+    /**
+     * 推送转化率
+     */
+    private Long convertRate;
+    /**
+     * 推送转化金额
+     */
+    private Long convertAmount;
+    /**
+     * 推送并购买SPU用户数
+     */
+    private Long convertSpuNum;
+    /**
+     * 推送并购买SPU转化率
+     */
+    private Long convertSpuRate;
+    /**
+     * 推送并购买SPU转化金额
+     */
+    private Long convertSpuAmount;
 }

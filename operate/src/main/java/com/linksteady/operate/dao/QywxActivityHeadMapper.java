@@ -1,7 +1,7 @@
 package com.linksteady.operate.dao;
 
-import com.linksteady.operate.domain.ActivityCoupon;
-import com.linksteady.operate.domain.ActivityHead;
+import com.linksteady.operate.domain.*;
+import com.linksteady.operate.vo.FollowUserVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -60,4 +60,40 @@ public interface QywxActivityHeadMapper {
      * @return
      */
     List<ActivityCoupon> getActivityCouponList(Long headId);
+
+    /**
+     * 获取成员列表
+     * @param headId
+     * @return
+     */
+    List<FollowUserVO> getAllFollowUserList(Long headId);
+
+    /**
+     *据headID,获取ActivityHead表数据
+     * @param headId
+     * @return
+     */
+    ActivityHead getActivityHeadById(Long headId);
+    /**
+     * 获取推送结果数据图
+     * @param headId
+     * @return
+     */
+    List<QywxActivityStatis> getQywxActivityStatisList(Long headId);
+    /**
+     *获取个体明细
+     * @param limit
+     * @param offset
+     * @param headId
+     * @return
+     */
+    List<QywxActivityConvertDetail> getConvertDetailData(int limit, int offset, Long headId);
+    /**
+     * 获取个体明细数量
+     * @param headId
+     * @return
+     */
+    int getConvertDetailCount(Long headId);
+
+    QywxActivityStaffEffect getActivityStaffEffect(Long headId, String followUserId);
 }
