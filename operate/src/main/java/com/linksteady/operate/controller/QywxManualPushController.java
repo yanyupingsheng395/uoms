@@ -1,5 +1,6 @@
 package com.linksteady.operate.controller;
 
+import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.FileUtils;
@@ -9,6 +10,7 @@ import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.QywxManualPushService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -17,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -54,25 +57,32 @@ public class QywxManualPushController {
                                                   @RequestParam("file") MultipartFile file,
                                                   @RequestParam("mpTitle")  String mpTitle,
                                                   @RequestParam("mpUrl")  String mpUrl,
-                                                  @RequestParam("mediaId")  String mediaId) throws Exception {
+                                                  @RequestParam("mediaId")  String mediaId,
+                                                  @RequestParam("picUrl")  String picUrl,
+                                                  @RequestParam("linkTitle")  String linkTitle,
+                                                  @RequestParam("linkDesc")  String linkDesc,
+                                                  @RequestParam("linkUrl")  String linkUrl,
+                                                  @RequestParam("linkPicurl")  String linkPicurl
+                                                  ) throws Exception {
         if(FileUtils.multipartFileToFile(file)==null){
             return ResponseBo.error("上传文件,请重新上传数据！");
         }
-        if(StringUtils.isEmpty(smsContent)){
-            return ResponseBo.error("推送内容不能为空,请重新上传数据！");
-        }
-        if(StringUtils.isEmpty(mediaId)){
-            return ResponseBo.error("小程序封面ID不能为空,请重新上传数据！");
-        }
-        if(StringUtils.isEmpty(mpTitle)){
-            return ResponseBo.error("小程序标题不能为空,请重新上传数据！");
-        }
-        if(StringUtils.isEmpty(mpUrl)){
-            return ResponseBo.error("小程序链接不能为空,请重新上传数据！");
-        }
+        QywxManualHeader qywxManualHeader = new QywxManualHeader();
+        qywxManualHeader.setInsertBy(((UserBo) SecurityUtils.getSubject().getPrincipal()).getUsername());
+        qywxManualHeader.setInsertDt(new Date());
+        qywxManualHeader.setStatus("0");
+        qywxManualHeader.setTextContent(smsContent);
+        qywxManualHeader.setMpTitle(mpTitle);
+        qywxManualHeader.setMpMediald(mediaId);
+        qywxManualHeader.setMpUrl(mpUrl);
+        qywxManualHeader.setPicUrl(picUrl);
+        qywxManualHeader.setLinkTitle(linkTitle);
+        qywxManualHeader.setLinkDesc(linkDesc);
+        qywxManualHeader.setLinkUrl(linkUrl);
+        qywxManualHeader.setLinkPicurl(linkPicurl);
         QywxManualError error =null;
         try {
-             error = qywxManualPushService.saveManualData(smsContent, file, mpTitle, mpUrl, mediaId);
+             error = qywxManualPushService.saveManualData( file,qywxManualHeader);
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseBo.error("文件解析异常！");

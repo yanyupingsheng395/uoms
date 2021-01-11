@@ -93,6 +93,11 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
                     qywxPushList.setMpUrl(header.getMpUrl());
                     qywxPushList.setMpMediaId(header.getMpMediald());
                     qywxPushList.setMpAppid(appId);
+                    qywxPushList.setPicUrl(header.getPicUrl());
+                    qywxPushList.setLinkUrl(header.getLinkUrl());
+                    qywxPushList.setLinkDesc(header.getLinkDesc());
+                    qywxPushList.setLinkPicurl(header.getLinkPicurl());
+                    qywxPushList.setLinkTitle(header.getLinkTitle());
                     qywxPushList.setExternalContactIds(org.apache.commons.lang3.StringUtils.join( qywxManualDetailList.stream().map(QywxManualDetail::getQywxContactId).collect(Collectors.toList()),","));
                     qywxPushList.setFollowUserId(followerUserId);
                     qywxPushList.setSourceId(detail.get(0).getHeadId());
@@ -114,6 +119,11 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
                         qywxPushList.setMpUrl(header.getMpUrl());
                         qywxPushList.setMpMediaId(header.getMpMediald());
                         qywxPushList.setMpAppid(appId);
+                        qywxPushList.setPicUrl(header.getPicUrl());
+                        qywxPushList.setLinkUrl(header.getLinkUrl());
+                        qywxPushList.setLinkDesc(header.getLinkDesc());
+                        qywxPushList.setLinkPicurl(header.getLinkPicurl());
+                        qywxPushList.setLinkTitle(header.getLinkTitle());
                         qywxPushList.setExternalContactIds(org.apache.commons.lang3.StringUtils.join(qywxManualDetailList.stream().map(QywxManualDetail::getQywxContactId).collect(Collectors.toList()),","));
                         qywxPushList.setFollowUserId(followerUserId);
                         qywxPushList.setSourceId(detail.get(0).getHeadId());
@@ -147,27 +157,32 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
             qywxActivityPushMapper.updatePushList(qywxPushList.getPushId(),"F","","","推送列表为空");
             return;
         }
-
-        String msgContent = qywxPushList.getTextContent();
-        String mpTitle = qywxPushList.getMpTitle();
-        String mpUrl = qywxPushList.getMpUrl();
-        String mediaId =qywxPushList.getMpMediaId();
-        String appId = qywxPushList.getMpAppid();
-
         //判断文本或小程序至少有一个的变量
         boolean flag=true;
         QywxMessage qywxMessage = new QywxMessage();
-
-        if (org.apache.commons.lang3.StringUtils.isNotEmpty(msgContent)) {
-            qywxMessage.setText(msgContent);
+        if (org.apache.commons.lang3.StringUtils.isNotEmpty(qywxPushList.getTextContent())) {
+            qywxMessage.setText(qywxPushList.getTextContent());
             flag=false;
         }
-        if(org.apache.commons.lang3.StringUtils.isNotEmpty(mpTitle))
+        if(org.apache.commons.lang3.StringUtils.isNotEmpty(qywxPushList.getMpTitle()))
         {
-            qywxMessage.setMpTitle(mpTitle);
-            qywxMessage.setMpPicMediaId(mediaId);
-            qywxMessage.setMpAppid(appId);
-            qywxMessage.setMpPage(mpUrl);
+            qywxMessage.setMpTitle(qywxPushList.getMpTitle());
+            qywxMessage.setMpPicMediaId(qywxPushList.getMpMediaId());
+            qywxMessage.setMpAppid(qywxPushList.getMpAppid());
+            qywxMessage.setMpPage(qywxPushList.getMpUrl());
+            flag=false;
+        }
+        //图片
+        if(!org.springframework.util.StringUtils.isEmpty(qywxPushList.getPicUrl())){
+            qywxMessage.setImgPicUrl(qywxPushList.getPicUrl());
+            flag=false;
+        }
+        //链接
+        if(!org.springframework.util.StringUtils.isEmpty(qywxPushList.getLinkTitle())){
+            qywxMessage.setLinkTitle(qywxPushList.getLinkTitle());
+            qywxMessage.setLinkPicUrl(qywxPushList.getLinkPicurl());
+            qywxMessage.setLinkDesc(qywxPushList.getLinkDesc());
+            qywxMessage.setLinkUrl(qywxPushList.getLinkUrl());
             flag=false;
         }
         if(flag)
@@ -215,17 +230,7 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public QywxManualError saveManualData(String smsContent, MultipartFile file, String mpTitle, String mpUrl, String mediaId) throws LinkSteadyException {
-        // 保存QywxManualHeader
-        QywxManualHeader qywxManualHeader = new QywxManualHeader();
-        qywxManualHeader.setInsertBy(((UserBo) SecurityUtils.getSubject().getPrincipal()).getUsername());
-        qywxManualHeader.setInsertDt(new Date());
-        qywxManualHeader.setStatus("0");
-        qywxManualHeader.setTextContent(smsContent);
-        qywxManualHeader.setMpTitle(mpTitle);
-        qywxManualHeader.setMpMediald(mediaId);
-        qywxManualHeader.setMpUrl(mpUrl);
-
+    public QywxManualError saveManualData(MultipartFile file, QywxManualHeader qywxManualHeader) throws LinkSteadyException {
         // 解析file
         List<String[]> gbk =null;
         //定义集合 存放所有的成员ID

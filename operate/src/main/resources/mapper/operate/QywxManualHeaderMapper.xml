@@ -23,6 +23,11 @@
         <result column="cov_cnt" jdbcType="DECIMAL" property="covCnt"/>
         <result column="cov_rate" jdbcType="DECIMAL" property="covRate"/>
         <result column="cov_amount" jdbcType="DECIMAL" property="covAmount"/>
+        <result column="pic_url" jdbcType="VARCHAR" property="picUrl"/>
+        <result column="link_title" jdbcType="VARCHAR" property="linkTitle"/>
+        <result column="link_url" jdbcType="VARCHAR" property="linkUrl"/>
+        <result column="link_desc" jdbcType="VARCHAR" property="linkDesc"/>
+        <result column="link_picurl" jdbcType="VARCHAR" property="linkPicurl"/>
 
 
     </resultMap>
@@ -59,7 +64,12 @@
                                   text_content,
                                   mp_url,
                                   mp_title,
-                                  mp_mediald)
+                                  mp_mediald,
+                                  pic_url,
+                                  link_title,
+                                  link_picurl,
+                                  link_desc,
+                                  link_url)
                                   values (
                                   #{userNumber},
                                   #{totalNum},
@@ -69,7 +79,13 @@
                                   #{textContent},
                                   #{mpUrl},
                                   #{mpTitle},
-                                  #{mpMediald})
+                                  #{mpMediald},
+                                  #{picUrl},
+                                  #{linkTitle},
+                                  #{linkUrl},
+                                  #{linkDesc},
+                                  #{linkPicurl}
+                                  )
     </insert>
 
     <insert id="saveQywxManualDetail">
@@ -90,7 +106,7 @@
 
     <select id="getHeaderListData" resultMap="base">
         select head_id, user_number, total_num, success_num, convert_num, status,push_date,
-        insert_by,insert_dt,update_by,update_dt,text_content,mp_url,mp_title,mp_mediald
+        insert_by,insert_dt,update_by,update_dt,text_content,mp_url,mp_title,mp_mediald,pic_url,link_title,link_picurl,link_desc,link_url
         from uo_qywx_manual_header
         order by head_id desc
         limit #{limit} offset #{offset}
@@ -111,7 +127,7 @@
 
     <select id="getQywxManualHeader" resultMap="base">
         select head_id, user_number, total_num, success_num, convert_num, status,push_date,
-        insert_by,insert_dt,update_by,update_dt,text_content,mp_url,mp_title,mp_mediald
+        insert_by,insert_dt,update_by,update_dt,text_content,mp_url,mp_title,mp_mediald,pic_url,link_title,link_picurl,link_desc,link_url
         from uo_qywx_manual_header where head_id=#{headId}
     </select>
 

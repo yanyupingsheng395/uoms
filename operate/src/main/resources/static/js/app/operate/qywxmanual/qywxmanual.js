@@ -1,7 +1,6 @@
 var $qywxManualForm = $( "#qywx-manual-form" );
 var $qywxManualForm_validator;
 $(function () {
-    validQywxContact();
     initTable();
 });
 
@@ -59,7 +58,7 @@ function initTable() {
         }, {
             field: 'convertNum',
             title: '实际执行推送用户数'
-        }, {
+        }/*, {
             field: 'mpUrl',
             title: '小程序链接'
         }, {
@@ -68,7 +67,7 @@ function initTable() {
         }, {
             field: 'mpMediald',
             title: '小程序封面ID'
-        }, {
+        }*/, {
             field: 'textContent',
             title: '推送内容',
             formatter: function (value, row, index) {
@@ -115,48 +114,55 @@ function submitData() {
         $MB.n_warning("上传数据不能超过10M！");
         return false;
     }
-    var validator = $qywxManualForm.validate();
-    if(validator.form()) {
-        $MB.loadingDesc("show", "正在处理数据中，请稍候...");
-        let formData = new FormData();
-        let smsContent = $("textarea[name='smsContent']").val();
-        let mpTitle = $("#mpTitle").val();
-        let mpUrl = $("#mpUrl").val();
-        let mediaId = $("#mediaId").val();
+    $MB.loadingDesc("show", "正在处理数据中，请稍候...");
+    let formData = new FormData();
+    let smsContent = $("textarea[name='smsContent']").val();
+    let mpTitle = $("#mpTitle").val();
+    let mpUrl = $("#mpUrl").val();
+    let mediaId = $("#mediaId").val();
+    let picUrl = $("#picUrl").val();
+    let linkTitle = $("#linkTitle").val();
+    let linkDesc = $("#linkDesc").val();
+    let linkUrl = $("#linkUrl").val();
+    let linkPicurl = $("#linkPicurl").val();
 
-        formData.append("file", document.getElementById('file').files[0]);
-        formData.append("smsContent",smsContent);
-        formData.append("mpTitle",mpTitle);
-        formData.append("mpUrl",mpUrl);
-        formData.append("mediaId",mediaId);
-        $.ajax({
-            url: "/qywxmanual/saveManualData",
-            type: "POST",
-            data:formData,
-            contentType: false,
-            processData: false,
-            success: function(data) {
-                if(data.code === 200){
-                    if(data.data.errorFlag=="N"){
-                        $MB.n_danger(data.data.errorDesc);
-                    }else if(data.data.errorFlag=="P"){
-                        makeErrorTable(data.data.errorPosition);
-                    }else{
-                        $MB.n_success("数据提交成功！");
-                        $MB.loadingDesc('hide');
-                        $("#add_modal").modal('hide');
-                        $MB.refreshTable('dataTable');
-                    }
-                }else {
+    formData.append("file", document.getElementById('file').files[0]);
+    formData.append("smsContent",smsContent);
+    formData.append("mpTitle",mpTitle);
+    formData.append("mpUrl",mpUrl);
+    formData.append("mediaId",mediaId);
+    formData.append("picUrl",picUrl);
+    formData.append("linkTitle",linkTitle);
+    formData.append("linkDesc",linkDesc);
+    formData.append("linkUrl",linkUrl);
+    formData.append("linkPicurl",linkPicurl);
+    $.ajax({
+        url: "/qywxmanual/saveManualData",
+        type: "POST",
+        data:formData,
+        contentType: false,
+        processData: false,
+        success: function(data) {
+            if(data.code === 200){
+                if(data.data.errorFlag=="N"){
+                    $MB.n_danger(data.data.errorDesc);
+                }else if(data.data.errorFlag=="P"){
+                    makeErrorTable(data.data.errorPosition);
+                }else{
+                    $MB.n_success("数据提交成功！");
                     $MB.loadingDesc('hide');
-                    $MB.n_danger(data.msg);
+                    $("#add_modal").modal('hide');
+                    $MB.refreshTable('dataTable');
                 }
-            },
-            error: function (data) {
+            }else {
+                $MB.loadingDesc('hide');
                 $MB.n_danger(data.msg);
             }
-        });
-    }
+        },
+        error: function (data) {
+            $MB.n_danger(data.msg);
+        }
+    });
 }
 
 // 上传失败的提示列表数据
@@ -181,7 +187,7 @@ function makeErrorTable(data) {
     $("#upload_error_modal").modal('show');
 }
 
-function validQywxContact() {
+/*function validQywxContact() {
     var icon = "<i class='fa fa-close'></i> ";
     $qywxManualForm_validator = $qywxManualForm.validate( {
         rules: {
@@ -220,7 +226,7 @@ function validQywxContact() {
             }
         }
     } );
-}
+}*/
 
 // 推送信息
 function pushMessage() {
@@ -296,6 +302,11 @@ $("#add_modal").on('hidden.bs.modal', function () {
     $("#mpTitle").val('');
     $("#mpUrl").val('');
     $("#mediaId").val('');
+    $("#picUrl").val('');
+    $("#linkTitle").val('');
+    $("#linkDesc").val('');
+    $("#linkUrl").val('');
+    $("#linkPicurl").val('');
 });
 
 $("#send_modal").on('hidden.bs.modal', function () {
@@ -312,3 +323,19 @@ $("#btn_effect").click(function () {
     let headId = selected[0].headId;
     window.location.href="/page/qywxManual/effect?headId="+headId;
 });
+
+function selectType(type) {
+    if(type=="image"){
+        $("#image").show();
+        $("#webPage").hide();
+        $("#applets").hide();
+    }else if(type=="webPage"){
+        $("#image").hide();
+        $("#webPage").show();
+        $("#applets").hide();
+    }else if(type=="applets"){
+        $("#image").hide();
+        $("#webPage").hide();
+        $("#applets").show();
+    }
+}

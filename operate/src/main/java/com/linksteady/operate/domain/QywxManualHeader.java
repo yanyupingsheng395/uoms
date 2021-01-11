@@ -90,5 +90,26 @@ public class QywxManualHeader {
      * 推送转化金额
      */
     private Long covAmount;
+    /**
+     *图片url
+     */
+    private String picUrl;
+    /**
+     *图文消息标题
+     */
+    private String linkTitle;
+    /**
+     *图文消息封面的url
+     */
+    private String linkUrl;
+    /**
+     *图文消息的描述
+     */
+    private String linkDesc;
+    /**
+     *图文消息的链接
+     */
+    private String linkPicurl;
+
 
 }

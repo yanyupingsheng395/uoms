@@ -87,29 +87,80 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                 <h5 class="modal-title">新增推送</h5>
+                <div class="form-group" id="intelPolicy" >
+                    <div class="col-xs-12" style="text-align: center">
+                        <label class="form-inline"/>选择推送方式：
+                            <label class="lyear-radio radio-inline radio-primary">
+                                <input type="radio" checked='checked' name="sendType" value="applets" onclick="selectType('applets')"><span>小程序</span>
+                            </label>
+                            <label class="lyear-radio radio-inline radio-primary">
+                                <input type="radio"  name="sendType" value="pic" onclick="selectType('image')"><span>图片</span>
+                            </label>
+                            <label class="lyear-radio radio-inline radio-primary">
+                                <input type="radio" name="sendType" value="web" onclick="selectType('webPage')"><span>网页</span>
+                            </label>
+                        </label>
+                    </div>
+                </div>
             </div>
             <div class="modal-body">
                 <form class="form-horizontal" method="post" id="qywx-manual-form">
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">小程序标题：</label>
-                        <div class="col-md-7">
-                            <input name="mpTitle" id="mpTitle"  class="form-control"/>
+                    <div id="image" style="display: none">
+                        <div class="form-group" style="margin-bottom: 2px;">
+                            <label class="col-md-3 control-label">图片地址：</label>
+                            <div class="col-md-7">
+                                <input class="form-control" name="picUrl" id="picUrl"/>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">小程序页面路径：</label>
-                        <div class="col-md-7">
-                            <input name="mpUrl" id="mpUrl"  class="form-control"/>
+                    <div id="webPage" style="display: none">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">消息标题：</label>
+                            <div class="col-md-7">
+                                <input class="form-control" name="linkTitle"  id="linkTitle">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">消息描述：</label>
+                            <div class="col-md-7">
+                                <input class="form-control" name="linkDesc" id="linkDesc">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">消息地址：</label>
+                            <div class="col-md-7">
+                                <input class="form-control" name="linkUrl" id="linkUrl">
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 2px;">
+                            <label class="col-md-3 control-label">封面地址：</label>
+                            <div class="col-md-7">
+                                <input class="form-control" name="linkPicurl" id="linkPicurl">
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">小程序封面MediaID：</label>
-                        <div class="col-md-7">
-                            <input name="mediaId" id="mediaId"  readonly="readonly" class="form-control"/>
+                    <div id="applets" style="display: block">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">小程序标题：</label>
+                            <div class="col-md-7">
+                                <input name="mpTitle" id="mpTitle"  class="form-control"/>
+                            </div>
                         </div>
-                        <a id='addShopDiscountBtn' style="cursor:pointer;color: #409eff !important;" onclick="chooseMedia()"><i class="fa fa-plus-circle" style="margin-top:12px;"></i>添加</a>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">小程序页面路径：</label>
+                            <div class="col-md-7">
+                                <input name="mpUrl" id="mpUrl"  class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">小程序封面MediaID：</label>
+                            <div class="col-md-7">
+                                <input name="mediaId" id="mediaId"  readonly="readonly" class="form-control"/>
+                            </div>
+                            <a id='addShopDiscountBtn' style="cursor:pointer;color: #409eff !important;" onclick="chooseMedia()"><i class="fa fa-plus-circle" style="margin-top:12px;"></i>添加</a>
+                        </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group" style="margin-top: 15px">
                         <label class="col-md-3 control-label">文本：</label>
                         <div class="col-md-7">
                             <textarea name="smsContent" id="smsContent" cols="30" rows="4" class="form-control"></textarea>

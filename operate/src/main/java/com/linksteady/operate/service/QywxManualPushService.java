@@ -12,7 +12,7 @@ public interface QywxManualPushService {
     /**
      * 插入数据
      */
-    QywxManualError saveManualData(String smsContent, MultipartFile file, String mpTitle, String mpUrl, String mediaId) throws IOException, LinkSteadyException;
+    QywxManualError saveManualData(MultipartFile file, QywxManualHeader qywxManualHeader) throws IOException, LinkSteadyException;
 
     /**
      * 获取数量
