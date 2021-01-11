@@ -20,7 +20,6 @@ $(function () {
                 pageSize: params.limit,
                 pageNum: params.offset / params.limit + 1,
                 username: $userTableForm.find("input[name='qusername']").val().trim(),
-                ssex: $userTableForm.find("select[name='qssex']").val(),
                 status: $userTableForm.find("select[name='qstatus']").val()
             };
         },
@@ -76,7 +75,6 @@ function searchUser() {
 
 function refreshUser() {
     $("input[name='qusername']").val("");
-    $("select[name='qssex']").find("option:selected").removeAttr("selected");
     $("select[name='qstatus']").find("option:selected").removeAttr("selected");
     $MB.refreshTable('userTable');
 }

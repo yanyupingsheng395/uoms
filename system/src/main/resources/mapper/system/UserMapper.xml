@@ -56,7 +56,7 @@
 
 	<insert id="saveUser" parameterType="com.linksteady.common.domain.User" useGeneratedKeys="true" keyProperty="userId">
 		insert into t_user(username,password,email,mobile,status,create_dt,create_by,expire_date,firstlogin,user_type) values
-		(#{username},#{password},#{email},#{mobile},#{status},#{createDt},#{createBy},#{ssex},#{theme},#{avatar},#{expireDate},#{firstLogin},#{userType})
+		(#{username},#{password},#{email},#{mobile},#{status},#{createDt},#{createBy},#{expireDate},#{firstLogin},#{userType})
 	</insert>
 
 	<update id="updateLastLoginTime">

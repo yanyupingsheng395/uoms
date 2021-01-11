@@ -27,7 +27,7 @@
     </select>
 
     <select id="getDataCount" resultType="int">
-        select count(1) from T_MSG_LIST t1
+        select count(1) from T_MSG_LIST t1 where 1=1
         <if test="msgLevel != '' and msgLevel != null">
             and t1.MSG_LEVEL = #{msgLevel}::int4
         </if>
