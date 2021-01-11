@@ -126,8 +126,9 @@
                                                                 <div class="form-group" style="margin-bottom: 2px;">
                                                                     <label class="col-md-3 control-label">图片地址：</label>
                                                                     <div class="col-md-7">
-                                                                        <input class="form-control" name="picUrl"/>
+                                                                        <input class="form-control" readonly="readonly" name="picUrl" id="picUrl"/>
                                                                     </div>
+                                                                    <a id='addMediaImage' style="cursor:pointer;color: #409eff !important;" onclick="chooseMediaImg()"><i class="fa fa-plus-circle" style="margin-top:12px;"></i>选择</a>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -469,6 +470,7 @@
         </div>
     </div>
 </div>
+<div data-th-include="qywx/chooseMediaImg/chooseMediaImg"></div>
 <th:block th:include="common/include::footer"/>
 <th:block th:include="common/include::datepicker-js" />
 <th:block th:include="common/include::perfect-scrollbar"/>
@@ -476,8 +478,12 @@
 <th:block th:include="common/include::common-js"/>
 <th:block th:include="common/include::bootstrap-table-js"/>
 <th:block th:include="common/include::jquery-confirm-js"/>
+<script data-th-src="@{/js/app/qywx/common/template.js}"></script>
+<script data-th-src="@{/plugins/imageUpload/cupload.js}"></script>
 <script data-th-src="@{/js/app/qywx/welcome/emoji-picker.js}"></script>
 <script data-th-src="@{/js/app/qywx/welcome/add.js}"></script>
+<script data-th-src="@{/js/app/qywx/chooseMediaImg/chooseMediaImg.js}"></script>
+
 <script>
     $(function() {
         emojiPicker = new EmojiPicker.EmojiPicker({

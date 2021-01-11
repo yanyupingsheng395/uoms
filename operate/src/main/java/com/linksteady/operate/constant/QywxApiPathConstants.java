@@ -6,6 +6,12 @@ public class QywxApiPathConstants {
 
     public static final String GET_VALID_MEDIA_COUNT="/api/getValidMediaImgCount";
 
+    public static final String GET_VALID_MEDIA_PERMANENT_LIST="/api/getPermanentMediaImgList";
+
+    public static final String GET_VALID_MEDIA_PERMANENT_COUNT="/api/getPermanentMediaImgCount";
+
+    public static final String UPDATE_QYWX_PERMANENT_MEDIA="/api/uploadPermanentMaterial";
+
     public static final String UPDATE_QYWX_MEDIA="/api/uploadQywxMaterial";
 
     public static final String SEND_QYWX_MESSAGE="/api/addMsgTemplate";

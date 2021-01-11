@@ -1,4 +1,4 @@
-package com.linksteady.qywx.domain;
+package com.linksteady.operate.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;

@@ -9,6 +9,7 @@ import com.linksteady.common.domain.SysInfoBo;
 import com.linksteady.common.service.CommonFunService;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.operate.constant.QywxApiPathConstants;
+import com.linksteady.operate.domain.QywxImage;
 import com.linksteady.operate.domain.QywxMediaImg;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +81,73 @@ public class QywxChooseMediaController {
             }
             String qywxUrl=sysInfoBo.getSysDomain();
             String url=qywxUrl+QywxApiPathConstants.UPDATE_QYWX_MEDIA;
+            Map<String,String> param=new HashMap<>();
+            param.put("title",title);
+            param.put("base64Code",base64Code);
+            String result= OkHttpUtil.postRequestByFormBody(url,param);
+            JSONObject jsonObject = JSON.parseObject(result);
+            if(null==jsonObject||200!=jsonObject.getIntValue("code")){
+                return ResponseBo.error();
+            }
+            return ResponseBo.ok();
+        } catch (Exception e) {
+            log.error("上传素材（图片）报错！");
+            return ResponseBo.error();
+        }
+    }
+
+    /**
+     *获取永久素材列表
+     * @param request
+     * @return
+     */
+    @RequestMapping("/getPermanentImg")
+    public ResponseBo getPermanentImg(QueryRequest request) throws Exception {
+        //获取当前企业微信API应用的地址
+        SysInfoBo sysInfoBo=commonFunService.getSysInfoByCode(CommonConstant.QYWX_CODE);
+        if(null==sysInfoBo|| StringUtils.isEmpty(sysInfoBo.getSysDomain()))
+        {
+            throw new Exception("企业微信模块尚未配置");
+        }
+        String qywxUrl=sysInfoBo.getSysDomain();
+        String url=qywxUrl+ QywxApiPathConstants.GET_VALID_MEDIA_PERMANENT_LIST;
+        Map<String,String> param=new HashMap<>();
+        param.put("limit",request.getLimit()+"");
+        param.put("offset",request.getOffset()+"");
+        String result= OkHttpUtil.postRequestByFormBody(url,param);
+        JSONObject jsonObject = JSON.parseObject(result);
+        List<QywxImage> qywxImageList = new ArrayList<>();
+        int count=0;
+        String res = OkHttpUtil.getRequest(qywxUrl+QywxApiPathConstants.GET_VALID_MEDIA_PERMANENT_COUNT);
+        JSONObject jscount = JSON.parseObject(res);
+        if(null==jsonObject||200!=jsonObject.getIntValue("code")||null==jscount||200!=jscount.getIntValue("code")){
+            return ResponseBo.error();
+        }else{
+            String data = jsonObject.getString("data");
+            count=jscount.getIntValue("data");
+            if(!StringUtils.isEmpty(data)){
+                qywxImageList = JSONObject.parseArray(data, QywxImage.class);
+            }
+        }
+        return ResponseBo.okOverPaging(null, count, qywxImageList);
+    }
+
+
+    /**
+     * 上传图片(临时素材)
+     * @param
+     * @return
+     */
+    @PostMapping("/uploadPermanentImg")
+    public ResponseBo uploadPermanentImg(String title,String base64Code)  {
+        try {
+            //获取当前企业微信API应用的地址
+            SysInfoBo sysInfoBo=commonFunService.getSysInfoByCode(CommonConstant.QYWX_CODE);
+            if(null==sysInfoBo|| StringUtils.isEmpty(sysInfoBo.getSysDomain())){
+                throw new Exception("企业微信模块尚未配置");
+            }
+            String qywxUrl=sysInfoBo.getSysDomain();
+            String url=qywxUrl+QywxApiPathConstants.UPDATE_QYWX_PERMANENT_MEDIA;
             Map<String,String> param=new HashMap<>();
             param.put("title",title);
             param.put("base64Code",base64Code);

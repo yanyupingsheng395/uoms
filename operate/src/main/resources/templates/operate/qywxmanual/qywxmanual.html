@@ -87,30 +87,38 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                 <h5 class="modal-title">新增推送</h5>
-                <div class="form-group" id="intelPolicy" >
-                    <div class="col-xs-12" style="text-align: center">
-                        <label class="form-inline"/>选择推送方式：
-                            <label class="lyear-radio radio-inline radio-primary">
-                                <input type="radio" checked='checked' name="sendType" value="applets" onclick="selectType('applets')"><span>小程序</span>
-                            </label>
-                            <label class="lyear-radio radio-inline radio-primary">
-                                <input type="radio"  name="sendType" value="pic" onclick="selectType('image')"><span>图片</span>
-                            </label>
-                            <label class="lyear-radio radio-inline radio-primary">
-                                <input type="radio" name="sendType" value="web" onclick="selectType('webPage')"><span>网页</span>
-                            </label>
-                        </label>
-                    </div>
-                </div>
             </div>
             <div class="modal-body">
                 <form class="form-horizontal" method="post" id="qywx-manual-form">
+                    <div class="form-group" style="margin-top: 15px">
+                        <label class="col-md-3 control-label">文本：</label>
+                        <div class="col-md-7">
+                            <textarea name="smsContent" id="smsContent" cols="30" rows="4" class="form-control"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group" id="intelPolicy" >
+                        <div class="col-xs-12" >
+                            <label class="col-md-3 control-label"/>选择消息类型：</label>
+                            <div class="col-md-7" style="margin-top: 5px;">
+                                <label class="lyear-radio radio-inline radio-primary">
+                                    <input type="radio" checked='checked' name="sendType" value="applets" onclick="selectType('applets')"><span>小程序</span>
+                                </label>
+                                <label class="lyear-radio radio-inline radio-primary">
+                                    <input type="radio"  name="sendType" value="pic" onclick="selectType('image')"><span>图片</span>
+                                </label>
+                                <label class="lyear-radio radio-inline radio-primary">
+                                    <input type="radio" name="sendType" value="web" onclick="selectType('webPage')"><span>网页</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                     <div id="image" style="display: none">
                         <div class="form-group" style="margin-bottom: 2px;">
                             <label class="col-md-3 control-label">图片地址：</label>
                             <div class="col-md-7">
-                                <input class="form-control" name="picUrl" id="picUrl"/>
+                                <input class="form-control" readonly="readonly" name="picUrl" id="picUrl"/>
                             </div>
+                            <a id='addMediaImage' style="cursor:pointer;color: #409eff !important;" onclick="chooseMediaImg()"><i class="fa fa-plus-circle" style="margin-top:12px;"></i>选择</a>
                         </div>
                     </div>
                     <div id="webPage" style="display: none">
@@ -160,18 +168,12 @@
                             <a id='addShopDiscountBtn' style="cursor:pointer;color: #409eff !important;" onclick="chooseMedia()"><i class="fa fa-plus-circle" style="margin-top:12px;"></i>添加</a>
                         </div>
                     </div>
-                    <div class="form-group" style="margin-top: 15px">
-                        <label class="col-md-3 control-label">文本：</label>
-                        <div class="col-md-7">
-                            <textarea name="smsContent" id="smsContent" cols="30" rows="4" class="form-control"></textarea>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">上传数据：</label>
+                    <div class="form-group" style="margin-top: 10px;">
+                        <label class="col-md-3 control-label">上传名单：</label>
                         <div class="col-md-7">
                             <input type="file" id="file" name="file" style="display: none;"
                                    onchange="beforeUpload()"/>
-                            <button class="btn btn-info btn-sm" type="button" onclick="$('#file').click()">上传数据</button>
+                            <button class="btn btn-info btn-sm" type="button" onclick="$('#file').click()">上传名单</button>
                             <span id="upload_file_name"></span>
                             <button class="btn btn-secondary btn-sm" type="button" onclick="window.location.href = '/qywxmanual/download'">下载模板</button>
                             <div>
@@ -184,11 +186,11 @@
                                 </font>
                                 <br/>
                                 <font class="h6" style="color: #7c7c7c;">
-                                    *其中第一行为标题行，数据请从第二行开始录入,第一列为成员ID，第二列为外部客户ID
+                                    *其中第一行为标题行，名单请从第二行开始录入,第一列为成员ID，第二列为外部客户ID
                                 </font>
                                 <br/>
                                 <font class="h6" style="color: #7c7c7c;">
-                                    *数据请连续录入，中间不能存在空行
+                                    *名单请连续录入，中间不能存在空行
                                 </font>
                             </div>
                         </div>
@@ -225,6 +227,7 @@
     </div>
 </div>
 <div data-th-include="operate/chooseMedia/chooseMedia"></div>
+<div data-th-include="operate/chooseMediaImg/chooseMediaImg"></div>
 
 <th:block th:include="common/include::clipboard-js" />
 <th:block th:include="common/include::footer" />
@@ -240,6 +243,7 @@
 <script data-th-src="@{/js/app/operate/common/template.js}"></script>
 <script data-th-src="@{/js/app/operate/qywxmanual/qywxmanual.js}"></script>
 <script data-th-src="@{/js/app/operate/chooseMedia/chooseMedia.js}"></script>
+<script data-th-src="@{/js/app/operate/chooseMediaImg/chooseMediaImg.js}"></script>
 <script>
     let clipboard1 = new ClipboardJS('.copy_btn');
     clipboard1.on('success', function(e) {

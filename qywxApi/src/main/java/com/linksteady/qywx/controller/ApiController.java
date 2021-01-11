@@ -5,6 +5,7 @@ import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.Base64Img;
 import com.linksteady.common.util.MD5Utils;
 import com.linksteady.qywx.constant.FilePathConsts;
+import com.linksteady.qywx.domain.QywxImage;
 import com.linksteady.qywx.domain.QywxMediaImg;
 import com.linksteady.qywx.exception.WxErrorException;
 import com.linksteady.qywx.service.MediaService;
@@ -113,6 +114,63 @@ public class ApiController {
             return ResponseBo.okWithData(null,count);
         } catch (Exception e) {
             return ResponseBo.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 获取永久素材
+     * @param request
+     * @param limit
+     * @param offset
+     * @return
+     */
+    @RequestMapping("/getPermanentMediaImgList")
+    public ResponseBo getPermanentMediaImgList(HttpServletRequest request,
+                                               @RequestParam("limit")int limit,
+                                               @RequestParam("offset")int offset){
+        List<QywxImage> qywxImageList = mediaService.getImageList(limit,offset);
+        try {
+            return ResponseBo.okWithData(null,qywxImageList);
+        } catch (Exception e) {
+            return ResponseBo.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 获取临时素材数量
+     * @return
+     */
+    @RequestMapping("/getPermanentMediaImgCount")
+    public ResponseBo getPermanentMediaImgCount() {
+        int count=mediaService.getImageCount();
+        try {
+            return ResponseBo.okWithData(null,count);
+        } catch (Exception e) {
+            return ResponseBo.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 上传图片(临时素材)
+     * @param
+     * @return
+     */
+    @PostMapping("/uploadPermanentMaterial")
+    public ResponseBo uploadPermanentMaterial(HttpServletRequest request,
+                                         @RequestParam("title") String title,
+                                         @RequestParam("base64Code") String base64Code)  {
+        try {
+            String fileSuffix = base64Code.substring("data:image/".length(), base64Code.lastIndexOf(";base64,"));
+            //生成文件名 md5(title+时间戳.fileSuffix)
+            String timestamp= String.valueOf(System.currentTimeMillis());
+            String fileName= MD5Utils.encrypt(title)+"_"+timestamp+"."+fileSuffix;
+            File file = Base64Img.base64ToFile(base64Code, fileName, FilePathConsts.TEMP_IMAGE_PATH);
+            //TODO 此处需要获取当前用户的名称，由调用方提供
+            mediaService.uploadImage(title,file,"");
+            return ResponseBo.ok();
+        } catch (Exception e) {
+            log.error("上传素材（图片）报错！");
+            return ResponseBo.error();
         }
     }
 
