@@ -23,6 +23,15 @@
         <result property="relateChat" jdbcType="VARCHAR" column="relate_chat"/>
         <result property="contactName" jdbcType="VARCHAR" column="contact_name"/>
         <result property="tagIds" jdbcType="VARCHAR" column="tag_ids"/>
+        <result column="pic_url" jdbcType="VARCHAR" property="picUrl"/>
+        <result column="link_title" jdbcType="VARCHAR" property="linkTitle"/>
+        <result column="link_url" jdbcType="VARCHAR" property="linkUrl"/>
+        <result column="link_desc" jdbcType="VARCHAR" property="linkDesc"/>
+        <result column="link_picurl" jdbcType="VARCHAR" property="linkPicurl"/>
+        <result column="mp_title" jdbcType="VARCHAR" property="mpTitle"/>
+        <result column="mp_url" jdbcType="VARCHAR" property="mpUrl"/>
+        <result column="media_id" jdbcType="VARCHAR" property="mediaId"/>
+        <result column="msg_type" jdbcType="VARCHAR" property="msgType"/>
     </resultMap>
 
     <resultMap id="contactWayDetail" type="com.linksteady.qywx.domain.QywxContactWayDetail">
@@ -56,7 +65,8 @@
 
     <select id="getContactWayById" resultMap="BaseResultMap">
         select contactway_id,qrcode,contact_type,scene,style,skip_verify,state,user_list,party,party,
-                config_id,create_dt,update_dt,create_by,update_by,externaluser_num,short_url,chat_text,relate_chat,contact_name,tag_ids
+                config_id,create_dt,update_dt,create_by,update_by,externaluser_num,short_url,chat_text,relate_chat,contact_name,tag_ids,pic_url,link_title,link_picurl,link_desc,link_url,
+                mp_title,mp_url,media_id,msg_Type
         from uo_qywx_contact_way where  contactway_id=#{contactWayId}
     </select>
 
@@ -130,7 +140,16 @@
                 chat_text=#{chatText},
                 relate_chat=#{relateChat},
                 contact_name=#{contactName},
-                tag_ids=#{tagIds}
+                tag_ids=#{tagIds},
+                pic_url=#{picUrl},
+                link_title=#{linkTitle},
+                link_picurl=#{linkPicurl},
+                link_desc=#{linkDesc},
+                link_url=#{linkUrl},
+                mp_title=#{mpTitle},
+                mp_url=#{mpUrl},
+                media_id=#{mediaId},
+                msg_type=#{msgType}
          where contactway_id=#{contactWayId}
     </update>
 
@@ -151,7 +170,16 @@
              chat_text,
              relate_chat,
              contact_name,
-             tag_ids
+             tag_ids,
+             pic_url,
+             link_title,
+             link_picurl,
+             link_desc,
+             link_url,
+             mp_title,
+             mp_url,
+             media_id,
+             msg_type
          ) values(
             #{contactType},
             #{scene},
@@ -168,7 +196,16 @@
             #{chatText},
             #{relateChat},
             #{contactName},
-            #{tagIds}
+            #{tagIds},
+            #{picUrl},
+            #{linkTitle},
+            #{linkPicurl},
+            #{linkDesc},
+            #{linkUrl},
+            #{mpTitle},
+            #{mpUrl},
+            #{mediaId},
+            #{msgType}
          );
     </insert>
 

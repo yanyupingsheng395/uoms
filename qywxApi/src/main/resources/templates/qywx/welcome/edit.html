@@ -115,7 +115,7 @@
                                     <div class="form-group">
                                         <label class="col-xs-12" style="font-weight: bold;">欢迎语素材</label>
                                         <div class="col-md-12">
-                                            <ul id="myTabs" class="nav nav-tabs" role="tablist">
+                                          <!--  <ul id="myTabs" class="nav nav-tabs" role="tablist">
                                                 <li class="active"><a href="#text" id="text-tab" role="tab"
                                                                       data-toggle="tab"><i class="fa fa-file-text-o"></i>&nbsp;文本</a>
                                                 </li>
@@ -128,74 +128,74 @@
                                                 <li><a href="#miniprogram" id="miniprogram-tab" role="tab"
                                                        data-toggle="tab"><i class="fa fa-skyatlas"></i>&nbsp;小程序</a>
                                                 </li>
-                                            </ul>
-                                            <div id="myTabContent" class="tab-content"
-                                                 style="height: auto;">
+                                            </ul>-->
+                                            <div id="myTabContent" class="tab-content" style="height: auto;">
                                                 <!--文本-->
-                                                <div class="tab-pane fade active in" id="text">
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <textarea th:text="${welcome.content}" class="form-control" name="content" rows="6" placeholder="请输入欢迎语内容" id="textContent1" data-emojiable="true" ></textarea>
-                                                        </div>
+                                                <div class="row" id="text">
+                                                    <label class="col-md-3">文本：</label>
+                                                    <div class="col-md-9">
+                                                        <textarea th:text="${welcome.content}" class="form-control" name="content" rows="6" placeholder="请输入欢迎语内容" id="textContent1" data-emojiable="true" ></textarea>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group" style="margin-top: 10px;">
+                                                    <label class="col-xs-3" >选择消息类型：</label>
+                                                    <div class="col-xs-9">
+                                                        <label class="radio-inline">
+                                                            <input type="radio" checked='checked' name="sendType" th:checked="${welcome.msgType eq 'applets'} ? true:false" value="applets" onclick="selectType('miniprogram')"><span>小程序</span>
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            <input type="radio"  name="sendType" value="image" th:checked="${welcome.msgType eq 'image'} ? true:false" onclick="selectType('image')"><span>图片</span>
+                                                        </label>
+                                                        <label class="radio-inline">
+                                                            <input type="radio" name="sendType" value="web" th:checked="${welcome.msgType eq 'web'} ? true:false" onclick="selectType('web')"><span>网页</span>
+                                                        </label>
                                                     </div>
                                                 </div>
                                                 <!--图片-->
-                                                <div class="tab-pane fade" id="image">
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <div class="form-horizontal">
-                                                                <div class="form-group" style="margin-bottom: 2px;">
-                                                                    <label class="col-md-3 control-label">图片地址：</label>
-                                                                    <div class="col-md-7">
-                                                                        <input class="form-control" th:value="${welcome.picUrl}" readonly="readonly" name="picUrl" id="picUrl"/>
-                                                                    </div>
-                                                                    <a id='addMediaImage' style="cursor:pointer;color: #409eff !important;" onclick="chooseMediaImg()"><i class="fa fa-plus-circle" style="margin-top:12px;"></i>选择</a>
-                                                                </div>
-                                                            </div>
+                                                <div class="row" id="image" style="display: none">
+                                                    <label class="col-md-3">图片地址：</label>
+                                                    <div class="col-md-7">
+                                                        <input class="form-control" th:value="${welcome.picUrl}" readonly="readonly" name="picUrl" id="picUrl"/>
+                                                    </div>
+                                                    <a id='addMediaImage' style="cursor:pointer;color: #409eff !important;" onclick="chooseMediaImg()"><i class="fa fa-plus-circle" style="margin-top:12px;"></i>选择</a>
+                                                </div>
+                                                <div id="web" style="display: none">
+                                                    <div class="form-group">
+                                                        <label class="col-md-3 ">消息标题：</label>
+                                                        <div class="col-md-7">
+                                                            <input class="form-control" name="linkTitle" th:value="${welcome.linkTitle}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="col-md-3 ">消息描述：</label>
+                                                        <div class="col-md-7">
+                                                            <input class="form-control" name="linkDesc" th:value="${welcome.linkDesc}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="col-md-3 ">消息地址：</label>
+                                                        <div class="col-md-7">
+                                                            <input class="form-control" name="linkUrl" th:value="${welcome.linkUrl}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group" style="margin-bottom: 2px;">
+                                                        <label class="col-md-3 ">封面地址：</label>
+                                                        <div class="col-md-7">
+                                                            <input class="form-control" name="linkPicurl" th:value="${welcome.linkPicurl}">
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="tab-pane fade" id="web">
-                                                    <div class="form-horizontal">
-                                                        <div class="form-group">
-                                                            <label class="col-md-3 control-label">消息标题：</label>
-                                                            <div class="col-md-7">
-                                                                <input class="form-control" name="linkTitle" th:value="${welcome.linkTitle}">
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label class="col-md-3 control-label">消息描述：</label>
-                                                            <div class="col-md-7">
-                                                                <input class="form-control" name="linkDesc" th:value="${welcome.linkDesc}">
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group">
-                                                            <label class="col-md-3 control-label">消息地址：</label>
-                                                            <div class="col-md-7">
-                                                                <input class="form-control" name="linkUrl" th:value="${welcome.linkUrl}">
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group" style="margin-bottom: 2px;">
-                                                            <label class="col-md-3 control-label">封面地址：</label>
-                                                            <div class="col-md-7">
-                                                                <input class="form-control" name="linkPicurl" th:value="${welcome.linkPicurl}">
-                                                            </div>
+                                                <div id="miniprogram">
+                                                    <div class="form-group">
+                                                        <label class="col-md-3 ">小程序标题：</label>
+                                                        <div class="col-md-7">
+                                                            <input class="form-control" readonly="readonly" name="miniprogramTitle" id="minititle" th:value="${welcome.miniprogramTitle}">
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="tab-pane fade" id="miniprogram">
-                                                    <div class="form-horizontal">
-                                                        <div class="form-group">
-                                                            <label class="col-md-3 control-label">小程序标题：</label>
-                                                            <div class="col-md-7">
-                                                                <input class="form-control" readonly="readonly" name="miniprogramTitle" id="minititle" th:value="${welcome.miniprogramTitle}">
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group" style="margin-bottom: 2px;">
-                                                            <label class="col-md-3 control-label">小程序地址：</label>
-                                                            <div class="col-md-7">
-                                                                <input class="form-control" readonly="readonly" name="miniprogramPage" id="miniaddress" th:value="${welcome.miniprogramPage}">
-                                                            </div>
+                                                    <div class="form-group" style="margin-bottom: 2px;">
+                                                        <label class="col-md-3 ">小程序地址：</label>
+                                                        <div class="col-md-7">
+                                                            <input class="form-control" readonly="readonly" name="miniprogramPage" id="miniaddress" th:value="${welcome.miniprogramPage}">
                                                         </div>
                                                     </div>
                                                 </div>
@@ -247,36 +247,8 @@
                                         </div>
 
                                         <div id="chatDiv">
-<!-- 消息预览，JS拼接了代码，此处为不需要-->
-<!--                                            <div style="overflow:hidden;">-->
-<!--                                                <div class="send" style="position: relative;margin-top: 200px;">-->
-<!--                                                    <div class="arrow"></div>-->
-<!--                                                    <p class="h5">送你一张五元券</p>-->
-<!--                                                    <div style=" width: 230px;height: 170px;background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1599631614507&di=8bb19956eab55733b1e8d9b7ae75d1ea&imgtype=0&src=http%3A%2F%2Fpicture.ik123.com%2Fuploads%2Fallimg%2F160812%2F4-160Q2151302.jpg);-webkit-background-size:cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;"></div>-->
-<!--                                                    <hr style="background: #b0b0b0;margin-top: 6px;margin-bottom: 6px;"/>-->
-<!--                                                    <p style="margin-bottom: 0px;color: #838383"><i class="fa fa-skyatlas" style="color: #1296db"></i>&nbsp;小程序</p>-->
-<!--                                                </div>-->
-<!--                                            </div>-->
                                         </div>
                                     </div>
-<!--                                    <div style="height: auto;width: 100%;background-color: rgb(235,235,235);border-bottom-left-radius: 10px;border-bottom-right-radius: 10px; padding-bottom: 25px;">-->
-<!--                                        <div class="send" id="preview">-->
-<!--                                            <div class="arrow"></div>-->
-<!--                                            <span id="wxPreview" style="width:auto; display:block; text-align:left;">请输入欢迎语内容</span>-->
-<!--                                        </div>-->
-
-<!--                                        <div id="chatDiv">-->
-<!--                                            <div style="overflow:hidden;">-->
-<!--                                                <div class="send" style="position: relative;margin-top: 200px;">-->
-<!--                                                    <div class="arrow"></div>-->
-<!--                                                    <p class="h5">送你一张五元券</p>-->
-<!--                                                    <div style=" width: 230px;height: 170px;background-image: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1599631614507&di=8bb19956eab55733b1e8d9b7ae75d1ea&imgtype=0&src=http%3A%2F%2Fpicture.ik123.com%2Fuploads%2Fallimg%2F160812%2F4-160Q2151302.jpg);-webkit-background-size:cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;"></div>-->
-<!--                                                    <hr style="background: #b0b0b0;margin-top: 6px;margin-bottom: 6px;"/>-->
-<!--                                                    <p style="margin-bottom: 0px;color: #838383"><i class="fa fa-skyatlas" style="color: #1296db"></i>&nbsp;小程序</p>-->
-<!--                                                </div>-->
-<!--                                            </div>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
                                 </div>
                             </div>
                         </div>
@@ -516,6 +488,9 @@
         });
         emojiPicker.discover();
     });
+
+    var msgType = '[[${msgType}]]';
+    selectType(msgType)
 </script>
 </body>
 </html>

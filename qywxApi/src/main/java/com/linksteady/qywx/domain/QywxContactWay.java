@@ -75,6 +75,43 @@ public class QywxContactWay implements Comparable<QywxContactWay>{
     private String tagIds;
 
     /**
+     *图片url
+     */
+    private String picUrl;
+    /**
+     *图文消息标题
+     */
+    private String linkTitle;
+    /**
+     *图文消息封面的url
+     */
+    private String linkUrl;
+    /**
+     *图文消息的描述
+     */
+    private String linkDesc;
+    /**
+     *图文消息的链接
+     */
+    private String linkPicurl;
+    /**
+     * 小程序标题
+     */
+    private String mpTitle;
+    /**
+     * 小程序url
+     */
+    private String mpUrl;
+    /**
+     * 小程序标题ID
+     */
+    private String mediaId;
+    /**
+     * 选择消息类型
+     */
+    private String msgType;
+
+    /**
      * 用于接收前端传过来的群码关联列表集合
      */
     private String watChatList;

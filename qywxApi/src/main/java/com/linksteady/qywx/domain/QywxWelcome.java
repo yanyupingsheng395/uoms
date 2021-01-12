@@ -49,4 +49,6 @@ public class QywxWelcome implements Serializable {
 
     private String updateBy;
 
+    private String msgType;
+
 }

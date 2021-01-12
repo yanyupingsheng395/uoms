@@ -651,3 +651,36 @@ $("#addProductModal").on('hidden.bs.modal', function () {
 $("#addCouponModal").on('hidden.bs.modal', function () {
     validator_coupon.resetForm();
 });
+
+function selectType(type) {
+    if(type=="image"){
+        $("#image").show();
+        $("#web").hide();
+        $("#miniprogram").hide();
+        $('#configBtn').attr('style', 'display:none;');
+        $("#linkTitle").val("");
+        $("#linkDesc").val("");
+        $("#linkUrl").val("");
+        $("#linkPicurl").val("");
+        $("#minititle").val("");
+        $("#miniaddress").val("");
+    }else if(type=="web"){
+        $("#image").hide();
+        $("#web").show();
+        $("#miniprogram").hide();
+        $('#configBtn').attr('style', 'display:none;');
+        $("#minititle").val("");
+        $("#miniaddress").val("");
+        $("#picUrl").val("");
+    }else if(type=="miniprogram"){
+        $("#image").hide();
+        $("#web").hide();
+        $("#miniprogram").show();
+        $('#configBtn').attr('style', 'display:inline-block;');
+        $("#picUrl").val("");
+        $("#linkTitle").val("");
+        $("#linkDesc").val("");
+        $("#linkUrl").val("");
+        $("#linkPicurl").val("");
+    }
+}

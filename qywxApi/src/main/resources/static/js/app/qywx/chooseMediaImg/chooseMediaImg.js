@@ -2,7 +2,7 @@
 function chooseMediaImg() {
     $("#add_modal").hide();
     $("#chooseMediaImg").modal('show');
-    getDataList( 'imageTable_MediaImg');
+    getDataListMediaImg( 'imageTable_MediaImg');
 }
 
 var upload;
@@ -15,7 +15,7 @@ function image() {
     } );
 }
 
-function getDataList(tableId) {
+function getDataListMediaImg(tableId) {
     var settings = {
         url: "/wxMedia/getImageList",
         cache: false,

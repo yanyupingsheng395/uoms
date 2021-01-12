@@ -39,7 +39,18 @@ function editContact(contactWayId) {
             $form.find( "input[name='deptList']" ).val(d.party);
             $form.find( "input[name='shortUrl']" ).val( d.shortUrl );
             $form.find( "input[name='contactName']" ).val( d.contactName );
+            $form.find( "input[name='picUrl']" ).val( d.picUrl );
+            $form.find( "input[name='linkTitle']" ).val( d.linkTitle );
+            $form.find( "input[name='linkDesc']" ).val( d.linkDesc );
+            $form.find( "input[name='linkUrl']" ).val( d.linkUrl );
+            $form.find( "input[name='linkPicurl']" ).val( d.linkPicurl );
+            $form.find( "input[name='mpTitle']" ).val( d.mpTitle );
+            $form.find( "input[name='mpUrl']" ).val( d.mpUrl );
+            $form.find( "input[name='mediaId']" ).val( d.mediaId );
             $form.find( "textarea[name='chatText']" ).val( d.chatText );
+            $(":radio[name='msgType'][value='" + d.msgType + "']").prop("checked", "checked");
+            //选择消息类型
+            selectType(d.msgType)
             $(":radio[name='relateChat'][value='" + d.relateChat + "']").prop("checked", "checked");
             var tagid=d.tagIds;
             if(d.relateChat =='N'){
@@ -363,7 +374,7 @@ var upload;
 image();
 function image() {
     upload = new Cupload( {
-        ele: '#cupload-create',
+        ele: '#cupload-create_er',
         num: 1
     } );
 }
@@ -402,7 +413,7 @@ function saveChatImg() {
             //校验是否重复选择群聊
             checkChatID.push(val);
             //清除所选图片
-            $("#cupload-create").html("");
+            $("#cupload-create_er").html("");
             image();
         }
     } );
@@ -595,6 +606,38 @@ function validateRule() {
     } );
 }
 
+function selectType(type) {
+    if(type=="image"){
+        $("#image").show();
+        $("#web").hide();
+        $("#applets").hide();
+
+        $("#mpTitle").val("");
+        $("#mpUrl").val("");
+        $("#mediaId").val("");
+        $("#linkTitle").val("");
+        $("#linkDesc").val("");
+        $("#linkUrl").val("");
+        $("#linkPicurl").val("");
+    }else if(type=="web"){
+        $("#image").hide();
+        $("#web").show();
+        $("#applets").hide();
+        $("#mpTitle").val("");
+        $("#mpUrl").val("");
+        $("#mediaId").val("");
+        $("#picUrl").val("");
+    }else if(type=="applets"){
+        $("#image").hide();
+        $("#web").hide();
+        $("#applets").show();
+        $("#picUrl").val("");
+        $("#linkTitle").val("");
+        $("#linkDesc").val("");
+        $("#linkUrl").val("");
+        $("#linkPicurl").val("");
+    }
+}
 
 
 

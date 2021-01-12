@@ -124,6 +124,7 @@ public class PageController  extends BaseController {
     public String editWelcome(Model model, String id) {
         QywxWelcome qywxWelcome = welcomeService.getDataById(id);
         model.addAttribute("welcome", qywxWelcome);
+        model.addAttribute("msgType", qywxWelcome.getMsgType());
         return "qywx/welcome/edit";
     }
 

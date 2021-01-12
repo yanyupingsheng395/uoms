@@ -21,6 +21,7 @@
         <result column="qywx_product_id" jdbcType="DECIMAL" property="qywxProductId"/>
         <result column="valid_flag" jdbcType="VARCHAR" property="validFlag"/>
         <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="msg_type" jdbcType="VARCHAR" property="msgType"/>
     </resultMap>
 
     <select id="getValidWelcome" resultMap="welcomeMap">
@@ -43,7 +44,8 @@
                update_dt,
                update_by,
                valid_flag,
-               status
+               status,
+               msg_type
          from uo_qywx_welcome
           where status='1'
         order by insert_dt desc limit 1
@@ -53,8 +55,8 @@
         <selectKey keyColumn="id" resultType="int" order="BEFORE" keyProperty="id">
             select nextval('uo_qywx_welcome_id_seq'::regclass)
         </selectKey>
-        insert into uo_qywx_welcome (id, welcome_name, content, insert_by, insert_dt, policy_type, pic_url, pic_id, link_title, link_picurl, link_desc, link_url, miniprogram_title, miniprogram_page, qywx_coupon_id, qywx_product_id)
-        values (#{id}, #{welcomeName}, #{content}, #{insertBy}, now(), #{policyType}, #{picUrl}, #{picId}::integer, #{linkTitle}, #{linkPicurl}, #{linkDesc}, #{linkUrl}, #{miniprogramTitle}, #{miniprogramPage}, #{qywxCouponId}, #{qywxProductId})
+        insert into uo_qywx_welcome (id, welcome_name, content, insert_by, insert_dt, policy_type, pic_url, pic_id, link_title, link_picurl, link_desc, link_url, miniprogram_title, miniprogram_page, qywx_coupon_id, qywx_product_id,msg_type)
+        values (#{id}, #{welcomeName}, #{content}, #{insertBy}, now(), #{policyType}, #{picUrl}, #{picId}::integer, #{linkTitle}, #{linkPicurl}, #{linkDesc}, #{linkUrl}, #{miniprogramTitle}, #{miniprogramPage}, #{qywxCouponId}, #{qywxProductId},#{msgType})
     </insert>
 
     <select id="getDataCount" resultType="int">
@@ -62,7 +64,7 @@
     </select>
 
     <select id="getDataList" resultType="com.linksteady.qywx.domain.QywxWelcome">
-        select id, welcome_name, content, insert_by, insert_dt, policy_type, pic_url, pic_id, link_title, link_picurl, link_desc, link_url, miniprogram_title, miniprogram_page, qywx_coupon_id, qywx_product_id, update_dt, update_by, valid_flag, status from uo_qywx_welcome
+        select id, welcome_name, content, insert_by, insert_dt, policy_type, pic_url, pic_id, link_title, link_picurl, link_desc, link_url, miniprogram_title, miniprogram_page, qywx_coupon_id, qywx_product_id, update_dt, update_by, valid_flag, status,msg_type from uo_qywx_welcome
         order by insert_dt desc limit #{limit} offset #{offset}
     </select>
 
@@ -71,12 +73,12 @@
     </delete>
 
     <select id="getDataById" resultType="com.linksteady.qywx.domain.QywxWelcome">
-        select id, welcome_name, content, insert_by, insert_dt, policy_type, pic_url, pic_id, link_title, link_picurl, link_desc, link_url, miniprogram_title, miniprogram_page, qywx_coupon_id, qywx_product_id, update_dt, update_by, valid_flag, status from uo_qywx_welcome where id = #{id}::integer
+        select id, welcome_name, content, insert_by, insert_dt, policy_type, pic_url, pic_id, link_title, link_picurl, link_desc, link_url, miniprogram_title, miniprogram_page, qywx_coupon_id, qywx_product_id, update_dt, update_by, valid_flag, status,msg_type from uo_qywx_welcome where id = #{id}::integer
     </select>
 
     <update id="updateData">
-        update uo_qywx_welcome set (welcome_name, content, update_by, update_dt, policy_type, pic_url, pic_id, link_title, link_picurl, link_desc, link_url, miniprogram_title, miniprogram_page, qywx_coupon_id, qywx_product_id)
-        = (#{welcomeName}, #{content}, #{updateBy}, now(), #{policyType}, #{picUrl}, #{picId}::integer, #{linkTitle}, #{linkPicurl}, #{linkDesc}, #{linkUrl}, #{miniprogramTitle}, #{miniprogramPage}, #{qywxCouponId}, #{qywxProductId})
+        update uo_qywx_welcome set (welcome_name, content, update_by, update_dt, policy_type, pic_url, pic_id, link_title, link_picurl, link_desc, link_url, miniprogram_title, miniprogram_page, qywx_coupon_id, qywx_product_id,msg_type)
+        = (#{welcomeName}, #{content}, #{updateBy}, now(), #{policyType}, #{picUrl}, #{picId}::integer, #{linkTitle}, #{linkPicurl}, #{linkDesc}, #{linkUrl}, #{miniprogramTitle}, #{miniprogramPage}, #{qywxCouponId}, #{qywxProductId},#{msgType})
         where id = #{id}
     </update>
 
