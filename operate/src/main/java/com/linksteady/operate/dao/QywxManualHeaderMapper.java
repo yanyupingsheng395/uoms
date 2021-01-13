@@ -50,4 +50,12 @@ public interface QywxManualHeaderMapper {
     int getPushDetailStatus(long headId);
 
     QywxManualHeader getManualPushById(Long headId, String status);
+
+    void updateUserNumber(int userNumber,Long headId);
+
+    void updateTotalNum(int totalNum, long headId);
+
+    void delFolluser(List<String> notExistsFollowUserList,Long headId);
+
+    void delContact(List<String> notExistsContactList,Long headId);
 }

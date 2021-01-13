@@ -117,6 +117,21 @@
     <delete id="deleteManualDetail">
         delete from uo_qywx_manual_detail where head_id=#{headId}
     </delete>
+
+    <delete id="delFolluser">
+        delete from uo_qywx_manual_detail where head_id=#{headId} and follow_user_id in
+        <foreach collection="notExistsFollowUserList" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </delete>
+
+    <delete id="delContact">
+        delete from uo_qywx_manual_detail where head_id=#{headId} and  qywx_contact_id in
+        <foreach collection="notExistsContactList" open="(" close=")" separator="," item="item">
+            #{item}
+        </foreach>
+    </delete>
+
     <select id="getHeadStatus" resultType="string">
         select status from uo_qywx_manual_header where head_id=#{headId}
     </select>
@@ -191,6 +206,12 @@
         <foreach collection="detailIdList" index="index" item="item" open="(" separator="," close=")">
             #{item}
         </foreach>
+    </update>
+    <update id="updateUserNumber">
+        update uo_qywx_manual_header set user_number=#{userNumber} where head_id=#{headId}
+    </update>
+    <update id="updateTotalNum">
+        update uo_qywx_manual_header set total_num=#{totalNum} where head_id=#{headId}
     </update>
 
     <select id="getNotExistsFollowUser" resultType="string">

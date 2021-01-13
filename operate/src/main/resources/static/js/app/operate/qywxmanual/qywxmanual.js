@@ -146,14 +146,12 @@ function submitData() {
             if(data.code === 200){
                 if(data.data.errorFlag=="N"){
                     $MB.n_danger(data.data.errorDesc);
-                }else if(data.data.errorFlag=="P"){
-                    makeErrorTable(data.data.errorPosition);
                 }else{
                     $MB.n_success("数据提交成功！");
-                    $MB.loadingDesc('hide');
-                    $("#add_modal").modal('hide');
-                    $MB.refreshTable('dataTable');
                 }
+                $MB.loadingDesc('hide');
+                $("#add_modal").modal('hide');
+                $MB.refreshTable('dataTable');
             }else {
                 $MB.loadingDesc('hide');
                 $MB.n_danger(data.msg);
@@ -307,6 +305,8 @@ $("#add_modal").on('hidden.bs.modal', function () {
     $("#linkDesc").val('');
     $("#linkUrl").val('');
     $("#linkPicurl").val('');
+    $(":radio[name='sendType'][value='applets']").prop("checked", "checked");
+    selectType("applets");
 });
 
 $("#send_modal").on('hidden.bs.modal', function () {
@@ -329,13 +329,31 @@ function selectType(type) {
         $("#image").show();
         $("#webPage").hide();
         $("#applets").hide();
+        $("#linkTitle").val("");
+        $("#linkDesc").val("");
+        $("#linkUrl").val("");
+        $("#linkPicurl").val("");
+        $("#mpTitle").val("");
+        $("#mpUrl").val("");
+        $("#mediaId").val("");
     }else if(type=="webPage"){
         $("#image").hide();
         $("#webPage").show();
         $("#applets").hide();
+        $("#picUrl").val("");
+        $("#mpTitle").val("");
+        $("#mpUrl").val("");
+        $("#mediaId").val("");
     }else if(type=="applets"){
         $("#image").hide();
         $("#webPage").hide();
         $("#applets").show();
+        $("#linkTitle").val("");
+        $("#linkDesc").val("");
+        $("#linkUrl").val("");
+        $("#linkPicurl").val("");
+        $("#mpTitle").val("");
+        $("#mpUrl").val("");
+        $("#mediaId").val("");
     }
 }

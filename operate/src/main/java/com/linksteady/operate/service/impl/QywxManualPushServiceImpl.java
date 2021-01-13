@@ -275,8 +275,10 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
           list.add(qywxManualDetail);
         }
         //文件中包含followuser的人数
-        qywxManualHeader.setUserNumber(followerSet.size());
-        qywxManualHeader.setTotalNum(gbk.size());
+        int userNumber = followerSet.size();//用户数
+        int totalNum =gbk.size();//需要推送的成员数
+        qywxManualHeader.setUserNumber(userNumber);
+        qywxManualHeader.setTotalNum(totalNum);
         //插入头表数据
         qywxManualHeaderMapper.saveQywxManualHeader(qywxManualHeader);
         long headId = qywxManualHeader.getHeadId();
@@ -286,16 +288,17 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
         }
         //插入明细表数据
         qywxManualHeaderMapper.saveQywxManualDetail(list);
-        //验证数据
-        QywxManualError qywxManualError = checkQywxManualDetail(headId);
+        //验证数据   userNumber,totalNum是成员数和需要推送人数。如果出现验证身份不通过，删除detail表数据，更新头表的数量
+        QywxManualError qywxManualError = checkQywxManualDetail(headId,userNumber,totalNum);
         FileUtils.deleteTempFile(tmpFile);
-        if("N".equals(qywxManualError.getErrorFlag())){
+    /*    if("N".equals(qywxManualError.getErrorFlag())){
             throw new LinkSteadyException(qywxManualError.getErrorDesc());
         }else {
             qywxManualError.setErrorFlag("Y");
             qywxManualError.setErrorDesc("新增成功！");
             return qywxManualError;
-        }
+        }*/
+        return qywxManualError;
     }
 
     /**
@@ -303,21 +306,39 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
      * @param headId
      * @return
      */
-    private QywxManualError checkQywxManualDetail(long headId){
+    private QywxManualError checkQywxManualDetail(long headId,int userNumber,int totalNum){
         QywxManualError qywxManualError=new QywxManualError();
         String errorFlag="Y";
-        String desc="";
+        String desc="保存成功";
         List<String> notExistsFollowUserList = qywxManualHeaderMapper.getNotExistsFollowUser(headId);
        if(notExistsFollowUserList.size()>0){
+           //去除重复数据
+           notExistsFollowUserList=notExistsFollowUserList.stream().distinct().collect(Collectors.toList());
            errorFlag="N";
            qywxManualError.setErrorFollow(notExistsFollowUserList);
-           desc+="文件中有"+notExistsFollowUserList.size()+"个成员不存在;";
+           //更新头表数据，将不存在的用户数量减去
+           qywxManualHeaderMapper.updateUserNumber(userNumber-(notExistsFollowUserList.size()),headId);
+           desc+="文件中有"+notExistsFollowUserList.size()+"个成员不存在，已删除;";
        }
         List<String> notExistsContactList = qywxManualHeaderMapper.getNotExistsContact(headId);
         if(notExistsContactList.size()>0){
             errorFlag="N";
+            //去除重复数据
+            notExistsContactList=notExistsContactList.stream().distinct().collect(Collectors.toList());
             qywxManualError.setErrorExternal(notExistsContactList);
-            desc+="文件中有"+notExistsContactList.size()+"个客户不存在;";
+            qywxManualHeaderMapper.updateTotalNum(totalNum-(notExistsContactList.size()),headId);
+
+            desc+="文件中有"+notExistsContactList.size()+"个客户不存在，已删除;";
+        }
+        /**
+         * 删除数据，放在下面是为了防止，删除FollowUser数据时，查询下面Contact数据会出现少的情况，
+         * 从而导致前面显示需要推送客户数（totalNum）和数据库真实数量不一致。
+         */
+        if(notExistsContactList.size()>0||notExistsFollowUserList.size()>0){
+            //删除detail表中不存在的用户数据
+            qywxManualHeaderMapper.delFolluser(notExistsFollowUserList,headId);
+            //删除detail表中不存在的推送用户数据
+            qywxManualHeaderMapper.delContact(notExistsContactList,headId);
         }
         qywxManualError.setErrorDesc(desc);
         qywxManualError.setErrorFlag(errorFlag);
