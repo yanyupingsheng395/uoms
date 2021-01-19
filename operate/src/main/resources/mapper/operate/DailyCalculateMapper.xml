@@ -228,5 +228,42 @@
           )
     </update>
 
+    <update id="updateQywxActivityPushStatistics">
+         UPDATE uo_qywx_activity_header h
+                    SET (
+                        total_num,
+                        success_num,
+                        push_success_rate,
+                        staff_cnt,
+                        execute_staff_cnt,
+                        execute_rate
+                        ) =
+                    (
+                      select
+                            count(qywx_detail_id),
+                            count(case when d.exec_status='1' then d.qywx_detail_id end) success_num,
+                            (case when count(qywx_detail_id)=0 then 0 else
+                              round(count(case when d.exec_status='1' then d.qywx_detail_id end)/count(qywx_detail_id)::numeric *100,2) end)  success_rate,
+                            count(distinct follow_user_id) staff_cnt,
+                            count(distinct case when d.exec_status='1' then follow_user_id end) execute_staff_cnt,
+                            (case when count(distinct follow_user_id)=0 then 0 else
+                                round(count(distinct case when d.exec_status='1' then follow_user_id end)/count(distinct follow_user_id)::numeric*100,2) end) execute_rate
+                      from uo_qywx_activity_detail d where d.head_id=h.head_id
+                    ) WHERE (
+                     h.formal_status IN ('doing', 'done')
+                    OR h.formal_notify_status IN ( 'doing', 'done' )
+                ) AND h.formal_end_dt::date&gt;=(current_date-30)
+    </update>
+
+    <update id="updateQywxActivityPlanStatistics">
+        UPDATE uo_qywx_activity_plan h
+            SET success_num=
+            (
+              select
+                    count(case when d.exec_status='1' then d.qywx_detail_id end) success_num
+              from uo_qywx_activity_detail d where d.head_id=h.head_id and d.plan_id=h.plan_id
+            ) WHERE h.plan_status IN ('2', '3')
+        AND h.insert_dt::date &gt;=(current_date-30)
+    </update>
 
 </mapper>

@@ -97,7 +97,7 @@
                PLAN_DATE_WID,
                PLAN_STATUS,
                PLAN_TYPE,
-               SUCCESS_NUM,
+               UO_QYWX_ACTIVITY_PLAN.SUCCESS_NUM,
                UO_QYWX_ACTIVITY_PLAN.COV_RATE,
                UO_QYWX_ACTIVITY_PLAN.COV_AMOUNT,
                UO_QYWX_ACTIVITY_PLAN.EFFECT_FLAG

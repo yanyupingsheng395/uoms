@@ -59,5 +59,9 @@ public interface DailyCalculateMapper {
 
    void updateQywxManualPushStatistics();
 
+   void updateQywxActivityPushStatistics();
+
+   void updateQywxActivityPlanStatistics();
+
 
 }

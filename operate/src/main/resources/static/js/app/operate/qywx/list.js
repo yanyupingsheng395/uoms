@@ -97,7 +97,16 @@ function initTable() {
             }
         }, {
             title: '配置校验结果',
-            field: 'checkDesc'
+            field: 'checkDesc',
+            formatter: function (value, row, indx) {
+                if(row.taskDateStr ===currDate) {
+                    return value;
+                }else
+                {
+                    return '-';
+                }
+
+            }
         }]
     };
     $MB.initTable('qywxDailyTable', settings);

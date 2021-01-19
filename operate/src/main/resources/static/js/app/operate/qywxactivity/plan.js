@@ -105,19 +105,19 @@ function getPlanTable() {
                     }
                     return res;
                 }
-            },
-            {
-                field: 'covRate',
-                title: '推送转化率(%)',
-                align: 'center',
-                valign: 'middle'
-            },
-            {
-                field: 'covAmount',
-                title: '推送转化金额(元)',
-                align: 'center',
-                valign: 'middle'
             }
+            // {
+            //     field: 'covRate',
+            //     title: '推送转化率(%)',
+            //     align: 'center',
+            //     valign: 'middle'
+            // },
+            // {
+            //     field: 'covAmount',
+            //     title: '推送转化金额(元)',
+            //     align: 'center',
+            //     valign: 'middle'
+            // }
             ]
     };
     $("#planTable").bootstrapTable('destroy').bootstrapTable(settings);

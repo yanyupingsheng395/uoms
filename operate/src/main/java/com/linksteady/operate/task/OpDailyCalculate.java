@@ -64,7 +64,8 @@ public class OpDailyCalculate extends IJobHandler {
 
             //企微头表的统计数据
             dailyCalculateMapper.updateQywxDailyPushStatistics();
-            //dailyCalculateMapper.updateQywxActivityPushStatistics();
+            dailyCalculateMapper.updateQywxActivityPushStatistics();
+            dailyCalculateMapper.updateQywxActivityPlanStatistics();
             dailyCalculateMapper.updateQywxManualPushStatistics();
 
             log.info("完成运营效果的计算，完成的时间为:{}", dtf2.format(LocalDateTime.now()));
