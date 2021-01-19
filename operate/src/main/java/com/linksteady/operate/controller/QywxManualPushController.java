@@ -62,7 +62,8 @@ public class QywxManualPushController {
                                                   @RequestParam("linkTitle")  String linkTitle,
                                                   @RequestParam("linkDesc")  String linkDesc,
                                                   @RequestParam("linkUrl")  String linkUrl,
-                                                  @RequestParam("linkPicurl")  String linkPicurl
+                                                  @RequestParam("linkPicurl")  String linkPicurl,
+                                                  @RequestParam("msgType")  String msgType
                                                   ) throws Exception {
         if(FileUtils.multipartFileToFile(file)==null){
             return ResponseBo.error("上传文件,请重新上传数据！");
@@ -80,6 +81,7 @@ public class QywxManualPushController {
         qywxManualHeader.setLinkDesc(linkDesc);
         qywxManualHeader.setLinkUrl(linkUrl);
         qywxManualHeader.setLinkPicurl(linkPicurl);
+        qywxManualHeader.setMsgType(msgType);
         QywxManualError error =null;
         try {
              error = qywxManualPushService.saveManualData( file,qywxManualHeader);

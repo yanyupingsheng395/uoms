@@ -1,5 +1,7 @@
 init_date('endDate', 'yyyy-mm-dd', 0, 2, 0);
 getCouponData();
+var $qywxManualForm = $( "#welcomeFormData" );
+var $qywxManualForm_validator;
 
 function getViewData() {
     var policyType = $("input[name='policyType']:checked").val();
@@ -219,8 +221,10 @@ function getTabFormData() {
 
 function saveData(dom) {
     var operate = $(dom).attr('name');
+    validWelcomeForm();
+    var validator = $qywxManualForm.validate();
     if(operate === 'save') {
-        if(validWelcomeForm()) {
+        if(validator.form()) {
             $MB.confirm({
                 title: "<i class='mdi mdi-alert-outline'></i>提示：",
                 content: "确定保存当前记录?"
@@ -238,7 +242,7 @@ function saveData(dom) {
     }
 
     if(operate === 'update') {
-        if(validWelcomeForm()) {
+        if(validator.form()) {
             $MB.confirm({
                 title: "<i class='mdi mdi-alert-outline'></i>提示：",
                 content: "确定更新当前记录?"
@@ -492,61 +496,116 @@ function setProduct() {
 
 // 验证欢迎语表单
 function validWelcomeForm() {
-    var welcomeName = $("input[name='welcomeName']").val();
-    var policyType = $("input[name='policyType']:checked").val();
-    var policyTypeTmp = $("input[name='policyTypeTmp']:checked").val();
-
-    if(welcomeName === '') {
-        $MB.n_warning("请输入欢迎语名称！");
-        return false;
+    var icon = "<i class='fa fa-close'></i> ";
+    var msgType = $('input[name="msgType"]:checked').val();
+    if(msgType=="applets"){
+        $qywxManualForm_validator = $qywxManualForm.validate( {
+            rules: {
+                miniprogramTitle: {
+                    required: true
+                },
+                miniprogramPage: {
+                    required: true
+                },
+                welcomeName:{
+                    required: true
+                },
+                content:{
+                    required: true
+                }
+            },
+            errorPlacement: function (error, element) {
+                if (element.is( ":checkbox" ) || element.is( ":radio" )) {
+                    error.appendTo( element.parent().parent() );
+                } else {
+                    error.insertAfter( element );
+                }
+            },
+            messages: {
+                miniprogramTitle: {
+                    required: icon + "请输入小程序标题"
+                },
+                miniprogramPage: {
+                    required: icon + "请输入小程序连接"
+                },
+                welcomeName:{
+                    required: icon + "请输入欢迎语名称"
+                },
+                content:{
+                    required: icon + "请输入欢迎语内容"
+                }
+            }
+        } );
+    }else if(msgType=="image"){
+        $qywxManualForm_validator = $qywxManualForm.validate( {
+            rules: {
+                picUrl: {
+                    required: true
+                },
+                welcomeName:{
+                    required: true
+                },
+                content:{
+                    required: true
+                }
+            },
+            errorPlacement: function (error, element) {
+                if (element.is( ":checkbox" ) || element.is( ":radio" )) {
+                    error.appendTo( element.parent().parent() );
+                } else {
+                    error.insertAfter( element );
+                }
+            },
+            messages: {
+                picUrl: {
+                    required: icon + "请选择图片地址！"
+                },
+                welcomeName:{
+                    required: icon + "请输入欢迎语名称"
+                },
+                content:{
+                    required: icon + "请输入欢迎语内容"
+                }
+            }
+        } );
+    }else if(msgType=="web"){
+        $qywxManualForm_validator = $qywxManualForm.validate( {
+            rules: {
+                linkTitle: {
+                    required: true
+                },
+                linkUrl: {
+                    required: true
+                },
+                welcomeName:{
+                    required: true
+                },
+                content:{
+                    required: true
+                }
+            },
+            errorPlacement: function (error, element) {
+                if (element.is( ":checkbox" ) || element.is( ":radio" )) {
+                    error.appendTo( element.parent().parent() );
+                } else {
+                    error.insertAfter( element );
+                }
+            },
+            messages: {
+                linkTitle: {
+                    required: icon + "请填写网页标题！"
+                }, linkUrl: {
+                    required: icon + "请填写网页地址！"
+                },
+                welcomeName:{
+                    required: icon + "请输入欢迎语名称"
+                },
+                content:{
+                    required: icon + "请输入欢迎语内容"
+                }
+            }
+        } );
     }
-
-    if(policyType !== 'M') {
-        if(policyTypeTmp === undefined) {
-            $MB.n_warning("请选择欢迎语配置策略！");
-            return false;
-        }
-    }
-    if(policyType=='A'){
-        var minititle=$("#minititle").val();
-        var miniaddress=$("#miniaddress").val();
-        if(minititle==null||minititle==''){
-            $MB.n_warning("请配置小程序标题！");
-            return false;
-        }
-        if(minititle==null||miniaddress==''){
-            $MB.n_warning("请配置小程序地址！");
-            return false;
-        }
-    }
-    var content = $("textarea[name='content']").val();
-    var picUrl = $("input[name='picUrl']").val();
-    var linkDesc = $("input[name='linkDesc']").val();
-    var linkUrl = $("input[name='linkUrl']").val();
-    var linkTitle = $("input[name='linkTitle']").val();
-    var linkPicurl = $("input[name='linkPicurl']").val();
-    var miniprogramTitle = $("input[name='miniprogramTitle']").val();
-    var miniprogramPage = $("input[name='miniprogramPage']").val();
-
-    if(content === '' && picUrl === '' && linkTitle ==='' && linkDesc ==='' && linkUrl ==='' && linkPicurl ==='' && miniprogramTitle ==='' && miniprogramPage ==='') {
-        $MB.n_warning("欢迎语素材内容不能同时为空！");
-        return false;
-    }
-
-    if((linkDesc !=='' || linkUrl !=='' || linkTitle !== '' || linkPicurl !== '') && !(linkDesc !=='' && linkUrl !=='' && linkTitle !== '' && linkPicurl !== '')) {
-        if(!(linkDesc ==='' && linkUrl ==='' && linkTitle === '' && linkPicurl === '')) {
-            $MB.n_warning("欢迎语网页素材都是必填项！");
-            return false;
-        }
-    }
-
-    if((miniprogramTitle !=='' || miniprogramPage !=='') && !(miniprogramTitle !=='' && miniprogramPage !=='')) {
-        if(!(miniprogramTitle ==='' && miniprogramPage ==='')) {
-            $MB.n_warning("欢迎语小程序素材都是必填项！");
-            return false;
-        }
-    }
-    return true;
 }
 
 // 更新欢迎语信息

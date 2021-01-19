@@ -103,7 +103,7 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
                     qywxPushList.setSourceId(detail.get(0).getHeadId());
                     qywxManualHeaderMapper.insertPushList(qywxPushList);
                     //推送并更新状态
-                    pushQywxMsg(qywxPushList,qywxManualDetailList);
+                    pushQywxMsg(qywxPushList,qywxManualDetailList,header);
                 }
             }else{
                 int pageNum = countDetail % pageSize == 0 ? (countDetail / pageSize) : ((countDetail / pageSize) + 1);
@@ -130,7 +130,7 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
                         //将信息，放入uo_qywx_push_list表中。
                         qywxManualHeaderMapper.insertPushList(qywxPushList);
                         //推送并更新状态
-                        pushQywxMsg(qywxPushList,qywxManualDetailList);
+                        pushQywxMsg(qywxPushList,qywxManualDetailList,header);
                     }
                 }
             }
@@ -151,7 +151,7 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
      *
      * @param qywxPushList (待推送的对象)
      */
-    public void pushQywxMsg(QywxPushList qywxPushList, List<QywxManualDetail> qywxManualDetailList) {
+    public void pushQywxMsg(QywxPushList qywxPushList, List<QywxManualDetail> qywxManualDetailList,QywxManualHeader header) {
 
         if(null==qywxManualDetailList||qywxManualDetailList.size()==0){
             qywxActivityPushMapper.updatePushList(qywxPushList.getPushId(),"F","","","推送列表为空");
@@ -164,7 +164,8 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
             qywxMessage.setText(qywxPushList.getTextContent());
             flag=false;
         }
-        if(org.apache.commons.lang3.StringUtils.isNotEmpty(qywxPushList.getMpTitle()))
+        //小程序
+        if("applets".equals(header.getMsgType()))
         {
             qywxMessage.setMpTitle(qywxPushList.getMpTitle());
             qywxMessage.setMpPicMediaId(qywxPushList.getMpMediaId());
@@ -173,12 +174,12 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
             flag=false;
         }
         //图片
-        if(!org.springframework.util.StringUtils.isEmpty(qywxPushList.getPicUrl())){
+        if("image".equals(header.getMsgType())){
             qywxMessage.setImgPicUrl(qywxPushList.getPicUrl());
             flag=false;
         }
-        //链接
-        if(!org.springframework.util.StringUtils.isEmpty(qywxPushList.getLinkTitle())){
+        //网页
+        if("web".equals(header.getMsgType())){
             qywxMessage.setLinkTitle(qywxPushList.getLinkTitle());
             qywxMessage.setLinkPicUrl(qywxPushList.getLinkPicurl());
             qywxMessage.setLinkDesc(qywxPushList.getLinkDesc());
@@ -291,13 +292,6 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
         //验证数据   userNumber,totalNum是成员数和需要推送人数。如果出现验证身份不通过，删除detail表数据，更新头表的数量
         QywxManualError qywxManualError = checkQywxManualDetail(headId,userNumber,totalNum);
         FileUtils.deleteTempFile(tmpFile);
-    /*    if("N".equals(qywxManualError.getErrorFlag())){
-            throw new LinkSteadyException(qywxManualError.getErrorDesc());
-        }else {
-            qywxManualError.setErrorFlag("Y");
-            qywxManualError.setErrorDesc("新增成功！");
-            return qywxManualError;
-        }*/
         return qywxManualError;
     }
 
@@ -310,36 +304,20 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
         QywxManualError qywxManualError=new QywxManualError();
         String errorFlag="Y";
         String desc="保存成功";
-        List<String> notExistsFollowUserList = qywxManualHeaderMapper.getNotExistsFollowUser(headId);
-       if(notExistsFollowUserList.size()>0){
-           //去除重复数据
-           notExistsFollowUserList=notExistsFollowUserList.stream().distinct().collect(Collectors.toList());
-           errorFlag="N";
-           qywxManualError.setErrorFollow(notExistsFollowUserList);
-           //更新头表数据，将不存在的用户数量减去
-           qywxManualHeaderMapper.updateUserNumber(userNumber-(notExistsFollowUserList.size()),headId);
-           desc+="文件中有"+notExistsFollowUserList.size()+"个成员不存在，已删除;";
-       }
-        List<String> notExistsContactList = qywxManualHeaderMapper.getNotExistsContact(headId);
+        List<QywxManualDetail> notExistsContactList = qywxManualHeaderMapper.getNotExistsContact(headId);
         if(notExistsContactList.size()>0){
             errorFlag="N";
             //去除重复数据
             notExistsContactList=notExistsContactList.stream().distinct().collect(Collectors.toList());
-            qywxManualError.setErrorExternal(notExistsContactList);
             qywxManualHeaderMapper.updateTotalNum(totalNum-(notExistsContactList.size()),headId);
+            for (QywxManualDetail detail : notExistsContactList) {
+                qywxManualHeaderMapper.delContact(detail);
+            }
+            desc+="其中"+notExistsContactList.size()+"人非企微客户，已删除";
+        }
+        //更新用户数
+        qywxManualHeaderMapper.updateUserNumber(headId);
 
-            desc+="文件中有"+notExistsContactList.size()+"个客户不存在，已删除;";
-        }
-        /**
-         * 删除数据，放在下面是为了防止，删除FollowUser数据时，查询下面Contact数据会出现少的情况，
-         * 从而导致前面显示需要推送客户数（totalNum）和数据库真实数量不一致。
-         */
-        if(notExistsContactList.size()>0||notExistsFollowUserList.size()>0){
-            //删除detail表中不存在的用户数据
-            qywxManualHeaderMapper.delFolluser(notExistsFollowUserList,headId);
-            //删除detail表中不存在的推送用户数据
-            qywxManualHeaderMapper.delContact(notExistsContactList,headId);
-        }
         qywxManualError.setErrorDesc(desc);
         qywxManualError.setErrorFlag(errorFlag);
         return  qywxManualError;

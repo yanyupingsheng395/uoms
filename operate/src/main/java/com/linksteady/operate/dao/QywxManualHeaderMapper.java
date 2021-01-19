@@ -45,17 +45,17 @@ public interface QywxManualHeaderMapper {
 
     List<String> getNotExistsFollowUser(long headId);
 
-    List<String> getNotExistsContact(long headId);
+    List<QywxManualDetail> getNotExistsContact(long headId);
 
     int getPushDetailStatus(long headId);
 
     QywxManualHeader getManualPushById(Long headId, String status);
 
-    void updateUserNumber(int userNumber,Long headId);
-
     void updateTotalNum(int totalNum, long headId);
 
     void delFolluser(List<String> notExistsFollowUserList,Long headId);
 
-    void delContact(List<String> notExistsContactList,Long headId);
+    void delContact(QywxManualDetail detail);
+
+    void updateUserNumber(long headId);
 }

@@ -110,6 +110,10 @@ public class QywxManualHeader {
      *图文消息的链接
      */
     private String linkPicurl;
+    /**
+     * 选择消息类型
+     */
+    private String msgType;
 
 
 }

@@ -58,16 +58,7 @@ function initTable() {
         }, {
             field: 'convertNum',
             title: '实际执行推送用户数'
-        }/*, {
-            field: 'mpUrl',
-            title: '小程序链接'
         }, {
-            field: 'mpTitle',
-            title: '小程序标题'
-        }, {
-            field: 'mpMediald',
-            title: '小程序封面ID'
-        }*/, {
             field: 'textContent',
             title: '推送内容',
             formatter: function (value, row, index) {
@@ -105,6 +96,7 @@ function beforeUpload() {
 
 // 提交数据
 function submitData() {
+    validQywxContact();
     let file = document.getElementById('file').files;
     if(document.getElementById('file').files.length === 0) {
         $MB.n_warning("请上传数据！");
@@ -114,53 +106,58 @@ function submitData() {
         $MB.n_warning("上传数据不能超过10M！");
         return false;
     }
-    $MB.loadingDesc("show", "正在处理数据中，请稍候...");
-    let formData = new FormData();
-    let smsContent = $("textarea[name='smsContent']").val();
-    let mpTitle = $("#mpTitle").val();
-    let mpUrl = $("#mpUrl").val();
-    let mediaId = $("#mediaId").val();
-    let picUrl = $("#picUrl").val();
-    let linkTitle = $("#linkTitle").val();
-    let linkDesc = $("#linkDesc").val();
-    let linkUrl = $("#linkUrl").val();
-    let linkPicurl = $("#linkPicurl").val();
+    var validator = $qywxManualForm.validate();
+    if(validator.form()) {
+        $MB.loadingDesc("show", "正在处理数据中，请稍候...");
+        let formData = new FormData();
+        let smsContent = $("textarea[name='smsContent']").val();
+        let mpTitle = $("#mpTitle").val();
+        let mpUrl = $("#mpUrl").val();
+        let mediaId = $("#mediaId").val();
+        let picUrl = $("#picUrl").val();
+        let linkTitle = $("#linkTitle").val();
+        let linkDesc = $("#linkDesc").val();
+        let linkUrl = $("#linkUrl").val();
+        let linkPicurl = $("#linkPicurl").val();
+        let msgType = $('input[name="msgType"]:checked').val();
 
-    formData.append("file", document.getElementById('file').files[0]);
-    formData.append("smsContent",smsContent);
-    formData.append("mpTitle",mpTitle);
-    formData.append("mpUrl",mpUrl);
-    formData.append("mediaId",mediaId);
-    formData.append("picUrl",picUrl);
-    formData.append("linkTitle",linkTitle);
-    formData.append("linkDesc",linkDesc);
-    formData.append("linkUrl",linkUrl);
-    formData.append("linkPicurl",linkPicurl);
-    $.ajax({
-        url: "/qywxmanual/saveManualData",
-        type: "POST",
-        data:formData,
-        contentType: false,
-        processData: false,
-        success: function(data) {
-            if(data.code === 200){
-                if(data.data.errorFlag=="N"){
-                    $MB.n_danger(data.data.errorDesc);
-                }else{
-                    $MB.n_success("数据提交成功！");
+        formData.append("file", document.getElementById('file').files[0]);
+        formData.append("smsContent", smsContent);
+        formData.append("mpTitle", mpTitle);
+        formData.append("mpUrl", mpUrl);
+        formData.append("mediaId", mediaId);
+        formData.append("picUrl", picUrl);
+        formData.append("linkTitle", linkTitle);
+        formData.append("linkDesc", linkDesc);
+        formData.append("linkUrl", linkUrl);
+        formData.append("linkPicurl", linkPicurl);
+        formData.append("msgType", msgType);
+        $.ajax({
+            url: "/qywxmanual/saveManualData",
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data.code === 200) {
+                    if (data.data.errorFlag == "N") {
+                        $MB.n_danger(data.data.errorDesc);
+                    } else {
+                        $MB.n_success("数据提交成功！");
+                    }
+                    $MB.loadingDesc('hide');
+                    $("#add_modal").modal('hide');
+                    $MB.refreshTable('dataTable');
+                } else {
+                    $MB.loadingDesc('hide');
+                    $MB.n_danger(data.msg);
                 }
-                $MB.loadingDesc('hide');
-                $("#add_modal").modal('hide');
-                $MB.refreshTable('dataTable');
-            }else {
-                $MB.loadingDesc('hide');
+            },
+            error: function (data) {
                 $MB.n_danger(data.msg);
             }
-        },
-        error: function (data) {
-            $MB.n_danger(data.msg);
-        }
-    });
+        });
+    }
 }
 
 // 上传失败的提示列表数据
@@ -185,46 +182,95 @@ function makeErrorTable(data) {
     $("#upload_error_modal").modal('show');
 }
 
-/*function validQywxContact() {
+function validQywxContact() {
     var icon = "<i class='fa fa-close'></i> ";
-    $qywxManualForm_validator = $qywxManualForm.validate( {
-        rules: {
-            smsContent: {
-                required: true
+    let msgType = $('input[name="msgType"]:checked').val();
+    if(msgType=="applets"){
+        $qywxManualForm_validator = $qywxManualForm.validate( {
+            rules: {
+                smsContent: {
+                    required: true
+                },
+                mpTitle: {
+                    required: true
+                },
+                mpUrl: {
+                    required: true
+                },
+                mediaId: {
+                    required: true
+                }
             },
-            mpTitle: {
-                required: true
+            errorPlacement: function (error, element) {
+                if (element.is( ":checkbox" ) || element.is( ":radio" )) {
+                    error.appendTo( element.parent().parent() );
+                } else {
+                    error.insertAfter( element );
+                }
             },
-            mpUrl: {
-                required: true
-            },
-            mediaId: {
-                required: true
+            messages: {
+                smsContent: {
+                    required: icon + "请输入内容！"
+                },
+                mpTitle: {
+                    required: icon + "请输入小程序标题"
+                },
+                mpUrl: {
+                    required: icon + "请输入小程序连接"
+                },
+                mediaId: {
+                    required: icon + "请输入小程序封面ID"
+                }
             }
-        },
-        errorPlacement: function (error, element) {
-            if (element.is( ":checkbox" ) || element.is( ":radio" )) {
-                error.appendTo( element.parent().parent() );
-            } else {
-                error.insertAfter( element );
+        } );
+    }else if(msgType=="image"){
+        $qywxManualForm_validator = $qywxManualForm.validate( {
+            rules: {
+                picUrl: {
+                    required: true
+                }
+            },
+            errorPlacement: function (error, element) {
+                if (element.is( ":checkbox" ) || element.is( ":radio" )) {
+                    error.appendTo( element.parent().parent() );
+                } else {
+                    error.insertAfter( element );
+                }
+            },
+            messages: {
+                picUrl: {
+                    required: icon + "请选择图片地址！"
+                }
             }
-        },
-        messages: {
-            smsContent: {
-                required: icon + "请输入内容！"
+        } );
+    }else if(msgType=="web"){
+        $qywxManualForm_validator = $qywxManualForm.validate( {
+            rules: {
+                linkTitle: {
+                    required: true
+                },
+                linkUrl: {
+                    required: true
+                }
             },
-            mpTitle: {
-                required: icon + "请输入小程序标题"
+            errorPlacement: function (error, element) {
+                if (element.is( ":checkbox" ) || element.is( ":radio" )) {
+                    error.appendTo( element.parent().parent() );
+                } else {
+                    error.insertAfter( element );
+                }
             },
-            mpUrl: {
-                required: icon + "请输入小程序连接"
-            },
-            mediaId: {
-                required: icon + "请输入小程序封面ID"
+            messages: {
+                linkTitle: {
+                    required: icon + "请填写网页标题！"
+                }, linkUrl: {
+                    required: icon + "请填写网页地址！"
+                }
             }
-        }
-    } );
-}*/
+        } );
+    }
+
+}
 
 // 推送信息
 function pushMessage() {

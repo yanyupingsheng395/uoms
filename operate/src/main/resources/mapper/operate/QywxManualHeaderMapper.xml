@@ -28,6 +28,7 @@
         <result column="link_url" jdbcType="VARCHAR" property="linkUrl"/>
         <result column="link_desc" jdbcType="VARCHAR" property="linkDesc"/>
         <result column="link_picurl" jdbcType="VARCHAR" property="linkPicurl"/>
+        <result column="msg_type" jdbcType="VARCHAR" property="msgType"/>
 
 
     </resultMap>
@@ -69,7 +70,8 @@
                                   link_title,
                                   link_picurl,
                                   link_desc,
-                                  link_url)
+                                  link_url,
+                                  msg_type)
                                   values (
                                   #{userNumber},
                                   #{totalNum},
@@ -84,7 +86,8 @@
                                   #{linkTitle},
                                   #{linkUrl},
                                   #{linkDesc},
-                                  #{linkPicurl}
+                                  #{linkPicurl},
+                                  #{msgType}
                                   )
     </insert>
 
@@ -126,10 +129,7 @@
     </delete>
 
     <delete id="delContact">
-        delete from uo_qywx_manual_detail where head_id=#{headId} and  qywx_contact_id in
-        <foreach collection="notExistsContactList" open="(" close=")" separator="," item="item">
-            #{item}
-        </foreach>
+        delete from uo_qywx_manual_detail where head_id=#{headId} and  qywx_contact_id =#{qywxContactId} and follow_user_id=#{followerUserId}
     </delete>
 
     <select id="getHeadStatus" resultType="string">
@@ -207,9 +207,6 @@
             #{item}
         </foreach>
     </update>
-    <update id="updateUserNumber">
-        update uo_qywx_manual_header set user_number=#{userNumber} where head_id=#{headId}
-    </update>
     <update id="updateTotalNum">
         update uo_qywx_manual_header set total_num=#{totalNum} where head_id=#{headId}
     </update>
@@ -221,12 +218,16 @@
         where b.user_id is null
     </select>
 
-    <select id="getNotExistsContact" resultType="string">
-       select a.qywx_contact_id from
-                 (select distinct follow_user_id,qywx_contact_id from uo_qywx_manual_detail where head_id=#{headId}) a left join uo_qywx_external_user_list  b
+    <select id="getNotExistsContact" resultMap="baseDetail">
+       select a.qywx_contact_id,a.follow_user_id,a.head_id from
+                 (select distinct follow_user_id,qywx_contact_id,head_id from uo_qywx_manual_detail where head_id=#{headId}) a left join uo_qywx_external_user_list  b
             on a.qywx_contact_id=b.external_userid and a.follow_user_id=b.follow_user_id
         where b.external_userid is null
     </select>
+
+    <update id="updateUserNumber">
+        update uo_qywx_manual_header set user_number=(select count(1) from (select follow_user_id from uo_qywx_manual_detail where head_id=#{headId} group by follow_user_id) as useNum) where head_id=#{headId}
+    </update>
 
     <select id="getPushDetailStatus" resultType="int">
         select  count(1) from uo_qywx_push_list b join uo_qywx_manual_detail a on a.push_id=b.push_id where a.head_id=#{headId} and b.push_status !='S'
