@@ -101,7 +101,6 @@ public class QywxManualPushController {
     @PostMapping("/pushMessage")
     public synchronized ResponseBo pushMessage(@RequestParam("headId") Long headId) {
         QywxManualHeader header=qywxManualPushService.getManualHeader(headId);
-        String content = header.getTextContent();
         String mediald = header.getMpMediald();
         String title = header.getMpTitle();
         String url = header.getMpUrl();
@@ -131,7 +130,6 @@ public class QywxManualPushController {
                 return ResponseBo.error("网页标题不能为空,请重新上传数据推送！");
             }
         }
-
 
         String status = qywxManualPushService.getHeadStatus(headId);
         // 判读当前状态为已上传，待推送，则可以继续执行
@@ -197,6 +195,12 @@ public class QywxManualPushController {
      */
     @GetMapping("/getOverAllInfo")
     public ResponseBo getOverAllInfo(@RequestParam Long headId,@RequestParam String status) {
-        return ResponseBo.okWithData(null, qywxManualPushService.getManualPushById(headId,status ));
+        String headStatus = qywxManualPushService.getHeadStatus(headId);
+        if(!"1".equals(headStatus)){
+            return ResponseBo.error("未推送完成，无效果数据！");
+        }else
+        {
+            return ResponseBo.okWithData(null, qywxManualPushService.getHeaderEffectInfo(headId,status ));
+        }
     }
 }

@@ -293,6 +293,9 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
         //验证数据   userNumber,totalNum是成员数和需要推送人数。如果出现验证身份不通过，删除detail表数据，更新头表的数量
         QywxManualError qywxManualError = checkQywxManualDetail(headId,userNumber,totalNum);
         FileUtils.deleteTempFile(tmpFile);
+
+        //更新是否匹配商城的标记
+        qywxManualHeaderMapper.updateQywxUserStatus(qywxManualHeader.getHeadId());
         return qywxManualError;
     }
 
@@ -360,7 +363,7 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
     }
 
     @Override
-    public QywxManualHeader getManualPushById(Long headId,String status) {
-        return qywxManualHeaderMapper. getManualPushById(headId,status);
+    public Map<String,Object> getHeaderEffectInfo(Long headId,String status) {
+        return qywxManualHeaderMapper.getHeaderEffectInfo(headId,status);
     }
 }

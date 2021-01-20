@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public interface QywxManualPushService {
     /**
@@ -59,5 +60,5 @@ public interface QywxManualPushService {
      * @param headId
      * @return
      */
-    QywxManualHeader getManualPushById(Long headId,String status);
+    Map<String,Object> getHeaderEffectInfo(Long headId, String status);
 }

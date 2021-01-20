@@ -366,7 +366,12 @@ $("#btn_effect").click(function () {
         $MB.n_warning('请选择需要查看效果的记录！');
         return;
     }
+    let status=selected[0].status;
     let headId = selected[0].headId;
+    if (status!='1') {
+        $MB.n_warning('尚未推送完成，不支持查看效果！');
+        return;
+    }
     window.location.href="/page/qywxManual/effect?headId="+headId;
 });
 

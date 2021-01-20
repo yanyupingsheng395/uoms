@@ -44,7 +44,7 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public boolean sendCouponToUser(Long headId) {
+    public boolean sendCouponToDailyUser(Long headId) {
          //发券的唯一标记类型 (PHONE表示手机号 UNIONID表示基于unionid发券 默认为PHONE)
          String sendCouponIdentityType=configService.getValueByName(ConfigEnum.sendCouponIdentityType.getKeyCode());
          if(StringUtils.isEmpty(sendCouponIdentityType))
@@ -87,10 +87,18 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
                         sendCouponSuccess=false;
                     }
                 }
-
             }
         }
         return sendCouponSuccess;
+    }
+
+    /**
+     * 针对个人发放优惠券
+     * @return
+     */
+    @Override
+    public boolean sendCouponToUser() {
+        return false;
     }
 
     /**

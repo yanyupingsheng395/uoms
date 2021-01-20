@@ -18,11 +18,6 @@
         <result column="mp_url" jdbcType="VARCHAR" property="mpUrl"/>
         <result column="mp_title" jdbcType="VARCHAR" property="mpTitle"/>
         <result column="mp_mediald" jdbcType="VARCHAR" property="mpMediald"/>
-        <result column="push_success_cnt" jdbcType="DECIMAL" property="pushSuccessCnt"/>
-        <result column="push_success_rate" jdbcType="DECIMAL" property="pushSuccessRate"/>
-        <result column="cov_cnt" jdbcType="DECIMAL" property="covCnt"/>
-        <result column="cov_rate" jdbcType="DECIMAL" property="covRate"/>
-        <result column="cov_amount" jdbcType="DECIMAL" property="covAmount"/>
         <result column="pic_url" jdbcType="VARCHAR" property="picUrl"/>
         <result column="link_title" jdbcType="VARCHAR" property="linkTitle"/>
         <result column="link_url" jdbcType="VARCHAR" property="linkUrl"/>
@@ -233,14 +228,31 @@
         select  count(1) from uo_qywx_push_list b join uo_qywx_manual_detail a on a.push_id=b.push_id where a.head_id=#{headId} and b.push_status !='S'
     </select>
 
-    <select id="getManualPushById" resultMap="baseDetail">
-        select 1 total_num,
-          1 push_success_cnt,
-           1 push_success_rate,
-           1 cov_cnt,
-            1 cov_rate,
-            1 cov_amount
- from uo_qywx_manual_header where head_id=1 and 'A'='A'
+    <select id="getHeaderEffectInfo" resultType="map">
+          select
+               g1.total_num,
+               g1.push_success_cnt,
+               (case when g1.total_num=0 then 0 else round(g1.push_success_cnt/g1.total_num*100,2) end)  push_success_rate,
+               g1.cov_cnt,
+               g1.cov_amount,
+               (case when g1.push_success_cnt=0 then 0 else round(g1.cov_cnt/g1.push_success_cnt*100,2) end) cov_rate
+            from
+                 (
+                 select
+                        count(*) total_num,
+                        count(case when exec_status=1 then manual_detail_id end) push_success_cnt,
+                        count(case when exec_status=1 then manual_detail_id end) cov_cnt,
+                        coalesce(sum(case when exec_status=1 then cov_amount end),0) cov_amount
+                  from uo_qywx_manual_convert_detail where head_id=#{headId} and user_status=#{status}
+               ) g1
     </select>
+
+    <update id="updateQywxUserStatus">
+        update uo_qywx_manual_detail m set user_status='Y'
+             from w_users u where
+                u.qywx_follow_user_id=m.follow_user_id
+            and u.qywx_user_id=m.qywx_contact_id
+            and m.head_id=#{headId}
+    </update>
 
 </mapper>

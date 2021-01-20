@@ -107,53 +107,53 @@ public class ActivityHead {
     /**
      * 对应企业成员数量(需要推送消息的成员数)
      */
-    private Long staffCnt;
+    private long staffCnt;
     /**
      * 执行推送任务的成员数（人）
      */
-    private Long executeStaffCnt;
+    private long executeStaffCnt;
     /**
      * 执行推送成员占比（%）
      */
-    private Long executeRate;
+    private double executeRate;
     /**
      * 推送成功用户数
      */
-    private Long successNum;
+    private long successNum;
     /**
      * 效果计算天数
      */
-    private Long effectDays;
+    private long effectDays;
     /**
      * 建议推送人数(消息所覆盖的用户数)
      */
-    private Long totalNum;
+    private long totalNum;
     /**
      * 推送成功率
      */
-    private Long pushSuccessRate;
+    private double pushSuccessRate;
     /**
      * 全部执行推送预计覆盖用户数
      */
-    private Long convertNum;
+    private long convertNum;
     /**
      * 推送转化率
      */
-    private Long convertRate;
+    private double convertRate;
     /**
      * 推送转化金额
      */
-    private Long convertAmount;
+    private double convertAmount;
     /**
      * 推送并购买SPU用户数
      */
-    private Long convertSpuNum;
+    private long convertSpuNum;
     /**
      * 推送并购买SPU转化率
      */
-    private Long convertSpuRate;
+    private double convertSpuRate;
     /**
      * 推送并购买SPU转化金额
      */
-    private Long convertSpuAmount;
+    private double convertSpuAmount;
 }

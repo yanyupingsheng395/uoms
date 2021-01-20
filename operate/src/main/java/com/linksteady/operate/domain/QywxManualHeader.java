@@ -70,26 +70,7 @@ public class QywxManualHeader {
      * 小程序封面ID
      */
     private String mpMediald;
-    /**
-     *推送成功用户数
-     */
-    private Long pushSuccessCnt;
-    /**
-     *推送成功率
-     */
-    private Long pushSuccessRate;
-    /**
-     *推送转化用户数
-     */
-    private Long covCnt;
-    /**
-     *推送转化率（%）
-     */
-    private Long covRate;
-    /**
-     * 推送转化金额
-     */
-    private Long covAmount;
+
     /**
      *图片url
      */

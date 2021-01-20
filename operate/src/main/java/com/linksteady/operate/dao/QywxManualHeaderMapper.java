@@ -6,6 +6,7 @@ import com.linksteady.operate.domain.QywxPushList;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 public interface QywxManualHeaderMapper {
 
@@ -49,7 +50,7 @@ public interface QywxManualHeaderMapper {
 
     int getPushDetailStatus(long headId);
 
-    QywxManualHeader getManualPushById(Long headId, String status);
+    Map<String,Object> getHeaderEffectInfo(Long headId, String status);
 
     void updateTotalNum(int totalNum, long headId);
 
@@ -58,4 +59,10 @@ public interface QywxManualHeaderMapper {
     void delContact(QywxManualDetail detail);
 
     void updateUserNumber(long headId);
+
+    /**
+     * 更新明细中外部客户是否匹配到商城的状态
+     * @param headId
+     */
+    void updateQywxUserStatus(long headId);
 }
