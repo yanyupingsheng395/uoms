@@ -199,4 +199,10 @@ public class QywxManualPushController {
     public ResponseBo getOverAllInfo(@RequestParam Long headId,@RequestParam String status) {
         return ResponseBo.okWithData(null, qywxManualPushService.getManualPushById(headId,status ));
     }
+
+    @PostMapping("/showContent")
+    public ResponseBo showContent(@RequestParam Long headId){
+        QywxManualHeader header = qywxManualPushService.getManualHeader(headId);
+        return ResponseBo.okWithData(null,header);
+    }
 }

@@ -62,15 +62,9 @@ function initTable() {
             field: 'textContent',
             title: '推送内容',
             formatter: function (value, row, index) {
-                if(null!=value&&value.length > 20) {
-                    return "<a style='color: #48b0f7;' data-toggle='tooltip' data-html='true' title='' data-placement='bottom' data-original-title='"+value+"' data-trigger='hover'>\n" +
-                        value.substring(0, 20) + "..." +
-                        "</a>&nbsp;<a style='text-decoration: underline;cursor: pointer;font-size: 12px;' data-clipboard-text='"+value+"' class='copy_btn'>复制</a>";
-                }else if(null!=value&&value!='')
-                {
-                    return value+"&nbsp;<a style='text-decoration: underline;cursor: pointer;font-size: 12px;' data-clipboard-text='"+value+"' class='copy_btn'>复制</a>";
-                }
-                return value;
+                //row.headId
+                var html='<a href="javaScript:void(0)" onclick="showContent('+row.headId+')"><span class="badge bg-info"><i class="glyphicon glyphicon-cog"></i>  查看内容</span></a>';
+                return html;
             }
         }, {
             field: 'pushDate',
@@ -83,6 +77,44 @@ function initTable() {
         }
     };
     $MB.initTable('dataTable', settings);
+}
+
+function showContent(headId) {
+    $('#showContent').modal('show');
+    $.post("/qywxmanual/showContent", {headId: headId}, function (res) {
+        if(res.code === 200) {
+           var data=res.data;
+            console.log(data);
+           var msgType=data.msgType;
+            var $form = $( '#qywx-show-form' );
+            $form.find( "textarea[name='smsContent']" ).val( data.textContent);
+            $form.find( "input[name='picUrl']" ).val( data.picUrl );
+            $form.find( "input[name='linkTitle']" ).val( data.linkTitle );
+            $form.find( "input[name='linkDesc']" ).val( data.linkDesc );
+            $form.find( "input[name='linkUrl']" ).val( data.linkUrl );
+            $form.find( "input[name='linkPicurl']" ).val( data.linkPicurl );
+            $form.find( "input[name='mpTitle']" ).val( data.mpTitle );
+            $form.find( "input[name='mpUrl']" ).val( data.mpUrl );
+            $form.find( "input[name='mediaId']" ).val( data.mpMediald );
+            if("applets"==msgType){
+                $("#image_show").hide();
+                $("#webPage_show").hide();
+                $("#applets_show").show();
+            }else if("image"==msgType){
+                $("#image_show").show();
+                $("#webPage_show").hide();
+                $("#applets_show").hide();
+            }else if("web"==msgType){
+                $("#image_show").hide();
+                $("#webPage_show").show();
+                $("#applets_show").hide();
+            }
+            $(":radio[name='msgType_show'][value='" + msgType + "']").prop("checked", "checked");
+            $("input:radio[name='msgType_show']").attr("disabled",true);
+        }else {
+            $MB.n_danger("查看内容出错，请联系系统管理员！");
+        }
+    });
 }
 
 function beforeUpload() {

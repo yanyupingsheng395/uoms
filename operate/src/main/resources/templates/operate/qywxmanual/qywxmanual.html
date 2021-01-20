@@ -226,6 +226,100 @@
         </div>
     </div>
 </div>
+
+<div class="modal" tabindex="-1" role="dialog" aria-labelledby="user_modal" id="showContent">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h5 class="modal-title">推送内容</h5>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" method="post" id="qywx-show-form">
+                    <div class="form-group" style="margin-top: 15px">
+                        <label class="col-md-3 control-label">文本：</label>
+                        <div class="col-md-7">
+                            <textarea name="smsContent"  readonly="readonly" cols="30" rows="4" class="form-control"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group" >
+                        <div class="col-xs-12" >
+                            <label class="col-md-3 control-label"/>选择消息类型：</label>
+                            <div class="col-md-7" style="margin-top: 5px;">
+                                <label class="lyear-radio radio-inline radio-primary">
+                                    <input type="radio" checked='checked'  name="msgType_show" value="applets" ><span>小程序</span>
+                                </label>
+                                <label class="lyear-radio radio-inline radio-primary">
+                                    <input type="radio"  name="msgType_show"  value="image" ><span>图片</span>
+                                </label>
+                                <label class="lyear-radio radio-inline radio-primary">
+                                    <input type="radio" name="msgType_show"  value="web" ><span>网页</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="image_show" style="display: none">
+                        <div class="form-group" style="margin-bottom: 2px;">
+                            <label class="col-md-3 control-label">图片地址：</label>
+                            <div class="col-md-7">
+                                <input class="form-control" readonly="readonly" name="picUrl" />
+                            </div>
+                        </div>
+                    </div>
+                    <div id="webPage_show" style="display: none">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">网页标题：</label>
+                            <div class="col-md-7">
+                                <input class="form-control" readonly="readonly" name="linkTitle"  >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">网页描述：</label>
+                            <div class="col-md-7">
+                                <input class="form-control" readonly="readonly" name="linkDesc">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">网页地址：</label>
+                            <div class="col-md-7">
+                                <input class="form-control" readonly="readonly" name="linkUrl" >
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 2px;">
+                            <label class="col-md-3 control-label">网页封面图片URL：</label>
+                            <div class="col-md-7">
+                                <input class="form-control" readonly="readonly" name="linkPicurl" >
+                            </div>
+                        </div>
+                    </div>
+                    <div id="applets_show" style="display: block">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">小程序标题：</label>
+                            <div class="col-md-7">
+                                <input name="mpTitle"  readonly="readonly"  class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">小程序页面路径：</label>
+                            <div class="col-md-7">
+                                <input name="mpUrl"  readonly="readonly"  class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">小程序封面MediaID：</label>
+                            <div class="col-md-7">
+                                <input name="mediaId"  readonly="readonly" class="form-control"/>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal" >关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div data-th-include="operate/chooseMedia/chooseMedia"></div>
 <div data-th-include="operate/chooseMediaImg/chooseMediaImg"></div>
 
