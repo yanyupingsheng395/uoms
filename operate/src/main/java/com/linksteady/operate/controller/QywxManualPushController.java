@@ -105,18 +105,33 @@ public class QywxManualPushController {
         String mediald = header.getMpMediald();
         String title = header.getMpTitle();
         String url = header.getMpUrl();
-        if(StringUtils.isEmpty(content)){
-            return ResponseBo.error("推送内容不能为空,请重新上传数据推送！");
+        String linkUrl = header.getLinkUrl();
+        String linkTitle = header.getLinkTitle();
+        String picUrl = header.getPicUrl();
+        String msgType = header.getMsgType();
+        if("applets".equals(msgType)){
+            if(StringUtils.isEmpty(mediald)){
+                return ResponseBo.error("小程序封面ID不能为空,请重新上传数据推送！");
+            }
+            if(StringUtils.isEmpty(title)){
+                return ResponseBo.error("小程序标题不能为空,请重新上传数据推送！");
+            }
+            if(StringUtils.isEmpty(url)){
+                return ResponseBo.error("小程序链接不能为空,请重新上传数据推送！");
+            }
+        }else if("image".equals(msgType)){
+            if(StringUtils.isEmpty(picUrl)){
+                return ResponseBo.error("图片地址不能为空,请重新上传数据推送！");
+            }
+        }else if("web".equals(msgType)){
+            if(StringUtils.isEmpty(linkUrl)){
+                return ResponseBo.error("网页链接不能为空,请重新上传数据推送！");
+            }
+            if(StringUtils.isEmpty(linkTitle)){
+                return ResponseBo.error("网页标题不能为空,请重新上传数据推送！");
+            }
         }
-        if(StringUtils.isEmpty(mediald)){
-            return ResponseBo.error("小程序封面ID不能为空,请重新上传数据推送！");
-        }
-        if(StringUtils.isEmpty(title)){
-            return ResponseBo.error("小程序标题不能为空,请重新上传数据推送！");
-        }
-        if(StringUtils.isEmpty(url)){
-            return ResponseBo.error("小程序链接不能为空,请重新上传数据推送！");
-        }
+
 
         String status = qywxManualPushService.getHeadStatus(headId);
         // 判读当前状态为已上传，待推送，则可以继续执行
