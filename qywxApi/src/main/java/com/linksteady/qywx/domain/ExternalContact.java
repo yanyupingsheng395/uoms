@@ -12,6 +12,8 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * 外部联系人
@@ -132,7 +134,7 @@ public class ExternalContact implements Serializable {
             this.setRemark(followInfo.getString("remark"));
             this.setDescription(followInfo.getString("description"));
             this.setCreatetime(followInfo.getString("createtime"));
-            this.setTags(followInfo.getString("tags"));
+            this.setTags(followInfo.getString("tag_id"));
             this.setRemarkCorpName(followInfo.getString("remark_corp_name"));
             this.setRemarkMobiles(followInfo.getString("remark_mobiles"));
             this.setState(followInfo.getString("state"));
@@ -179,7 +181,7 @@ public class ExternalContact implements Serializable {
             this.setExternalProfile(externalContract.getString("external_profile"));
 
             this.setFollowUser(jsonObject.getString("follow_user"));
-
+            //所有导购给当前用户打上的信息
             JSONArray jsonArray=jsonObject.getJSONArray("follow_user");
             jsonArray.stream().forEach(i->{
                 JSONObject temp=(JSONObject)i;
@@ -189,7 +191,12 @@ public class ExternalContact implements Serializable {
                     this.setRemark(temp.getString("remark"));
                     this.setDescription(temp.getString("description"));
                     this.setCreatetime(temp.getString("createtime"));
-                    this.setTags(temp.getString("tags"));
+                    //导购给当前用户打上的标签
+                    List<ExternalTags> tagsList=JSONObject.parseArray(temp.getString("tags"),ExternalTags.class);
+                            temp.getJSONArray("tags");
+
+                    String [] tagArray=(String [])tagsList.stream().filter(p ->1==p.getType()).map(ExternalTags::getTagId).toArray();
+                    this.setTags(Arrays.toString(tagArray));
                     this.setRemarkCorpName(temp.getString("remark_corp_name"));
                     this.setRemarkMobiles(temp.getString("remark_mobiles"));
                     this.setState(temp.getString("state"));
@@ -215,7 +222,17 @@ public class ExternalContact implements Serializable {
         this.setFollowerUserId(followerUserId);
         return this;
     }
+}
+@Data
+class ExternalTags
+{
+    private String groupName;
 
+    private String tagName;
+
+    private String tagId;
+
+    private int type;
 
 
 }
