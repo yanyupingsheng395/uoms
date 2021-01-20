@@ -14,6 +14,7 @@ import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 外部联系人
@@ -195,8 +196,8 @@ public class ExternalContact implements Serializable {
                     List<ExternalTags> tagsList=JSONObject.parseArray(temp.getString("tags"),ExternalTags.class);
                             temp.getJSONArray("tags");
 
-                    String [] tagArray=(String [])tagsList.stream().filter(p ->1==p.getType()).map(ExternalTags::getTagId).toArray();
-                    this.setTags(Arrays.toString(tagArray));
+                    List<String> tagArray=tagsList.stream().filter(p ->1==p.getType()).map(ExternalTags::getTagId).collect(Collectors.toList());
+                    this.setTags(tagArray.toString());
                     this.setRemarkCorpName(temp.getString("remark_corp_name"));
                     this.setRemarkMobiles(temp.getString("remark_mobiles"));
                     this.setState(temp.getString("state"));
