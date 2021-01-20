@@ -232,18 +232,22 @@
           select
                g1.total_num,
                g1.push_success_cnt,
-               (case when g1.total_num=0 then 0 else round(g1.push_success_cnt/g1.total_num*100,2) end)  push_success_rate,
+               (case when g1.total_num=0 then 0 else round(g1.push_success_cnt*1.00/g1.total_num*100,2) end)  push_success_rate,
                g1.cov_cnt,
                g1.cov_amount,
-               (case when g1.push_success_cnt=0 then 0 else round(g1.cov_cnt/g1.push_success_cnt*100,2) end) cov_rate
+               (case when g1.push_success_cnt=0 then 0 else round(g1.cov_cnt*1.00/g1.push_success_cnt*100,2) end) cov_rate
             from
                  (
                  select
                         count(*) total_num,
                         count(case when exec_status=1 then manual_detail_id end) push_success_cnt,
-                        count(case when exec_status=1 then manual_detail_id end) cov_cnt,
-                        coalesce(sum(case when exec_status=1 then cov_amount end),0) cov_amount
-                  from uo_qywx_manual_convert_detail where head_id=#{headId} and user_status=#{status}
+                        count(case when exec_status=1 and is_conversion='1' then manual_detail_id end) cov_cnt,
+                        coalesce(sum(case when exec_status=1 and is_conversion='1' then cov_amount end),0) cov_amount
+                  from uo_qywx_manual_convert_detail where head_id=#{headId}
+                    <if test="status != null and status != 'ALL'">
+                        and user_status=#{status}
+                    </if>
+
                ) g1
     </select>
 
