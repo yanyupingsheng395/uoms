@@ -109,7 +109,7 @@
 
     <select id="getHeaderListData" resultMap="base">
         select head_id, user_number, total_num, success_num, convert_num, status,push_date,
-        insert_by,insert_dt,update_by,update_dt,text_content,mp_url,mp_title,mp_mediald,pic_url,link_title,link_picurl,link_desc,link_url
+        insert_by,insert_dt,update_by,update_dt,text_content,mp_url,mp_title,mp_mediald,pic_url,link_title,link_picurl,link_desc,link_url,msg_type
         from uo_qywx_manual_header
         order by head_id desc
         limit #{limit} offset #{offset}
@@ -142,7 +142,7 @@
 
     <select id="getQywxManualHeader" resultMap="base">
         select head_id, user_number, total_num, success_num, convert_num, status,push_date,
-        insert_by,insert_dt,update_by,update_dt,text_content,mp_url,mp_title,mp_mediald,pic_url,link_title,link_picurl,link_desc,link_url
+        insert_by,insert_dt,update_by,update_dt,text_content,mp_url,mp_title,mp_mediald,pic_url,link_title,link_picurl,link_desc,link_url,msg_type
         from uo_qywx_manual_header where head_id=#{headId}
     </select>
 

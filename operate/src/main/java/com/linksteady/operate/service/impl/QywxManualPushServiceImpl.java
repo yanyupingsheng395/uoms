@@ -152,7 +152,8 @@ public class QywxManualPushServiceImpl implements QywxManualPushService {
      * @param qywxPushList (待推送的对象)
      */
     public void pushQywxMsg(QywxPushList qywxPushList, List<QywxManualDetail> qywxManualDetailList,QywxManualHeader header) {
-
+        log.info("推送集合{}",qywxPushList.toString());
+        log.info("头表数据{}",header.toString());
         if(null==qywxManualDetailList||qywxManualDetailList.size()==0){
             qywxActivityPushMapper.updatePushList(qywxPushList.getPushId(),"F","","","推送列表为空");
             return;
