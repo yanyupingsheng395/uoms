@@ -29,6 +29,7 @@ public class OperateApplication {
 		SpringApplication.run(OperateApplication.class, args);
 		SystemProperties systemProperties= (SystemProperties) SpringContextUtils.getBean(SystemProperties.class);
 		log.info("用户成长模块.[{}]",systemProperties.isDemoEnvironment()==true?"演示环境":"非演示环境");
+		log.info("待连接的thrift服务的地址为{}:{}",systemProperties.getThriftServerHost(),systemProperties.getThriftServerPort());
 	}
 
 	/**

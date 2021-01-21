@@ -19,43 +19,43 @@ public class QywxActivityStaffEffect  implements Serializable {
     /**
      * 需执行的推送消息数
      */
-    private Long msgNum;
+    private long msgNum;
     /**
      * 实际执行的推送消息数
      */
-    private Long executeMsgNum;
+    private long executeMsgNum;
     /**
      * 全部执行推送预计覆盖用户数
      */
-    private Long coverNum;
+    private long coverNum;
     /**
      * 实际执行推送后覆盖用户数
      */
-    private Long executeCoverNum;
+    private long executeCoverNum;
     /**
      * 推送并转化用户数
      */
-    private Long convertNum;
+    private long convertNum;
     /**
      * 推送转化金额
      */
-    private Long convertAmount;
+    private double convertAmount;
     /**
      * 推送转化率
      */
-    private Long convertRate;
+    private double convertRate;
     /**
      * 推送并购买SPU用户数
      */
-    private Long convertSpuNum;
+    private long convertSpuNum;
     /**
      * 推送并购买SPU转化金额
      */
-    private Long convertSpuAmount;
+    private double convertSpuAmount;
     /**
      * 推送并购买SPU转化率
      */
-    private Long convertSpuRate;
+    private double convertSpuRate;
     /**
      * 统计日期
      */
