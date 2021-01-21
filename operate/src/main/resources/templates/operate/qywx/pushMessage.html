@@ -36,52 +36,92 @@
                     <div class="col-sm-12 select-table table-striped">
                         <form class="form-horizontal" id="testPush">
                             <div class="row">
-                                <div class="col-sm-12">
+                                <div class="form-group mg-stop">
+                                    <label class="col-md-2 control-label">发送人ID：</label>
+                                    <div class="col-md-8 ">
+                                        <input class="form-control" type="text" id="senderId" name="senderId" th:value="${senderId}" placeholder="请输入发送人ID(只支持单个发送人ID)"/>
+                                    </div>
+                                </div>
+                                <div class="form-group mg-stop">
+                                    <label class="col-md-2 control-label">外部联系人ID：</label>
+                                    <div class="col-md-8 ">
+                                        <input class="form-control" type="text" id="externalContact" name="externalContact" th:value="${externalContact}" placeholder="请输入外部联系人ID(多个以逗号分割)"/>
+                                    </div>
+                                </div>
+                                <div class="form-group mg-stop">
+                                    <label class="col-md-2 control-label">文本：</label>
+                                    <div class="col-md-8 ">
+                                        <textarea class="form-control" id="messageTest" name="messageTest" style="height: 102px;border: solid 1px #ebebeb;" placeholder="请输入文本"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group mg-stop" id="intelPolicy" >
+                                    <label class="col-md-2 control-label"/>选择消息类型：</label>
+                                    <div class="col-md-8 input-group" style="margin-top: 5px;">
+                                        <label class="lyear-radio radio-inline radio-primary">
+                                            <input type="radio" checked='checked' name="msgType" value="applets" onclick="selectType('applets')"><span>小程序</span>
+                                        </label>
+                                        <label class="lyear-radio radio-inline radio-primary">
+                                            <input type="radio"  name="msgType" value="image" onclick="selectType('image')"><span>图片</span>
+                                        </label>
+                                        <label class="lyear-radio radio-inline radio-primary">
+                                            <input type="radio" name="msgType" value="web" onclick="selectType('webPage')"><span>网页</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div id="image" style="display: none">
+                                    <div class="form-group  mg-stop" style="margin-bottom: 2px;">
+                                        <label class="col-md-2 control-label">图片地址：</label>
+                                        <div class="col-md-8 ">
+                                            <input class="form-control" readonly="readonly" name="picUrl" id="picUrl"/>
+                                        </div>
+                                        <a id='addMediaImage' style="cursor:pointer;color: #409eff !important;" onclick="chooseMediaImg()"><i class="fa fa-plus-circle" style="margin-top:12px;"></i>选择</a>
+                                    </div>
+                                </div>
+                                <div id="webPage" style="display: none">
                                     <div class="form-group mg-stop">
-                                        <label class="col-md-2 control-label">发送人ID：</label>
-                                        <div class="col-md-8 input-group">
-                                            <input class="form-control" type="text" id="senderId" name="senderId" placeholder="请输入发送人ID(只支持单个发送人ID)"/>
+                                        <label class="col-md-2 control-label">网页标题：</label>
+                                        <div class="col-md-8">
+                                            <input class="form-control" name="linkTitle"  id="linkTitle">
+                                        </div>
+                                    </div>
+                                    <div class="form-group mg-stop">
+                                        <label class="col-md-2 control-label">网页描述：</label>
+                                        <div class="col-md-8">
+                                            <input class="form-control" name="linkDesc" id="linkDesc">
+                                        </div>
+                                    </div>
+                                    <div class="form-group mg-stop">
+                                        <label class="col-md-2 control-label">网页地址：</label>
+                                        <div class="col-md-8">
+                                            <input class="form-control" name="linkUrl" id="linkUrl">
+                                        </div>
+                                    </div>
+                                    <div class="form-group mg-stop" style="margin-bottom: 2px;">
+                                        <label class="col-md-2 control-label">网页封面图片URL：</label>
+                                        <div class="col-md-8">
+                                            <input class="form-control" name="linkPicurl" id="linkPicurl">
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-12">
-                                    <div class="form-group mg-stop">
-                                        <label class="col-md-2 control-label">外部联系人ID：</label>
-                                        <div class="col-md-8 input-group">
-                                            <input class="form-control" type="text" id="externalContact" name="externalContact" placeholder="请输入外部联系人ID(多个以逗号分割)"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-12">
+                                <div id="applets" style="display: block">
                                     <div class="form-group mg-stop">
                                         <label class="col-md-2 control-label">小程序标题：</label>
-                                        <div class="col-md-8 input-group">
-                                            <input class="form-control" type="text" id="title" name="title" placeholder="请输入小程序标题"/>
+                                        <div class="col-md-8 ">
+                                            <input class="form-control" type="text" id="mpTitle" name="mpTitle" />
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-sm-12">
                                     <div class="form-group mg-stop">
                                         <label class="col-md-2 control-label">小程序路径：</label>
-                                        <div class="col-md-8 input-group">
-                                            <input class="form-control" type="text" id="pathAddress" name="pathAddress" placeholder="请输入小程序路径"/>
+                                        <div class="col-md-8 ">
+                                            <input class="form-control" type="text" id="mpUrl" name="mpUrl" />
                                         </div>
                                     </div>
-                                </div>
-                                <div class="col-sm-12">
                                     <div class="form-group mg-stop">
-                                        <label class="col-md-2 control-label">小程序封面图片MediaId：</label>
-                                        <div class="col-md-8 input-group">
-                                            <input class="form-control" type="text" id="mediaId" name="mediaId" placeholder="请输入小程序封面图片MediaId"/>
+                                        <label class="col-md-2 control-label">小程序封面MediaID：</label>
+                                        <div class="col-md-8 ">
+                                            <input class="form-control" type="text" readonly="readonly" id="mediaId" name="mediaId" />
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-12">
-                                    <div class="form-group mg-stop">
-                                        <label class="col-md-2 control-label">文本：</label>
-                                        <div class="col-md-8 input-group">
-                                            <textarea class="form-control" id="messageTest" name="messageTest" style="height: 102px;width:685px;border: solid 1px #ebebeb;" placeholder="请输入文本"></textarea>
-                                        </div>
+                                        <a id='addShopDiscountBtn' style="cursor:pointer;color: #409eff !important;" onclick="chooseMedia()"><i class="fa fa-plus-circle" style="margin-top:12px;"></i>添加</a>
                                     </div>
                                 </div>
                                 <a  class="btn btn-primary btn-sm" role="button" onclick="pushMessage()" style="margin-left: 390px;width: 15%">提交</a>
@@ -93,6 +133,8 @@
         </main>
     </div>
 </div>
+<div data-th-include="operate/chooseMedia/chooseMedia"></div>
+<div data-th-include="operate/chooseMediaImg/chooseMediaImg"></div>
 </body>
 <th:block th:include="common/include::footer" />
 <th:block th:include="common/include::perfect-scrollbar" />
@@ -100,5 +142,8 @@
 <th:block th:include="common/include::common-js" />
 <th:block th:include="common/include::bootstrap-table-js" />
 <th:block th:include="common/include::jquery-confirm-js" />
+<script data-th-src="@{/plugins/imageUpload/cupload.js}"></script>
 <script data-th-src="@{/js/app/operate/qywx/pushMessage.js}"></script>
+<script data-th-src="@{/js/app/operate/chooseMedia/chooseMedia.js}"></script>
+<script data-th-src="@{/js/app/operate/chooseMediaImg/chooseMediaImg.js}"></script>
 </html>

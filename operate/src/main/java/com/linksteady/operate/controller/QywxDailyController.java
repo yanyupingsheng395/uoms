@@ -27,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -200,7 +201,7 @@ public class QywxDailyController {
                 String senderId="brandonz";
                 String externalContact="wmXfFiDwAAIoOS6g8UB2tHo2pZKT0zfQ,wmXfFiDwAArXVAgKadY0lv9LZ3FISz8w";
                 String mediaId = qywxMdiaService.getMpMediaId("100");
-                testPush(title, pathAddress, senderId, externalContact, messageTest,mediaId);
+               // testPush(title, pathAddress, senderId, externalContact, messageTest,mediaId);
                 return ResponseBo.ok();
             } catch (Exception e) {
                 return ResponseBo.error("推送错误，原因为:"+e.getMessage());
@@ -345,9 +346,9 @@ public class QywxDailyController {
      * 企业微信测试推送
      */
     @GetMapping("/testQywxPush")
-    public ResponseBo testQywxPush(String title, String pathAddress, String senderId, String externalContact, String messageTest,String mediaId) {
+    public ResponseBo testQywxPush(String mpTitle, String mpUrl,String mediaId,String linkPicurl,String linkUrl,String linkDesc,String linkTitle,String picUrl,String msgType, String senderId, String externalContact, String messageTest) {
         try {
-            testPush(title, pathAddress, senderId, externalContact, messageTest,mediaId);
+            testPush(mpTitle,mpUrl,mediaId,linkPicurl,linkUrl,linkDesc,linkTitle,picUrl,msgType,senderId,externalContact,messageTest);
             return ResponseBo.ok();
         } catch (Exception e) {
             return ResponseBo.error(e.getMessage());
@@ -360,18 +361,25 @@ public class QywxDailyController {
      *
      * @return
      */
-    private String testPush(String title, String pathAddress, String senderId, String externalContact, String messageTest,String mediaId) throws Exception {
+    private String testPush(String mpTitle, String mpUrl,String mediaId,String linkPicurl,String linkUrl,String linkDesc,String linkTitle,String picUrl,String msgType, String senderId, String externalContact, String messageTest) throws Exception {
         QywxMessage qywxMessage = new QywxMessage();
         qywxMessage.setText(messageTest);
-        qywxMessage.setMpTitle(title);
-
-        String appId =qywxMessageService.getMpAppId();
-        qywxMessage.setMpPicMediaId(mediaId);
-        qywxMessage.setMpAppid(appId);
-        qywxMessage.setMpPage(pathAddress);
-        List<String> externalContactList = asList(externalContact);
+        List<String> externalContactList = Arrays.asList(externalContact.split(","));
+        if("applets".equals(msgType)){
+            String appId =qywxMessageService.getMpAppId();
+            qywxMessage.setMpPicMediaId(mediaId);
+            qywxMessage.setMpAppid(appId);
+            qywxMessage.setMpPage(mpUrl);
+            qywxMessage.setMpTitle(mpTitle);
+        }else if("image".equals(msgType)){
+            qywxMessage.setImgPicUrl(picUrl);
+        }else if("web".equals(msgType)){
+            qywxMessage.setLinkDesc(linkDesc);
+            qywxMessage.setLinkPicUrl(linkPicurl);
+            qywxMessage.setLinkTitle(linkTitle);
+            qywxMessage.setLinkUrl(linkUrl);
+        }
         String result = qywxMessageService.pushQywxMessage(qywxMessage, senderId, externalContactList);
-
         return result;
     }
 

@@ -416,7 +416,9 @@ public class PageController extends BaseController {
      */
     @Log(value = "每日用户运营[企业微信]-编辑推送", location = "用户成长系统")
     @RequestMapping("/qywxDaily/pushMessage")
-    public String pushMessage() {
+    public String pushMessage(Model model) {
+        model.addAttribute("senderId","brandonz");
+        model.addAttribute("externalContact","wmXfFiDwAAIoOS6g8UB2tHo2pZKT0zfQ,wmXfFiDwAArXVAgKadY0lv9LZ3FISz8w");
         return "operate/qywx/pushMessage";
     }
 
