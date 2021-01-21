@@ -401,17 +401,7 @@ public class QywxActivityController {
      */
     @GetMapping("/getOverAllInfo")
     public ResponseBo getOverAllInfo(@RequestParam Long headId) {
-        return ResponseBo.okWithData(null, qywxActivityHeadService.getActivityHeadById(headId));
-    }
-
-    /**
-     * 获取推送变化数据
-     *
-     * @return
-     */
-    @GetMapping("/getPushEffectChange")
-    public ResponseBo getPushEffectChange(@RequestParam("headId") Long headId) {
-        return ResponseBo.okWithData(null, qywxActivityHeadService.getPushEffectChange(headId));
+        return ResponseBo.okWithData(null, qywxActivityHeadService.getActivityHeadEffectById(headId));
     }
 
     /**

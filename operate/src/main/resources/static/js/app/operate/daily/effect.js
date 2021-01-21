@@ -11,16 +11,16 @@ function getOverAllInfo() {
         $("#taskDt").html('').append('<i class="mdi mdi-alert-circle-outline"></i>任务日期：' + data["touchDtStr"] + '，成功触达：'+data['successNum']+'人，效果累计天数：'+data['effectDays']);
 
          //更新其它数据
-        $("#totalNum").text(totalNum);
-        $("#successNum").text(successNum);
-        $("#convertNum").text(convertNum);
-        $("#convertSpuNum").text(convertSpuNum);
+        $("#totalNum").text(data.totalNum);
+        $("#successNum").text(data.successNum);
+        $("#convertNum").text(data.convertNum);
+        $("#convertSpuNum").text(data.convertSpuNum);
 
-        $("#convertRate").text(convertRate);
-        $("#convertSpuRate").text(convertSpuRate);
+        $("#convertRate").text(data.convertRate);
+        $("#convertSpuRate").text(data.convertSpuRate);
 
-        $("#convertAmount").text(convertAmount);
-        $("#convertSpuAmount").text(convertSpuAmount);
+        $("#convertAmount").text(data.convertAmount);
+        $("#convertSpuAmount").text(data.convertSpuAmount);
     });
 }
 

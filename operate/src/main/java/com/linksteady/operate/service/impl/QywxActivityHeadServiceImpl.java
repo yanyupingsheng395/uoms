@@ -142,78 +142,8 @@ public class QywxActivityHeadServiceImpl implements QywxActivityHeadService {
     }
 
     @Override
-    public ActivityHead getActivityHeadById(Long headId) {
-        return qywxActivityHeadMapper.getActivityHeadById(headId);
-    }
-
-    @Override
-    public Map<String, Object> getPushEffectChange(Long headId) {
-        Map<String, Object> result = Maps.newHashMap();
-        String dateFormat = "yyyyMMdd";
-        List<LocalDate> xdatas = Lists.newLinkedList();
-
-        ActivityHead qywxDailyHeader = qywxActivityHeadMapper.getActivityHeadById(headId);
-        // 提交任务日期
-        // TODO: 2021/1/9 这个地方需要修改，先讨论
-        String taskDt ="20201202";
-
-        //获取任务观察的天数
-        long effectDays = qywxDailyHeader.getEffectDays();
-
-        //任务提交的日期
-        LocalDate taskDtDate = LocalDate.parse(taskDt, DateTimeFormatter.ofPattern(dateFormat));
-
-        // 任务期最后时间
-        LocalDate maxDate = taskDtDate.plusDays(effectDays + 1);
-
-        //时间轴的数据
-        while (taskDtDate.isBefore(maxDate)) {
-            xdatas.add(taskDtDate);
-            taskDtDate = taskDtDate.plusDays(1);
-        }
-
-        List<QywxActivityStatis> dataList = qywxActivityHeadMapper.getQywxActivityStatisList(headId);
-        Map<String, QywxActivityStatis> dailyStatisMap = dataList.stream().collect(Collectors.toMap(QywxActivityStatis::getConversionDateStr, a -> a));
-
-        //转化人数
-        List<Long> convertNumList = Lists.newArrayList();
-        List<Double> convertRateList = Lists.newArrayList();
-        List<Long> convertSpuNumList = Lists.newArrayList();
-        List<Double> convertSpuRateList = Lists.newArrayList();
-
-        xdatas.forEach(x -> {
-            //判断当前是否有数据
-            QywxActivityStatis qywxDailyStatis = dailyStatisMap.get(x.format(DateTimeFormatter.ofPattern(dateFormat)));
-
-            //找不到转化数据
-            if (null == qywxDailyStatis) {
-                if (x.isAfter(LocalDate.now()) || x.isEqual(LocalDate.now())) {
-                    //填充空值
-                    convertNumList.add(null);
-                    convertRateList.add(null);
-                    convertSpuNumList.add(null);
-                    convertSpuRateList.add(null);
-                } else {
-                    //填充0
-                    convertNumList.add(0L);
-                    convertRateList.add(0D);
-                    convertSpuNumList.add(0L);
-                    convertSpuRateList.add(0D);
-                }
-            } else {
-                convertNumList.add(qywxDailyStatis.getConvertNum());
-                convertRateList.add(qywxDailyStatis.getConvertRate());
-                convertSpuNumList.add(qywxDailyStatis.getConvertSpuNum());
-                convertSpuRateList.add(qywxDailyStatis.getConvertSpuRate());
-            }
-        });
-
-        result.put("xdata", xdatas.stream().map(x -> x.format(DateTimeFormatter.ofPattern(dateFormat))).collect(Collectors.toList()));
-        result.put("ydata1", convertNumList);
-        result.put("ydata2", convertRateList);
-        result.put("ydata3", convertSpuNumList);
-        result.put("ydata4", convertSpuRateList);
-        return result;
+    public ActivityHead getActivityHeadEffectById(Long headId) {
+        return qywxActivityHeadMapper.getActivityHeadEffectById(headId);
     }
 
     @Override

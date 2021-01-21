@@ -73,13 +73,8 @@ public interface QywxActivityHeadMapper {
      * @param headId
      * @return
      */
-    ActivityHead getActivityHeadById(Long headId);
-    /**
-     * 获取推送结果数据图
-     * @param headId
-     * @return
-     */
-    List<QywxActivityStatis> getQywxActivityStatisList(Long headId);
+    ActivityHead getActivityHeadEffectById(Long headId);
+
     /**
      *获取个体明细
      * @param limit

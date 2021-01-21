@@ -85,13 +85,8 @@ public interface QywxActivityHeadService {
      * @param headId
      * @return
      */
-    ActivityHead getActivityHeadById(Long headId);
-    /**
-     * 获取推送变化数据
-     * @param headId
-     * @return
-     */
-    Map<String, Object> getPushEffectChange(Long headId);
+    ActivityHead getActivityHeadEffectById(Long headId);
+
 
     /**
      *获取个体明细

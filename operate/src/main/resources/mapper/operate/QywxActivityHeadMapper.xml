@@ -292,20 +292,23 @@
             order by follow_user_id asc
     </select>
 
-    <select id="getActivityHeadById" resultMap="baseResult">
-        SELECT HEAD_ID, TOTAL_NUM, SUCCESS_NUM, CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT, EFFECT_DAYS,push_success_rate,convert_spu_num,convert_rate,convert_spu_amount,insert_dt
+    <select id="getActivityHeadEffectById" resultMap="baseResult">
+        SELECT  HEAD_ID,
+                TOTAL_NUM,
+                SUCCESS_NUM,
+                CONVERT_NUM,
+                CONVERT_RATE,
+                CONVERT_AMOUNT,
+                EFFECT_DAYS,
+                push_success_rate,
+                convert_spu_num,
+                convert_rate,
+                convert_spu_amount,
+                convert_spu_rate,
+                insert_dt
          FROM uo_qywx_activity_header WHERE HEAD_ID =#{headId}
     </select>
 
-    <select id="getQywxActivityStatisList" resultMap="activityStatis">
-         select CONVERT_SPU_RATE,
-               CONVERT_RATE,
-               CONVERT_SPU_NUM,
-               CONVERT_NUM,
-               to_char(CONVERSION_DATE, 'yyyymmdd') CONVERSION_DATE_STR
-        from UO_QYWX_DAILY_STATIS
-        where HEAD_ID = #{headId} order by CONVERSION_DATE asc
-    </select>
 
     <select id="getConvertDetailData" resultMap="convertDetail">
          select
