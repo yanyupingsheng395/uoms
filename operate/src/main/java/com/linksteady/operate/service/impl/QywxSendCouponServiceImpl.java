@@ -122,7 +122,7 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
         //设置券有效期开始时间
         couponInfoVO.setBeginDate(LocalDate.now());
         //设置券有效期结束时间
-        DateTimeFormatter ftf1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter ftf1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String couponEndDate = qywxSendCouponMapper.getCouponEndDate(couponIdentity);
         couponInfoVO.setEndDate(LocalDate.parse(couponEndDate, ftf1));
         //进行数据校验
