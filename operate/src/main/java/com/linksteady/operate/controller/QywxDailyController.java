@@ -436,4 +436,13 @@ public class QywxDailyController {
         }
         return ResponseBo.ok();
     }
+
+    @GetMapping("/sendList")
+    public ResponseBo sendList(){
+        boolean flag = qywxSendCouponService.sendList();
+        if(!flag){
+            return ResponseBo.error();
+        }
+        return ResponseBo.ok();
+    }
 }

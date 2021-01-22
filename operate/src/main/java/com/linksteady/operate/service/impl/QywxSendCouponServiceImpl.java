@@ -282,4 +282,22 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
         return flag;
     }
 
+    @Override
+    public boolean sendList() {
+        CouponInfoVO couponInfoVO=new CouponInfoVO();
+        couponInfoVO.setCouponName("30元优惠券");
+        couponInfoVO.setCouponIdentity("60053");
+        DateTimeFormatter ftf1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        couponInfoVO.setEndDate(LocalDate.parse("2021-01-25 00:00:00", ftf1));
+        couponInfoVO.setBeginDate(LocalDate.parse("2021-01-22 00:00:00", ftf1));
+        List<SendCouponVO> sendCouponVOList=new ArrayList<>();
+        SendCouponVO sendCouponVO=new SendCouponVO();
+        sendCouponVO.setUnionId("oinwC1Rygm7pDLnjNpR1Pg6G0wBI");
+        sendCouponVOList.add(sendCouponVO);
+        SendCouponVO sendCouponVO2=new SendCouponVO();
+        sendCouponVO2.setUnionId("oinwC1Rs3-JXP9SCFHsg3RCLnNeY");
+        sendCouponVOList.add(sendCouponVO2);
+        return sendCoupon(111,couponInfoVO,sendCouponVOList,"UNIONID");
+    }
+
 }
