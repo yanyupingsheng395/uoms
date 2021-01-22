@@ -428,7 +428,7 @@ public class QywxDailyController {
      * @param userIdentity 用户唯一标识
      * @return
      */
-    @PostMapping("/sendCouponToUser")
+    @GetMapping("/sendCouponToUser")
     public ResponseBo sendCouponToUser(@RequestParam("couponName") String couponName,@RequestParam("couponIdentity") String couponIdentity,@RequestParam("userIdentity") String userIdentity){
         boolean coupon = qywxSendCouponService.sendCouponToUser(couponName, couponIdentity, userIdentity);
         if(!coupon){
