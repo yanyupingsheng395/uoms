@@ -34,8 +34,10 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
 
     @Autowired
     ConfigService configService;
-
+    //批量发券
     private static final String SEND_COUPON_BATCH_PATH="/coupon/sendCouponBatch";
+    //针对单独发券
+    private static final String SEND_COUPON_SINGLE_PATH="/coupon/sendCouponSingle";
 
     /**
      * 在新的事务中执行，避免 消息发送 优惠券发送 互相干扰
@@ -97,8 +99,84 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
      * @return
      */
     @Override
-    public boolean sendCouponToUser() {
-        return false;
+    public boolean sendCouponToUser(String couponName,String couponIdentity,String userIdentity) {
+        //发券的唯一标记类型 (PHONE表示手机号 UNIONID表示基于unionid发券 默认为PHONE)
+        String sendCouponIdentityType=configService.getValueByName(ConfigEnum.sendCouponIdentityType.getKeyCode());
+        if(StringUtils.isEmpty(sendCouponIdentityType)){
+            sendCouponIdentityType="PHONE";
+        }
+        //发券是否成功 true表示成功 false表示失败
+        boolean flag=true;
+        String sendResult= "";//发券结果
+        String sendResultDesc= "";//发券结果描述
+        SendCouponVO sendCouponVO=new SendCouponVO();
+        CouponInfoVO couponInfoVO=new CouponInfoVO();
+        //进行数据校验
+        if("PHONE".equals(sendCouponIdentityType)){
+            if(StringUtils.isEmpty(userIdentity)){
+                log.error("发券校验失败，发券方式为基于手机号发券，但获取到的手机号为空");
+                return false;
+            }else{
+                sendCouponVO.setUserPhone(userIdentity);
+            }
+        }else if("UNIONID".equals(sendCouponIdentityType)){
+            if(StringUtils.isEmpty(userIdentity)){
+                log.error("发券校验失败，发券方式为基于unionid发券，但获取到的unionid为空");
+                return false;
+            }else{
+                sendCouponVO.setUnionId(userIdentity);
+            }
+        }
+        List<SendCouponVO> backSendCouponVOList= null;
+        try {
+            String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
+            String signature= SHA1.gen(timestamp,couponName,couponIdentity,userIdentity,sendCouponIdentityType);
+
+            Map<String,String> param= Maps.newHashMap();
+            param.put("timestamp", timestamp);
+            param.put("couponName",couponName);
+            param.put("couponIdentity",couponIdentity);
+            param.put("userIdentity",userIdentity);
+            param.put("sendCouponIdentityType",sendCouponIdentityType);
+            param.put("signature", signature);
+            log.info("发送单人优惠券，传入的参数为:{}",param);
+            //调用发券接口
+            String result= OkHttpUtil.postRequestByFormBody(configService.getValueByName(ConfigEnum.sendCouponUrl.getKeyCode())+SEND_COUPON_SINGLE_PATH,param);
+            JSONObject jsonObject = JSON.parseObject(result);
+            if(null==jsonObject||200!=jsonObject.getIntValue("code")){
+                sendResult="F";
+                sendResultDesc=jsonObject.getString("msg");
+                backSendCouponVOList.add(sendCouponVO);
+                flag=false;
+            }else{
+                sendResult="S";
+                sendResultDesc="发送成功";
+                //返回成功后，对象中携带了券编号
+                sendCouponVO = JSONObject.parseObject(jsonObject.getString("data"), SendCouponVO.class);
+                backSendCouponVOList.add(sendCouponVO);
+                log.info("单人发券返回信息{}",sendCouponVO.toString());
+            }
+        }catch (Exception e){
+            sendResult="F";
+            sendResultDesc="调用单人发券接口失败";
+            backSendCouponVOList.add(sendCouponVO);
+            flag=false;
+        }
+        log.info("保存发券记录");
+        couponInfoVO.setCouponName(couponName);
+        couponInfoVO.setCouponIdentity(couponIdentity);
+        SendCouponRecord sendCouponRecord=new SendCouponRecord();
+        sendCouponRecord.setCouponInfo(JSON.toJSONString(couponInfoVO));
+        sendCouponRecord.setUserInfo(JSON.toJSONString(sendCouponVO));
+        sendCouponRecord.setSendResult(sendResult);
+        sendCouponRecord.setSendResultDesc(sendResultDesc);
+        sendCouponRecord.setInsertDt(LocalDateTime.now());
+
+        //记录发送记录
+        qywxSendCouponMapper.saveSendCouponRecord(sendCouponRecord);
+        //将发券记录ID更新到每日运营明细表中去
+        qywxSendCouponMapper.updateCouponSendRecord(sendResult,sendCouponRecord.getSendRecordId(),backSendCouponVOList);
+        return flag;
     }
 
     /**

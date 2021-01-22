@@ -18,10 +18,7 @@ import com.linksteady.operate.service.*;
 import com.linksteady.operate.vo.FollowUserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -70,6 +67,9 @@ public class QywxDailyController {
 
     @Autowired
     QywxMdiaService qywxMdiaService;
+
+    @Autowired
+    QywxSendCouponService qywxSendCouponService;
 
     @Autowired
     private SystemProperties systemProperties;
@@ -419,5 +419,21 @@ public class QywxDailyController {
         List<QywxDailyPersonalEffect> qywxDailyPersonalList = qywxDailyService.getConvertDetailData(limit, offset, headId);
         int count = qywxDailyService.getConvertDetailCount(headId);
         return ResponseBo.okOverPaging(null, count, qywxDailyPersonalList);
+    }
+
+    /**
+     * 测试单人发券逻辑
+     * @param couponName  券名称
+     * @param couponIdentity 券标识
+     * @param userIdentity 用户唯一标识
+     * @return
+     */
+    @PostMapping("/sendCouponToUser")
+    public ResponseBo sendCouponToUser(@RequestParam("couponName") String couponName,@RequestParam("couponIdentity") String couponIdentity,@RequestParam("userIdentity") String userIdentity){
+        boolean coupon = qywxSendCouponService.sendCouponToUser(couponName, couponIdentity, userIdentity);
+        if(!coupon){
+          return   ResponseBo.error("单人发券错误");
+        }
+        return ResponseBo.ok();
     }
 }
