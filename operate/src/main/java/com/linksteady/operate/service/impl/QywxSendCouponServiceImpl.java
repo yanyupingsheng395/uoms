@@ -22,6 +22,7 @@ import org.springframework.util.StringUtils;
 import javax.persistence.Transient;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -111,6 +112,8 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
         String sendResultDesc= "";//发券结果描述
         SendCouponVO sendCouponVO=new SendCouponVO();
         CouponInfoVO couponInfoVO=new CouponInfoVO();
+        couponInfoVO.setCouponName(couponName);
+        couponInfoVO.setCouponIdentity(couponIdentity);
         //进行数据校验
         if("PHONE".equals(sendCouponIdentityType)){
             if(StringUtils.isEmpty(userIdentity)){
@@ -127,7 +130,7 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
                 sendCouponVO.setUnionId(userIdentity);
             }
         }
-        List<SendCouponVO> backSendCouponVOList= null;
+        List<SendCouponVO> backSendCouponVOList= new ArrayList<>();
         try {
             String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
             String signature= SHA1.gen(timestamp,couponName,couponIdentity,userIdentity,sendCouponIdentityType);
@@ -163,8 +166,6 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
             flag=false;
         }
         log.info("保存发券记录");
-        couponInfoVO.setCouponName(couponName);
-        couponInfoVO.setCouponIdentity(couponIdentity);
         SendCouponRecord sendCouponRecord=new SendCouponRecord();
         sendCouponRecord.setCouponInfo(JSON.toJSONString(couponInfoVO));
         sendCouponRecord.setUserInfo(JSON.toJSONString(sendCouponVO));
