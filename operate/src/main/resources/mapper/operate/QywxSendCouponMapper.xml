@@ -6,6 +6,7 @@
         <result property="couponId" jdbcType="DECIMAL" column="coupon_id"></result>
         <result property="couponName" jdbcType="VARCHAR" column="coupon_display_name"></result>
         <result property="couponIdentity" jdbcType="VARCHAR" column="coupon_identity"></result>
+        <result property="endDate" jdbcType="TIMESTAMP" column="valid_end"></result>
     </resultMap>
 
     <resultMap id="sendCouponVOMap" type="com.linksteady.operate.vo.SendCouponVO">
@@ -17,7 +18,8 @@
     <select id="getCouponList" resultMap="couponInfoVOMap">
         select distinct uo_qywx_coupon.coupon_id,
                         coupon_display_name,
-                        coupon_identity
+                        coupon_identity,
+                        valid_end
         from uo_qywx_daily_detail join uo_qywx_coupon
           on uo_qywx_daily_detail.coupon_id=uo_qywx_coupon.coupon_id
          and uo_qywx_daily_detail.head_id=#{headId}
@@ -32,6 +34,9 @@
         select detail_id,user_phone,unionid from uo_qywx_daily_detail where head_id=#{headId} and coupon_id=#{couponId}
         and sendresult &lt;&gt; 'S'
         order by detail_id asc limit #{limit} offset #{offset}
+    </select>
+    <select id="getCouponEndDate" resultType="string">
+        select valid_end from uo_qywx_coupon where coupon_identity=#{couponIdentity}
     </select>
 
     <insert id="saveSendCouponRecord" useGeneratedKeys="true" keyProperty="sendRecordId" keyColumn="sendrecord_id">

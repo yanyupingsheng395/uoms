@@ -20,8 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.Transient;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -59,12 +61,14 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
         List<CouponInfoVO> couponInfoVOList=qywxSendCouponMapper.getCouponList(headId);
         Long couponId=null;
         List<SendCouponVO> sendCouponVOList=null;
-
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         //发券是否成功 true表示成功 false表示失败
         boolean sendCouponSuccess=true;
         for(CouponInfoVO couponInfoVO:couponInfoVOList)
         {
             couponId=couponInfoVO.getCouponId();
+            //设置券有效期开始时间
+            couponInfoVO.setBeginDate(LocalDate.now());
             //查询当前这个券下面有多少人
             int count=qywxSendCouponMapper.getCouponUserCount(headId,couponId);
 
@@ -110,10 +114,17 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
         boolean flag=true;
         String sendResult= "";//发券结果
         String sendResultDesc= "";//发券结果描述
+        String couponInfo= null;
         SendCouponVO sendCouponVO=new SendCouponVO();
         CouponInfoVO couponInfoVO=new CouponInfoVO();
         couponInfoVO.setCouponName(couponName);
         couponInfoVO.setCouponIdentity(couponIdentity);
+        //设置券有效期开始时间
+        couponInfoVO.setBeginDate(LocalDate.now());
+        //设置券有效期结束时间
+        DateTimeFormatter ftf1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String couponEndDate = qywxSendCouponMapper.getCouponEndDate(couponIdentity);
+        couponInfoVO.setEndDate(LocalDate.parse(couponEndDate, ftf1));
         //进行数据校验
         if("PHONE".equals(sendCouponIdentityType)){
             if(StringUtils.isEmpty(userIdentity)){
@@ -132,13 +143,12 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
         }
         List<SendCouponVO> backSendCouponVOList= new ArrayList<>();
         try {
+            couponInfo = JSON.toJSONString(couponInfoVO);
             String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
-            String signature= SHA1.gen(timestamp,couponName,couponIdentity,userIdentity,sendCouponIdentityType);
-
+            String signature= SHA1.gen(timestamp,couponInfo,userIdentity,sendCouponIdentityType);
             Map<String,String> param= Maps.newHashMap();
             param.put("timestamp", timestamp);
-            param.put("couponName",couponName);
-            param.put("couponIdentity",couponIdentity);
+            param.put("couponInfo",couponInfo);
             param.put("userIdentity",userIdentity);
             param.put("sendCouponIdentityType",sendCouponIdentityType);
             param.put("signature", signature);

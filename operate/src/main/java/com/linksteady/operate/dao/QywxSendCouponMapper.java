@@ -38,4 +38,9 @@ public interface QywxSendCouponMapper {
      */
     void updateCouponSendRecord(String sendResult,long sendRecordId,List<SendCouponVO> sendCouponVOList);
 
+    /**
+     * 获取券的有效结束时间
+     * @param couponIdentity
+     */
+    String getCouponEndDate(String couponIdentity);
 }
