@@ -218,7 +218,7 @@ public class QywxDailyController {
         {
             int versionCount = qywxDailyDetailService.selVersion(headId, version);
             if(versionCount<=0){
-                return ResponseBo.error("当前记录已经被其他用户修改，请刷新界面后操作！");
+                return ResponseBo.error("当前记录已经被其他用户修改，请返回列表界面重新进入！");
             }
             if (null == effectDays || effectDays < 1 || effectDays > 10) {
                 return ResponseBo.error("参数错误，请通过系统界面进行操作！");
@@ -481,7 +481,7 @@ public class QywxDailyController {
     public synchronized ResponseBo resetPushDel(@RequestParam("headId") Long headId,@RequestParam("delDetailId")String delDetailId,@RequestParam("version")int version){
         int versionCount = qywxDailyDetailService.selVersion(headId, version);
         if(versionCount<=0){
-            return ResponseBo.error("当前记录已经被其他用户修改，请刷新界面后操作！");
+            return ResponseBo.error("当前记录已经被其他用户修改，请返回列表界面重新进入！");
         }
         List<Long> list=Arrays.stream(delDetailId.split(",")).map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());
         qywxDailyDetailService.resetPushDel(headId,list);

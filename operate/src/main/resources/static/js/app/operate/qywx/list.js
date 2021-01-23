@@ -582,7 +582,7 @@ function resetPushDel() {
                 $MB.n_success("删除成功！");
                 getUserStrategyList(push_id);
             }else{
-                $MB.n_warning(res.msg);
+                $MB.n_danger(res.msg);
             }
         });
     });
