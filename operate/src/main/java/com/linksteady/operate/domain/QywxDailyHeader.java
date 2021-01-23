@@ -14,7 +14,7 @@ public class QywxDailyHeader {
 
     private Long headId;
 
-    private Long totalNum;
+    private long totalNum;
 
     private Date taskDate;
 

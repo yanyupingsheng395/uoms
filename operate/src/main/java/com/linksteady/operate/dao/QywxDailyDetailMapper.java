@@ -3,6 +3,7 @@ package com.linksteady.operate.dao;
 import com.linksteady.operate.domain.QywxDailyDetail;
 import com.linksteady.operate.domain.QywxDailyStaffEffect;
 import com.linksteady.operate.vo.FollowUserVO;
+import com.linksteady.operate.vo.RecProdVo;
 import io.lettuce.core.dynamic.annotation.Param;
 
 import java.util.List;
@@ -50,7 +51,7 @@ public interface QywxDailyDetailMapper {
      * @param headId
      * @return
      */
-    int getQywxDetailCount(@Param("headId") Long headId,@Param("followUserId") String followUserId);
+    int getQywxDetailCount(@Param("headId") Long headId,@Param("followUserId") String followUserId,@Param("recProdId")long recProdId);
 
     /**
      * 分页获取当header_id下选中的用户名单
@@ -62,7 +63,8 @@ public interface QywxDailyDetailMapper {
     List<QywxDailyDetail> getQywxDetailList(@Param("headId") Long headId,
                                             @Param("limit") int limit,
                                             @Param("offset") int offset,
-                                            @Param("followUserId") String followUserId);
+                                            @Param("followUserId") String followUserId,
+                                            @Param("recProdId")long recProdId);
 
     /**
      * 获取当前header_id下转化的用户列表
@@ -126,4 +128,10 @@ public interface QywxDailyDetailMapper {
 
 
     List<String> getProductIdList(long headId);
+
+    List<RecProdVo> getRecProdList(Long headId);
+
+    void resetPushDel(Long headId, List<Long> list);
+
+    void updateTotleNum(int size,Long headId);
 }

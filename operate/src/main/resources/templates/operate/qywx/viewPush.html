@@ -29,6 +29,16 @@
                                         </select>
                                         </li>
                                     </ul>
+                                    <ul>
+                                        <li>
+                                            商品列表：<select id="commoditySelect" name="commoditySelect">
+                                            <option value="">所有</option>
+                                        </select>
+                                        </li>
+                                    </ul>
+                                    <a class="btn btn-primary btn-rounded btn-sm" id="btn_push_query"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                    <a class="btn btn-warning btn-rounded btn-sm" onclick="resetPushQuery()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                    <a id="resetPushDel" class="btn btn-danger btn-rounded btn-sm" onclick="resetPushDel()"><i class="glyphicon glyphicon-remove"></i>&nbsp;删除</a>
                                 </div>
                             </form>
                             <div class="table-striped">

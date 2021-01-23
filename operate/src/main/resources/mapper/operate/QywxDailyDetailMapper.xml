@@ -42,6 +42,11 @@
         <result column="FOLLOW_USER_NAME" jdbcType="VARCHAR" property="followUserName"></result>
     </resultMap>
 
+    <resultMap id="recProdResult" type="com.linksteady.operate.vo.RecProdVo">
+        <result column="rec_prod_id" jdbcType="DECIMAL" property="recProdId"></result>
+        <result column="rec_prod_name" jdbcType="VARCHAR" property="recProdName"></result>
+    </resultMap>
+
     <select id="getUserCount" resultType="int">
         select
             count(*)
@@ -114,6 +119,9 @@
         <if test="followUserId != '' and followUserId != null and followUserId !='-1'" >
             and follow_user_id = #{followUserId}
         </if>
+        <if test="recProdId != 0 and recProdId != null and recProdId !=-1" >
+            and rec_prod_id = #{recProdId}
+        </if>
     </select>
 
     <select id="getQywxDetailList" resultMap="baseResult">
@@ -147,6 +155,9 @@
          WHERE  head_id = #{headId}
         <if test="followUserId != '' and followUserId != null and followUserId !='-1'" >
             and uo_qywx_daily_detail.follow_user_id = #{followUserId}
+        </if>
+        <if test="recProdId != 0 and recProdId != null and recProdId !=-1" >
+            and rec_prod_id = #{recProdId}
         </if>
          ORDER BY detail_id DESC
          limit #{limit} offset #{offset}
@@ -241,7 +252,21 @@
         </foreach>
     </update>
 
+    <update id="resetPushDel">
+        delete from uo_qywx_daily_detail where head_id=#{headId} and detail_id in
+        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <update id="updateTotleNum">
+        update uo_qywx_daily_header set total_num=total_num-#{size} where head_id=#{headId}
+    </update>
+
     <select id="getProductIdList" resultType="string">
         select distinct REC_PROD_ID from uo_qywx_daily_detail where head_id = #{headId}
+    </select>
+    <select id="getRecProdList" resultMap="recProdResult">
+        select distinct  rec_prod_id,rec_prod_name from uo_qywx_daily_detail where head_id=#{headId}
     </select>
 </mapper>

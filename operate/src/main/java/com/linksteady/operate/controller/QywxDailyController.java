@@ -16,8 +16,11 @@ import com.linksteady.operate.exception.PushQywxMessageException;
 import com.linksteady.operate.exception.SendCouponException;
 import com.linksteady.operate.service.*;
 import com.linksteady.operate.vo.FollowUserVO;
+import com.linksteady.operate.vo.RecProdVo;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
@@ -172,8 +175,13 @@ public class QywxDailyController {
         int offset = request.getOffset();
         Long headId = Long.parseLong(request.getParam().get("headId"));
         String followUserId = request.getParam().get("followUserId");
-        List<QywxDailyDetail> dataList = qywxDailyDetailService.getQywxDetailList(headId, limit, offset, followUserId);
-        int count = qywxDailyDetailService.getQywxDetailCount(headId, followUserId);
+        String prodId = request.getParam().get("recProdId");
+        long recProdId =0l;
+        if(!StringUtils.isEmpty(prodId)){
+            recProdId =Long.parseLong( prodId);
+        }
+        List<QywxDailyDetail> dataList = qywxDailyDetailService.getQywxDetailList(headId, limit, offset, followUserId,recProdId);
+        int count = qywxDailyDetailService.getQywxDetailCount(headId, followUserId,recProdId);
         return ResponseBo.okOverPaging(null, count, dataList);
     }
 
@@ -304,6 +312,16 @@ public class QywxDailyController {
     @GetMapping("/getFollowUserList")
     public ResponseBo getFollowUserList(Long headId) {
         List<FollowUserVO> dataList = qywxDailyDetailService.getAllFollowUserList(headId);
+        return ResponseBo.okWithData(null, dataList);
+    }
+
+    /**
+     *获取商品列表
+     * @return
+     */
+    @GetMapping("/getRecProdList")
+    public ResponseBo getRecProdList(Long headId){
+        List<RecProdVo> dataList = qywxDailyDetailService.getRecProdList(headId);
         return ResponseBo.okWithData(null, dataList);
     }
 
@@ -443,6 +461,20 @@ public class QywxDailyController {
         if(!flag){
             return ResponseBo.error();
         }
+        return ResponseBo.ok();
+    }
+
+    /**
+     * 预览推送，删除数据
+     * @param headId
+     * @param delDetailId 需要删除的detailId集合字符串
+     * @return
+     */
+    @GetMapping("/resetPushDel")
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseBo resetPushDel(@RequestParam("headId") Long headId,@RequestParam("delDetailId")String delDetailId){
+        List<Long> list=Arrays.stream(delDetailId.split(",")).map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());
+        qywxDailyDetailService.resetPushDel(headId,list);
         return ResponseBo.ok();
     }
 }

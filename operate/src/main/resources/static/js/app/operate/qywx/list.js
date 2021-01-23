@@ -1,3 +1,5 @@
+var push_id=0;
+var checkFlag=true;
 $(function () {
     var errmsg=$("#errormsg").val();
     if(null!=errmsg&&errmsg!='')
@@ -174,6 +176,11 @@ $("#btn_insight").click(function () {
 
             //加载当前任务所涉及的成员
             getAllFollowUserList(headId);
+            push_id=headId;
+            //如果头表执行状态是"未执行"，那么预览推送就能出现选择按钮。
+            if(status!="todo"){
+                checkFlag=false;
+            }
             getUserStrategyList(headId);
             //打开modal
             $("#viewPush_modal").modal('show');
@@ -249,6 +256,9 @@ $("#viewPush_modal").on("hidden.bs.modal", function () {
     $("#push_ok").prop("checked", false);
     $("input[name='pushMethod']:checked").prop("checked", false);
     current_step = 0;
+    //窗口关闭重置选项
+    $("#commoditySelect")[0][0].selected = true;
+    $("#followUserSelect")[0][0].selected = true;
 });
 
 function init() {
@@ -407,6 +417,12 @@ $('input[name="pushMethod"]').click(function () {
 });
 
 function getUserStrategyList(pheadId) {
+    //显示删除按钮
+    if(checkFlag){
+        $("#resetPushDel").show();
+    }else{
+        $("#resetPushDel").hide();
+    }
     let settings = {
         url: '/qywxDaily/getDetailList',
         pagination: true,
@@ -418,11 +434,20 @@ function getUserStrategyList(pheadId) {
                 pageNum: (params.offset / params.limit) + 1,
                 param: {
                     headId: pheadId,
-                    followUserId: $("#followUserSelect").find("option:selected").val()
+                    followUserId: $("#followUserSelect").find("option:selected").val(),
+                    recProdId: $("#commoditySelect").find("option:selected").val()
                 }
             };
         },
         columns: [
+            {
+                checkbox: checkFlag,
+                visible: checkFlag
+            }, {
+                field: 'detailId',
+                title: 'ID',
+                visible: false
+            },
             {
                 field: 'textContent',
                 title: '个性化消息内容',
@@ -487,16 +512,67 @@ function growthInsight(user_id,head_id)
     });
 }
 
+/**
+ * 获取成员和商品列表
+ * @param pheadId
+ */
 function getAllFollowUserList(pheadId) {
     $.get("/qywxDaily/getFollowUserList", {headId: pheadId}, function (r) {
         var code = "<option value='-1'>所有</option>";
         $.each(r.data,function (index,value) {
             code += "<option value="+value.followUserId+">"+value.followUserName+"</option>";
         });
-        $("#followUserSelect").change(function() {
-            //重新加载数据
-            getUserStrategyList(pheadId);
-        });
         $("#followUserSelect").html('').append(code);
+    });
+
+    $.get("/qywxDaily/getRecProdList", {headId: pheadId}, function (r) {
+        var code = "<option value='-1'>所有</option>";
+        $.each(r.data,function (index,value) {
+            code += "<option value="+value.recProdId+">"+value.recProdName+"</option>";
+        });
+        $("#commoditySelect").html('').append(code);
+    });
+}
+
+/**
+ * 预览推送搜索
+ */
+$("#btn_push_query").click(function () {
+    getUserStrategyList(push_id);
+});
+
+/**
+ * 预览推送重置按钮
+ */
+function resetPushQuery() {
+    $("#commoditySelect")[0][0].selected = true;
+    $("#followUserSelect")[0][0].selected = true;
+    getUserStrategyList(push_id);
+}
+
+/**
+ * 在预览推送中，删除记录
+ */
+function resetPushDel() {
+    var selected = $("#userListTable").bootstrapTable('getSelections');
+    var selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请勾选需要删除的记录！');
+        return;
+    };
+    var delDetailId=[];
+    for(var i=0;i<selected_length;i++){
+        delDetailId.push(selected[i].detailId);
+    }
+    $MB.confirm({
+        title: '提示：',
+        content: '确认删除该记录？'
+    }, function() {
+        $.get("/qywxDaily/resetPushDel", {delDetailId: delDetailId.toString(),headId:push_id}, function (res) {
+            if(res.code === 200) {
+                $MB.n_success("删除成功！");
+                getUserStrategyList(push_id);
+            }
+        });
     });
 }

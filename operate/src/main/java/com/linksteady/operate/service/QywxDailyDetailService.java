@@ -2,6 +2,7 @@ package com.linksteady.operate.service;
 
 import com.linksteady.operate.domain.QywxDailyDetail;
 import com.linksteady.operate.vo.FollowUserVO;
+import com.linksteady.operate.vo.RecProdVo;
 
 import java.util.List;
 import java.util.Map;
@@ -25,14 +26,14 @@ public interface QywxDailyDetailService {
      * @param headId
      * @return
      */
-    List<QywxDailyDetail> getQywxDetailList(Long headId, int limit, int offset, String followUserId);
+    List<QywxDailyDetail> getQywxDetailList(Long headId, int limit, int offset, String followUserId,long recProdId);
 
     /**
      * 推送列表记录数
      * @param headId
      * @return
      */
-    int getQywxDetailCount(Long headId,String followUserId);
+    int getQywxDetailCount(Long headId,String followUserId,long recProdId);
 
 
     /**
@@ -57,4 +58,12 @@ public interface QywxDailyDetailService {
      */
     List<FollowUserVO> getAllFollowUserList(Long headId);
 
+    /**
+     * 查询商品列表
+     * @param headId
+     * @return
+     */
+    List<RecProdVo> getRecProdList(Long headId);
+
+    void resetPushDel(Long headId, List<Long> list);
 }

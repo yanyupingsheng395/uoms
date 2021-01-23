@@ -15,6 +15,7 @@ import com.linksteady.operate.service.ShortUrlService;
 import com.linksteady.operate.thread.TransQywxDailyContentThread;
 import com.linksteady.operate.vo.FollowUserVO;
 import com.linksteady.operate.vo.GroupCouponVO;
+import com.linksteady.operate.vo.RecProdVo;
 import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.crypto.hash.Md5Hash;
@@ -140,13 +141,13 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
     }
 
     @Override
-    public List<QywxDailyDetail> getQywxDetailList(Long headId, int limit, int offset, String followUserId) {
-        return qywxDailyDetailMapper.getQywxDetailList(headId, limit, offset, followUserId);
+    public List<QywxDailyDetail> getQywxDetailList(Long headId, int limit, int offset, String followUserId,long recProdId) {
+        return qywxDailyDetailMapper.getQywxDetailList(headId, limit, offset, followUserId,recProdId);
     }
 
     @Override
-    public int getQywxDetailCount(Long headId, String followUserId) {
-        return qywxDailyDetailMapper.getQywxDetailCount(headId, followUserId);
+    public int getQywxDetailCount(Long headId, String followUserId,long recProdId) {
+        return qywxDailyDetailMapper.getQywxDetailCount(headId, followUserId,recProdId);
     }
 
     @Override
@@ -162,6 +163,18 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
     @Override
     public List<FollowUserVO> getAllFollowUserList(Long headId) {
         return qywxDailyDetailMapper.getAllFollowUserList(headId);
+    }
+
+    @Override
+    public List<RecProdVo> getRecProdList(Long headId) {
+        return qywxDailyDetailMapper.getRecProdList(headId);
+    }
+
+    @Override
+    public void resetPushDel(Long headId, List<Long> list) {
+        qywxDailyDetailMapper.resetPushDel(headId,list);
+        //更新头表的数量用户数量
+        qywxDailyDetailMapper.updateTotleNum(list.size(),headId);
     }
 
 
