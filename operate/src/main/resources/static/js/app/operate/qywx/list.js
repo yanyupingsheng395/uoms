@@ -1,5 +1,6 @@
 var push_id=0;
 var checkFlag=true;
+var version=0;//乐观锁版本号
 $(function () {
     var errmsg=$("#errormsg").val();
     if(null!=errmsg&&errmsg!='')
@@ -174,6 +175,8 @@ $("#btn_insight").click(function () {
             //初始化步骤组件
             setStep(status,taskDate);
 
+            //获取乐观锁版本号，往下的所有操作，必须带上此参数
+            version=r.data;
             //加载当前任务所涉及的成员
             getAllFollowUserList(headId);
             push_id=headId;
@@ -259,6 +262,8 @@ $("#viewPush_modal").on("hidden.bs.modal", function () {
     //窗口关闭重置选项
     $("#commoditySelect")[0][0].selected = true;
     $("#followUserSelect")[0][0].selected = true;
+    //刷新每日任务列表数据
+    $MB.refreshTable("qywxDailyTable");
 });
 
 function init() {
@@ -393,10 +398,13 @@ function submitData() {
     $.get("/qywxDaily/submitTask", {
         headId: $("#headId").val(), pushMethod: $("input[name='pushMethod']:checked").val(),
         pushPeriod: $("#pushPeriod").find("option:selected").val(),
-        effectDays: $("#effectDays").val()
+        effectDays: $("#effectDays").val(),
+        version: version
     }, function (r) {
         if (r.code === 200) {
             $MB.n_success("启动推送成功！");
+            //重新赋值乐观锁版本号
+            version=r.data;
             setTimeout(function () {
                 window.location.href = "/page/qywxDaily/list";
             }, 1000);
@@ -568,10 +576,13 @@ function resetPushDel() {
         title: '提示：',
         content: '确认删除该记录？'
     }, function() {
-        $.get("/qywxDaily/resetPushDel", {delDetailId: delDetailId.toString(),headId:push_id}, function (res) {
+        $.get("/qywxDaily/resetPushDel", {delDetailId: delDetailId.toString(),headId:push_id,version:version}, function (res) {
             if(res.code === 200) {
+                version=res.data;
                 $MB.n_success("删除成功！");
                 getUserStrategyList(push_id);
+            }else{
+                $MB.n_warning(res.msg);
             }
         });
     });

@@ -127,13 +127,14 @@ public class QywxDailyController {
         if (qywxDailyHeader.getTotalNum() == 0) {
             return ResponseBo.error("当前计划没有待运营的用户！");
         }
-
+        //将乐观锁版本号传入前端，后续逻辑带上版本号，防止并发操作
+        int version = qywxDailyDetailService.getVersion(headId);
         //待执行状态且是当天的任务
         if ("todo".equals(qywxDailyHeader.getStatus()) && currentDay.equals(qywxDailyHeader.getTaskDateStr())) {
             //如果已经进行了优惠券的发放
             if ("Y".equals(qywxDailyHeader.getCouponSendFlag())) {
                 //直接返回
-                return ResponseBo.ok();
+                return ResponseBo.okWithData(null,version);
             }
 
             //验证配置是否通过校验
@@ -145,8 +146,7 @@ public class QywxDailyController {
                 if (qywxDailyService.getTransContentLock(String.valueOf(headId))) {
                     try {
                         qywxDailyDetailService.generate(headId);
-                        //直接返回
-                        return ResponseBo.ok();
+                        return ResponseBo.okWithData(null,version);
                     } catch (Exception e) {
                         log.error("每日运营[微信]转化生成文案错误，异常堆栈为{}", e);
                         return ResponseBo.error("每日运营[微信]生成文案错误，请联系系统运维人员！");
@@ -160,7 +160,7 @@ public class QywxDailyController {
             }
         } else {
             //直接返回
-            return ResponseBo.ok();
+            return ResponseBo.okWithData(null,version);
         }
     }
 
@@ -198,7 +198,7 @@ public class QywxDailyController {
      * @return
      */
     @GetMapping("/submitTask")
-    public ResponseBo submitTask(Long headId, Long effectDays) {
+    public ResponseBo submitTask(Long headId, Long effectDays,int version) {
         //判断如果是演示环境，推送测试文案
         if(systemProperties.isDemoEnvironment())
         {
@@ -216,6 +216,10 @@ public class QywxDailyController {
             }
         }else
         {
+            int versionCount = qywxDailyDetailService.selVersion(headId, version);
+            if(versionCount<=0){
+                return ResponseBo.error("当前记录已经被其他用户修改，请刷新界面后操作！");
+            }
             if (null == effectDays || effectDays < 1 || effectDays > 10) {
                 return ResponseBo.error("参数错误，请通过系统界面进行操作！");
             }
@@ -245,7 +249,9 @@ public class QywxDailyController {
                 if (count > 0) {
                     throw new PushQywxMessageException("推送企业微信消息存在错误");
                 } else {
-                    return ResponseBo.ok();
+                    //乐观锁版本号加一
+                    qywxDailyDetailService.UpdateVersion(headId, version);
+                    return ResponseBo.okWithData(null,qywxDailyDetailService.getVersion(headId));
                 }
             } catch (Exception e) {
                 log.error("企业微信每日运营推送错误，错误堆栈为", e);
@@ -472,9 +478,15 @@ public class QywxDailyController {
      */
     @GetMapping("/resetPushDel")
     @Transactional(rollbackFor = Exception.class)
-    public ResponseBo resetPushDel(@RequestParam("headId") Long headId,@RequestParam("delDetailId")String delDetailId){
+    public synchronized ResponseBo resetPushDel(@RequestParam("headId") Long headId,@RequestParam("delDetailId")String delDetailId,@RequestParam("version")int version){
+        int versionCount = qywxDailyDetailService.selVersion(headId, version);
+        if(versionCount<=0){
+            return ResponseBo.error("当前记录已经被其他用户修改，请刷新界面后操作！");
+        }
         List<Long> list=Arrays.stream(delDetailId.split(",")).map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());
         qywxDailyDetailService.resetPushDel(headId,list);
-        return ResponseBo.ok();
+        //乐观锁版本号加一
+         qywxDailyDetailService.UpdateVersion(headId, version);
+        return ResponseBo.okWithData(null,qywxDailyDetailService.getVersion(headId));
     }
 }

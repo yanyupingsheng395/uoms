@@ -5,7 +5,6 @@ import com.linksteady.operate.vo.FollowUserVO;
 import com.linksteady.operate.vo.RecProdVo;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author huang
@@ -66,4 +65,25 @@ public interface QywxDailyDetailService {
     List<RecProdVo> getRecProdList(Long headId);
 
     void resetPushDel(Long headId, List<Long> list);
+
+    /**
+     * 获取乐观锁版本号
+     * @param headId
+     * @return
+     */
+    int getVersion(Long headId);
+
+    /**
+     * 查询版本号，然后进行后续操作
+     * @param headId
+     * @param version
+     */
+    int selVersion(Long headId, int version);
+
+    /**
+     * 乐观锁版本号加一，然后返回
+     * @param headId
+     * @return
+     */
+    int UpdateVersion(Long headId, int version);
 }

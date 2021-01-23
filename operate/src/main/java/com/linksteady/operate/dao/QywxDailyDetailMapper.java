@@ -134,4 +134,10 @@ public interface QywxDailyDetailMapper {
     void resetPushDel(Long headId, List<Long> list);
 
     void updateTotleNum(int size,Long headId);
+
+    int getVersion(Long headId);
+
+    int selVersion(Long headId, int version);
+
+    int UpdateVersion(Long headId, int version);
 }

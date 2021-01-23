@@ -177,6 +177,21 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
         qywxDailyDetailMapper.updateTotleNum(list.size(),headId);
     }
 
+    @Override
+    public int getVersion(Long headId) {
+      return   qywxDailyDetailMapper.getVersion(headId);
+    }
+
+    @Override
+    public int selVersion(Long headId, int version) {
+        return qywxDailyDetailMapper.selVersion(headId,version);
+    }
+
+    @Override
+    public int UpdateVersion(Long headId, int version) {
+        return qywxDailyDetailMapper.UpdateVersion(headId, version);
+    }
+
 
     /**
      * 对配在组上的补贴按照GROUP_ID进行分组
