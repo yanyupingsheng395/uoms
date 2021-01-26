@@ -307,7 +307,7 @@ public class QywxActivityPlanController {
      */
     @GetMapping("/calculationList")
     public ResponseBo calculationList(@RequestParam Long headId,@RequestParam Long planId){
-        qywxActivityPlanService.calculationList(headId,planId);
-        return null;
+        long result = qywxActivityPlanService.calculationList(headId, planId);
+        return ResponseBo.okWithData(null,result);
     }
 }
