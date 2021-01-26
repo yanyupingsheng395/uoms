@@ -406,3 +406,60 @@ $("#btn_stop").click(function () {
         $MB.n_warning("只有待执行的计划才能终止！");
     }
 });
+
+/**
+ * 计算名单
+ */
+$("#btn_calculation").click(function () {
+    let selected = $("#planTable").bootstrapTable('getSelections');
+    let selected_length = selected.length;
+    if (!selected_length) {
+        $MB.n_warning('请选择要计算的推送计划！');
+        return;
+    }
+    let planId = selected[0].planId;
+    let headId = selected[0].headId;
+    let status = selected[0].planStatus;//推送状态
+    let planDateWid=selected[0].planDateWid;//推送日期
+    if(status!='0'){
+        $MB.n_warning('该计划状态不能进行计算！');
+        return;
+    }
+    var r=dateFormat(planDateWid+"");
+    var s2= new Date();
+    var s1 = new Date(r.replace(/-/g, "/"));
+    var days = s2.getTime() - s1.getTime();
+    var time = parseInt(days / (1000 * 60 * 60 * 24));
+    if(time!=0){
+        $MB.n_warning('请选择当天计划！');
+        return;
+    }
+$MB.loadingDesc('show', '名计算中，请稍候...');
+    $.get("/qywxActivityPlan/calculationList", {planId: planId,headId:headId}, function (r) {
+        if(r.code == 200) {
+            var data=r.data;
+            if(data==0){
+                $MB.n_success("计算成功！");
+            }else if(data==1){
+                $MB.n_danger("计算失败！");
+            }else if(data==2){
+                $MB.n_danger("计算成功，但人数为0！");
+            }else if(data==3){
+                $MB.n_danger("校验失败，请检查配置！");
+            }
+        }else {
+            //提示错误信息
+            $MB.n_danger(r.msg);
+        }
+        $MB.loadingDesc('hide');
+    });
+
+});
+
+function dateFormat(planDateWid) {
+    var resultDate=planDateWid.slice(0,4)+"-"+planDateWid.slice(4,6)+"-"+planDateWid.slice(6,8);
+    return resultDate;
+    
+}
+
+

@@ -298,4 +298,16 @@ public class QywxActivityPlanController {
     public ResponseBo getPlanStatus(@RequestParam String headId) {
         return ResponseBo.okWithData(null, qywxActivityPlanService.getPlanStatus(headId));
     }
+
+    /**
+     * 计算名单
+     * @param headId
+     * @param planId
+     * @return
+     */
+    @GetMapping("/calculationList")
+    public ResponseBo calculationList(@RequestParam Long headId,@RequestParam Long planId){
+        qywxActivityPlanService.calculationList(headId,planId);
+        return null;
+    }
 }

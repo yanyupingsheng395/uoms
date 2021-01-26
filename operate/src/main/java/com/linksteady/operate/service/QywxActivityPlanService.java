@@ -59,4 +59,6 @@ public interface QywxActivityPlanService {
     void expireActivityPlan();
 
     String getPlanStatus(String headId);
+
+    long calculationList(Long headId, Long planId);
 }

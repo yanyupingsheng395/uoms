@@ -3,6 +3,7 @@ package com.linksteady.operate.service.impl;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.service.ConfigService;
+import com.linksteady.common.thrift.ThriftClient;
 import com.linksteady.common.util.ArithUtil;
 import com.linksteady.common.util.DateUtil;
 import com.linksteady.operate.dao.*;
@@ -25,6 +26,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 /**
@@ -54,6 +56,15 @@ public class QywxActivityPlanServiceImpl implements QywxActivityPlanService {
 
     @Autowired
     QywxActivityProductMapper qywxActivityProductMapper;
+
+    @Autowired
+    private ThriftClient thriftClient;
+
+    /**
+     * 由于thrift 中 seqid资源是线程不安全的，所以需要通过加锁的方式来同步调用资源。
+     * 否则会报msg.seqid ！= seqid  => badseqid exception的异常信息。
+     */
+    private ReentrantLock lock = new ReentrantLock();
 
     /**
      * 生成plan数据
@@ -291,5 +302,23 @@ public class QywxActivityPlanServiceImpl implements QywxActivityPlanService {
     @Override
     public String getPlanStatus(String headId) {
         return qywxActivityPlanMapper.getPlanStatus(headId);
+    }
+
+    @Override
+    public long calculationList(Long headId, Long planId) {
+        long result=0;
+        lock.lock();
+        try {
+            if (!thriftClient.isOpend()) {
+                thriftClient.open();
+            }
+            result=thriftClient.getInsightService().genActivityPlanDetail(headId,planId);
+        }catch (Exception e){
+            log.error("计算名单错误", e);
+            thriftClient.close();
+        } finally {
+            lock.unlock();
+        }
+        return result;
     }
 }
