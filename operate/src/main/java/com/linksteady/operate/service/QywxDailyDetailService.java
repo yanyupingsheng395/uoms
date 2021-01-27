@@ -64,6 +64,11 @@ public interface QywxDailyDetailService {
      */
     List<RecProdVo> getRecProdList(Long headId);
 
-    void resetPushDel(Long headId, List<Long> list);
+    /**
+     * 删除选中的用户明细数据
+     * @param headId
+     * @param list
+     */
+    void delDetail(Long headId, List<Long> list);
 
 }

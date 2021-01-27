@@ -236,5 +236,8 @@
     <update id="expireActivityDailyHead">
          update uo_qywx_daily_header h set status='timeout' where h.status='todo' and task_date::date&lt;current_date
     </update>
+    <update id="updateVersion">
+        update uo_qywx_daily_header set version=version+1 where head_id=#{headId} and status="todo" and version=#{version}
+    </update>
 
 </mapper>

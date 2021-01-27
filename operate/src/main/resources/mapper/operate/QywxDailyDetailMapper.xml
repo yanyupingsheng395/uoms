@@ -259,9 +259,9 @@
         </foreach>
     </update>
 
-<!--    <update id="updateTotleNum">-->
-<!--        update uo_qywx_daily_header set total_num=total_num-#{size} where head_id=#{headId}-->
-<!--    </update>-->
+    <update id="updateTotalNum">
+        update uo_qywx_daily_header set total_num=(select count(1) from uo_qywx_daily_detail where uo_qywx_daily_detail.head_id=#{headId}) where head_id=#{headId}
+    </update>
 
     <select id="getProductIdList" resultType="string">
         select distinct REC_PROD_ID from uo_qywx_daily_detail where head_id = #{headId}

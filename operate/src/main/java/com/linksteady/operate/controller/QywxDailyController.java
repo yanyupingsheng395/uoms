@@ -128,7 +128,7 @@ public class QywxDailyController {
             return ResponseBo.error("当前计划没有待运营的用户！");
         }
         //将乐观锁版本号传入前端，后续逻辑带上版本号，防止并发操作
-        int version = qywxDailyDetailService.getVersion(headId);
+        int version = qywxDailyService.getHeadInfo(headId).getVersion();
         //待执行状态且是当天的任务
         if ("todo".equals(qywxDailyHeader.getStatus()) && currentDay.equals(qywxDailyHeader.getTaskDateStr())) {
             //如果已经进行了优惠券的发放
@@ -228,14 +228,9 @@ public class QywxDailyController {
         }
         else
         {
-//            int versionCount = qywxDailyDetailService.selVersion(headId, version);
-//            if(versionCount<=0){
-//                return ResponseBo.error("当前记录已经被其他用户修改，请返回列表界面重新进入！");
-//            }
             if (null == effectDays || effectDays < 1 || effectDays > 10) {
                 return ResponseBo.error("参数错误，请通过系统界面进行操作！");
             }
-
             //进行一次状态的判断
             QywxDailyHeader qywxDailyHeader = qywxDailyService.getHeadInfo(headId);
             //进行一次时间的判断 (调度修改状态有一定的延迟)
@@ -264,11 +259,6 @@ public class QywxDailyController {
                 {
                     return ResponseBo.okWithData(null,"");
                 }
-//                else {
-//                    //乐观锁版本号加一
-//                    qywxDailyDetailService.UpdateVersion(headId, version);
-//                    return ResponseBo.okWithData(null,qywxDailyDetailService.getVersion(headId));
-//                }
             } catch (Exception e) {
                 log.error("企业微信每日运营推送错误，错误堆栈为", e);
                 if (e instanceof OptimisticLockException) {
@@ -488,14 +478,6 @@ public class QywxDailyController {
         return ResponseBo.ok();
     }
 
-//    @GetMapping("/sendList")
-//    public ResponseBo sendList(){
-//        boolean flag = qywxSendCouponService.sendList();
-//        if(!flag){
-//            return ResponseBo.error();
-//        }
-//        return ResponseBo.ok();
-//    }
 
     /**
      * 预览推送，删除数据
@@ -506,18 +488,12 @@ public class QywxDailyController {
     @GetMapping("/resetPushDel")
     @Transactional(rollbackFor = Exception.class)
     public synchronized ResponseBo resetPushDel(@RequestParam("headId") Long headId,@RequestParam("delDetailId")String delDetailId,@RequestParam("version")int version){
-//        int versionCount = qywxDailyDetailService.selVersion(headId, version);
-
         int count=qywxDailyService.updateVersion(headId, version);
-
-        //update uo_qywx_daily_header set version=version+1 where head_id=? and status="todo" and version=#{version}
         if(count<=0){
             return ResponseBo.error("当前记录已经被其他用户修改，请返回列表界面重新进入！");
         }
         List<Long> list=Arrays.stream(delDetailId.split(",")).map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());
-        qywxDailyDetailService.resetPushDel(headId,list);
-//        //乐观锁版本号加一
-//         qywxDailyDetailService.UpdateVersion(headId, version);
+        qywxDailyDetailService.delDetail(headId,list);
 
         return ResponseBo.okWithData(null,qywxDailyService.getHeadInfo(headId).getVersion());
     }

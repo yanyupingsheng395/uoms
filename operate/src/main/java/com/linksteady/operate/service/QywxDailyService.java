@@ -83,5 +83,11 @@ public interface QywxDailyService {
      */
     void expireActivityDailyHead();
 
-
+    /**
+     * 版本号加一
+     * @param headId
+     * @param version
+     * @return
+     */
+    int updateVersion(Long headId, int version);
 }

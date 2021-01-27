@@ -171,10 +171,11 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
     }
 
     @Override
-    public void resetPushDel(Long headId, List<Long> list) {
+    @Transactional(rollbackFor = Exception.class)
+    public void delDetail(Long headId, List<Long> list) {
         qywxDailyDetailMapper.resetPushDel(headId,list);
         //更新头表的数量用户数量
-        qywxDailyDetailMapper.updateTotleNum(list.size(),headId);
+        qywxDailyDetailMapper.updateTotalNum(list.size(),headId);
     }
 
 

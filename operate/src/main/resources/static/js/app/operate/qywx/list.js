@@ -401,18 +401,14 @@ function submitData() {
         effectDays: $("#effectDays").val(),
         version: version
     }, function (r) {
+        $MB.loadingDesc('hide');
         if (r.code === 200) {
             $MB.n_success("启动推送成功！");
-            //重新赋值乐观锁版本号
-            version=r.data;
-            setTimeout(function () {
-                window.location.href = "/page/qywxDaily/list";
-            }, 1000);
         } else {
-            $("#btn_push").attr("disabled", false);
+            $("#btn_push").attr("pushMsgBtn", false);
             $MB.n_danger(r.msg);
         }
-        $MB.loadingDesc('hide');
+        $("#viewPush_modal").modal('hide');
     });
 }
 

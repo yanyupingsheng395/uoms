@@ -61,4 +61,5 @@ public interface QywxDailyMapper {
     void expireActivityDailyHead();
 
 
+    int updateVersion(Long headId, int version);
 }

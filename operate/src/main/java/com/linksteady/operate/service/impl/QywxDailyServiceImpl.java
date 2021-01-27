@@ -445,5 +445,10 @@ public class QywxDailyServiceImpl implements QywxDailyService {
         qywxDailyMapper.expireActivityDailyHead();
     }
 
+    @Override
+    public int updateVersion(Long headId, int version) {
+        return qywxDailyMapper.updateVersion(headId,version);
+    }
+
 
 }

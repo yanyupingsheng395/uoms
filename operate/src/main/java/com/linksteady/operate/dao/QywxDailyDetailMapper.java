@@ -132,7 +132,7 @@ public interface QywxDailyDetailMapper {
     List<RecProdVo> getRecProdList(Long headId);
 
     void resetPushDel(Long headId, List<Long> list);
-//
-//    void updateTotleNum(int size,Long headId);
+
+    void updateTotalNum(int size, Long headId);
 
 }
