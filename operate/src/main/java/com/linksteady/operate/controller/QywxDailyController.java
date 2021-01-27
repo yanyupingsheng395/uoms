@@ -205,7 +205,7 @@ public class QywxDailyController {
             try {
                 String title="测试活动商品";
                 String messageTest="哈喽，上次购买的东西还满意吗？40元专属券已放入您的账户，别忘记来小程序使用呀~";
-                String mpUrl=" pages/about/about";
+                String mpUrl=" /pages/about/about";
                 String senderId="brandonz";
                 String externalContact="wmXfFiDwAAIoOS6g8UB2tHo2pZKT0zfQ,wmXfFiDwAArXVAgKadY0lv9LZ3FISz8w";
                 String mediaId = qywxMdiaService.getMpMediaId("100");
