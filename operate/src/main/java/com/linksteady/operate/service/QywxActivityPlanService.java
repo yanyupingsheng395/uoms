@@ -6,6 +6,7 @@ import com.linksteady.operate.domain.QywxActivityPlan;
 import com.linksteady.operate.vo.ActivityGroupVO;
 import com.linksteady.operate.vo.ActivityPlanEffectVO;
 import com.linksteady.operate.vo.SmsStatisVO;
+import org.apache.thrift.TException;
 
 import java.util.List;
 import java.util.Map;
@@ -60,5 +61,9 @@ public interface QywxActivityPlanService {
 
     String getPlanStatus(String headId);
 
-    long calculationList(Long headId, Long planId);
+    long calculationList(Long headId, Long planId) throws TException;
+
+    boolean getTransLock(Long headId);
+
+    void delTransLock();
 }

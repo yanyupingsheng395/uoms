@@ -16,8 +16,10 @@ import com.linksteady.operate.vo.SmsStatisVO;
 import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.thrift.TException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +28,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
@@ -305,7 +308,7 @@ public class QywxActivityPlanServiceImpl implements QywxActivityPlanService {
     }
 
     @Override
-    public long calculationList(Long headId, Long planId) {
+    public long calculationList(Long headId, Long planId) throws TException {
         long result=0;
         lock.lock();
         try {
@@ -315,10 +318,25 @@ public class QywxActivityPlanServiceImpl implements QywxActivityPlanService {
             result=thriftClient.getInsightService().genActivityPlanDetail(headId,planId);
         }catch (Exception e){
             log.error("计算名单错误", e);
+
             thriftClient.close();
+          throw e;
         } finally {
             lock.unlock();
         }
         return result;
+    }
+
+    @Override
+    public boolean getTransLock(Long headId) {
+        ValueOperations valueOperations = redisTemplate.opsForValue();
+        //如果key不存在，则将key的值设置为value，同时返回true. 如果key不存在，则什么也不做，返回false.
+        boolean flag = valueOperations.setIfAbsent("calculation_lock", headId, 60, TimeUnit.SECONDS);
+        return flag;
+    }
+
+    @Override
+    public void delTransLock() {
+        redisTemplate.delete("calculation_lock");
     }
 }

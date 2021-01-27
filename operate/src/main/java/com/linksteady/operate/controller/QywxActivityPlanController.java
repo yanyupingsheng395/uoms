@@ -307,7 +307,20 @@ public class QywxActivityPlanController {
      */
     @GetMapping("/calculationList")
     public ResponseBo calculationList(@RequestParam Long headId,@RequestParam Long planId){
-        long result = qywxActivityPlanService.calculationList(headId, planId);
+        long result =0;
+        if(qywxActivityPlanService.getTransLock(headId)){
+            try {
+                result=qywxActivityPlanService.calculationList(headId, planId);
+            }catch (Exception e){
+                log.error("计算名单错误");
+                return ResponseBo.error("计算名单错误，请联系管理员");
+            }finally {
+                //释放锁
+                qywxActivityPlanService.delTransLock();
+            }
+        }else{
+            return ResponseBo.error("其他用户正在计算名单！");
+        }
         return ResponseBo.okWithData(null,result);
     }
 }
