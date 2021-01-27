@@ -259,25 +259,14 @@
         </foreach>
     </update>
 
-    <update id="updateTotleNum">
-        update uo_qywx_daily_header set total_num=total_num-#{size} where head_id=#{headId}
-    </update>
-
-    <update id="UpdateVersion" >
-        update uo_qywx_daily_header set version=version+1 where head_id=#{headId} and version=#{version}
-    </update>
-
-    <select id="selVersion" resultType="int">
-        select count(1) from uo_qywx_daily_header where head_id=#{headId} and version=#{version}
-    </select>
+<!--    <update id="updateTotleNum">-->
+<!--        update uo_qywx_daily_header set total_num=total_num-#{size} where head_id=#{headId}-->
+<!--    </update>-->
 
     <select id="getProductIdList" resultType="string">
         select distinct REC_PROD_ID from uo_qywx_daily_detail where head_id = #{headId}
     </select>
     <select id="getRecProdList" resultMap="recProdResult">
         select distinct  rec_prod_id,rec_prod_name from uo_qywx_daily_detail where head_id=#{headId}
-    </select>
-    <select id="getVersion" resultType="int">
-        select version from uo_qywx_daily_header where head_id=#{headId}
     </select>
 </mapper>

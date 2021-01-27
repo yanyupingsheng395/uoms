@@ -95,9 +95,9 @@ public class QywxDailyServiceImpl implements QywxDailyService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void push(QywxDailyHeader qywxDailyHeader, Long effectDays) throws Exception {
+    public void push(QywxDailyHeader qywxDailyHeader, Long effectDays,int version) throws Exception {
         //更新状态为已执行
-        int count = qywxDailyMapper.updateStatus(qywxDailyHeader.getHeadId(), "done", effectDays,qywxDailyHeader.getVersion());
+        int count = qywxDailyMapper.updateStatus(qywxDailyHeader.getHeadId(), "done", effectDays,version);
         if (count == 0) {
             throw new OptimisticLockException("记录已被其他用户修改，请返回刷新后重试");
         }

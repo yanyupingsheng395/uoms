@@ -114,12 +114,19 @@ public class QywxMessageServiceImpl implements QywxMessageService {
                 {
                     throw new Exception("企业微信接口返回为空");
                 }
+                JSONObject jsonObject = JSON.parseObject(result);
+                if(jsonObject.getIntValue("errcode")==-1)
+                {
+                    throw new Exception("微信端返回繁忙，进行重试");
+                }
+
                 return result;
             } catch (Exception e) {
                 log.error("调用企业微信接口发送消息失败，即将进行重试");
                 if(retryTimes+1>maxRetryTimes){
                     //超过最大重试次数，写log日志，将错误信息返回上一层处理
                     log.warn("推送消息重试达到最大次数，接收到的参数为{}",message,sender,externalUserList.toString());
+                    //todo 暂时未实现 返回空字符串 由上层进行处理
                 }else{
                     //线程休眠，进入重试模式
                     long delayMins=1000* (1 << retryTimes);

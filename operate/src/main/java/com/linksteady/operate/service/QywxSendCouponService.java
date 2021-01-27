@@ -13,5 +13,5 @@ public interface QywxSendCouponService {
 
     boolean sendCouponToUser(String couponName,String couponIdentity,String userIdentity);
 
-    boolean sendList();
+//    boolean sendList();
 }

@@ -36,7 +36,7 @@ public interface QywxDailyService {
      * @param effectDays
      * @throws Exception
      */
-    void push(QywxDailyHeader qywxDailyHeader,Long effectDays) throws Exception;
+    void push(QywxDailyHeader qywxDailyHeader,Long effectDays,int version) throws Exception;
 
     /**
      * 获取推送变化数据
