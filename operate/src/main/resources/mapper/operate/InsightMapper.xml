@@ -22,7 +22,7 @@
     </resultMap>
 
     <select id="getSpuTree" resultMap="base">
-        select SPU_WID id, SPU_NAME as name from W_PRODUCT_SPU order by spu_name asc
+        select SPU_WID id, SPU_NAME as name from W_PRODUCT_SPU WHERE VALID_STATUS='1' order by SPU_WID asc
     </select>
 
     <select id="getProductTree" resultMap="base">
@@ -321,7 +321,7 @@
     </select>
 
     <select id="findSpuByPurchOrder" resultType="map">
-        select SPU_WID id, SPU_NAME as name from W_PRODUCT_SPU order by spu_name asc
+        select SPU_WID id, SPU_NAME as name from W_PRODUCT_SPU where valid_status='1' order by SPU_WID asc
     </select>
 
     <!--获取top5人数的商品与spu关系图-->
@@ -442,7 +442,7 @@
       select
           G1.SPU_WID,W_PRODUCT_SPU.SPU_NAME
        from (select distinct WP_USER_PATH.SPU_WID from WP_USER_PATH where RN>=2) G1 LEFT JOIN W_PRODUCT_SPU
-         ON G1.SPU_WID = W_PRODUCT_SPU.SPU_WID
+         ON G1.SPU_WID = W_PRODUCT_SPU.SPU_WID AND w_product_spu.valid_status='1' ORDER BY G1.spu_wid ASC
     </select>
 
     <select id="getPathPurchOrder" resultType="string">

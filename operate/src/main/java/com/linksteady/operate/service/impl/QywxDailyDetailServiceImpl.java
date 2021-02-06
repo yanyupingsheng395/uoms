@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.linksteady.common.service.ConfigService;
-import com.linksteady.common.util.MD5Utils;
 import com.linksteady.operate.dao.QywxDailyCouponMapper;
 import com.linksteady.operate.dao.QywxDailyDetailMapper;
 import com.linksteady.operate.domain.QywxDailyDetail;
