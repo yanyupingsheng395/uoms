@@ -174,6 +174,9 @@ public class LoginController extends BaseController {
             request.getSession().removeAttribute(em.nextElement().toString());
         }
         getSubject().logout();
-        return "redirect:/login";
+        //获取登录地址
+        SysInfoBo system=commonFunService.getSysInfoByCode(CommonConstant.SYS_CODE);
+
+        return "redirect:"+system.getSysDomain()+"/login";
     }
 }
