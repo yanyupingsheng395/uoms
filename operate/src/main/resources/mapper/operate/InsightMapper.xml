@@ -441,7 +441,7 @@
     <select id="getPathSpu" resultType="map">
       select
           G1.SPU_WID,W_PRODUCT_SPU.SPU_NAME
-       from (select distinct WP_USER_PATH.SPU_WID from WP_USER_PATH where RN>=2) G1 LEFT JOIN W_PRODUCT_SPU
+       from (select distinct WP_USER_PATH.SPU_WID from WP_USER_PATH where RN>=2) G1 JOIN W_PRODUCT_SPU
          ON G1.SPU_WID = W_PRODUCT_SPU.SPU_WID AND w_product_spu.valid_status='1' ORDER BY G1.spu_wid ASC
     </select>
 
