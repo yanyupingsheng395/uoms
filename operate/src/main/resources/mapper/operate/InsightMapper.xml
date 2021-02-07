@@ -112,7 +112,7 @@
                     t1.USER_ID,
                     ORDER_ID,
                     ORDER_DT,
-                    SUM(t1.SALE_PRICE * t1.QUANTITY - t1.discount) SPU_ORDER_FEE, SUM(QUANTITY) QUANTITY
+                    SUM(t1.AMOUNT) SPU_ORDER_FEE, SUM(QUANTITY) QUANTITY
              FROM W_ORDER_DETAILS t1, W_PRODUCT t2
                WHERE t1.PRODUCT_ID = t2.PRODUCT_ID
                 <if test="type == 'product'">
@@ -122,7 +122,7 @@
                     and t2.SPU_WID = #{id}
                 </if>
                AND t1.VALID_STATUS = 1
-               AND t1.PRICE > 0
+               AND t1.AMOUNT > 0
                and t1.ORDER_DT_WID >= #{periodStartDt}
                GROUP BY t2.SPU_WID, t1.USER_ID, ORDER_ID, ORDER_DT
            ) u
@@ -162,7 +162,7 @@
                         t1.USER_ID,
                         ORDER_ID,
                         ORDER_DT,
-                        SUM(t1.PRICE * t1.QUANTITY) SPU_ORDER_FEE,
+                        SUM(t1.AMOUNT) SPU_ORDER_FEE,
                         SUM(QUANTITY) QUANTITY
                  FROM W_ORDER_DETAILS t1, W_PRODUCT t2
                    WHERE t1.PRODUCT_ID = t2.PRODUCT_ID
@@ -173,7 +173,7 @@
                         and t2.SPU_WID = #{id}
                     </if>
                    AND t1.VALID_STATUS = 1
-                   AND t1.PRICE > 0
+                   AND t1.AMOUNT > 0
                    and t1.ORDER_DT_WID >= #{periodStartDt}
         GROUP BY t2.SPU_WID, t1.USER_ID, ORDER_ID, ORDER_DT
                ) v1
@@ -207,11 +207,11 @@
         ORDER_ID
         FROM (
         SELECT
-        t2.SPU_WID,t1.USER_ID,ORDER_ID,ORDER_DT,SUM(t1.PRICE * t1.QUANTITY) SPU_ORDER_FEE, SUM(QUANTITY) QUANTITY
+        t2.SPU_WID,t1.USER_ID,ORDER_ID,ORDER_DT,SUM(t1.AMOUNT) SPU_ORDER_FEE, SUM(QUANTITY) QUANTITY
         FROM W_ORDER_DETAILS t1, W_PRODUCT t2
         WHERE t1.PRODUCT_ID = t2.PRODUCT_ID
         AND t1.VALID_STATUS = 1
-        AND t1.PRICE > 0
+        AND t1.AMOUNT > 0
         and t1.ORDER_DT_WID >= #{periodStartDt}
         GROUP BY t2.SPU_WID,t1.USER_ID,ORDER_ID,ORDER_DT
         ) tmp
@@ -246,11 +246,11 @@
         ORDER_ID
         FROM (
         SELECT
-        t2.EBP_PRODUCT_ID,t1.USER_ID,ORDER_ID,ORDER_DT,SUM(t1.PRICE * t1.QUANTITY) SPU_ORDER_FEE, SUM(QUANTITY) QUANTITY
+        t2.EBP_PRODUCT_ID,t1.USER_ID,ORDER_ID,ORDER_DT,SUM(t1.AMOUNT) SPU_ORDER_FEE, SUM(QUANTITY) QUANTITY
         FROM W_ORDER_DETAILS t1, W_PRODUCT t2
         WHERE t1.PRODUCT_ID = t2.PRODUCT_ID
         AND t1.VALID_STATUS = 1
-        AND t1.PRICE > 0
+        AND t1.AMOUNT > 0
         and t1.ORDER_DT_WID >= #{periodStartDt}
         GROUP BY t2.EBP_PRODUCT_ID,t1.USER_ID,ORDER_ID,ORDER_DT
         ) tmp
@@ -286,7 +286,7 @@
         ORDER_ID
         FROM (
         SELECT
-        t2.SPU_WID,t1.USER_ID,ORDER_ID,ORDER_DT,SUM(t1.PRICE * t1.QUANTITY) SPU_ORDER_FEE,SUM(QUANTITY) QUANTITY
+        t2.SPU_WID,t1.USER_ID,ORDER_ID,ORDER_DT,SUM(t1.AMOUNT) SPU_ORDER_FEE,SUM(QUANTITY) QUANTITY
         FROM W_ORDER_DETAILS t1, W_PRODUCT t2
         WHERE t1.PRODUCT_ID = t2.PRODUCT_ID
         <if test="type == 'product'">
@@ -296,7 +296,7 @@
             and t2.SPU_WID = #{id}
         </if>
         AND t1.VALID_STATUS = 1
-        AND t1.PRICE > 0
+        AND t1.AMOUNT > 0
         and t1.ORDER_DT_WID >= #{periodStartDt}
         GROUP BY t2.SPU_WID,t1.USER_ID,ORDER_ID,ORDER_DT) tmp),
         PUR_GAP_RN AS(

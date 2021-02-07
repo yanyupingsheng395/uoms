@@ -6,7 +6,7 @@
     <select id="getKpiOfDifferPeriod" resultType="Double">
         SELECT
             (CASE WHEN SUM(W_ORDER_DETAILS.QUANTITY)=0 THEN 0 ELSE
-                TRUNC(SUM(W_ORDER_DETAILS.PRICE*W_ORDER_DETAILS.QUANTITY-W_ORDER_DETAILS.DISCOUNT)/SUM(W_ORDER_DETAILS.QUANTITY),2) END) SPRICE
+                TRUNC(SUM(W_ORDER_DETAILS.AMOUNT)/SUM(W_ORDER_DETAILS.QUANTITY),2) END) SPRICE
         FROM
          W_ORDER_DETAILS JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID = W_DATE.ROW_WID
             <if test="joinInfo != null and joinInfo != ''">
@@ -23,7 +23,7 @@
     <select id="getDatePeriodData" resultType="com.linksteady.operate.vo.KpiInfoVO">
         SELECT
               (CASE WHEN SUM(W_ORDER_DETAILS.QUANTITY)=0 THEN 0 ELSE
-              TRUNC(SUM(W_ORDER_DETAILS.PRICE*W_ORDER_DETAILS.QUANTITY-W_ORDER_DETAILS.DISCOUNT)/SUM(W_ORDER_DETAILS.QUANTITY),2) END)  kpiVal,
+              TRUNC(SUM(W_ORDER_DETAILS.AMOUNT)/SUM(W_ORDER_DETAILS.QUANTITY),2) END)  kpiVal,
              ${period_name} kpiDate
         FROM W_ORDER_DETAILS JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID = W_DATE.ROW_WID
         <if test="joinInfo != null and joinInfo != ''">
@@ -44,7 +44,7 @@
         (
                 SELECT
                     ${period_name} PERIOD_NAME,
-                    W_ORDER_DETAILS.PRICE*W_ORDER_DETAILS.QUANTITY-W_ORDER_DETAILS.DISCOUNT ORDER_FEE,
+                    W_ORDER_DETAILS.AMOUNT ORDER_FEE,
                     W_ORDER_DETAILS.QUANTITY,
                     W_ORDER_DETAILS.IS_FP
                 FROM W_ORDER_DETAILS JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID = W_DATE.ROW_WID
@@ -81,7 +81,7 @@
         (
         SELECT
         ${period_name} PERIOD_NAME,
-        W_ORDER_DETAILS.PRICE*W_ORDER_DETAILS.QUANTITY-W_ORDER_DETAILS.DISCOUNT ORDER_FEE,
+        W_ORDER_DETAILS.AMOUNT ORDER_FEE,
         W_ORDER_DETAILS.QUANTITY,
         W_ORDER_DETAILS.IS_FP
         FROM W_ORDER_DETAILS JOIN W_DATE ON W_ORDER_DETAILS.ORDER_DT_WID = W_DATE.ROW_WID
