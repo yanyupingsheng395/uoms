@@ -33,10 +33,11 @@ public class FollowUserServiceImpl implements FollowUserService {
 
         requestUrl.append("?access_token="+qywxService.getAccessToken());
         String followUserResult= OkHttpUtil.getRequest(requestUrl.toString());
-        log.debug("获取导购信息返回的结果为{}",followUserResult);
+        log.info("获取导购信息返回的结果为{}",followUserResult);
         JSONObject jsonObject = JSON.parseObject(followUserResult);
         WxError error = WxError.fromJsonObject(jsonObject);
         if (error.getErrorCode() != 0) {
+            log.info("获取导购信息错误，原因为{}",error);
             throw new WxErrorException(error);
         }
         JSONArray jsonArray=jsonObject.getJSONArray("follow_user");
@@ -59,6 +60,7 @@ public class FollowUserServiceImpl implements FollowUserService {
         JSONObject jsonObject =JSON.parseObject(result);
         WxError error = WxError.fromJsonObject(jsonObject);
         if (error.getErrorCode() != 0) {
+            log.info("获取导购详细信息失败，原因为{}",error);
             throw new WxErrorException(error);
         }
 
@@ -76,6 +78,7 @@ public class FollowUserServiceImpl implements FollowUserService {
         log.info("同步具有外部联系权限的成员列表");
         //获取配置了客户联系功能的成员列表
         List<String> followerUserList =this.selectFollowUserList();
+        log.info("处理标志位");
         //更新删除标记位为1
         followUserMapper.updateDeleteFlag();
         //对成员列表进行保存(设置删除标志为0)
@@ -86,7 +89,7 @@ public class FollowUserServiceImpl implements FollowUserService {
 
         //删除标志为1的记录
         followUserMapper.deleteFollowUser();
-
+        log.info("对详细信息进行更新");
         //对本地的导购详细信息进行更新
         FollowUser followUser=null;
 
@@ -94,6 +97,7 @@ public class FollowUserServiceImpl implements FollowUserService {
         {
             //查询成员的详细信息，并进行更新
             followUser = selectUserDetail(followerUserId);
+            log.info("对follower:{}的详细信息进行更新",followerUserId);
             followUserMapper.updateFollowUser(followUser);
         }
         log.info("同步具有外部联系权限的成员列表结束");
