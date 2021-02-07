@@ -112,7 +112,7 @@
                     t1.USER_ID,
                     ORDER_ID,
                     ORDER_DT,
-                    SUM(t1.PRICE * t1.QUANTITY - t1.discount) SPU_ORDER_FEE, SUM(QUANTITY) QUANTITY
+                    SUM(t1.SALE_PRICE * t1.QUANTITY - t1.discount) SPU_ORDER_FEE, SUM(QUANTITY) QUANTITY
              FROM W_ORDER_DETAILS t1, W_PRODUCT t2
                WHERE t1.PRODUCT_ID = t2.PRODUCT_ID
                 <if test="type == 'product'">
