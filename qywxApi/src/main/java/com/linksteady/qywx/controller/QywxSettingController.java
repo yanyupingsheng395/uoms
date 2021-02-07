@@ -197,6 +197,10 @@ public class QywxSettingController {
         } else {
             InputStream ins = null;
             String filePath = "file/";
+            File dir = new File(filePath);
+            if (!dir.exists() && !dir.isDirectory()) {
+                dir.mkdirs();
+            }
             ins = file.getInputStream();
             toFile = new File(filePath+file.getOriginalFilename());
             inputStreamToFile(ins, toFile);
