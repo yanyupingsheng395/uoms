@@ -48,6 +48,9 @@
                         coupon_identity,
                         valid_end from uo_qywx_coupon where coupon_id=#{couponId}
     </select>
+    <select id="getCouponSnList" resultType="String">
+        select serial_no from uo_coupon_serial_no where used_flag='N' and coupon_id=#{couponId} limit #{count}
+    </select>
 
     <insert id="saveSendCouponRecord" useGeneratedKeys="true" keyProperty="sendRecordId" keyColumn="sendrecord_id">
        insert into  uo_qywx_coupon_sendrecord
@@ -87,6 +90,20 @@
 
     <update id="updateCouponSn">
         update uo_qywx_param set coupon_sn=#{lastCouponSn}
+    </update>
+    <update id="updateCouponSnList">
+        update uo_coupon_serial_no set coupon_identity=#{couponIdentity},used_flag='Y',used_dt=now()
+        where coupon_id=#{couponId} and serial_no in
+        <foreach collection="couponSnList" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </update>
+
+    <update id="uploadCoupon">
+        insert into uo_coupon_serial_no(coupon_id, serial_no, insert_dt, used_flag) VALUES
+        <foreach collection="mobiles" item="item" index="index" separator=",">
+            (#{couponId},#{item},now(),'N')
+        </foreach>
     </update>
 
 </mapper>

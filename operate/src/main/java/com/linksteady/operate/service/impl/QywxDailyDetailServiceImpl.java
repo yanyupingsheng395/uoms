@@ -4,8 +4,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.linksteady.common.service.ConfigService;
+import com.linksteady.common.util.FileUtils;
 import com.linksteady.operate.dao.QywxDailyCouponMapper;
 import com.linksteady.operate.dao.QywxDailyDetailMapper;
+import com.linksteady.operate.dao.QywxSendCouponMapper;
+import com.linksteady.operate.domain.ActivityProductUploadError;
 import com.linksteady.operate.domain.QywxDailyDetail;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.QywxDailyDetailService;
@@ -16,15 +19,25 @@ import com.linksteady.operate.vo.FollowUserVO;
 import com.linksteady.operate.vo.GroupCouponVO;
 import com.linksteady.operate.vo.RecProdVo;
 import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.shiro.crypto.hash.Md5Hash;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
@@ -58,6 +71,9 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
 
     @Autowired
     ExceptionNoticeHandler exceptionNoticeHandler;
+
+    @Autowired
+    QywxSendCouponMapper qywxSendCouponMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -177,6 +193,46 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
         qywxDailyDetailMapper.updateTotalNum(list.size(),headId);
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void uploadCoupon(MultipartFile file, Long couponId)throws IOException, LinkSteadyException {
+        // 解析file
+        List<String> mobiles = Lists.newArrayList();
+        String xlsSuffix = ".xls";
+        String xlsxSuffix = ".xlsx";
+        String originalFilename = file.getOriginalFilename();
+        assert originalFilename != null;
+        String fileType = originalFilename.substring(originalFilename.lastIndexOf("."));
+        if (!(fileType.equalsIgnoreCase(xlsSuffix) || fileType.equalsIgnoreCase(xlsxSuffix))) {
+            throw new LinkSteadyException("文件格式不符，只支持.xls,.xlsx后缀的文件！");
+        }
+        Workbook workbook = null;
+        try {
+            InputStream is = file.getInputStream();
+            if (fileType.equalsIgnoreCase(xlsSuffix)) {
+                workbook = new HSSFWorkbook(is);
+            } else if (fileType.equalsIgnoreCase(xlsxSuffix)) {
+                workbook = new XSSFWorkbook(is);
+            }
+            Sheet sheet = workbook.getSheetAt(0);
+            if (null == sheet) {
+                throw new LinkSteadyException("系统只解析第一个sheet，当前文件第一个sheet为空");
+            } else{
+                for (int i = 0; i <= sheet.getLastRowNum(); i++) {
+                    Row row = sheet.getRow(i);
+                    Cell cell = row.getCell(0);
+                    mobiles.add(cell.getStringCellValue());
+                }
+                FileUtils.deleteTempFile(FileUtils.multipartFileToFile(file));
+            }
+        }catch (IOException e){
+            throw new LinkSteadyException("文件解析异常！");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //获取数据，更新到uo_coupon_serial_no中
+        qywxSendCouponMapper.uploadCoupon(mobiles,couponId);
+    }
 
     /**
      * 对配在组上的补贴按照GROUP_ID进行分组

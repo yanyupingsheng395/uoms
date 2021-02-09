@@ -5,12 +5,14 @@ import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.QywxMessage;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.service.ConfigService;
+import com.linksteady.common.util.FileUtils;
 import com.linksteady.operate.config.PushConfig;
 import com.linksteady.common.config.SystemProperties;
 import com.linksteady.operate.domain.QywxDailyDetail;
 import com.linksteady.operate.domain.QywxDailyHeader;
 import com.linksteady.operate.domain.QywxDailyPersonalEffect;
 import com.linksteady.operate.domain.QywxDailyStaffEffect;
+import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.exception.PushQywxMessageException;
 import com.linksteady.operate.exception.SendCouponException;
@@ -22,7 +24,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -495,5 +499,21 @@ public class QywxDailyController {
         qywxDailyDetailService.delDetail(headId,list);
 
         return ResponseBo.okWithData(null,qywxDailyService.getHeadInfo(headId).getVersion());
+    }
+
+    @PostMapping("/uploadCoupon")
+    public ResponseBo uploadCoupon(@RequestParam("file") MultipartFile file,@RequestParam("couponId")  Long couponId) throws Exception {
+        if(FileUtils.multipartFileToFile(file)==null){
+            return ResponseBo.error("上传文件为空,请重新上传数据！");
+        }
+        try {
+            qywxDailyDetailService.uploadCoupon(file,couponId);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseBo.error("文件解析异常！");
+        } catch (LinkSteadyException e) {
+            return  ResponseBo.error(e.getMessage());
+        }
+        return  ResponseBo.ok();
     }
 }

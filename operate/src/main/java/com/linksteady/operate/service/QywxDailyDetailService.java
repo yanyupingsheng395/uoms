@@ -1,9 +1,12 @@
 package com.linksteady.operate.service;
 
 import com.linksteady.operate.domain.QywxDailyDetail;
+import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.vo.FollowUserVO;
 import com.linksteady.operate.vo.RecProdVo;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -71,4 +74,10 @@ public interface QywxDailyDetailService {
      */
     void delDetail(Long headId, List<Long> list);
 
+    /**
+     * 上传优惠券流水号
+     * @param file
+     * @param couponId
+     */
+    void uploadCoupon(MultipartFile file, Long couponId)throws LinkSteadyException, IOException;
 }

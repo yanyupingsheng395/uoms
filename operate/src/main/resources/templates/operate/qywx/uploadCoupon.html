@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge" />
+    <title>手动上传券流水号</title>
+    <th:block th:include="common/include :: common-css" />
+    <th:block th:include="common/include :: rangeslider-css" />
+    <th:block th:include="common/include::jquery-confirm-css" />
+    <th:block th:include="common/include::step-css" />
+    <th:block th:include="common/include::datepicker-css" />
+    <th:block th:include="common/include::bootstrap-table-css" />
+</head>
+<body class="gray-bg">
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 左侧导航 -->
+        <div data-th-include="common/aside"></div>
+        <!-- 头部信息 -->
+        <div data-th-include="common/header"></div>
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content">
+            <div class="container-div ui-layout-center">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <div class="row">
+                            <h5 class="navbar-page-title">手动上传优惠券流水号</h5>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <hr class="hr m-t-0 m-b-5"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 select-table table-striped">
+                        <form class="form-horizontal" id="testPush">
+                            <div class="row">
+                                <div class="form-group mg-stop">
+                                    <label class="col-md-2 control-label">优惠券ID：</label>
+                                    <div class="col-md-8 ">
+                                        <input class="form-control" type="text" id="couponId" name="couponId"  placeholder="请输入优惠券ID"/>
+                                    </div>
+                                </div>
+                                <div class="form-group mg-stop">
+                                    <label class="col-md-2 control-label">上传文件：</label>
+                                    <div class="col-md-8">
+                                        <input type="file" id="file" name="file" style="display: none;"
+                                               onchange="beforeUpload()"/>
+                                        <button class="btn btn-info btn-sm" type="button" onclick="$('#file').click()">上传文件</button>
+                                        <span id="upload_file_name"></span>
+                                    </div>
+                                </div>
+                                <a  class="btn btn-primary btn-sm" role="button" onclick="pushMessage()" style="margin-left: 390px;width: 15%">提交</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+<div data-th-include="operate/chooseMedia/chooseMedia"></div>
+<div data-th-include="operate/chooseMediaImg/chooseMediaImg"></div>
+</body>
+<th:block th:include="common/include::footer" />
+<th:block th:include="common/include::perfect-scrollbar" />
+<th:block th:include="common/include::jquery-validate-js" />
+<th:block th:include="common/include::common-js" />
+<th:block th:include="common/include::bootstrap-table-js" />
+<th:block th:include="common/include::jquery-confirm-js" />
+<script data-th-src="@{/plugins/imageUpload/cupload.js}"></script>
+<script data-th-src="@{/js/app/operate/qywx/uploadCoupon.js}"></script>
+</html>

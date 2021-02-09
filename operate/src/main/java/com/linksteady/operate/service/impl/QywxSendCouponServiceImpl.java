@@ -108,23 +108,12 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
      * @param count           生成流水号的个数
      * @return
      */
-    private synchronized List<String> getCouponNum(long couponId,int count)
-    {
+    private synchronized List<String> getCouponNum(long couponId,int count,String couponIdentity){
        //获取当前的流水号
-        int couponSn=qywxSendCouponMapper.getCouponSn();
-        if(couponSn==0) {
-            couponSn=1;
-        }
-        //最后一个序号
-        int lastCouponSn=couponSn+count;
-
-        //更新最后一个序号到数据库
-        qywxSendCouponMapper.updateCouponSn(lastCouponSn);
         List<String> couponSnList= Lists.newArrayList();
-        //遍历生成序号
-//        for(int i=couponSn+1;i<=lastCouponSn;i++){
-//            couponSnList.add(couponNoPrefix+String.format("%012d", i));
-//        }
+        couponSnList= qywxSendCouponMapper.getCouponSnList(couponId,count);
+        //将查询的集合更新usedFlag为Y，并将couponIdentity更新到表中
+        qywxSendCouponMapper.updateCouponSnList(couponSnList,couponIdentity,couponId);
         return couponSnList;
     }
 
@@ -172,7 +161,7 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
         try {
             couponInfo = JSON.toJSONString(couponInfoVO);
             //根据优惠券编号获取发放流水号
-            List<String> couponNoList=getCouponNum(couponId,1);
+            List<String> couponNoList=getCouponNum(couponId,1,couponInfoVO.getCouponIdentity());
             String couponSn=couponNoList.get(0);
             String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
             String signature= SHA1.gen(timestamp,couponInfo,userIdentity,couponSn,sendCouponIdentityType);
@@ -254,7 +243,7 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
         List<SendCouponVO> backSendCouponVOList= null;
         try {
             //批量获取发放流水号，并放入集合中
-            List<String> couponNoList=getCouponNum(couponId,sendCouponVOList.size());
+            List<String> couponNoList=getCouponNum(couponId,sendCouponVOList.size(),couponInfoVO.getCouponIdentity());
             int i=0;
             for(SendCouponVO sendCouponVO:sendCouponVOList){
                 sendCouponVO.setCouponSn(couponNoList.get(i));

@@ -423,6 +423,15 @@ public class PageController extends BaseController {
     }
 
     /**
+     *编辑测试推送
+     */
+    @Log(value = "每日用户运营[企业微信]-上传优惠券流水号", location = "用户成长系统")
+    @RequestMapping("/qywxDaily/uploadCoupon")
+    public String uploadCoupo() {
+        return "operate/qywx/uploadCoupon";
+    }
+
+    /**
      * 每日运营[企业微信]-效果跟踪
      *
      * @return

@@ -55,4 +55,26 @@ public interface QywxSendCouponMapper {
      * @return
      */
     CouponInfoVO queryCoupon(Long couponId);
+
+    /**
+     * 获取没有使用过的优惠券列表
+     * @param couponId
+     * @param count
+     * @return
+     */
+    List<String> getCouponSnList(long couponId, int count);
+
+    /**
+     *
+     * @param couponSnList
+     * @param couponIdentity
+     */
+    void updateCouponSnList(List<String> couponSnList, String couponIdentity,long couponId);
+
+    /**
+     * 文件上传优惠券数据
+     * @param mobiles
+     * @param couponId
+     */
+    void uploadCoupon(List<String> mobiles, Long couponId);
 }
