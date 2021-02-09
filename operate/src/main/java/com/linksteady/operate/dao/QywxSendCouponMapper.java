@@ -1,5 +1,6 @@
 package com.linksteady.operate.dao;
 
+import com.linksteady.operate.domain.CouponInfo;
 import com.linksteady.operate.domain.SendCouponRecord;
 import com.linksteady.operate.vo.CouponInfoVO;
 import com.linksteady.operate.vo.SendCouponVO;
@@ -47,4 +48,11 @@ public interface QywxSendCouponMapper {
     int getCouponSn();
 
     void updateCouponSn(int lastCouponSn);
+
+    /**
+     * 根据couponId去查优惠券的信息
+     * @param couponId
+     * @return
+     */
+    CouponInfoVO queryCoupon(Long couponId);
 }

@@ -464,14 +464,13 @@ public class QywxDailyController {
 
     /**
      * 测试单人发券逻辑
-     * @param couponName  券名称
      * @param couponIdentity 券标识
      * @param userIdentity 用户唯一标识
      * @return
      */
     @GetMapping("/sendCouponToUser")
-    public ResponseBo sendCouponToUser(@RequestParam("couponName") String couponName,@RequestParam("couponIdentity") String couponIdentity,@RequestParam("userIdentity") String userIdentity){
-        boolean coupon = qywxSendCouponService.sendCouponToUser(couponName, couponIdentity, userIdentity);
+    public ResponseBo sendCouponToUser(@RequestParam("couponId")Long couponId,@RequestParam("couponIdentity") String couponIdentity,@RequestParam("userIdentity") String userIdentity){
+        boolean coupon = qywxSendCouponService.sendCouponToUser(couponId, couponIdentity, userIdentity);
         if(!coupon){
           return   ResponseBo.error("单人发券错误");
         }

@@ -42,6 +42,12 @@
     <select id="getCouponSn" resultType="int">
         select coupon_sn from uo_qywx_param limit 1
     </select>
+    <select id="queryCoupon" resultMap="couponInfoVOMap">
+        select coupon_id,
+                        coupon_display_name,
+                        coupon_identity,
+                        valid_end from uo_qywx_coupon where coupon_id=#{couponId}
+    </select>
 
     <insert id="saveSendCouponRecord" useGeneratedKeys="true" keyProperty="sendRecordId" keyColumn="sendrecord_id">
        insert into  uo_qywx_coupon_sendrecord

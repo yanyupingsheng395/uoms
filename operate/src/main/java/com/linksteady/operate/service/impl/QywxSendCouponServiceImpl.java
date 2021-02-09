@@ -9,6 +9,7 @@ import com.linksteady.common.service.ConfigService;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.common.util.crypto.SHA1;
 import com.linksteady.operate.dao.QywxSendCouponMapper;
+import com.linksteady.operate.domain.CouponInfo;
 import com.linksteady.operate.domain.SendCouponRecord;
 import com.linksteady.operate.service.QywxSendCouponService;
 import com.linksteady.operate.vo.CouponInfoVO;
@@ -134,7 +135,7 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
      * @return
      */
     @Override
-    public boolean sendCouponToUser(String couponName,String couponIdentity,String userIdentity) {
+    public boolean sendCouponToUser(Long couponId,String couponIdentity,String userIdentity) {
         //发券的唯一标记类型 (PHONE表示手机号 UNIONID表示基于unionid发券 默认为PHONE)
         String sendCouponIdentityType=configService.getValueByName(ConfigEnum.sendCouponIdentityType.getKeyCode());
         if(StringUtils.isEmpty(sendCouponIdentityType)){
@@ -146,9 +147,7 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
         String sendResultDesc= "";//发券结果描述
         String couponInfo= null;
         SendCouponVO sendCouponVO=new SendCouponVO();
-        CouponInfoVO couponInfoVO=new CouponInfoVO();
-        couponInfoVO.setCouponName(couponName);
-        couponInfoVO.setCouponIdentity(couponIdentity);
+        CouponInfoVO couponInfoVO=qywxSendCouponMapper.queryCoupon(couponId);
         //设置券有效期开始时间
         couponInfoVO.setBeginDate(LocalDate.now());
         //设置券有效期结束时间
