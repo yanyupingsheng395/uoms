@@ -2,6 +2,7 @@ package com.linksteady.operate.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.enums.ConfigEnum;
 import com.linksteady.common.service.ConfigService;
@@ -32,8 +33,10 @@ import java.util.Map;
 @Slf4j
 public class QywxSendCouponServiceImpl implements QywxSendCouponService {
 
-    @Autowired
+    @Autowired(required = false)
     QywxSendCouponMapper qywxSendCouponMapper;
+
+    private static final String COUPON_NO_PREFIX="AYHQ";
 
     @Autowired
     ConfigService configService;
@@ -76,7 +79,7 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
             {
                 //直接调接口进行优惠券发放
                 sendCouponVOList=qywxSendCouponMapper.getCouponUserList(headId,couponId,100,0);
-                sendCouponSuccess=sendCoupon(headId,couponInfoVO,sendCouponVOList,sendCouponIdentityType);
+                sendCouponSuccess=sendCouponBatch(couponInfoVO,sendCouponVOList);
             }else
             {
                 //进行分页
@@ -86,7 +89,7 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
                 boolean tempFlag=true;
                 for (int i = 0; i < page; i++) {
                     sendCouponVOList=qywxSendCouponMapper.getCouponUserList(headId,couponId,pageSize,i * pageSize);
-                    tempFlag=sendCoupon(headId,couponInfoVO,sendCouponVOList,sendCouponIdentityType);
+                    tempFlag=sendCouponBatch(couponInfoVO,sendCouponVOList);
                     log.info("发券，返回的状态标记为:{}",tempFlag);
 
                     if(!tempFlag)
@@ -97,6 +100,33 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
             }
         }
         return sendCouponSuccess;
+    }
+
+    /**
+     * 批量生成优惠券发放流水号
+     * @param couponIdentity  优惠券唯一标记符号
+     * @param couponNoPrefix  优惠券编号前缀
+     * @param count           生成流水号的个数
+     * @return
+     */
+    private synchronized List<String> getCouponNum(String couponIdentity,String couponNoPrefix,int count)
+    {
+       //获取当前的流水号
+        int couponSn=qywxSendCouponMapper.getCouponSn();
+        if(couponSn==0) {
+            couponSn=1;
+        }
+        //最后一个序号
+        int lastCouponSn=couponSn+count;
+
+        //更新最后一个序号到数据库
+        qywxSendCouponMapper.updateCouponSn(lastCouponSn);
+        List<String> couponSnList= Lists.newArrayList();
+        //遍历生成序号
+        for(int i=couponSn+1;i<=lastCouponSn;i++){
+            couponSnList.add(couponNoPrefix+String.format("%012d", i));
+        }
+        return couponSnList;
     }
 
     /**
@@ -144,12 +174,16 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
         List<SendCouponVO> backSendCouponVOList= new ArrayList<>();
         try {
             couponInfo = JSON.toJSONString(couponInfoVO);
+            //根据优惠券编号获取发放流水号
+            List<String> couponNoList=getCouponNum(couponIdentity,COUPON_NO_PREFIX,1);
+            String couponSn=couponNoList.get(0);
             String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
-            String signature= SHA1.gen(timestamp,couponInfo,userIdentity,sendCouponIdentityType);
+            String signature= SHA1.gen(timestamp,couponInfo,userIdentity,couponSn,sendCouponIdentityType);
             Map<String,String> param= Maps.newHashMap();
             param.put("timestamp", timestamp);
             param.put("couponInfo",couponInfo);
             param.put("userIdentity",userIdentity);
+            param.put("couponSn",couponSn);
             param.put("sendCouponIdentityType",sendCouponIdentityType);
             param.put("signature", signature);
             log.info("发送单人优惠券，传入的参数为:{}",param);
@@ -190,12 +224,13 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
         return flag;
     }
 
-    /**
-     * 调用接口进行优惠券发放 并记录发送记录
-     * @param headId 待发券的headId
-     */
-    private boolean sendCoupon(long headId,CouponInfoVO couponInfoVO,List<SendCouponVO> sendCouponVOList,String sendCouponIdentityType)
-    {
+    @Override
+    public boolean sendCouponBatch(CouponInfoVO couponInfoVO, List<SendCouponVO> sendCouponVOList) {
+        //发券的唯一标记类型 (PHONE表示手机号 UNIONID表示基于unionid发券 默认为PHONE)
+        String sendCouponIdentityType=configService.getValueByName(ConfigEnum.sendCouponIdentityType.getKeyCode());
+        if(StringUtils.isEmpty(sendCouponIdentityType)){
+            sendCouponIdentityType="PHONE";
+        }
         //发券是否成功 true表示成功 false表示失败
         boolean flag=true;
         String couponInfo= null;
@@ -204,17 +239,13 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
         String sendResultDesc= "";
 
         //进行数据校验
-        if("PHONE".equals(sendCouponIdentityType))
-        {
-            if(sendCouponVOList.stream().filter(i->StringUtils.isEmpty(i.getUserPhone())).count()>0l)
-            {
+        if("PHONE".equals(sendCouponIdentityType)){
+            if(sendCouponVOList.stream().filter(i->StringUtils.isEmpty(i.getUserPhone())).count()>0l){
                 log.error("发券校验失败，发券方式为基于手机号发券，但获取到的手机号为空");
-                 return false;
+                return false;
             }
-        }else if("UNIONID".equals(sendCouponIdentityType))
-        {
-            if(sendCouponVOList.stream().filter(i->StringUtils.isEmpty(i.getUnionId())).count()>0l)
-            {
+        }else if("UNIONID".equals(sendCouponIdentityType)){
+            if(sendCouponVOList.stream().filter(i->StringUtils.isEmpty(i.getUnionId())).count()>0l){
                 log.error("发券校验失败，发券方式为基于手机号发券，但获取到的手机号为空");
                 return false;
             }
@@ -225,6 +256,13 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
          */
         List<SendCouponVO> backSendCouponVOList= null;
         try {
+            //批量获取发放流水号，并放入集合中
+            List<String> couponNoList=getCouponNum(couponInfoVO.getCouponIdentity(),COUPON_NO_PREFIX,sendCouponVOList.size());
+            int i=0;
+            for(SendCouponVO sendCouponVO:sendCouponVOList){
+                sendCouponVO.setCouponSn(couponNoList.get(i));
+                i++;
+            }
             String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
             couponInfo = JSON.toJSONString(couponInfoVO);
             sendCouponList = JSON.toJSONString(sendCouponVOList);
@@ -244,60 +282,37 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
 
             log.info("调用发券服务，接口返回的结果为:{}",jsonObject);
 
-            if(null==jsonObject||200!=jsonObject.getIntValue("code"))
-            {
+            if(null==jsonObject||200!=jsonObject.getIntValue("code")){
                 sendResult="F";
                 sendResultDesc=jsonObject.getString("msg");
                 backSendCouponVOList=sendCouponVOList;
                 flag=false;
-            }else
-            {
+            }else{
                 sendResult="S";
                 sendResultDesc="发送成功";
                 backSendCouponVOList= JSONObject.parseArray(jsonObject.getString("data"), SendCouponVO.class);
             }
         } catch (Exception e) {
-           log.error("调用发券接口进行发券失败，原因为{}",e);
+            log.error("调用发券接口进行发券失败，原因为{}",e);
             sendResult="F";
             sendResultDesc="调用发券接口失败";
             backSendCouponVOList=sendCouponVOList;
             flag=false;
         }
-
-        log.info("保存发券记录");
         SendCouponRecord sendCouponRecord=new SendCouponRecord();
-        sendCouponRecord.setHeadId(headId);
         sendCouponRecord.setCouponInfo(couponInfo);
         sendCouponRecord.setUserInfo(sendCouponList);
         sendCouponRecord.setSendResult(sendResult);
         sendCouponRecord.setSendResultDesc(sendResultDesc);
         sendCouponRecord.setInsertDt(LocalDateTime.now());
 
-        log.info(JSON.toJSONString(backSendCouponVOList));
+        log.info("保存发券记录"+JSON.toJSONString(backSendCouponVOList));
         //记录发送记录
         qywxSendCouponMapper.saveSendCouponRecord(sendCouponRecord);
         //将发券记录ID更新到每日运营明细表中去
         qywxSendCouponMapper.updateCouponSendRecord(sendResult,sendCouponRecord.getSendRecordId(),backSendCouponVOList);
-
         return flag;
     }
 
-//    @Override
-//    public boolean sendList() {
-//        CouponInfoVO couponInfoVO=new CouponInfoVO();
-//        couponInfoVO.setCouponName("30元优惠券");
-//        couponInfoVO.setCouponIdentity("60053");
-//        DateTimeFormatter ftf1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-//        couponInfoVO.setEndDate(LocalDate.parse("2021-01-25 00:00:00", ftf1));
-//        couponInfoVO.setBeginDate(LocalDate.parse("2021-01-22 00:00:00", ftf1));
-//        List<SendCouponVO> sendCouponVOList=new ArrayList<>();
-//        SendCouponVO sendCouponVO=new SendCouponVO();
-//        sendCouponVO.setUnionId("oinwC1Rygm7pDLnjNpR1Pg6G0wBI");
-//        sendCouponVOList.add(sendCouponVO);
-//        SendCouponVO sendCouponVO2=new SendCouponVO();
-//        sendCouponVO2.setUnionId("oinwC1Rs3-JXP9SCFHsg3RCLnNeY");
-//        sendCouponVOList.add(sendCouponVO2);
-//        return sendCoupon(111,couponInfoVO,sendCouponVOList,"UNIONID");
-//    }
 
 }

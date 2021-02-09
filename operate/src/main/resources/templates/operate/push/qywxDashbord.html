@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="edge"/>
+    <title>用户成长系统</title>
+    <th:block th:include="common/include :: common-css" />
+    <th:block th:include="common/include::bootstrap-table-css" />
+    <style>
+        #pushTable thead {
+            background-color: #eff3f8;
+        }
+
+        hr {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body class="gray-bg">
+<div class="lyear-layout-web">
+    <div class="lyear-layout-container">
+        <!-- 页面主要内容 -->
+        <main class="lyear-layout-content"
+              style="padding-top: 0px; padding-left: 0px;padding-right: 13px;margin-left: 10px;margin-right: 10px;">
+            <div class="container-div ui-layout-center select-table table-striped">
+                <!--推送按钮-->
+                <div class="row">
+                    <div class="col-sm-8">
+                        <div class="btn-group-sm" role="group">
+                            <a class="btn btn-primary" id="startPush" onclick="start()" shiro:hasPermission="pushadmin">
+                                <i class="fa fa-play"></i> 启动推送
+                            </a>
+                            <a class="btn btn-danger" id="stopPush" onclick="stop()" shiro:hasPermission="pushadmin">
+                                <i class="fa fa-stop"></i> 停止推送
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 text-center">
+                        <div class="btn-group-sm" role="group">
+                            <a class="btn btn-info" id="status_btn">
+                                <i class="fa fa-info-circle"></i> <span id="status">当前状态：--</span>
+                            </a>
+                        </div>
+                    </div>
+                 <!--   <div class="col-sm-2 text-right">
+                        <div class="btn-group-sm" role="group">
+                            <a class="btn btn-secondary" onclick="getPushLog(-1)">
+                                <i class="fa fa-arrow-left"></i> 前一天
+                            </a>
+                            <a class="btn btn-secondary" onclick="getPushLog(1)">
+                                后一天 <i class="fa fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>-->
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <hr class="hr m-t-0 m-b-5"/>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</div>
+<th:block th:include="common/include::footer" />
+<th:block th:include="common/include::perfect-scrollbar" />
+<th:block th:include="common/include::jquery-validate-js" />
+<th:block th:include="common/include::common-js" />
+<th:block th:include="common/include::bootstrap-table-js" />
+<th:block th:include="common/include::jquery-confirm-js" />
+<th:block th:include="common/include::echarts" />
+
+<script>
+    window.onload = function () {
+        //获取当前微信服务状态
+        status();
+        //获取启动日志
+        //getPushLog();
+    };
+
+    // 启动服务
+    function start() {
+        $("#startPush").attr("disabled",true);
+        $MB.loadingDesc('show', '启动服务中，请稍候...');
+        $.get( "/push/start", {}, function (r) {
+            if (r.code === 200) {
+                //延迟 显示遮罩层 延迟7s后结束
+                setTimeout(
+                    function(){
+                        $MB.n_success(r.msg);
+                        status();
+                        $MB.loadingDesc('hide');
+                        $("#startPush").attr("disabled",false);
+                    }
+                    ,7000);
+            }else{
+                $MB.n_warning(r.msg);
+                $MB.loadingDesc('hide');
+                $("#startPush").attr("disabled",false);
+            }
+        } );
+    }
+
+    // 停止服务
+    function stop() {
+        $("#stopPush").attr("disabled",true);
+        $MB.loadingDesc('show', '停止服务中，请稍候...');
+        $.get( "/push/stop", {}, function (r) {
+            if (r.code === 200) {
+                //延迟 显示遮罩层 延迟7s后结束
+                setTimeout(
+                    function()
+                    {
+                        $MB.n_success(r.msg);
+                        status();
+                        $MB.loadingDesc('hide');
+                        $("#stopPush").attr("disabled",false);
+                    }
+                    ,7000);
+            }else {
+                $MB.n_warning(r.msg);
+                $MB.loadingDesc('hide');
+                $("#stopPush").attr("disabled",false);
+            }
+        } );
+    }
+
+    function status() {
+        $.get( "/qywxpush/status", {}, function (r) {
+            let status = r.data;
+            let code = "";
+            if (status == 'Y') {
+                $( "#status_btn").removeClass().addClass('btn btn-info');
+                code = "当前推送状态：已启动";
+            }
+            if (status == 'N') {
+                $( "#status_btn").removeClass().addClass('btn btn-danger');
+                code = "当前推送状态：已停止";
+            }
+            if (status != 'Y' && status != "N") {
+                $( "#status_btn").removeClass().addClass('btn btn-warning');
+                code = "当前推送状态：未知状态";
+            }
+            $( "#status" ).html( '' ).append( code );
+        } );
+    }
+
+</script>
+</body>
+</html>

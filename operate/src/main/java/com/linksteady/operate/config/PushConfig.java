@@ -259,4 +259,8 @@ public class PushConfig {
     public String getWxofficialEnabled() {
         return  configService.getValueByName(ConfigEnum.wxofficialEnabled.getKeyCode());
     }
+
+    public String getQywxPushFlag() {
+        return configService.getValueByName(ConfigEnum.qywxSyncMsgResult.getKeyCode());
+    }
 }

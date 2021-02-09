@@ -1,5 +1,10 @@
 package com.linksteady.operate.service;
 
+import com.linksteady.operate.vo.CouponInfoVO;
+import com.linksteady.operate.vo.SendCouponVO;
+
+import java.util.List;
+
 /**
  * 优惠券的发放
  */
@@ -12,6 +17,12 @@ public interface QywxSendCouponService {
     boolean sendCouponToDailyUser(Long headId);
 
     boolean sendCouponToUser(String couponName,String couponIdentity,String userIdentity);
+
+    /**
+     *批量发券
+     * @return
+     */
+    boolean sendCouponBatch(CouponInfoVO couponInfoVO, List<SendCouponVO> sendCouponVOList);
 
 //    boolean sendList();
 }

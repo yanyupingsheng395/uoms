@@ -43,4 +43,8 @@ public interface QywxSendCouponMapper {
      * @param couponIdentity
      */
     String getCouponEndDate(String couponIdentity);
+
+    int getCouponSn();
+
+    void updateCouponSn(int lastCouponSn);
 }

@@ -39,6 +39,10 @@
         select valid_end from uo_qywx_coupon where coupon_identity=#{couponIdentity}
     </select>
 
+    <select id="getCouponSn" resultType="int">
+        select coupon_sn from uo_qywx_param limit 1
+    </select>
+
     <insert id="saveSendCouponRecord" useGeneratedKeys="true" keyProperty="sendRecordId" keyColumn="sendrecord_id">
        insert into  uo_qywx_coupon_sendrecord
             (
@@ -73,6 +77,10 @@
         ) as tmp(sendrecord_id,sendresult,coupon_sn,detail_id)
         where tmp.detail_id=uo_qywx_daily_detail.detail_id
 
+    </update>
+
+    <update id="updateCouponSn">
+        update uo_qywx_param set coupon_sn=#{lastCouponSn}
     </update>
 
 </mapper>

@@ -47,6 +47,21 @@ public class RootPathController extends BaseController {
     }
 
     /**
+     * 推送控制页
+     * @return
+     */
+    @RequestMapping("/qywxPush")
+    public String qywxPush(Model model) {
+        if(pushConfig != null) {
+            String status = pushConfig.getPushFlag();
+            if(StringUtils.isNotEmpty(status)) {
+                model.addAttribute("status", status);
+            }
+        }
+        return "operate/push/qywxDashbord";
+    }
+
+    /**
      * 桑基图
      * @return
      */
