@@ -2,6 +2,7 @@ package com.linksteady.common.util;
 
 import com.alibaba.fastjson.JSON;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 
 import java.io.File;
@@ -10,6 +11,7 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 public class OkHttpUtil {
 
     private static OkHttpClient okHttpClient;
@@ -39,11 +41,15 @@ public class OkHttpUtil {
                 .build();
 
         Call call = okHttpClient.newCall(request);
+        log.info("newcall");
         try {
+            log.info("request:{}",url);
             Response response = call.execute();
+            log.info("exec:{}",response.body());
             ResponseBody responseBody = response.body();
             return responseBody.string();
         } catch (IOException e) {
+            log.error("http请求出错，原因为{}",e);
             e.printStackTrace();
         }
         return "";
@@ -68,7 +74,7 @@ public class OkHttpUtil {
             ResponseBody responseBody = response.body();
             return responseBody.string();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("http请求出错，原因为{}",e);
         }
         return "";
     }
@@ -92,7 +98,7 @@ public class OkHttpUtil {
             ResponseBody responseBody = response.body();
             return responseBody.string();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("http请求出错，原因为{}",e);
         }
         return null;
     }
@@ -116,7 +122,7 @@ public class OkHttpUtil {
             ResponseBody responseBody = response.body();
             return responseBody.string();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("http请求出错，原因为{}",e);
         }
         return null;
     }
@@ -196,7 +202,7 @@ public class OkHttpUtil {
             ResponseBody responseBody = response.body();
             return responseBody.string();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("http请求出错，原因为{}",e);
         }
         return null;
     }
@@ -216,7 +222,7 @@ public class OkHttpUtil {
             ResponseBody responseBody = response.body();
             return responseBody.byteStream();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("http请求出错，原因为{}",e);
         }
         return null;
     }
@@ -251,7 +257,7 @@ public class OkHttpUtil {
             ResponseBody responseBody = response.body();
             return responseBody.string();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("http请求出错，原因为{}",e);
         }
         return null;
     }
@@ -286,7 +292,7 @@ public class OkHttpUtil {
             ResponseBody responseBody = response.body();
             return responseBody.string();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("http请求出错，原因为{}",e);
         }
         return null;
     }

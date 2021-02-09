@@ -58,6 +58,7 @@ public class FollowUserServiceImpl implements FollowUserService {
 
         String result=OkHttpUtil.getRequest(requestUrl.toString());
         JSONObject jsonObject =JSON.parseObject(result);
+        log.info("获取导购详情信息，返回的结果为{}",jsonObject);
         WxError error = WxError.fromJsonObject(jsonObject);
         if (error.getErrorCode() != 0) {
             log.info("获取导购详细信息失败，原因为{}",error);

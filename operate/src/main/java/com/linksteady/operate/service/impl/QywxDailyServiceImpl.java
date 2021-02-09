@@ -105,7 +105,8 @@ public class QywxDailyServiceImpl implements QywxDailyService {
         //判断优惠券是否已发放 如果未发放，则进行优惠券的发放
         if ("N".equals(qywxDailyHeader.getCouponSendFlag())) {
             try {
-                boolean flag = qywxSendCouponService.sendCouponToDailyUser(headId);
+                  boolean flag= true;
+          //      boolean flag = qywxSendCouponService.sendCouponToDailyUser(headId);
                 if (!flag) {
                     throw new SendCouponException("发券失败，请联系系统运维人员");
                 }else
@@ -351,7 +352,8 @@ public class QywxDailyServiceImpl implements QywxDailyService {
         QywxDailyHeader header=qywxDailyMapper.getHeadInfo(headId);
         if(null!=header&&"N".equals(header.getCouponSendFlag()))
         {
-            boolean flag=qywxSendCouponService.sendCouponToDailyUser(headId);
+          //  boolean flag=qywxSendCouponService.sendCouponToDailyUser(headId);
+            boolean flag=true;
             return flag?"发券成功":"发券失败";
         }else {
             return "不存在的ID或当前记录已发过券了";
