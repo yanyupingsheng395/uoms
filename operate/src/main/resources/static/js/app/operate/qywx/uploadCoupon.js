@@ -8,33 +8,54 @@ function beforeUpload() {
 }
 
 function pushMessage() {
-    let file = document.getElementById('file').files;
-    if(document.getElementById('file').files.length === 0) {
-        $MB.n_warning("请上传数据！");
-        return false;
-    }
-    if(file[0].size > 10485760) {
-        $MB.n_warning("上传数据不能超过10M！");
-        return false;
-    }
     let formData = new FormData();
-    formData.append("couponId",$("#couponId").val());
-    formData.append("file", document.getElementById('file').files[0]);
-    $.ajax({
-        url: "/qywxDaily/uploadCoupon",
-        type: "POST",
-        data: formData,
-        contentType: false,
-        processData: false,
-        success: function (data) {
-            if (data.code === 200) {
-                $MB.n_success("数据提交成功！");
-            } else {
+    if(sendFlag){
+        let file = document.getElementById('file').files;
+        if(document.getElementById('file').files.length === 0) {
+            $MB.n_warning("请上传数据！");
+            return false;
+        }
+        if(file[0].size > 10485760) {
+            $MB.n_warning("上传数据不能超过10M！");
+            return false;
+        }
+        formData.append("couponId",$("#couponId").val());
+        formData.append("file", document.getElementById('file').files[0]);
+        $.ajax({
+            url: "/qywxDaily/uploadCoupon",
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data.code === 200) {
+                    $MB.n_success("数据提交成功！");
+                } else {
+                    $MB.n_danger(data.msg);
+                }
+            },
+            error: function (data) {
                 $MB.n_danger(data.msg);
             }
-        },
-        error: function (data) {
-            $MB.n_danger(data.msg);
-        }
-    });
+        });
+    }else{
+        formData.append("couponId",$("#couponId").val());
+        $.ajax({
+            url: "/qywxDaily/couponToSequence",
+            type: "POST",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                if (data.code === 200) {
+                    $MB.n_success("数据生成成功！");
+                } else {
+                    $MB.n_danger(data.msg);
+                }
+            },
+            error: function (data) {
+                $MB.n_danger(data.msg);
+            }
+        });
+    }
 }

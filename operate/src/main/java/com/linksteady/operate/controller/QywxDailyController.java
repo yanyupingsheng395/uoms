@@ -21,6 +21,7 @@ import com.linksteady.operate.vo.FollowUserVO;
 import com.linksteady.operate.vo.RecProdVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -511,6 +512,16 @@ public class QywxDailyController {
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseBo.error("文件解析异常！");
+        } catch (LinkSteadyException e) {
+            return  ResponseBo.error(e.getMessage());
+        }
+        return  ResponseBo.ok();
+    }
+
+    @PostMapping("/couponToSequence")
+    public ResponseBo couponToSequence(@RequestParam("couponId")  Long couponId) throws Exception {
+        try {
+            qywxDailyDetailService.couponToSequence(couponId);
         } catch (LinkSteadyException e) {
             return  ResponseBo.error(e.getMessage());
         }

@@ -195,7 +195,7 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void uploadCoupon(MultipartFile file, Long couponId)throws IOException, LinkSteadyException {
+    public void uploadCoupon(MultipartFile file, Long couponId)throws LinkSteadyException {
         // 解析file
         List<String> mobiles = Lists.newArrayList();
         String xlsSuffix = ".xls";
@@ -232,6 +232,27 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
         }
         //获取数据，更新到uo_coupon_serial_no中
         qywxSendCouponMapper.uploadCoupon(mobiles,couponId);
+    }
+
+    @Override
+    public void couponToSequence(Long couponId) throws LinkSteadyException{
+        //获取当前的流水号
+        int couponSn=qywxSendCouponMapper.getCouponSn();
+        if(couponSn==0) {
+            couponSn=1;
+        }
+        //最后一个序号
+        int lastCouponSn=couponSn+100;
+
+        //更新最后一个序号到数据库
+        qywxSendCouponMapper.updateCouponSn(lastCouponSn);
+        List<String> couponSnList= Lists.newArrayList();
+        //遍历生成序号
+        for(int i=couponSn+1;i<=lastCouponSn;i++){
+            couponSnList.add(String.format("%012d", i));
+        }
+        //获取数据，更新到uo_coupon_serial_no中
+        qywxSendCouponMapper.uploadCoupon(couponSnList,couponId);
     }
 
     /**

@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.enums.ConfigEnum;
 import com.linksteady.common.service.ConfigService;
+import com.linksteady.common.thrift.RetentionData;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.common.util.crypto.SHA1;
 import com.linksteady.operate.dao.QywxSendCouponMapper;
@@ -14,6 +15,7 @@ import com.linksteady.operate.domain.SendCouponRecord;
 import com.linksteady.operate.service.QywxSendCouponService;
 import com.linksteady.operate.vo.CouponInfoVO;
 import com.linksteady.operate.vo.SendCouponVO;
+import com.linksteady.smp.starter.domain.ResultInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 @Slf4j
@@ -38,6 +41,7 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
     QywxSendCouponMapper qywxSendCouponMapper;
 
     private static final String COUPON_NO_PREFIX="AYHQ";
+    private ReentrantLock lock = new ReentrantLock();
 
     @Autowired
     ConfigService configService;
@@ -108,13 +112,21 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
      * @param count           生成流水号的个数
      * @return
      */
-    private synchronized List<String> getCouponNum(long couponId,int count,String couponIdentity){
-       //获取当前的流水号
+    private List<String> getCouponNum(long couponId,int count,String couponIdentity){
+        lock.lock();
         List<String> couponSnList= Lists.newArrayList();
-        couponSnList= qywxSendCouponMapper.getCouponSnList(couponId,count);
-        //将查询的集合更新usedFlag为Y，并将couponIdentity更新到表中
-        qywxSendCouponMapper.updateCouponSnList(couponSnList,couponIdentity,couponId);
-        return couponSnList;
+        try {
+            //获取当前的流水号
+            couponSnList= qywxSendCouponMapper.getCouponSnList(couponId,count);
+            //将查询的集合更新usedFlag为Y，并将couponIdentity更新到表中
+            qywxSendCouponMapper.updateCouponSnList(couponSnList,couponIdentity,couponId);
+            return couponSnList;
+        } catch (Exception e) {
+            log.error("thrift接口获取拟合值数据异常", e);
+            return couponSnList;
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
@@ -162,6 +174,9 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
             couponInfo = JSON.toJSONString(couponInfoVO);
             //根据优惠券编号获取发放流水号
             List<String> couponNoList=getCouponNum(couponId,1,couponInfoVO.getCouponIdentity());
+            if(couponNoList.size()<=0){
+                throw new Exception("发放优惠券失败,获取优惠券流水号失败！");
+            }
             String couponSn=couponNoList.get(0);
             String timestamp=String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(8)));
             String signature= SHA1.gen(timestamp,couponInfo,userIdentity,couponSn,sendCouponIdentityType);
@@ -244,6 +259,9 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
         try {
             //批量获取发放流水号，并放入集合中
             List<String> couponNoList=getCouponNum(couponId,sendCouponVOList.size(),couponInfoVO.getCouponIdentity());
+            if(couponNoList.size()<=0){
+                throw new Exception("发放优惠券失败,获取优惠券流水号失败！");
+            }
             int i=0;
             for(SendCouponVO sendCouponVO:sendCouponVOList){
                 sendCouponVO.setCouponSn(couponNoList.get(i));
