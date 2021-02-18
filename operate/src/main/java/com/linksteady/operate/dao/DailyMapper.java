@@ -110,4 +110,7 @@ public interface DailyMapper {
     void expireDailyHead();
 
     String getLifeCycleByUserId(String userId, String headId);
+
+    String queryCouponFlag();
+
 }

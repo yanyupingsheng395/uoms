@@ -62,4 +62,11 @@ public interface DailyService {
     void expireDailyHead();
 
     String getLifeCycleByUserId(String userId, String headId);
+
+    /**
+     * 查询生成优惠券流水号的方式
+     */
+    String queryCouponFlag();
+
+
 }

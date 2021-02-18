@@ -357,4 +357,9 @@ public class DailyServiceImpl implements DailyService {
     public String getLifeCycleByUserId(String userId, String headId) {
         return dailyMapper.getLifeCycleByUserId(userId, headId);
     }
+
+    @Override
+    public String queryCouponFlag() {
+        return  dailyMapper.queryCouponFlag();
+    }
 }
