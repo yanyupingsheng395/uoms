@@ -21,4 +21,6 @@ public class SystemProperties {
     private String thriftServerHost ="127.0.0.1";
 
     private int thriftServerPort = 7778;
+
+    private boolean sendFlag= true;
 }
