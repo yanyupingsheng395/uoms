@@ -428,9 +428,8 @@ public class PageController extends BaseController {
     @Log(value = "每日用户运营[企业微信]-上传优惠券流水号", location = "用户成长系统")
     @RequestMapping("/qywxDaily/uploadCoupon")
     public String uploadCoupo(Model model) {
-        boolean couponFlag=true;
-        couponFlag="Y".equals(dailyService.queryCouponFlag())?true:false;
-        model.addAttribute("sendFlag",couponFlag);
+        boolean coupontype="Y".equals(ConfigEnum.sendCouponType.getKeyCode())?true:false;
+        model.addAttribute("sendFlag",coupontype);
         return "operate/qywx/uploadCoupon";
     }
 

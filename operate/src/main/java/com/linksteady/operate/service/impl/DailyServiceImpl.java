@@ -358,8 +358,4 @@ public class DailyServiceImpl implements DailyService {
         return dailyMapper.getLifeCycleByUserId(userId, headId);
     }
 
-    @Override
-    public String queryCouponFlag() {
-        return  dailyMapper.queryCouponFlag();
-    }
 }

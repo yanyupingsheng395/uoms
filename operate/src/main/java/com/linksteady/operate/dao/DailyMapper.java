@@ -111,6 +111,5 @@ public interface DailyMapper {
 
     String getLifeCycleByUserId(String userId, String headId);
 
-    String queryCouponFlag();
 
 }
