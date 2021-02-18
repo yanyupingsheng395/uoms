@@ -51,13 +51,13 @@
                                         <span id="upload_file_name"></span>
                                     </div>
                                 </div>
-                                <div th:if="${sendFlag eq 'N'}">
+                                <div th:if="${!sendFlag}">
                                     <label class="col-md-2 control-label">生成说明：</label>
-                                    <div class="col-md-8">
+                                    <div class="col-md-8" style="margin-top:7px;">
                                         <span >点击一次，生成100个优惠券流水号编码</span>
                                     </div>
                                 </div>
-                                <a  class="btn btn-primary btn-sm" role="button" onclick="pushMessage()" style="margin-left: 390px;width: 15%">提交</a>
+                                <a  class="btn btn-primary btn-sm" role="button" onclick="pushMessage()" style="margin-left: 390px;width: 15%;margin-top:10px;">提交</a>
                             </div>
                         </form>
                     </div>
@@ -69,7 +69,7 @@
 <div data-th-include="operate/chooseMedia/chooseMedia"></div>
 <div data-th-include="operate/chooseMediaImg/chooseMediaImg"></div>
 <script>
-    var sendFlag = "[[${sendFlag}]]";
+    var sendFlag = [[${sendFlag}]];
 </script>
 </body>
 <th:block th:include="common/include::footer" />
