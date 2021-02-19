@@ -94,11 +94,13 @@ public class FollowUserServiceImpl implements FollowUserService {
         //对本地的导购详细信息进行更新
         FollowUser followUser=null;
 
+        int count=0;
         for(String followerUserId:followerUserList)
         {
+            count++;
             //查询成员的详细信息，并进行更新
             followUser = selectUserDetail(followerUserId);
-            log.info("对follower:{}的详细信息进行更新",followerUserId);
+            log.info("{}对follower:{}的详细信息进行更新",count,followerUserId);
             followUserMapper.updateFollowUser(followUser);
         }
         log.info("同步具有外部联系权限的成员列表结束");

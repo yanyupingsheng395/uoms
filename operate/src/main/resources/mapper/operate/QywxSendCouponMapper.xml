@@ -49,7 +49,7 @@
                         valid_end from uo_qywx_coupon where coupon_id=#{couponId}
     </select>
     <select id="getCouponSnList" resultType="String">
-        select serial_no from uo_coupon_serial_no where used_flag='N' and coupon_id=#{couponId} limit #{count}
+        select serial_no from uo_coupon_serial_no where used_flag='N' and coupon_id=#{couponId} limit #{count} order by serial_no asc
     </select>
 
     <insert id="saveSendCouponRecord" useGeneratedKeys="true" keyProperty="sendRecordId" keyColumn="sendrecord_id">

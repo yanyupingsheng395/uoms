@@ -18,9 +18,9 @@ public class OkHttpUtil {
 
     static {
         OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(60, TimeUnit.SECONDS)
-                .writeTimeout(60, TimeUnit.SECONDS)
-                .readTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(20, TimeUnit.SECONDS)
                 .build();
         okHttpClient = client;
     }
@@ -41,17 +41,15 @@ public class OkHttpUtil {
                 .build();
 
         Call call = okHttpClient.newCall(request);
-        log.info("newcall");
         try {
-            log.info("request:{}",url);
             Response response = call.execute();
-            log.info("exec:{}",response.body());
-            ResponseBody responseBody = response.body();
-            return responseBody.string();
-        } catch (IOException e) {
+            String result=response.body().string();
+            return result;
+        } catch (Exception e) {
             log.error("http请求出错，原因为{}",e);
             e.printStackTrace();
         }
+
         return "";
     }
 
