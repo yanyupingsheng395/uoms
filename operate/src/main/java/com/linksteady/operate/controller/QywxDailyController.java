@@ -17,8 +17,10 @@ import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.exception.PushQywxMessageException;
 import com.linksteady.operate.exception.SendCouponException;
 import com.linksteady.operate.service.*;
+import com.linksteady.operate.vo.CouponInfoVO;
 import com.linksteady.operate.vo.FollowUserVO;
 import com.linksteady.operate.vo.RecProdVo;
+import com.linksteady.operate.vo.SendCouponVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xmlbeans.impl.xb.xsdschema.Public;
@@ -32,10 +34,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -478,6 +477,29 @@ public class QywxDailyController {
         boolean coupon = qywxSendCouponService.sendCouponToUser(couponId, couponIdentity, userIdentity);
         if(!coupon){
           return   ResponseBo.error("单人发券错误");
+        }
+        return ResponseBo.ok();
+    }
+
+    /**
+     * 测试多人发券
+     * @return
+     */
+    @RequestMapping("/testCouponBatch")
+    public ResponseBo  testCouponBatch(@RequestParam("couponId")Long couponId){
+        CouponInfoVO couponInfoVO=new CouponInfoVO();
+        couponInfoVO.setCouponId(couponId);
+        couponInfoVO.setCouponIdentity("R676FP6VJ66T");
+        List<SendCouponVO> sendCouponVOList=new ArrayList<>();
+        SendCouponVO sendCouponVO1=new SendCouponVO();
+        sendCouponVO1.setUserPhone("15097615242");
+        sendCouponVOList.add(sendCouponVO1);
+        SendCouponVO sendCouponVO2=new SendCouponVO();
+        sendCouponVO2.setUserPhone("15810081993");
+        sendCouponVOList.add(sendCouponVO2);
+        boolean b = qywxSendCouponService.sendCouponBatch(couponId, couponInfoVO, sendCouponVOList);
+        if(!b){
+            return   ResponseBo.error("多人发券错误");
         }
         return ResponseBo.ok();
     }

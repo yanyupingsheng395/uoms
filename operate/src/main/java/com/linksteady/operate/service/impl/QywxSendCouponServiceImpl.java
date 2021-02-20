@@ -134,6 +134,7 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
      * @return
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean sendCouponToUser(Long couponId,String couponIdentity,String userIdentity) {
         //发券的唯一标记类型 (PHONE表示手机号 UNIONID表示基于unionid发券 默认为PHONE)
         String sendCouponIdentityType=configService.getValueByName(ConfigEnum.sendCouponIdentityType.getKeyCode());
@@ -226,6 +227,7 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public boolean sendCouponBatch(long couponId,CouponInfoVO couponInfoVO, List<SendCouponVO> sendCouponVOList) {
         //发券的唯一标记类型 (PHONE表示手机号 UNIONID表示基于unionid发券 默认为PHONE)
         String sendCouponIdentityType=configService.getValueByName(ConfigEnum.sendCouponIdentityType.getKeyCode());
