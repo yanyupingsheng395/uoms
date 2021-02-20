@@ -90,9 +90,18 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
             sendCouponIdentityType="PHONE";
         }
 
-        //todo 对券信息 和用户信息进行校验
         if(StringUtils.isEmpty(sendCouponVO.getUserIdentity())){
             log.error("发券校验失败，用户标记为空");
+            throw new Exception("发券校验失败");
+        }
+
+        if(couponInfoVO ==null||couponInfoVO.getCouponId()<=0||
+                StringUtils.isEmpty(couponInfoVO.getBeginDate())||
+                StringUtils.isEmpty(couponInfoVO.getEndDate())||
+                StringUtils.isEmpty(couponInfoVO.getBeginDate())||
+                StringUtils.isEmpty(couponInfoVO.getCouponIdentity())||
+                StringUtils.isEmpty(couponInfoVO.getCouponName())){
+            log.error("发券校验失败，券信息有误");
             throw new Exception("发券校验失败");
         }
 
@@ -171,13 +180,21 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
             sendCouponIdentityType="PHONE";
         }
 
-        //todo 对优惠券信息进行校验
-        if(sendCouponVOList.stream().filter(i->StringUtils.isEmpty(i.getUserIdentity())).count()>0l){
+        if(sendCouponVOList.stream().filter(i->StringUtils.isEmpty(i.getUserIdentity())||
+                                                StringUtils.isEmpty(i.getBusinessId())||
+                                                StringUtils.isEmpty(i.getBusinessType())).count()>0l){
             log.error("发券校验失败，用户标识为空");
             throw new Exception("发券校验失败");
         }
-        // businessId  businessType 不能为空
-        // couponID   couponIdentity couponName beginDt endDt 不能为空
+        if(couponInfoVO ==null||couponInfoVO.getCouponId()<=0||
+                StringUtils.isEmpty(couponInfoVO.getBeginDate())||
+                StringUtils.isEmpty(couponInfoVO.getEndDate())||
+                StringUtils.isEmpty(couponInfoVO.getBeginDate())||
+                StringUtils.isEmpty(couponInfoVO.getCouponIdentity())||
+                StringUtils.isEmpty(couponInfoVO.getCouponName())){
+            log.error("发券校验失败，券信息有误");
+            throw new Exception("发券校验失败");
+        }
 
         //发券是否成功 true表示成功 false表示失败
         String couponInfo= null;
@@ -216,16 +233,14 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
             log.info("调用发券服务，接口返回的结果为:{}",jsonObject);
 
             if(null==jsonObject||200!=jsonObject.getIntValue("code")){
-                sendResult="F";
-                sendResultDesc=jsonObject.getString("msg");
+                throw new Exception(jsonObject.getString("msg"));
             }else{
                 sendResult="S";
                 sendResultDesc="发送成功";
             }
         } catch (Exception e) {
             log.error("调用发券接口进行发券失败，原因为{}",e);
-            sendResult="F";
-            sendResultDesc="调用发券接口失败";
+            throw new Exception("调用发券接口失败。"+e);
         }
         SendCouponRecord sendCouponRecord=new SendCouponRecord();
         sendCouponRecord.setCouponInfo(couponInfo);
