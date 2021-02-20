@@ -25,11 +25,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -548,5 +553,30 @@ public class QywxDailyController {
             return  ResponseBo.error(e.getMessage());
         }
         return  ResponseBo.ok();
+    }
+
+    /**
+     * 下载模板
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping("/download")
+    public void fileDownload(HttpServletResponse response) throws Exception {
+        String fileName = "coupon_template.xls";
+        String realFileName = fileName.substring(fileName.indexOf('_') + 1);
+        Resource resource =  new ClassPathResource("excel/" + fileName);
+        InputStream in = resource.getInputStream();
+        response.setHeader("Content-Disposition", "inline;fileName=" + java.net.URLEncoder.encode(realFileName, "utf-8"));
+        response.setContentType("application/vnd.ms-excel");
+        response.setCharacterEncoding("utf-8");
+        try (InputStream inputStream = in; OutputStream os = response.getOutputStream()) {
+            byte[] b = new byte[2048];
+            int length;
+            while ((length = inputStream.read(b)) > 0) {
+                os.write(b, 0, length);
+            }
+        } catch (Exception e) {
+            log.error("文件下载失败", e);
+        }
     }
 }
