@@ -11,14 +11,14 @@ public class SendCouponVO implements java.io.Serializable{
     private long businessId;
 
     /**
-     * 用户手机号
+     * 业务类型
      */
-    private String userPhone;
+    private String businessType;
 
     /**
-     * 用户微信生态下的unionid
+     * 用户的标记
      */
-    private String unionId;
+    private String userIdentity;
 
     /**
      * 给当前用户发送优惠券 生成的优惠券号

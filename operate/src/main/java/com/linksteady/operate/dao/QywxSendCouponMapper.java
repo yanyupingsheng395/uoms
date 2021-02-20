@@ -39,22 +39,10 @@ public interface QywxSendCouponMapper {
      */
     void updateCouponSendRecord(String sendResult,long sendRecordId,List<SendCouponVO> sendCouponVOList);
 
-    /**
-     * 获取券的有效结束时间
-     * @param couponIdentity
-     */
-    String getCouponEndDate(String couponIdentity);
-
     int getCouponSn();
 
     void updateCouponSn(int lastCouponSn);
 
-    /**
-     * 根据couponId去查优惠券的信息
-     * @param couponId
-     * @return
-     */
-    CouponInfoVO queryCoupon(Long couponId);
 
     /**
      * 获取没有使用过的优惠券列表
@@ -67,9 +55,8 @@ public interface QywxSendCouponMapper {
     /**
      *
      * @param couponSnList
-     * @param couponIdentity
      */
-    void updateCouponSnList(List<String> couponSnList, String couponIdentity,long couponId);
+    void updateCouponSnList(List<String> couponSnList,long couponId);
 
     /**
      * 文件上传优惠券数据

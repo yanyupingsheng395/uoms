@@ -17,10 +17,7 @@ import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.exception.PushQywxMessageException;
 import com.linksteady.operate.exception.SendCouponException;
 import com.linksteady.operate.service.*;
-import com.linksteady.operate.vo.CouponInfoVO;
-import com.linksteady.operate.vo.FollowUserVO;
-import com.linksteady.operate.vo.RecProdVo;
-import com.linksteady.operate.vo.SendCouponVO;
+import com.linksteady.operate.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.xmlbeans.impl.xb.xsdschema.Public;
@@ -479,11 +476,21 @@ public class QywxDailyController {
      */
     @GetMapping("/sendCouponToUser")
     public ResponseBo sendCouponToUser(@RequestParam("couponId")Long couponId,@RequestParam("couponIdentity") String couponIdentity,@RequestParam("userIdentity") String userIdentity){
-        boolean coupon = qywxSendCouponService.sendCouponToUser(couponId, couponIdentity, userIdentity);
-        if(!coupon){
-          return   ResponseBo.error("单人发券错误");
+        //获取优惠券信息
+        CouponInfoVO couponInfoVO=null;
+        //构造发送信息
+        SendCouponVO sendCouponVO=null;
+        SendCouponResultVO sendCouponResultVO= null;
+        try {
+            sendCouponResultVO = qywxSendCouponService.sendCouponToUser(couponInfoVO,sendCouponVO);
+            if(null==sendCouponResultVO||"F".equals(sendCouponResultVO.getSendResult())){
+                return ResponseBo.error("单人发券错误");
+            }
+            return ResponseBo.ok();
+        } catch (Exception e) {
+            log.error("单人发券失败，原因为{}",e);
+            return ResponseBo.error("单人发券错误,原因："+e.getMessage());
         }
-        return ResponseBo.ok();
     }
 
     /**
@@ -495,18 +502,30 @@ public class QywxDailyController {
         CouponInfoVO couponInfoVO=new CouponInfoVO();
         couponInfoVO.setCouponId(couponId);
         couponInfoVO.setCouponIdentity("R676FP6VJ66T");
+        //设置优惠券的时效
         List<SendCouponVO> sendCouponVOList=new ArrayList<>();
         SendCouponVO sendCouponVO1=new SendCouponVO();
-        sendCouponVO1.setUserPhone("15097615242");
+        sendCouponVO1.setUserIdentity("15097615242");
+        sendCouponVO1.setBusinessId(1L);
+        sendCouponVO1.setBusinessType("TEST");
         sendCouponVOList.add(sendCouponVO1);
         SendCouponVO sendCouponVO2=new SendCouponVO();
-        sendCouponVO2.setUserPhone("15810081993");
+        sendCouponVO2.setUserIdentity("15810081993");
+        sendCouponVO2.setBusinessId(1L);
+        sendCouponVO2.setBusinessType("TEST");
         sendCouponVOList.add(sendCouponVO2);
-        boolean b = qywxSendCouponService.sendCouponBatch(couponId, couponInfoVO, sendCouponVOList);
-        if(!b){
-            return   ResponseBo.error("多人发券错误");
+        SendCouponResultVO sendCouponResultVO= null;
+        try {
+            sendCouponResultVO = qywxSendCouponService.sendCouponBatch(couponInfoVO, sendCouponVOList);
+            if(null==sendCouponResultVO||"F".equals(sendCouponResultVO.getSendResult())){
+                return ResponseBo.error("多人发券错误");
+            }
+            return ResponseBo.ok();
+        } catch (Exception e) {
+            log.error("多人发券失败，原因为{}",e);
+            return ResponseBo.error("多人发券错误,原因："+e.getMessage());
         }
-        return ResponseBo.ok();
+
     }
 
 

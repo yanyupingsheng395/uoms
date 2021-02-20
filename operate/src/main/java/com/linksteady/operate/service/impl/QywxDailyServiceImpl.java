@@ -105,8 +105,15 @@ public class QywxDailyServiceImpl implements QywxDailyService {
         //判断优惠券是否已发放 如果未发放，则进行优惠券的发放
         if ("N".equals(qywxDailyHeader.getCouponSendFlag())) {
             try {
-                  boolean flag= true;
-          //      boolean flag = qywxSendCouponService.sendCouponToDailyUser(headId);
+
+                //校验券流水号是否够用(返回不够用的券信息列表)
+                List<String> checkCouponSnResult=checkCouponSn(headId);
+                if (null!=checkCouponSnResult&&checkCouponSnResult.size()>0) {
+                    throw new SendCouponException("发券失败，以下优惠券编码不足:"+checkCouponSnResult.toString());
+                }
+
+                //进行优惠券的发放
+                boolean flag =sendCouponToDailyUser(headId);
                 if (!flag) {
                     throw new SendCouponException("发券失败，请联系系统运维人员");
                 }else
@@ -176,6 +183,22 @@ public class QywxDailyServiceImpl implements QywxDailyService {
                 }
             });
         });
+    }
+
+    /**
+     * 校验流水号是否足够用
+     */
+    List<String> checkCouponSn(Long headId)
+    {
+        return Lists.newArrayList();
+    }
+
+    /***
+     * 对每日运营用户进行发券
+     */
+    boolean sendCouponToDailyUser(Long headId)
+    {
+        return true;
     }
 
     /**

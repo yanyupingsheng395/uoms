@@ -9,7 +9,7 @@ public class SendCouponRecord {
 
     private Long sendRecordId;
 
-    private Long headId;
+    private Long businessId;
 
     private String couponInfo;
 
@@ -20,6 +20,8 @@ public class SendCouponRecord {
     private String sendResultDesc;
 
     private LocalDateTime insertDt;
+
+    private String businessType;
 
 
 }

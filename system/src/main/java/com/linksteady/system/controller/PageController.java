@@ -43,7 +43,7 @@ public class PageController extends BaseController {
         model.addAttribute("user", userBo);
         //转跳到用户成长系统的 用户洞察界面
         SysInfoBo sysInfoBo=commonFunService.getSysInfoByCode(CommonConstant.OP_CODE);
-        log.info("获取系统列表:{},{}",sysInfoBo,sysInfoBo.getSysDomain());
+
         if(null!=sysInfoBo&& StringUtils.isNotEmpty(sysInfoBo.getSysDomain()))
         {
             log.info("redirect:"+sysInfoBo.getSysDomain()+"/page/insight");

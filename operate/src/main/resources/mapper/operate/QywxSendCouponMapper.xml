@@ -35,19 +35,11 @@
         and sendresult &lt;&gt; 'S'
         order by detail_id asc limit #{limit} offset #{offset}
     </select>
-    <select id="getCouponEndDate" resultType="string">
-        select valid_end from uo_qywx_coupon where coupon_identity=#{couponIdentity}
-    </select>
 
     <select id="getCouponSn" resultType="int">
         select coupon_sn from uo_qywx_param limit 1
     </select>
-    <select id="queryCoupon" resultMap="couponInfoVOMap">
-        select coupon_id,
-                        coupon_display_name,
-                        coupon_identity,
-                        valid_end from uo_qywx_coupon where coupon_id=#{couponId}
-    </select>
+
     <select id="getCouponSnList" resultType="String">
         select serial_no from uo_coupon_serial_no where used_flag='N' and coupon_id=#{couponId} order by serial_no asc limit #{count}
     </select>
@@ -64,7 +56,7 @@
                 business_type
             )
        values (
-                #{headId},#{couponInfo},#{userInfo},#{sendResult},#{sendResultDesc},#{insertDt},'DAILY'
+                #{businessId},#{couponInfo},#{userInfo},#{sendResult},#{sendResultDesc},#{insertDt},#{businessType}
 
        )
     </insert>
@@ -92,7 +84,7 @@
         update uo_qywx_param set coupon_sn=#{lastCouponSn}
     </update>
     <update id="updateCouponSnList">
-        update uo_coupon_serial_no set coupon_identity=#{couponIdentity},used_flag='Y',used_dt=now()
+        update uo_coupon_serial_no set used_flag='Y',used_dt=now()
         where coupon_id=#{couponId} and serial_no in
         <foreach collection="couponSnList" index="index" item="item" open="(" separator="," close=")">
             #{item}
