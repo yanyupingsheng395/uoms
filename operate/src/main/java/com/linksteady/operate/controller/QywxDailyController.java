@@ -477,9 +477,17 @@ public class QywxDailyController {
     @GetMapping("/sendCouponToUser")
     public ResponseBo sendCouponToUser(@RequestParam("couponId")Long couponId,@RequestParam("couponIdentity") String couponIdentity,@RequestParam("userIdentity") String userIdentity){
         //获取优惠券信息
-        CouponInfoVO couponInfoVO=null;
+        CouponInfoVO couponInfoVO=new CouponInfoVO();
+        couponInfoVO.setCouponId(couponId);
+        couponInfoVO.setCouponIdentity(couponIdentity);
+        couponInfoVO.setBeginDate(LocalDate.now());
+        couponInfoVO.setEndDate(LocalDate.now().plusMonths(2));
+        couponInfoVO.setCouponName("测试优惠券");
         //构造发送信息
-        SendCouponVO sendCouponVO=null;
+        SendCouponVO sendCouponVO=new SendCouponVO();
+        sendCouponVO.setBusinessId(1l);
+        sendCouponVO.setBusinessType("TEST");
+        sendCouponVO.setUserIdentity(userIdentity);
         SendCouponResultVO sendCouponResultVO= null;
         try {
             sendCouponResultVO = qywxSendCouponService.sendCouponToUser(couponInfoVO,sendCouponVO);
@@ -502,6 +510,9 @@ public class QywxDailyController {
         CouponInfoVO couponInfoVO=new CouponInfoVO();
         couponInfoVO.setCouponId(couponId);
         couponInfoVO.setCouponIdentity("R676FP6VJ66T");
+        couponInfoVO.setBeginDate(LocalDate.now());
+        couponInfoVO.setEndDate(LocalDate.now().plusMonths(2));
+        couponInfoVO.setCouponName("测试优惠券");
         //设置优惠券的时效
         List<SendCouponVO> sendCouponVOList=new ArrayList<>();
         SendCouponVO sendCouponVO1=new SendCouponVO();
