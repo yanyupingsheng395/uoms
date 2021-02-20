@@ -8,11 +8,6 @@ import java.util.List;
 public class SendCouponResultVO implements java.io.Serializable{
 
     /**
-     * 发送状态
-     */
-    private String sendResult;
-
-    /**
      * 发送批次号
      */
     private Long sendRecordId;
@@ -22,8 +17,7 @@ public class SendCouponResultVO implements java.io.Serializable{
      */
     private List<SendCouponVO> sendCouponVOList;
 
-    public SendCouponResultVO(String sendResult, Long sendRecordId, List<SendCouponVO> sendCouponVOList) {
-        this.sendResult = sendResult;
+    public SendCouponResultVO(Long sendRecordId, List<SendCouponVO> sendCouponVOList) {
         this.sendRecordId = sendRecordId;
         this.sendCouponVOList = sendCouponVOList;
     }

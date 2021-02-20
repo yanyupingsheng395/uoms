@@ -1,6 +1,8 @@
 package com.linksteady.operate.dao;
 
 import com.linksteady.operate.domain.*;
+import com.linksteady.operate.vo.CouponInfoVO;
+import com.linksteady.operate.vo.SendCouponVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -53,13 +55,31 @@ public interface QywxDailyMapper {
      */
     List<QywxDailyStatis> getQywxDailyStatisList(Long headId);
 
-
     List<QywxDailyPersonalEffect> getConvertDetailData(int limit, int offset, long headId);
 
     int getConvertDetailCount(long headId);
 
     void expireActivityDailyHead();
 
-
     int updateVersion(Long headId, int version);
+
+    /**
+     * 获取当前头信息下的优惠券列表
+     */
+    List<CouponInfoVO> getCouponList(long headId);
+
+    /**
+     * 查询当前优惠券有多少人
+     */
+    int getCouponUserCount(long headId,long couponId);
+
+    /**
+     * 获取待发优惠券的人员列表
+     */
+    List<SendCouponVO> getCouponUserList(long headId, long couponId, int limit, int offset,String identityColumn);
+
+    /**
+     * 更新每日运营明细的发券信息
+     */
+    void updateCouponSendInfo(long sendRecordId,List<SendCouponVO> sendCouponVOList);
 }

@@ -45,6 +45,8 @@
         <result property="couponId" jdbcType="DECIMAL" column="coupon_id"></result>
         <result property="couponName" jdbcType="VARCHAR" column="coupon_display_name"></result>
         <result property="couponIdentity" jdbcType="VARCHAR" column="coupon_identity"></result>
+        <result property="endDate" jdbcType="TIMESTAMP" column="valid_end"></result>
+        <result property="userCount" jdbcType="DECIMAL" column="user_count"></result>
     </resultMap>
 
     <resultMap id="qywxStatisResult" type="com.linksteady.operate.domain.QywxDailyStatis">
@@ -74,6 +76,12 @@
         <result property="followUserName" jdbcType="VARCHAR" column="follow_user_name"></result>
         <result property="qywxContractId" jdbcType="VARCHAR" column="qywx_contract_id"></result>
         <result property="qywxContactName" jdbcType="VARCHAR" column="qywx_contact_name"></result>
+    </resultMap>
+
+    <resultMap id="sendCouponVOMap" type="com.linksteady.operate.vo.SendCouponVO">
+        <result property="businessId" jdbcType="VARCHAR" column="detail_id"></result>
+        <result property="businessType" jdbcType="VARCHAR" column="business_type"></result>
+        <result property="userIdentity" jdbcType="VARCHAR" column="user_identity"></result>
     </resultMap>
 
     <select id="getHeadList" resultMap="baseResult">
@@ -238,6 +246,49 @@
     </update>
     <update id="updateVersion">
         update uo_qywx_daily_header set version=version+1 where head_id=#{headId} and status="todo" and version=#{version}
+    </update>
+
+    <select id="getCouponList" resultMap="couponInfoVOMap">
+        select          uo_qywx_coupon.coupon_id,
+                        coupon_display_name,
+                        coupon_identity,
+                        valid_end,
+                        count(detail_id) user_count
+        from uo_qywx_daily_detail join uo_qywx_coupon
+          on uo_qywx_daily_detail.coupon_id=uo_qywx_coupon.coupon_id
+         and uo_qywx_daily_detail.head_id=#{headId}
+         and uo_qywx_daily_detail.sendresult &lt;&gt; 'S'
+         group by uo_qywx_coupon.coupon_id,coupon_display_name,coupon_identity,valid_end
+    </select>
+
+    <select id="getCouponUserCount" resultType="int">
+        select count(*) from uo_qywx_daily_detail where head_id=#{headId} and coupon_id=#{couponId} and sendresult &lt;&gt; 'S'
+    </select>
+
+    <select id="getCouponUserList" resultMap="sendCouponVOMap">
+        select detail_id,
+               'DAILY' business_type,
+               ${identityColumn} user_identity
+        from uo_qywx_daily_detail where head_id=#{headId} and coupon_id=#{couponId}
+        and sendresult &lt;&gt; 'S'
+        order by detail_id asc limit #{limit} offset #{offset}
+    </select>
+
+    <update id="updateCouponSendInfo">
+        update uo_qywx_daily_detail set
+        sendrecord_id=tmp.sendrecord_id,
+        sendresult='S',
+        coupon_sn=tmp.coupon_sn
+        FROM (
+        VALUES
+        <foreach collection="sendCouponVOList" item="item" index="index"
+                 open="" close="" separator=",">
+            (#{sendRecordId},
+            #{item.couponSn},
+            #{item.businessId})
+        </foreach>
+        ) as tmp(sendrecord_id,coupon_sn,detail_id)
+        where tmp.detail_id=uo_qywx_daily_detail.detail_id
     </update>
 
 </mapper>

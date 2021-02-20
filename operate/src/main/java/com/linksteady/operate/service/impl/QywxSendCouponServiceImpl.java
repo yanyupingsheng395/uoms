@@ -16,6 +16,7 @@ import com.linksteady.operate.service.QywxSendCouponService;
 import com.linksteady.operate.vo.CouponInfoVO;
 import com.linksteady.operate.vo.SendCouponResultVO;
 import com.linksteady.operate.vo.SendCouponVO;
+import com.linksteady.operate.vo.couponSnCountVO;
 import com.linksteady.smp.starter.domain.ResultInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,9 +106,6 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
             throw new Exception("发券校验失败");
         }
 
-        String sendResult= "";//发券结果
-        String sendResultDesc= "";//发券结果描述
-
         try {
             //根据优惠券编号获取发放流水号
             List<String> couponNoList=getCouponNum(couponInfoVO,1);
@@ -129,25 +127,18 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
             String result= OkHttpUtil.postRequestByFormBody(configService.getValueByName(ConfigEnum.sendCouponUrl.getKeyCode())+SEND_COUPON_SINGLE_PATH,param);
             JSONObject jsonObject = JSON.parseObject(result);
             if(null==jsonObject||200!=jsonObject.getIntValue("code")){
-                sendResult="F";
-                sendResultDesc=jsonObject.getString("msg");
-            }else{
-                sendResult="S";
-                sendResultDesc="发送成功";
-                //返回成功后，对象中携带了券编号
-                sendCouponVO = JSONObject.parseObject(jsonObject.getString("data"), SendCouponVO.class);
-                log.info("单人发券返回信息{}",sendCouponVO.toString());
+                throw new Exception(jsonObject.getString("msg"));
             }
         }catch (Exception e){
-            sendResult="F";
-            sendResultDesc="调用单人发券接口失败";
+            throw new Exception(e.getMessage());
         }
         log.info("保存发券记录");
         SendCouponRecord sendCouponRecord=new SendCouponRecord();
         sendCouponRecord.setCouponInfo(JSON.toJSONString(couponInfoVO));
         sendCouponRecord.setUserInfo(JSON.toJSONString(sendCouponVO));
-        sendCouponRecord.setSendResult(sendResult);
-        sendCouponRecord.setSendResultDesc(sendResultDesc);
+        //这两个字段不再使用
+        sendCouponRecord.setSendResult("S");
+        sendCouponRecord.setSendResultDesc("");
         sendCouponRecord.setInsertDt(LocalDateTime.now());
         sendCouponRecord.setBusinessType(sendCouponVO.getBusinessType());
         sendCouponRecord.setBusinessId(sendCouponVO.getBusinessId());
@@ -157,11 +148,7 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
 
         List<SendCouponVO> sendCouponVOList=new ArrayList();
         sendCouponVOList.add(sendCouponVO);
-        return new SendCouponResultVO(sendResult,sendCouponRecord.getSendRecordId(),sendCouponVOList);
-
-//        //将发券记录ID更新到每日运营明细表中去
-//        qywxSendCouponMapper.updateCouponSendRecord(sendResult,sendCouponRecord.getSendRecordId(),backSendCouponVOList);
-//        return flag;
+        return new SendCouponResultVO(sendCouponRecord.getSendRecordId(),sendCouponVOList);
     }
 
     /**
@@ -199,8 +186,6 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
         //发券是否成功 true表示成功 false表示失败
         String couponInfo= null;
         String sendCouponList= null;
-        String sendResult= "";
-        String sendResultDesc= "";
 
         try {
             //批量获取发放流水号，并放入集合中
@@ -234,19 +219,16 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
 
             if(null==jsonObject||200!=jsonObject.getIntValue("code")){
                 throw new Exception(jsonObject.getString("msg"));
-            }else{
-                sendResult="S";
-                sendResultDesc="发送成功";
             }
         } catch (Exception e) {
             log.error("调用发券接口进行发券失败，原因为{}",e);
-            throw new Exception("调用发券接口失败。"+e);
+            throw new Exception(e.getMessage());
         }
         SendCouponRecord sendCouponRecord=new SendCouponRecord();
         sendCouponRecord.setCouponInfo(couponInfo);
         sendCouponRecord.setUserInfo(sendCouponList);
-        sendCouponRecord.setSendResult(sendResult);
-        sendCouponRecord.setSendResultDesc(sendResultDesc);
+        sendCouponRecord.setSendResult("S");
+        sendCouponRecord.setSendResultDesc("");
         sendCouponRecord.setInsertDt(LocalDateTime.now());
         //填充第一个用户的记录
         sendCouponRecord.setBusinessType(sendCouponVOList.get(0).getBusinessType());
@@ -256,10 +238,12 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
         //记录发券批次记录
         qywxSendCouponMapper.saveSendCouponRecord(sendCouponRecord);
 
-        return new SendCouponResultVO(sendResult,sendCouponRecord.getSendRecordId(),sendCouponVOList);
-//        //将发券记录ID更新到每日运营明细表中去
-//        qywxSendCouponMapper.updateCouponSendRecord(sendResult,sendCouponRecord.getSendRecordId(),sendCouponVOList);
+        return new SendCouponResultVO(sendCouponRecord.getSendRecordId(),sendCouponVOList);
+    }
 
+    @Override
+    public List<couponSnCountVO> getCouponSnCount() {
+        return qywxSendCouponMapper.getCouponSnCount();
     }
 
 

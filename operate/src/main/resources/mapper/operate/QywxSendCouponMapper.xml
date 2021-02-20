@@ -1,47 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.operate.dao.QywxSendCouponMapper">
-    
-    <resultMap id="couponInfoVOMap" type="com.linksteady.operate.vo.CouponInfoVO">
-        <result property="couponId" jdbcType="DECIMAL" column="coupon_id"></result>
-        <result property="couponName" jdbcType="VARCHAR" column="coupon_display_name"></result>
-        <result property="couponIdentity" jdbcType="VARCHAR" column="coupon_identity"></result>
-        <result property="endDate" jdbcType="TIMESTAMP" column="valid_end"></result>
+
+    <resultMap id="couponSnCountMap" type="com.linksteady.operate.vo.couponSnCountVO">
+        <result property="couponId" jdbcType="VARCHAR" column="coupon_id"></result>
+        <result property="snCount" jdbcType="VARCHAR" column="sn_count"></result>
     </resultMap>
-
-    <resultMap id="sendCouponVOMap" type="com.linksteady.operate.vo.SendCouponVO">
-        <result property="businessId" jdbcType="VARCHAR" column="detail_id"></result>
-        <result property="userPhone" jdbcType="VARCHAR" column="user_phone"></result>
-        <result property="unionId" jdbcType="VARCHAR" column="unionid"></result>
-    </resultMap>
-
-    <select id="getCouponList" resultMap="couponInfoVOMap">
-        select distinct uo_qywx_coupon.coupon_id,
-                        coupon_display_name,
-                        coupon_identity,
-                        valid_end
-        from uo_qywx_daily_detail join uo_qywx_coupon
-          on uo_qywx_daily_detail.coupon_id=uo_qywx_coupon.coupon_id
-         and uo_qywx_daily_detail.head_id=#{headId}
-         and uo_qywx_daily_detail.sendresult &lt;&gt; 'S'
-    </select>
-
-    <select id="getCouponUserCount" resultType="int">
-        select count(*) from uo_qywx_daily_detail where head_id=#{headId} and coupon_id=#{couponId} and sendresult &lt;&gt; 'S'
-    </select>
-
-    <select id="getCouponUserList" resultMap="sendCouponVOMap">
-        select detail_id,user_phone,unionid from uo_qywx_daily_detail where head_id=#{headId} and coupon_id=#{couponId}
-        and sendresult &lt;&gt; 'S'
-        order by detail_id asc limit #{limit} offset #{offset}
-    </select>
 
     <select id="getCouponSn" resultType="int">
         select coupon_sn from uo_qywx_param limit 1
     </select>
 
+    <update id="updateCouponSn">
+        update uo_qywx_param set coupon_sn=#{lastCouponSn}
+    </update>
+
     <select id="getCouponSnList" resultType="String">
         select serial_no from uo_coupon_serial_no where used_flag='N' and coupon_id=#{couponId} order by serial_no asc limit #{count}
+    </select>
+
+    <select id="getCouponSnCount" resultMap="couponSnCountMap">
+     select coupon_id,count(serial_no) sn_count from uo_coupon_serial_no where used_flag='N' group by coupon_id
     </select>
 
     <insert id="saveSendCouponRecord" useGeneratedKeys="true" keyProperty="sendRecordId" keyColumn="sendrecord_id">
@@ -57,32 +36,9 @@
             )
        values (
                 #{businessId},#{couponInfo},#{userInfo},#{sendResult},#{sendResultDesc},#{insertDt},#{businessType}
-
        )
     </insert>
 
-    <update id="updateCouponSendRecord">
-        update uo_qywx_daily_detail set
-                sendrecord_id=tmp.sendrecord_id,
-                sendresult=tmp.sendresult,
-                coupon_sn=tmp.coupon_sn
-        FROM (
-        VALUES
-        <foreach collection="sendCouponVOList" item="item" index="index"
-                 open="" close="" separator=",">
-            (#{sendRecordId},
-            #{sendResult},
-            #{item.couponSn},
-            #{item.businessId})
-        </foreach>
-        ) as tmp(sendrecord_id,sendresult,coupon_sn,detail_id)
-        where tmp.detail_id=uo_qywx_daily_detail.detail_id
-
-    </update>
-
-    <update id="updateCouponSn">
-        update uo_qywx_param set coupon_sn=#{lastCouponSn}
-    </update>
     <update id="updateCouponSnList">
         update uo_coupon_serial_no set used_flag='Y',used_dt=now()
         where coupon_id=#{couponId} and serial_no in

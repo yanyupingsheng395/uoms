@@ -12,9 +12,9 @@ import com.linksteady.operate.domain.*;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.exception.SendCouponException;
+import com.linksteady.operate.service.QywxDailyScService;
 import com.linksteady.operate.service.QywxDailyService;
 import com.linksteady.operate.service.QywxMessageService;
-import com.linksteady.operate.service.QywxSendCouponService;
 import com.linksteady.operate.vo.FollowUserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -57,7 +57,7 @@ public class QywxDailyServiceImpl implements QywxDailyService {
     private QywxMessageService qywxMessageService;
 
     @Autowired
-    QywxSendCouponService qywxSendCouponService;
+    QywxDailyScService qywxDailyScService;
 
     @Override
     public List<QywxDailyHeader> getHeadList(int limit, int offset, String taskDate) {
@@ -105,23 +105,12 @@ public class QywxDailyServiceImpl implements QywxDailyService {
         //判断优惠券是否已发放 如果未发放，则进行优惠券的发放
         if ("N".equals(qywxDailyHeader.getCouponSendFlag())) {
             try {
-
-                //校验券流水号是否够用(返回不够用的券信息列表)
-                List<String> checkCouponSnResult=checkCouponSn(headId);
-                if (null!=checkCouponSnResult&&checkCouponSnResult.size()>0) {
-                    throw new SendCouponException("发券失败，以下优惠券编码不足:"+checkCouponSnResult.toString());
-                }
-
                 //进行优惠券的发放
-                boolean flag =sendCouponToDailyUser(headId);
-                if (!flag) {
-                    throw new SendCouponException("发券失败，请联系系统运维人员");
-                }else
-                {
-                    qywxDailyMapper.updateSendCouponFlag(headId);
-                }
-            } catch (Exception e) {
-                throw new SendCouponException("发送优惠券异常");
+                qywxDailyScService.sendCouponToDailyUser(headId);
+                //更新发券标记为成功
+                qywxDailyMapper.updateSendCouponFlag(headId);
+            } catch (SendCouponException e) {
+                throw new SendCouponException("发送优惠券失败，原因为:"+e.getMessage());
             }
         }
 
@@ -183,22 +172,6 @@ public class QywxDailyServiceImpl implements QywxDailyService {
                 }
             });
         });
-    }
-
-    /**
-     * 校验流水号是否足够用
-     */
-    List<String> checkCouponSn(Long headId)
-    {
-        return Lists.newArrayList();
-    }
-
-    /***
-     * 对每日运营用户进行发券
-     */
-    boolean sendCouponToDailyUser(Long headId)
-    {
-        return true;
     }
 
     /**
@@ -375,9 +348,13 @@ public class QywxDailyServiceImpl implements QywxDailyService {
         QywxDailyHeader header=qywxDailyMapper.getHeadInfo(headId);
         if(null!=header&&"N".equals(header.getCouponSendFlag()))
         {
-          //  boolean flag=qywxSendCouponService.sendCouponToDailyUser(headId);
-            boolean flag=true;
-            return flag?"发券成功":"发券失败";
+            try {
+                qywxDailyScService.sendCouponToDailyUser(headId);
+                return "发券成功";
+            } catch (SendCouponException e) {
+                log.error("发券失败，原因为{}",e);
+                return "发券失败";
+            }
         }else {
             return "不存在的ID或当前记录已发过券了";
         }

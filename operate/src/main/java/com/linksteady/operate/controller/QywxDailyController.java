@@ -491,9 +491,6 @@ public class QywxDailyController {
         SendCouponResultVO sendCouponResultVO= null;
         try {
             sendCouponResultVO = qywxSendCouponService.sendCouponToUser(couponInfoVO,sendCouponVO);
-            if(null==sendCouponResultVO||"F".equals(sendCouponResultVO.getSendResult())){
-                return ResponseBo.error("单人发券错误");
-            }
             return ResponseBo.ok();
         } catch (Exception e) {
             log.error("单人发券失败，原因为{}",e);
@@ -528,9 +525,6 @@ public class QywxDailyController {
         SendCouponResultVO sendCouponResultVO= null;
         try {
             sendCouponResultVO = qywxSendCouponService.sendCouponBatch(couponInfoVO, sendCouponVOList);
-            if(null==sendCouponResultVO||"F".equals(sendCouponResultVO.getSendResult())){
-                return ResponseBo.error("多人发券错误");
-            }
             return ResponseBo.ok();
         } catch (Exception e) {
             log.error("多人发券失败，原因为{}",e);

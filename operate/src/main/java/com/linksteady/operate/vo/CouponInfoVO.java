@@ -29,4 +29,9 @@ public class CouponInfoVO implements Serializable {
      * 券有效结束时间
      */
     private LocalDate endDate;
+
+    /**
+     * 当前优惠券下有多少人
+     */
+    private int userCount;
 }
