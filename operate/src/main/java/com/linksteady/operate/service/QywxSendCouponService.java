@@ -1,5 +1,6 @@
 package com.linksteady.operate.service;
 
+import com.linksteady.operate.exception.SendCouponException;
 import com.linksteady.operate.vo.CouponInfoVO;
 import com.linksteady.operate.vo.SendCouponResultVO;
 import com.linksteady.operate.vo.SendCouponVO;
@@ -13,13 +14,13 @@ import java.util.List;
 public interface QywxSendCouponService {
 
 
-    SendCouponResultVO sendCouponToUser(CouponInfoVO couponInfoVO,SendCouponVO sendCouponVO) throws Exception;
+    SendCouponResultVO sendCouponToUser(CouponInfoVO couponInfoVO,SendCouponVO sendCouponVO) throws SendCouponException;
 
     /**
      *批量发券
      * @return
      */
-    SendCouponResultVO sendCouponBatch(CouponInfoVO couponInfoVO, List<SendCouponVO> sendCouponVOList)  throws Exception;
+    SendCouponResultVO sendCouponBatch(CouponInfoVO couponInfoVO, List<SendCouponVO> sendCouponVOList)  throws SendCouponException;
 
 
     /**

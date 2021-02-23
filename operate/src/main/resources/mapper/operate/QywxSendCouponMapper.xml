@@ -53,5 +53,8 @@
             (#{couponId},#{item},now(),'N')
         </foreach>
     </update>
+    <update id="updateFlag">
+        update uo_coupon_serial_no set used_flag='N' where coupon_identity=#{couponIdentity}
+    </update>
 
 </mapper>

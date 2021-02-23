@@ -49,4 +49,7 @@ public interface QywxSendCouponMapper {
      * @param couponId
      */
     void uploadCoupon(List<String> mobiles, Long couponId);
+
+
+    void updateFlag(String couponIdentity);
 }

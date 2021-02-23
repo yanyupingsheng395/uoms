@@ -6,30 +6,23 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.domain.enums.ConfigEnum;
 import com.linksteady.common.service.ConfigService;
-import com.linksteady.common.thrift.RetentionData;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.common.util.crypto.SHA1;
 import com.linksteady.operate.dao.QywxSendCouponMapper;
-import com.linksteady.operate.domain.CouponInfo;
 import com.linksteady.operate.domain.SendCouponRecord;
+import com.linksteady.operate.exception.SendCouponException;
 import com.linksteady.operate.service.QywxSendCouponService;
 import com.linksteady.operate.vo.CouponInfoVO;
 import com.linksteady.operate.vo.SendCouponResultVO;
 import com.linksteady.operate.vo.SendCouponVO;
 import com.linksteady.operate.vo.couponSnCountVO;
-import com.linksteady.smp.starter.domain.ResultInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.Transient;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -83,8 +76,7 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
      * @return
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public SendCouponResultVO sendCouponToUser(CouponInfoVO couponInfoVO,SendCouponVO sendCouponVO) throws Exception{
+    public SendCouponResultVO sendCouponToUser(CouponInfoVO couponInfoVO,SendCouponVO sendCouponVO) throws SendCouponException{
         //发券的唯一标记类型 (PHONE表示手机号 UNIONID表示基于unionid发券 默认为PHONE)
         String sendCouponIdentityType=configService.getValueByName(ConfigEnum.sendCouponIdentityType.getKeyCode());
         if(StringUtils.isEmpty(sendCouponIdentityType)){
@@ -93,7 +85,7 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
 
         if(StringUtils.isEmpty(sendCouponVO.getUserIdentity())){
             log.error("发券校验失败，用户标记为空");
-            throw new Exception("发券校验失败");
+            throw new SendCouponException("发券校验失败");
         }
 
         if(couponInfoVO ==null||couponInfoVO.getCouponId()<=0||
@@ -103,14 +95,14 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
                 StringUtils.isEmpty(couponInfoVO.getCouponIdentity())||
                 StringUtils.isEmpty(couponInfoVO.getCouponName())){
             log.error("发券校验失败，券信息有误");
-            throw new Exception("发券校验失败");
+            throw new SendCouponException("发券校验失败");
         }
 
         try {
             //根据优惠券编号获取发放流水号
             List<String> couponNoList=getCouponNum(couponInfoVO,1);
             if(couponNoList.size()<=0){
-                throw new Exception("发放优惠券失败,获取优惠券流水号失败！");
+                throw new SendCouponException("发放优惠券失败,获取优惠券流水号失败！");
             }
 
             sendCouponVO.setCouponSn(couponNoList.get(0));
@@ -127,10 +119,11 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
             String result= OkHttpUtil.postRequestByFormBody(configService.getValueByName(ConfigEnum.sendCouponUrl.getKeyCode())+SEND_COUPON_SINGLE_PATH,param);
             JSONObject jsonObject = JSON.parseObject(result);
             if(null==jsonObject||200!=jsonObject.getIntValue("code")){
-                throw new Exception(jsonObject.getString("msg"));
+                qywxSendCouponMapper.updateFlag(couponInfoVO.getCouponIdentity());
+                throw new SendCouponException(jsonObject.getString("msg"));
             }
         }catch (Exception e){
-            throw new Exception(e.getMessage());
+            throw new SendCouponException(e.getMessage());
         }
         log.info("保存发券记录");
         SendCouponRecord sendCouponRecord=new SendCouponRecord();
@@ -159,8 +152,7 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
      * @return
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public SendCouponResultVO sendCouponBatch(CouponInfoVO couponInfoVO, List<SendCouponVO> sendCouponVOList)  throws Exception{
+    public SendCouponResultVO sendCouponBatch(CouponInfoVO couponInfoVO, List<SendCouponVO> sendCouponVOList)  throws SendCouponException {
         //发券的唯一标记类型 (PHONE表示手机号 UNIONID表示基于unionid发券 默认为PHONE)
         String sendCouponIdentityType=configService.getValueByName(ConfigEnum.sendCouponIdentityType.getKeyCode());
         if(StringUtils.isEmpty(sendCouponIdentityType)){
@@ -171,7 +163,7 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
                                                 StringUtils.isEmpty(i.getBusinessId())||
                                                 StringUtils.isEmpty(i.getBusinessType())).count()>0l){
             log.error("发券校验失败，用户标识为空");
-            throw new Exception("发券校验失败");
+            throw new SendCouponException("发券校验失败");
         }
         if(couponInfoVO ==null||couponInfoVO.getCouponId()<=0||
                 StringUtils.isEmpty(couponInfoVO.getBeginDate())||
@@ -180,7 +172,7 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
                 StringUtils.isEmpty(couponInfoVO.getCouponIdentity())||
                 StringUtils.isEmpty(couponInfoVO.getCouponName())){
             log.error("发券校验失败，券信息有误");
-            throw new Exception("发券校验失败");
+            throw new SendCouponException("发券校验失败");
         }
 
         //发券是否成功 true表示成功 false表示失败
@@ -218,11 +210,12 @@ public class QywxSendCouponServiceImpl implements QywxSendCouponService {
             log.info("调用发券服务，接口返回的结果为:{}",jsonObject);
 
             if(null==jsonObject||200!=jsonObject.getIntValue("code")){
-                throw new Exception(jsonObject.getString("msg"));
+                qywxSendCouponMapper.updateFlag(couponInfoVO.getCouponIdentity());
+                throw new SendCouponException(jsonObject.getString("msg"));
             }
         } catch (Exception e) {
             log.error("调用发券接口进行发券失败，原因为{}",e);
-            throw new Exception(e.getMessage());
+            throw new SendCouponException(e.getMessage());
         }
         SendCouponRecord sendCouponRecord=new SendCouponRecord();
         sendCouponRecord.setCouponInfo(couponInfo);

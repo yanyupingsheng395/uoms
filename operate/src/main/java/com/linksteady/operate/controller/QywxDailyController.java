@@ -258,7 +258,6 @@ public class QywxDailyController {
 
                 //获取是否有推送失败的情况
                 int count = qywxDailyService.getPushErrorCount(headId);
-
                 if (count > 0) {
                     throw new PushQywxMessageException("推送企业微信消息存在错误");
                 }else
@@ -506,7 +505,7 @@ public class QywxDailyController {
     public ResponseBo  testCouponBatch(@RequestParam("couponId")Long couponId){
         CouponInfoVO couponInfoVO=new CouponInfoVO();
         couponInfoVO.setCouponId(couponId);
-        couponInfoVO.setCouponIdentity("R676FP6VJ66T");
+        couponInfoVO.setCouponIdentity("RXKHYRYXJUKR");
         couponInfoVO.setBeginDate(LocalDate.now());
         couponInfoVO.setEndDate(LocalDate.now().plusMonths(2));
         couponInfoVO.setCouponName("测试优惠券");
