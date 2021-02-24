@@ -189,4 +189,5 @@ function uploadCoupon() {
             }
         });
     }
+    $('#add_modal').modal('hide');
 }

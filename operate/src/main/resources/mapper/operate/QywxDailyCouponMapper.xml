@@ -61,7 +61,8 @@
             coupon_sn=#{couponSn},
             VALID_STATUS = #{validStatus},
             VALID_END = to_date(#{validEnd}, 'yyyy-mm-dd'),
-            check_flag = #{checkFlag}
+            check_flag = #{checkFlag},
+            coupon_identity=#{couponIdentity}
         where COUPON_ID = #{couponId}
     </update>
 

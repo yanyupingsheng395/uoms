@@ -19,6 +19,7 @@ import com.linksteady.operate.vo.GroupCouponVO;
 import com.linksteady.operate.vo.RecProdVo;
 import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -217,7 +218,9 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
                 for (int i = 0; i <= sheet.getLastRowNum(); i++) {
                     Row row = sheet.getRow(i);
                     Cell cell = row.getCell(0);
-                    mobiles.add(cell.getStringCellValue());
+                    if(StringUtils.isNotEmpty(cell.getStringCellValue())){
+                        mobiles.add(cell.getStringCellValue());
+                    }
                 }
                 FileUtils.deleteTempFile(FileUtils.multipartFileToFile(file));
             }
