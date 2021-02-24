@@ -8,10 +8,7 @@ import com.linksteady.common.service.ConfigService;
 import com.linksteady.common.util.FileUtils;
 import com.linksteady.operate.config.PushConfig;
 import com.linksteady.common.config.SystemProperties;
-import com.linksteady.operate.domain.QywxDailyDetail;
-import com.linksteady.operate.domain.QywxDailyHeader;
-import com.linksteady.operate.domain.QywxDailyPersonalEffect;
-import com.linksteady.operate.domain.QywxDailyStaffEffect;
+import com.linksteady.operate.domain.*;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.exception.OptimisticLockException;
 import com.linksteady.operate.exception.PushQywxMessageException;
@@ -553,12 +550,14 @@ public class QywxDailyController {
     }
 
     @PostMapping("/uploadCoupon")
-    public ResponseBo uploadCoupon(@RequestParam("file") MultipartFile file,@RequestParam("couponId")  Long couponId) throws Exception {
+    public ResponseBo uploadCoupon(@RequestParam("file") MultipartFile file,
+                                   @RequestParam("couponId")  Long couponId,
+                                   @RequestParam("couponIdentity")  String couponIdentity) throws Exception {
         if(FileUtils.multipartFileToFile(file)==null){
             return ResponseBo.error("上传文件为空,请重新上传数据！");
         }
         try {
-            qywxDailyDetailService.uploadCoupon(file,couponId);
+            qywxDailyDetailService.uploadCoupon(file,couponId,couponIdentity);
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseBo.error("文件解析异常！");
@@ -569,9 +568,9 @@ public class QywxDailyController {
     }
 
     @PostMapping("/couponToSequence")
-    public ResponseBo couponToSequence(@RequestParam("couponId")  Long couponId) throws Exception {
+    public ResponseBo couponToSequence(@RequestParam("couponId")  Long couponId ,@RequestParam("couponIdentity")  String couponIdentity) throws Exception {
         try {
-            qywxDailyDetailService.couponToSequence(couponId);
+            qywxDailyDetailService.couponToSequence(couponId,couponIdentity);
         } catch (LinkSteadyException e) {
             return  ResponseBo.error(e.getMessage());
         }
@@ -601,5 +600,35 @@ public class QywxDailyController {
         } catch (Exception e) {
             log.error("文件下载失败", e);
         }
+    }
+
+    /**
+     * 查看有效优惠券
+     * @param request
+     * @return
+     */
+    @RequestMapping("/getCouponListPage")
+    public ResponseBo getCouponListPage(QueryRequest request){
+        int limit = request.getLimit();
+        int offset = request.getOffset();
+        int count = qywxDailyService.getCouponListCount();
+        List<QywxCoupon> dataList = qywxDailyService.getCouponListData(limit,offset);
+        return ResponseBo.okOverPaging(null, count, dataList);
+    }
+
+    /**
+     * 查看券码明细
+     * @param request
+     * @return
+     */
+    @RequestMapping("/viewCouponData")
+    public ResponseBo viewCouponData(QueryRequest request){
+        int limit = request.getLimit();
+        int offset = request.getOffset();
+        Long couponId =Long.parseLong(StringUtils.isEmpty(request.getParam().get("couponId"))?"0":request.getParam().get("couponId")) ;
+        String couponIdentity=request.getParam().get("couponIdentity");
+        int count = qywxDailyService.viewCouponCount(couponId,couponIdentity);
+        List<couponSerialNo> dataList = qywxDailyService.viewCouponData(limit,offset,couponId,couponIdentity);
+        return ResponseBo.okOverPaging(null, count, dataList);
     }
 }

@@ -82,4 +82,36 @@ public interface QywxDailyMapper {
      * 更新每日运营明细的发券信息
      */
     void updateCouponSendInfo(long sendRecordId,List<SendCouponVO> sendCouponVOList);
+
+    /**
+     * 获取有效优惠券数量
+     * @return
+     */
+    int getCouponListCount();
+
+    /**
+     * 获取有效优惠券明细
+     * @param limit
+     * @param offset
+     * @return
+     */
+    List<QywxCoupon> getCouponListData(int limit, int offset);
+
+    /**
+     * 根据券ID，券标识，查看券流水号数量
+     * @param couponId
+     * @param couponIdentity
+     * @return
+     */
+    int viewCouponCount(Long couponId, String couponIdentity);
+
+    /**
+     * 根据券ID，券标识，查看券流水号
+     * @param limit
+     * @param offset
+     * @param couponId
+     * @param couponIdentity
+     * @return
+     */
+    List<couponSerialNo> viewCouponData(int limit, int offset, Long couponId, String couponIdentity);
 }

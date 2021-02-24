@@ -1,9 +1,6 @@
 package com.linksteady.operate.dao;
 
-import com.linksteady.operate.domain.CouponInfo;
 import com.linksteady.operate.domain.SendCouponRecord;
-import com.linksteady.operate.vo.CouponInfoVO;
-import com.linksteady.operate.vo.SendCouponVO;
 import com.linksteady.operate.vo.couponSnCountVO;
 
 import java.util.List;
@@ -47,8 +44,9 @@ public interface QywxSendCouponMapper {
      * 文件上传优惠券数据
      * @param mobiles
      * @param couponId
+     * @param couponIdentity
      */
-    void uploadCoupon(List<String> mobiles, Long couponId);
+    void uploadCoupon(List<String> mobiles, Long couponId, String couponIdentity);
 
 
     void updateFlag(String couponIdentity);

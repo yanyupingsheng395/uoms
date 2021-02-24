@@ -79,11 +79,11 @@ public interface QywxDailyDetailService {
      * @param file
      * @param couponId
      */
-    void uploadCoupon(MultipartFile file, Long couponId)throws LinkSteadyException, IOException;
+    void uploadCoupon(MultipartFile file, Long couponId,String couponIdentity)throws LinkSteadyException, IOException;
 
     /**
      * 点击生成100个优惠券编码
      * @param couponId
      */
-    void couponToSequence(Long couponId)throws LinkSteadyException;
+    void couponToSequence(Long couponId,String couponIdentity)throws LinkSteadyException;
 }

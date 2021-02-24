@@ -84,6 +84,34 @@
         <result property="userIdentity" jdbcType="VARCHAR" column="user_identity"></result>
     </resultMap>
 
+    <resultMap id="couponMap" type="com.linksteady.operate.domain.QywxCoupon">
+        <result property="couponId" jdbcType="DECIMAL" column="coupon_id"></result>
+        <result property="couponDenom" jdbcType="DECIMAL" column="coupon_denom"></result>
+        <result property="couponThreshold" jdbcType="DECIMAL" column="coupon_threshold"></result>
+        <result property="couponUrl" jdbcType="VARCHAR" column="coupon_url"></result>
+        <result property="couponDesc" jdbcType="VARCHAR" column="coupon_desc"></result>
+        <result property="couponNum" jdbcType="DECIMAL" column="coupon_num"></result>
+        <result property="validEnd" jdbcType="TIMESTAMP" column="valid_end"></result>
+        <result property="couponDisplayName" jdbcType="VARCHAR" column="coupon_display_name"></result>
+        <result property="validStatus" jdbcType="VARCHAR" column="valid_status"></result>
+        <result property="discountLevel" jdbcType="VARCHAR" column="discount_level"></result>
+        <result property="checkFlag" jdbcType="VARCHAR" column="check_flag"></result>
+        <result property="checkComments" jdbcType="VARCHAR" column="check_comments"></result>
+        <result property="couponIdentity" jdbcType="VARCHAR" column="coupon_identity"></result>
+        <result property="couponSn" jdbcType="DECIMAL" column="coupon_sn"></result>
+        <result property="couponSerialNum" jdbcType="DECIMAL" column="coupon_serial_num"></result>
+        <result property="couponLongUrl" jdbcType="VARCHAR" column="coupon_long_url"></result>
+    </resultMap>
+    
+    <resultMap id="couponSeriaNoMap" type="com.linksteady.operate.domain.couponSerialNo">
+        <result property="couponId" jdbcType="DECIMAL" column="coupon_id"></result>
+        <result property="serialNo" jdbcType="VARCHAR" column="serial_no"></result>
+        <result property="insertDt" jdbcType="TIMESTAMP" column="insert_dt"></result>
+        <result property="usedFlag" jdbcType="VARCHAR" column="used_flag"></result>
+        <result property="usedDt" jdbcType="TIMESTAMP" column="used_dt"></result>
+        <result property="couponIdentity" jdbcType="VARCHAR" column="coupon_identity"></result>
+    </resultMap>
+
     <select id="getHeadList" resultMap="baseResult">
         SELECT HEAD_ID,to_char(TASK_DATE,'YYYYMMDD') TASK_DATE_STR,TASK_DATE, TOTAL_NUM, SUCCESS_NUM,CONVERT_NUM, CONVERT_RATE, CONVERT_AMOUNT,
         STATUS,EFFECT_DAYS,QYWX_MESSAGE_COUNT, staff_cnt, execute_staff_cnt, execute_rate
@@ -272,6 +300,23 @@
         from uo_qywx_daily_detail where head_id=#{headId} and coupon_id=#{couponId}
         and sendresult &lt;&gt; 'S'
         order by detail_id asc limit #{limit} offset #{offset}
+    </select>
+
+    <select id="getCouponListCount" resultType="int">
+        select count(*) from uo_qywx_coupon where valid_status='Y' and check_flag='1'
+    </select>
+
+    <select id="getCouponListData" resultMap="couponMap">
+        select  a.coupon_id,a.coupon_identity,a.coupon_display_name,a.coupon_threshold,a.coupon_denom,COUNT(b.coupon_id) as coupon_serial_num
+        from uo_qywx_coupon a left join uo_coupon_serial_no b on a.coupon_id=b.coupon_id
+        where a.valid_status='Y' and a.check_flag='1'  group by a.coupon_id, a.coupon_identity, a.coupon_display_name, a.coupon_threshold, a.coupon_denom
+        order by a.coupon_id asc  limit #{limit} offset #{offset}
+    </select>
+    <select id="viewCouponCount" resultType="int">
+        select count(*) from uo_coupon_serial_no where coupon_id=#{couponId} and coupon_identity=#{couponIdentity}
+    </select>
+    <select id="viewCouponData" resultMap="couponSeriaNoMap">
+        select coupon_id,serial_no,insert_dt,used_flag,used_dt,coupon_identity from uo_coupon_serial_no where coupon_id=#{couponId} and coupon_identity=#{couponIdentity} order by insert_dt desc limit #{limit} offset #{offset}
     </select>
 
     <update id="updateCouponSendInfo">
