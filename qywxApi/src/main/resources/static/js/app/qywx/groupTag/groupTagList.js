@@ -196,17 +196,6 @@ function getTagGroupDetail(groupId) {
             field: 'tagCreateTime',
             title: '标签创建时间',
             align: 'center'
-        }, {
-            field: 'insertBy',
-            title: '创建人',
-            align: 'center',
-            formatter: function (value, row, index) {
-                if(value==null||value==""){
-                    return "-";
-                }else{
-                    return value;
-                }
-            }
         }]
     };
     $("#TagTable").bootstrapTable('destroy').bootstrapTable(settings);
