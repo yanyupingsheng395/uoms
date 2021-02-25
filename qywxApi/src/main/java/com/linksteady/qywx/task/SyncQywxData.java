@@ -3,6 +3,7 @@ package com.linksteady.qywx.task;
 import com.linksteady.qywx.service.ExternalContactService;
 import com.linksteady.qywx.service.FollowUserService;
 import com.linksteady.qywx.service.MappingService;
+import com.linksteady.qywx.service.QywxTagService;
 import com.linksteady.smp.starter.annotation.JobHandler;
 import com.linksteady.smp.starter.domain.ResultInfo;
 import com.linksteady.smp.starter.jobclient.service.IJobHandler;
@@ -24,6 +25,9 @@ public class SyncQywxData extends IJobHandler {
     @Autowired
     MappingService mappingService;
 
+    @Autowired
+    QywxTagService qywxTagService;
+
     @Override
     public ResultInfo execute(String param) {
         try {
@@ -35,6 +39,9 @@ public class SyncQywxData extends IJobHandler {
             //进行外部联系人和w_users表的匹配
             mappingService.mappingAll();
             mappingService.unMappingAll();
+
+            //同步企业微信的标签
+            qywxTagService.syncQywxTagList();
 
             log.info("同步企业微信数据执行成功");
             return ResultInfo.success("");

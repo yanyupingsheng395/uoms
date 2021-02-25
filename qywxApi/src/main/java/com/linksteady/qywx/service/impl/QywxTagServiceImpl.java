@@ -3,11 +3,13 @@ package com.linksteady.qywx.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.common.bo.UserBo;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.qywx.constant.WxPathConsts;
+import com.linksteady.qywx.dao.QywxContactWayMapper;
 import com.linksteady.qywx.dao.QywxTagMapper;
 import com.linksteady.qywx.domain.QywxTag;
 import com.linksteady.qywx.domain.QywxTagGroup;
@@ -16,10 +18,12 @@ import com.linksteady.qywx.exception.WxErrorException;
 import com.linksteady.qywx.service.QywxService;
 import com.linksteady.qywx.service.QywxTagService;
 import com.linksteady.qywx.utils.TimeStampUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -27,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class QywxTagServiceImpl implements QywxTagService {
 
     @Autowired(required = false)
@@ -34,6 +39,9 @@ public class QywxTagServiceImpl implements QywxTagService {
 
     @Autowired
     private QywxService qywxService;
+
+    @Autowired
+    private QywxContactWayMapper qywxContactWayMapper;
 
     @Override
     public List<QywxTagGroup> getTagList(int limit,int offset) {
@@ -337,6 +345,45 @@ public class QywxTagServiceImpl implements QywxTagService {
         QywxTag qywxTag = getTagDetails(id);
         if (qywxTag != null) {
             qywxTagMapper.addTag(qywxTag);
+        }
+    }
+
+    @Override
+    public void tagToUserByState(String followUserId, String externalUserId, String state) throws Exception{
+        //判断当前stage是否配置有标签
+        String tagIds=qywxContactWayMapper.getTagIdsByState(state);
+
+        //如果标签不为空，则进行打标签操作
+        if(!StringUtils.isEmpty(tagIds))
+        {
+            List<String> addTagsList= Splitter.on(',').trimResults().omitEmptyStrings().splitToList(tagIds);
+            markCorpTags(followUserId,externalUserId,addTagsList,null);
+        }
+    }
+
+    @Override
+    public void markCorpTags(String followUserId, String externalUserId, List<String> addTagsList, List<String> removeTagsList) throws WxErrorException{
+        StringBuffer requestUrl = new StringBuffer(qywxService.getRedisConfigStorage().getApiUrl(WxPathConsts.ExternalContacts.GET_CORP_TAG_LIST));
+        requestUrl.append("?access_token=" + qywxService.getAccessToken());
+
+        Map<String,Object> param=Maps.newHashMap();
+        param.put("userid",followUserId);
+        param.put("external_userid",externalUserId);
+        if(null!=addTagsList&& addTagsList.size()>0)
+        {
+            param.put("add_tag",addTagsList);
+        }
+        if(null!=removeTagsList&& removeTagsList.size()>0)
+        {
+            param.put("remove_tag",removeTagsList);
+        }
+
+        log.info("为用户打标签，传入的参数为:{}",JSON.toJSONString(param));
+        String result = OkHttpUtil.postRequestByJson(requestUrl.toString(),JSON.toJSONString(param));
+        JSONObject jsonObject = JSON.parseObject(result);
+        WxError error = WxError.fromJsonObject(jsonObject);
+        if (error.getErrorCode() != 0) {
+            throw new WxErrorException(error);
         }
     }
 

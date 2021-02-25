@@ -161,7 +161,7 @@ public class QywxTagController {
     }
 
     /**
-     * 从微信段获取所有标签，并存入数据库
+     * 从微信端获取所有标签，并存入数据库
      */
     @RequestMapping("/syncQywxTagList")
     public ResponseBo syncQywxTagList() {

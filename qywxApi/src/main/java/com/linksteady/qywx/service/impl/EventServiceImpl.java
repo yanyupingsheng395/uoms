@@ -38,7 +38,6 @@ public class EventServiceImpl implements EventService {
         log.info("事件消息内容:{}", inMessage.toString());
        if("event".equals(inMessage.getMsgType())&&"change_external_contact".equals(inMessage.getEvent()))
        {
-           log.info("");
            if(StringUtils.equalsAnyIgnoreCase(inMessage.getChangeType(),"add_external_contact","edit_external_contact","add_half_external_contact"))
            {
                log.info("外部联系人事件-新增、编辑外部联系人");
@@ -63,6 +62,15 @@ public class EventServiceImpl implements EventService {
                        welcomeService.sendWelcomeMessage(inMessage.getWelcomeCode(),inMessage.getExternalUserId());
                    } catch (Exception e) {
                        log.error("推送欢迎语失败！");
+                   }
+               }
+               //为用户打标签
+               if("add_external_contact".equals(inMessage.getChangeType())&&StringUtils.isNotEmpty(inMessage.getState()))
+               {
+                   try {
+                       qywxTagService.tagToUserByState(inMessage.getUserId(),inMessage.getExternalUserId(),inMessage.getState());
+                   } catch (Exception e) {
+                       log.error("为通过联系我添加进来的用户打标签失败！");
                    }
                }
 

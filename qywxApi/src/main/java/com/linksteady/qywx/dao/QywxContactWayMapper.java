@@ -56,4 +56,6 @@ public interface QywxContactWayMapper {
     List<QywxContactWayChat> getContactChatById(Long contactWayId);
 
     void deleteContactWayChat(Long contactWayId);
+
+    String getTagIdsByState(String state);
 }

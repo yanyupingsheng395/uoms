@@ -252,23 +252,6 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
                 qywxContactWay.setDeptList(StringUtils.join(deptNameList, ","));
             }
         }
-   //     List<QywxDeptUser> deptAndUserData = qywxBaseDataMapper.getDeptAndUserData();
-        //        Map<String, String> userMap = deptAndUserData.stream().filter(x->StringUtils.isNotEmpty(x.getUserId()) && StringUtils.isNotEmpty(x.getUserName())).collect(Collectors.toMap(QywxDeptUser::getUserId, QywxDeptUser::getUserName, BinaryOperator.minBy(Comparator.naturalOrder())));
-//        Map<String, String> deptMap = deptAndUserData.stream().filter(x->StringUtils.isNotEmpty(x.getDeptId()) && StringUtils.isNotEmpty(x.getDeptName())).collect(Collectors.toMap(QywxDeptUser::getDeptId, QywxDeptUser::getDeptName, BinaryOperator.minBy(Comparator.naturalOrder())));
-//        contactWayList.stream().forEach(x->{
-//            String userIds = x.getUsersList();
-//            String deptIds = x.getDeptList();
-//            if(StringUtils.isNotEmpty(userIds)) {
-//                List<String> userIdList = Arrays.asList(userIds.split(","));
-//                List<String> userNameList = userIdList.stream().map(k->userMap.get(k)).collect(Collectors.toList());
-//                x.setUsersList(StringUtils.join(userNameList, ","));
-//            }
-//            if(StringUtils.isNotEmpty(deptIds)) {
-//                List<String> deptIdList = Arrays.asList(deptIds.split(","));
-//                List<String> deptNameList = deptIdList.stream().map(k->deptMap.get(k)).collect(Collectors.toList());
-//                x.setDeptList(StringUtils.join(deptNameList, ","));
-//            }
-//        });
         return contactWayList;
 
     }

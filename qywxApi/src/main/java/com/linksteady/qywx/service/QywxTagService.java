@@ -104,4 +104,18 @@ public interface QywxTagService {
      * @param id
      */
     void saveTag(String id) throws WxErrorException;
+
+    /**
+     * 为通过欢迎我进来的用户打上标签
+     */
+    void tagToUserByState(String followUserId,String externalUserId,String state) throws Exception;
+
+    /**
+     * 封装为企业成员打标签的通用方法
+     * @param followUserId
+     * @param externalUserId
+     * @param addTagsList
+     * @param removeTagsList
+     */
+    void markCorpTags(String followUserId,String externalUserId,List<String> addTagsList,List<String> removeTagsList) throws WxErrorException;
 }
