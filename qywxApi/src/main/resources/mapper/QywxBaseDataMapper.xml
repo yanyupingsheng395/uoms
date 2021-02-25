@@ -33,5 +33,6 @@
 
     <select id="getUserList" resultType="map">
         select user_id,name,main_department,operate_flag from uo_qywx_follower_user_list where delete_flag=0
+        order by name asc
     </select>
 </mapper>
