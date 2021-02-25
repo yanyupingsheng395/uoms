@@ -3,7 +3,7 @@ var user_list =[];//添加人员的集合
 var tagCount=0;//标签组总数
 var userData;
 var deptData;
-var Single=false;//在更新时，判断当前活吗是不是单人的。如果是单人的，就不能转成多人。
+var Single=false;//在更新时，判断当前活码是不是单人的。如果是单人的，就不能转成多人。
 var $contactWayForm = $( "#contactWay_edit" );
 var userSelect = $contactWayForm.find( "select[name='userSelect']" );
 var $usersList = $contactWayForm.find( "input[name='usersList']" );
@@ -120,7 +120,7 @@ function upContactWay() {
     var flag = validator.form();
     if(Single){
         if(user_list.length>1||dept_list.length>0){
-            $MB.n_danger( "该渠道活吗初始类型是单人，不能添加多人或部门！");
+            $MB.n_danger( "该渠道活码类型是单人，不能添加多人或部门！");
             return;
         }
     }
@@ -511,7 +511,7 @@ function getDeptAndUserId() {
 }
 
 /**
- * 新增渠道活吗
+ * 新增渠道活码
  */
 function addContactWay() {
     getDeptAndUserId();
@@ -523,7 +523,7 @@ function addContactWay() {
     }
     if(Single){
         if(user_list.length>1){
-            $MB.n_danger( "该渠道活吗初始类型是单人，不能添加多人！");
+            $MB.n_danger( "该渠道活码类型是单人，不能添加多人！");
             return;
         }
     }
