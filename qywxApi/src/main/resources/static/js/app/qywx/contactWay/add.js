@@ -20,7 +20,7 @@ $( function () {
         editContact(contactWayId);
         editChat(contactWayId);
     }
-} );
+});
 
 /**
  * 点击更新按钮，填充页面数据

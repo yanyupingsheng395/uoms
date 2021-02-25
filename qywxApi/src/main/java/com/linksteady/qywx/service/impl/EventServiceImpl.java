@@ -70,7 +70,7 @@ public class EventServiceImpl implements EventService {
                    try {
                        qywxTagService.tagToUserByState(inMessage.getUserId(),inMessage.getExternalUserId(),inMessage.getState());
                    } catch (Exception e) {
-                       log.error("为通过联系我添加进来的用户打标签失败！");
+                       log.error("为通过联系我添加进来的用户打标签失败！{}",e);
                    }
                }
 
