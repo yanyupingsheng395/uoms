@@ -61,9 +61,10 @@ public class EventServiceImpl implements EventService {
                                "Y".equals(qywxService.getEnableWelcome()),welcomeWhiteUserSet.contains(inMessage.getUserId()));
                        welcomeService.sendWelcomeMessage(inMessage.getWelcomeCode(),inMessage.getExternalUserId());
                    } catch (Exception e) {
-                       log.error("推送欢迎语失败！");
+                       log.error("推送欢迎语失败！,原因为{}",e);
                    }
                }
+
                //为用户打标签
                if("add_external_contact".equals(inMessage.getChangeType())&&StringUtils.isNotEmpty(inMessage.getState()))
                {

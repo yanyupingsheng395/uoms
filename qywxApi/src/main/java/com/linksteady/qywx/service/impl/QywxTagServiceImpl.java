@@ -59,6 +59,7 @@ public class QywxTagServiceImpl implements QywxTagService {
     public synchronized void addTagGroup(String groupTagName, String groupName) throws WxErrorException {
         StringBuffer requestUrl = new StringBuffer(qywxService.getRedisConfigStorage().getApiUrl(WxPathConsts.ExternalContacts.ADD_CORP_TAG));
         requestUrl.append("?access_token=" + qywxService.getAccessToken());
+
         List<Map<String,Object>> list= Lists.newArrayList();
         Map<String,Object> tag= Maps.newHashMap();
         tag.put("name",groupTagName);
@@ -66,6 +67,7 @@ public class QywxTagServiceImpl implements QywxTagService {
         JSONObject param= new JSONObject();
         param.put("group_name",groupName);
         param.put("tag",list);
+
         String detailData = OkHttpUtil.postRequestByJson(requestUrl.toString(), JSON.toJSONString(param));
         JSONObject jsonObject = JSON.parseObject(detailData);
         WxError error = WxError.fromJsonObject(jsonObject);

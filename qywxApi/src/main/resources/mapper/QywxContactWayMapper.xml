@@ -267,7 +267,7 @@
          delete from uo_qywx_contact_way_chat where contact_way_id=#{contactWayId}
     </delete>
 
-    <select id="getTagIdsByState">
+    <select id="getTagIdsByState" resultType="string">
          select tag_ids from uo_qywx_contact_way where state=#{state} limit 1
     </select>
 </mapper>
