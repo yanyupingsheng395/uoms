@@ -18,10 +18,6 @@ function initTable() {
         },
         columns: [{
             checkbox: true
-        },  {
-            field: 'couponId',
-            align: 'center',
-            title: '优惠券ID'
         }, {
             field: 'couponDisplayName',
             align: 'center',
@@ -37,11 +33,15 @@ function initTable() {
         }, {
             field: 'couponIdentity',
             align: 'center',
-            title: '商城优惠券唯一标记'
+            title: '券码标记'
         }, {
             field: 'couponSerialNum',
             align: 'center',
-            title: '流水号数量'
+            title: '券码总数量'
+        }, {
+            field: 'couponSeriaNolNum',
+            align: 'center',
+            title: '券码未使用数量'
         }],onLoadSuccess: function(data){
             $("a[data-toggle='tooltip']").tooltip();
         }
@@ -97,7 +97,7 @@ function viewCouponData(couponId,couponIdentity) {
         columns: [ {
             field: 'serialNo',
             align: 'center',
-            title: '流水号编号'
+            title: '券码编号'
         }, {
             field: "usedFlag",
             align: 'center',
@@ -189,5 +189,10 @@ function uploadCoupon() {
             }
         });
     }
+    $('#add_modal').modal('hide');
+    $MB.refreshTable("dataTable");
+}
+
+function closeCoupon() {
     $('#add_modal').modal('hide');
 }

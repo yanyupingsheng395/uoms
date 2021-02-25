@@ -68,5 +68,9 @@ public class QywxCoupon implements Serializable {
      * 对应uo_coupon_serial_no的数量
      */
     private long couponSerialNum;
+    /**
+     * 券码未使用数量
+     */
+    private long couponSeriaNolNum;
 
 }
