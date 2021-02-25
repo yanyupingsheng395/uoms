@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/qywx")
@@ -133,6 +134,8 @@ public class QywxSettingController {
         String status = qywxService.getEnableWelcome();
         Map<String,Object> result= Maps.newHashMap();
         result.put("status",status);
+        Set<String> welcomeWhiteUser = qywxService.getWelcomeWhiteUserSet();
+        result.put("welcomeWhiteUser",StringUtils.strip(welcomeWhiteUser.toString(),"[]"));
         return ResponseBo.ok(result);
     }
 
@@ -140,9 +143,10 @@ public class QywxSettingController {
      * 设置欢迎语状态
      */
     @PostMapping("/setEnableWelcome")
-    public ResponseBo setEnableWelcome(String status){
+    public ResponseBo setEnableWelcome(String status,String welcomeWhiteUserName){
         try {
             qywxService.setEnableWelcome(status);
+            qywxService.setWelcomeWhiteUserName(welcomeWhiteUserName);
             return ResponseBo.ok();
         }catch (Exception e){
             return ResponseBo.error();

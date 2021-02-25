@@ -1,28 +1,33 @@
 <div class="row">
     <div class="col-sm-12">
-        <form  method="post" class="form-inline" id="qywx-setting-form">
+        <form  method="post" class="form-horizontal" id="qywx-setting-form">
             <div class="row">
-                <div class="col-md-4">
-                    <div class="form-group">
-                        &#12288;&#12288;企业ID：<input type="text"  class="form-control" name="corpId" id="corpId"/>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">企业ID：</label>
+                    <div class="col-sm-6">
+                        <input type="text"  class="form-control" name="corpId" id="corpId"/>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        &#12288;&#12288;应用秘钥：<input type="text"  class="form-control" name="applicationSecret" id="applicationSecret"/>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">应用秘钥：</label>
+                    <div class="col-sm-6">
+                        <input type="text"  class="form-control" name="applicationSecret" id="applicationSecret"/>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        &#12288;&#12288;应用agentID：<input type="text" class="form-control" name="agentId" id="agentId"/>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">应用agentID：</label>
+                    <div class="col-sm-6">
+                        <input type="text"  class="form-control" name="agentId" id="agentId"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 25px;">
+                <div class="col-sm-12">
+                    <div class="btn-group-sm" style="text-align: center">
+                        <a class="btn btn-primary btn-edit" onclick="updateWxSetting()" type="button"><i class="fa fa-arrow-right"></i>保存配置</a>
                     </div>
                 </div>
             </div>
         </form>
-    </div>
-</div>
-<div class="row m-t-15">
-    <div class="col-md-12 text-right">
-        <a id='updateSetting' class="btn btn-sm btn-secondary" onclick="updateWxSetting()" type="button"><i class="fa fa-arrow-right"></i>保存</a>
     </div>
 </div>

@@ -1,19 +1,39 @@
 <div class="row">
     <div class="col-sm-12">
-        <div class="example-box">
-            <label class="control-label">　　　　是否开启欢迎语：</label>
-            <label class="lyear-radio radio-inline radio-primary">
-                <input type="radio" id="openWel" name="isopenwel" value="Y"><span>是</span>
-            </label>
-            <label class="lyear-radio radio-inline radio-primary">
-                <input type="radio" id="closeWel" value="N"  name="isopenwel" checked="checked"><span>否</span>
-            </label>
-        </div>
-    </div>
-</div>
-<div class="row m-t-15">
-    <div class="col-md-12 text-right">
-        <a class="btn btn-sm btn-secondary" onclick="setEnableWelcome()" type="button"><i class="fa fa-arrow-right"></i>保存</a>
+        <form  method="post"  class="form-horizontal" id="qywx-welcom-form">
+            <div class="row">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">是否开启欢迎语：</label>
+                    <div class="col-sm-6" style="margin-top: 6px;">
+                        <label class="lyear-radio radio-inline radio-primary">
+                            <input type="radio" id="openWel" name="isopenwel" value="Y"><span>是</span>
+                        </label>
+                        <label class="lyear-radio radio-inline radio-primary">
+                            <input type="radio" id="closeWel" value="N"  name="isopenwel" checked="checked"><span>否</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">欢迎语导购白名单：</label>
+                    <div class="col-sm-6">
+                        <input type="text"  class="form-control" name="welcomeWhiteUserName" id="welcomeWhiteUserName" placeholder="导购ID1,导购ID2"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">备注：</label>
+                    <div class="col-sm-6">
+                        <p  style="margin-top: 5px;">多个导购ID用逗号拼接</p>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 25px;">
+                <div class="col-sm-12">
+                    <div class="btn-group-sm" style="text-align: center">
+                        <a class="btn btn-primary btn-edit" onclick="setEnableWelcome()" type="button"><i class="fa fa-arrow-right"></i>保存配置</a>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 

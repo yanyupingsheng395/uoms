@@ -1,18 +1,21 @@
 <div class="row">
     <div class="col-sm-12">
-        <form  method="post"  class="form-inline" id="qywx-apples-form">
+        <form  method="post"  class="form-horizontal" id="qywx-apples-form">
             <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group" style="width: 50%;">
-                        &#12288;&#12288;企微关联的小程序商城APPID：<input type="text" style="width: 70%;"  class="form-control" name="mpappid" id="mpappid"/>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">企微关联的小程序商城APPID：</label>
+                    <div class="col-sm-6">
+                        <input type="text"  class="form-control" name="mpappid" id="mpappid"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 25px;">
+                <div class="col-sm-12">
+                    <div class="btn-group-sm" style="text-align: center">
+                        <a class="btn btn-primary btn-edit" onclick="setMpAppId()" type="button"><i class="fa fa-arrow-right"></i>保存配置</a>
                     </div>
                 </div>
             </div>
         </form>
-    </div>
-</div>
-<div class="row m-t-15">
-    <div class="col-md-12 text-right">
-        <a class="btn btn-sm btn-secondary" onclick="setMpAppId()" type="button"><i class="fa fa-arrow-right"></i>保存</a>
     </div>
 </div>

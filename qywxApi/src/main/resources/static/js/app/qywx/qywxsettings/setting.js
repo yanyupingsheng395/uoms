@@ -137,6 +137,7 @@ function getEnableWel(){
                 $("#openWel").attr("checked","checked");
                 $('#closeWel').removeAttr("checked");
             }
+            $("#welcomeWhiteUserName").val(r.msg.welcomeWhiteUser);
         }else {
             $MB.n_danger("获取数据异常！");
         }
@@ -148,7 +149,8 @@ function getEnableWel(){
  */
 function setEnableWelcome(){
     var status= $("input[name='isopenwel']:checked").val();
-    var data ="status="+status;
+    var welcomeWhiteUserName = $("#welcomeWhiteUserName").val();
+    var data ="status="+status+"&welcomeWhiteUserName="+welcomeWhiteUserName;
     $.post( "/qywx/setEnableWelcome", data, function (r) {
         if (r.code === 200) {
             $MB.n_success("更新成功！");

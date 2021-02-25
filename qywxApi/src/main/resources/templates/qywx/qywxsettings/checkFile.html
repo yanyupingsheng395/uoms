@@ -1,28 +1,34 @@
 <div class="row">
     <div class="col-sm-12">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="btn-group-sm" id="toolbar" role="group">
-                    <a class="btn btn-primary btn-edit" id="btn_upload" onclick="$('#materialModal').modal('show')">
-                        <i class="fa fa-cog"></i> 上传文件
-                    </a>
-                </div>
-            </div>
-        </div>
-        <div class="row">
+        <form  method="post"  class="form-horizontal">
             <div id="showfile" style="display:none;">
-                <div class="col-xs-6 col-xs-offset-2 col-sm-8" style="margin-top:10px;">
+                <div class="row">
                     <div class="form-group">
-                        校验文件名称：<input type="text"  class="form-control" readonly="readonly" name="filename" id="filename"/>
+                        <label class="col-sm-3 control-label">校验文件名称：</label>
+                        <div class="col-sm-6">
+                            <input type="text"  class="form-control" readonly="readonly" name="filename" id="filename"/>
+                        </div>
                     </div>
                 </div>
-                <div class="col-xs-6 col-xs-offset-2 col-sm-8">
+                <div class="row">
                     <div class="form-group">
-                        校验文件内容：<textarea class="form-control" rows="3"  readonly="readonly" name="content" id="content"></textarea>
+                        <label class="col-sm-3 control-label">校验文件内容：</label>
+                        <div class="col-sm-6">
+                            <input type="text"  class="form-control" readonly="readonly" name="content" id="content"/>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+            <div class="row" style="margin-top: 25px;">
+                <div class="col-sm-12">
+                    <div class="btn-group-sm" style="text-align: center" id="toolbar" role="group">
+                        <a class="btn btn-primary btn-edit"  id="btn_upload" onclick="$('#materialModal').modal('show')">
+                            <i class="fa fa-cog"></i> 上传文件
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
 
 </div>

@@ -1,28 +1,34 @@
 <div class="row">
     <div class="col-sm-12">
-        <form  method="post"  class="form-inline" id="qywx-contact-form">
+        <form  method="post"  class="form-horizontal" id="qywx-contact-form">
             <div class="row">
-                <div class="col-md-4">
-                    <div class="form-group">
-                        外部联系人事件URL：<input type="text" readonly="readonly"  class="form-control" name="eventUrl" id="eventUrl"/>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">外部联系人事件URL：</label>
+                    <div class="col-sm-6">
+                        <input type="text"  class="form-control" readonly name="eventUrl" id="eventUrl"/>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        外部联系人事件token：<input type="text" class="form-control"  name="eventToken" id="eventToken"/>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">外部联系人事件token：</label>
+                    <div class="col-sm-6">
+                        <input type="text"  class="form-control" name="eventToken" id="eventToken"/>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        外部联系人事件aesKey：<input type="text" class="form-control" name="eventAesKey" id="eventAesKey"/>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">外部联系人事件aesKey：</label>
+                    <div class="col-sm-6">
+                        <input type="text"  class="form-control" name="eventAesKey" id="eventAesKey"/>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 25px;">
+                <div class="col-sm-12">
+                    <div class="btn-group-sm" style="text-align: center">
+                        <a class="btn btn-primary btn-edit" onclick="updateContact()" type="button"><i class="fa fa-arrow-right"></i>保存配置</a>
                     </div>
                 </div>
             </div>
         </form>
     </div>
 </div>
-<div class="row m-t-15">
-    <div class="col-md-12 text-right">
-        <a class="btn btn-sm btn-secondary" onclick="updateContact()" type="button"><i class="fa fa-arrow-right"></i>保存</a>
-    </div>
-</div>
+
