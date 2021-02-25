@@ -20,6 +20,8 @@ public interface ParamMapper {
 
     void updateEnableWelcome(String enableWelcome);
 
+    void updateWelcomeWhiteUserName(String welcomeWhiteUserName);
+
     void updateMpAppId(String mpAppId);
 
     void updateQywxParam(int dailyAddNum, double dailyAddRate, int applyNum, String opUser);

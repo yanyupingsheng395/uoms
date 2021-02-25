@@ -79,4 +79,8 @@ public interface RedisConfigStorage {
 
     void setAgentJsapiTicket(String agentJsApiTicket,long expireIn);
 
+    String getWelcomeWhiteUserName();
+
+    void setWelcomeWhiteUserName(String welcomeWhiteUserName);
+
 }

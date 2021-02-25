@@ -9,6 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+
 @Service
 @Slf4j
 public class EventServiceImpl implements EventService {
@@ -49,10 +51,15 @@ public class EventServiceImpl implements EventService {
                externalContactService.updateExternalContract(externalContact);
 
                //(前提是已经开启了欢迎语) 如果是添加时，需要发送欢迎信息，则在此进行发送
-               if("Y".equals(qywxService.getEnableWelcome())&&"add_external_contact".equals(inMessage.getChangeType())&&StringUtils.isNotEmpty(inMessage.getWelcomeCode()))
+               if("add_external_contact".equals(inMessage.getChangeType())&&StringUtils.isNotEmpty(inMessage.getWelcomeCode()))
                {
+                   //获取欢迎语的导购白名单
+                   Set<String> welcomeWhiteUserSet = qywxService.getWelcomeWhiteUserSet();
+
+                   if("Y".equals(qywxService.getEnableWelcome())||welcomeWhiteUserSet.contains(inMessage.getUserId()))
                    try {
-                       log.info("对{}发送欢迎语，收到的welcomeCode为{}",inMessage.getExternalUserId(),inMessage.getWelcomeCode());
+                       log.info("对{}发送欢迎语，收到的welcomeCode为{},欢迎语开关：{},当前导购是否在白名单:{}",inMessage.getExternalUserId(),inMessage.getWelcomeCode(),
+                               "Y".equals(qywxService.getEnableWelcome()),welcomeWhiteUserSet.contains(inMessage.getUserId()));
                        welcomeService.sendWelcomeMessage(inMessage.getWelcomeCode(),inMessage.getExternalUserId());
                    } catch (Exception e) {
                        log.error("推送欢迎语失败！");

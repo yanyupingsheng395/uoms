@@ -19,6 +19,7 @@
         <result column="ec_event_aeskey" jdbcType="VARCHAR" property="ecEventAesKey"/>
         <result column="agent_id" jdbcType="VARCHAR" property="agentId"/>
         <result column="enable_welcome" jdbcType="VARCHAR" property="enableWelcome"/>
+        <result column="welcome_white_username" jdbcType="VARCHAR" property="welcomeWhiteUserName"/>
 
         <result column="oauth_filename" jdbcType="VARCHAR" property="oauthFilename"/>
         <result column="oauth_file" jdbcType="VARCHAR" property="oauthFile"/>
@@ -42,6 +43,10 @@
 
     <update id="updateEnableWelcome">
          update uo_qywx_param set enable_welcome=#{enableWelcome}
+    </update>
+
+    <update id="updateWelcomeWhiteUserName">
+        update uo_qywx_param set welcome_white_username=#{welcomeWhiteUserName}
     </update>
 
     <update id="updateMpAppId">

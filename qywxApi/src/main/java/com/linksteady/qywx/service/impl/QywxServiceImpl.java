@@ -2,6 +2,8 @@ package com.linksteady.qywx.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Sets;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.qywx.constant.WxPathConsts;
 import com.linksteady.qywx.dao.ParamMapper;
@@ -17,6 +19,7 @@ import org.springframework.util.StringUtils;
 import redis.clients.jedis.JedisPool;
 
 import javax.annotation.PostConstruct;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -65,6 +68,10 @@ public class QywxServiceImpl implements QywxService {
         if(null!=qywxParam&&!StringUtils.isEmpty(qywxParam.getEnableWelcome()))
         {
             redisConfigStorage.setEnableWelcome(qywxParam.getEnableWelcome());
+        }
+        if(null!=qywxParam&&!StringUtils.isEmpty(qywxParam.getWelcomeWhiteUserName()))
+        {
+            redisConfigStorage.setWelcomeWhiteUserName(qywxParam.getWelcomeWhiteUserName());
         }
         this.redisConfigStorage=redisConfigStorage;
     }
@@ -293,6 +300,38 @@ public class QywxServiceImpl implements QywxService {
     @Override
     public QywxParam getFileMessage() {
         return paramMapper.getFileMessage();
+    }
+
+    @Override
+    public Set<String> getWelcomeWhiteUserSet() {
+        String welcomeWhiteUserName=this.redisConfigStorage.getWelcomeWhiteUserName();
+
+        if(StringUtils.isEmpty(welcomeWhiteUserName))
+        {
+            QywxParam qywxParam=paramMapper.getQywxParam();
+            welcomeWhiteUserName=qywxParam==null?"":qywxParam.getWelcomeWhiteUserName();
+            if(!StringUtils.isEmpty(welcomeWhiteUserName)) {
+                this.redisConfigStorage.setWelcomeWhiteUserName(welcomeWhiteUserName);
+            }
+        }
+        welcomeWhiteUserName=this.redisConfigStorage.getWelcomeWhiteUserName();
+        if(StringUtils.isEmpty(welcomeWhiteUserName))
+        {
+            return Sets.newHashSet();
+        }else
+        {
+            return Sets.newHashSet(Splitter.on(',').trimResults().omitEmptyStrings().split(welcomeWhiteUserName));
+
+        }
+
+    }
+
+    @Override
+    public synchronized void setWelcomeWhiteUserName(String welcomeWhiteUserName) {
+        //更新到数据库
+        paramMapper.updateWelcomeWhiteUserName(welcomeWhiteUserName);
+        //更新到redis
+        this.redisConfigStorage.setWelcomeWhiteUserName(welcomeWhiteUserName);
     }
 
 }

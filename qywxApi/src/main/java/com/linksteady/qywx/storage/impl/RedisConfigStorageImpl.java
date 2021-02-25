@@ -27,6 +27,8 @@ public class RedisConfigStorageImpl implements RedisConfigStorage {
     protected final static String QYWX_JSAPI_TICKET="qywx:jsapi_ticket";
     protected final static String QYWX_AGENT_JSAPI_TICKET="qywx:jsapi_agent_ticket";
 
+    protected final static String QYWX_WELCOME_WHITE_USERNAME="qywx:ec:welcome:whiteusername";
+
     private JedisPool jedisPool;
 
     public RedisConfigStorageImpl(JedisPool jedisPool) {
@@ -228,6 +230,22 @@ public class RedisConfigStorageImpl implements RedisConfigStorage {
             }
             // NX是不存在时才set， XX是存在时才set， EX是秒，PX是毫秒
             jedis.set(QYWX_AGENT_JSAPI_TICKET,agentJsApiTicket,"NX","EX",expireIn-200);
+        }
+    }
+
+    @Override
+    public String getWelcomeWhiteUserName() {
+        try(Jedis jedis=jedisPool.getResource())
+        {
+            return jedis.get(QYWX_WELCOME_WHITE_USERNAME);
+        }
+    }
+
+    @Override
+    public void setWelcomeWhiteUserName(String welcomeWhiteUserName) {
+        try(Jedis jedis=jedisPool.getResource())
+        {
+            jedis.set(QYWX_WELCOME_WHITE_USERNAME,welcomeWhiteUserName);
         }
     }
 

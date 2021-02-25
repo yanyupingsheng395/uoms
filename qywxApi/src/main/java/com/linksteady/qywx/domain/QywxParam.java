@@ -81,4 +81,9 @@ public class QywxParam implements Serializable {
 
     private String oauthFile;
 
+    /**
+     * 欢迎语白名单
+     */
+    private String welcomeWhiteUserName;
+
 }

@@ -4,6 +4,8 @@ import com.linksteady.qywx.domain.QywxParam;
 import com.linksteady.qywx.exception.WxErrorException;
 import com.linksteady.qywx.storage.impl.RedisConfigStorageImpl;
 
+import java.util.Set;
+
 
 public interface QywxService {
 
@@ -84,4 +86,15 @@ public interface QywxService {
     void saveFile(String title, String content);
 
     QywxParam getFileMessage();
+
+
+    /**
+     * 获取欢迎语导购白名单
+     */
+    Set<String> getWelcomeWhiteUserSet();
+
+    /**
+     * 设置欢迎语导购白名单
+     */
+    void setWelcomeWhiteUserName(String userList);
 }
