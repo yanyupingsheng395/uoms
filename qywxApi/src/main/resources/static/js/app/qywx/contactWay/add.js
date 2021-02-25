@@ -521,6 +521,9 @@ function addContactWay() {
     if(validator.form()==true){
         flag=true;
     }
+    if($("input[name='relateChat']:checked").val()=='N'){
+        flag=true;
+    }
     if(Single){
         if(user_list.length>1){
             $MB.n_danger( "该渠道活码类型是单人，不能添加多人！");
