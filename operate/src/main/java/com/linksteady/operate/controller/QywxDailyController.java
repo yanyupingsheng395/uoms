@@ -423,6 +423,9 @@ public class QywxDailyController {
             qywxMessage.setLinkUrl(linkUrl);
         }
         String result = qywxMessageService.pushQywxMessage(qywxMessage, senderId, externalContactList);
+        if(StringUtils.isEmpty(result)){
+            throw new Exception("推送消息失败");
+        }
         return result;
     }
 
