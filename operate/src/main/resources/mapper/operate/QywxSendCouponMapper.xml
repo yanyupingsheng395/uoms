@@ -48,13 +48,13 @@
     </update>
 
     <update id="uploadCoupon">
-        insert into uo_coupon_serial_no(coupon_id, serial_no, insert_dt, used_flag) VALUES
+        insert into uo_coupon_serial_no(coupon_id, serial_no, insert_dt, used_flag,coupon_identity) VALUES
         <foreach collection="mobiles" item="item" index="index" separator=",">
-            (#{couponId},#{item},now(),'N')
+            (#{couponId},#{item},now(),'N',#{couponIdentity})
         </foreach>
     </update>
     <update id="updateFlag">
-        update uo_coupon_serial_no set used_flag='N' where coupon_identity=#{couponIdentity}
+        update uo_coupon_serial_no set used_flag='N',used_dt=null where coupon_identity=#{couponIdentity}
     </update>
 
 </mapper>

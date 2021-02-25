@@ -106,6 +106,62 @@ public class PushStatusController extends BaseController {
     }
 
     /**
+     * 关闭推送服务
+     * @param
+     * @return
+     */
+    @GetMapping("/qywxStop")
+    public ResponseBo qywxStop() {
+        //判断当前状态
+        if("Y".equalsIgnoreCase(pushConfig.queryQywxPushFlag())) {
+            //关闭服务
+            try {
+                pushConfig.sendPushSignal(PushSignalEnum.QYWX_SIGNAL_STOP,getCurrentUser().getUsername());
+                return ResponseBo.ok("关闭服务成功！");
+            } catch (Exception e) {
+                log.error("关闭推送服务异常，异常原因为{}",e);
+                return ResponseBo.error("关闭服务失败！");
+            }
+        }else
+        {
+            return ResponseBo.error("关闭服务失败，服务已经是关闭状态！");
+        }
+    }
+
+    /**
+     * 开启推送服务
+     * @param
+     * @return
+     */
+    @GetMapping("/qywxStart")
+    public ResponseBo qywxStart() {
+        //判断当前状态
+        if("N".equalsIgnoreCase(pushConfig.queryQywxPushFlag())) {
+            //开启服务
+            try {
+                pushConfig.sendPushSignal(PushSignalEnum.QYWX_SIGNAL_START,getCurrentUser().getUsername());
+                return ResponseBo.ok("开启服务成功！");
+            } catch (Exception e) {
+                log.error("开启推送服务异常，异常原因为{}",e);
+                return ResponseBo.error("开启服务失败！");
+            }
+        }else
+        {
+            return ResponseBo.error("开启服务失败,服务已经是开启状态！");
+        }
+    }
+
+    /**
+     * 获取当前服务的启动状态
+     * @param
+     * @return
+     */
+    @GetMapping("/qywxStatus")
+    public ResponseBo qywxStatus() {
+        return ResponseBo.okWithData(null, pushConfig.queryQywxPushFlag());
+    }
+
+    /**
      * 获取推送的日志
      * @param
      * @return

@@ -90,4 +90,36 @@ public interface QywxDailyService {
      * @return
      */
     int updateVersion(Long headId, int version);
+
+    /**
+     * 获取uo_qywx_coupon有效优惠券的数量
+     * @return
+     */
+    int getCouponListCount();
+
+    /**
+     * 分页查询有效优惠券明细
+     * @param limit
+     * @param offset
+     * @return
+     */
+    List<QywxCoupon> getCouponListData(int limit, int offset);
+
+    /**
+     * 根据券ID，券标识，查看券流水号数量
+     * @param couponId
+     * @param couponIdentity
+     * @return
+     */
+    int viewCouponCount(Long couponId, String couponIdentity);
+
+    /**
+     * 根据券ID，券标识，查看券流水号
+     * @param limit
+     * @param offset
+     * @param couponId
+     * @param couponIdentity
+     * @return
+     */
+    List<couponSerialNo> viewCouponData(int limit, int offset, Long couponId, String couponIdentity);
 }

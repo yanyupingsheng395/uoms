@@ -452,5 +452,25 @@ public class QywxDailyServiceImpl implements QywxDailyService {
         return qywxDailyMapper.updateVersion(headId,version);
     }
 
+    @Override
+    public int getCouponListCount() {
+        return qywxDailyMapper.getCouponListCount();
+    }
+
+    @Override
+    public List<QywxCoupon> getCouponListData(int limit, int offset) {
+        return qywxDailyMapper.getCouponListData(limit,offset);
+    }
+
+    @Override
+    public int viewCouponCount(Long couponId, String couponIdentity) {
+        return qywxDailyMapper.viewCouponCount(couponId,couponIdentity);
+    }
+
+    @Override
+    public List<couponSerialNo> viewCouponData(int limit, int offset, Long couponId, String couponIdentity) {
+        return qywxDailyMapper.viewCouponData(limit,offset,couponId,couponIdentity);
+    }
+
 
 }

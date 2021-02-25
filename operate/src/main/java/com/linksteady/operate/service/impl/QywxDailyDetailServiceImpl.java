@@ -8,7 +8,6 @@ import com.linksteady.common.util.FileUtils;
 import com.linksteady.operate.dao.QywxDailyCouponMapper;
 import com.linksteady.operate.dao.QywxDailyDetailMapper;
 import com.linksteady.operate.dao.QywxSendCouponMapper;
-import com.linksteady.operate.domain.ActivityProductUploadError;
 import com.linksteady.operate.domain.QywxDailyDetail;
 import com.linksteady.operate.exception.LinkSteadyException;
 import com.linksteady.operate.service.QywxDailyDetailService;
@@ -19,9 +18,8 @@ import com.linksteady.operate.vo.FollowUserVO;
 import com.linksteady.operate.vo.GroupCouponVO;
 import com.linksteady.operate.vo.RecProdVo;
 import com.linksteady.smp.starter.lognotice.service.ExceptionNoticeHandler;
-import com.opencsv.CSVReader;
-import com.opencsv.CSVReaderBuilder;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -29,7 +27,6 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.shiro.crypto.hash.Md5Hash;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -195,7 +192,7 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void uploadCoupon(MultipartFile file, Long couponId)throws LinkSteadyException {
+    public void uploadCoupon(MultipartFile file, Long couponId,String couponIdentity)throws LinkSteadyException {
         // 解析file
         List<String> mobiles = Lists.newArrayList();
         String xlsSuffix = ".xls";
@@ -221,7 +218,9 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
                 for (int i = 0; i <= sheet.getLastRowNum(); i++) {
                     Row row = sheet.getRow(i);
                     Cell cell = row.getCell(0);
-                    mobiles.add(cell.getStringCellValue());
+                    if(StringUtils.isNotEmpty(cell.getStringCellValue())){
+                        mobiles.add(cell.getStringCellValue());
+                    }
                 }
                 FileUtils.deleteTempFile(FileUtils.multipartFileToFile(file));
             }
@@ -231,11 +230,11 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
             e.printStackTrace();
         }
         //获取数据，更新到uo_coupon_serial_no中
-        qywxSendCouponMapper.uploadCoupon(mobiles,couponId);
+        qywxSendCouponMapper.uploadCoupon(mobiles,couponId,couponIdentity);
     }
 
     @Override
-    public void couponToSequence(Long couponId) throws LinkSteadyException{
+    public void couponToSequence(Long couponId,String couponIdentity) throws LinkSteadyException{
         //获取当前的流水号
         int couponSn=qywxSendCouponMapper.getCouponSn();
         if(couponSn==0) {
@@ -252,7 +251,7 @@ public class QywxDailyDetailServiceImpl implements QywxDailyDetailService {
             couponSnList.add(String.format("%012d", i));
         }
         //获取数据，更新到uo_coupon_serial_no中
-        qywxSendCouponMapper.uploadCoupon(couponSnList,couponId);
+        qywxSendCouponMapper.uploadCoupon(couponSnList,couponId, couponIdentity);
     }
 
     /**
