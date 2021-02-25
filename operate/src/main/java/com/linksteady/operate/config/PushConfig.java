@@ -61,6 +61,18 @@ public class PushConfig {
             //通知推送端也重新加载配置
             heartBeatInfo.setSignal(signal);
             redisMessageService.sendPushSingal(heartBeatInfo);
+        }else if (signal.getSignalCode().equals(PushSignalEnum.QYWX_SIGNAL_START.getSignalCode()))
+        {
+            //更新数据库
+            configMapper.updateConfig(ConfigEnum.qywxSyncMsgResult.getKeyCode(),"Y");
+            //重新加载配置到redis
+            configService.loadConfigToRedis();
+        }else if(signal.getSignalCode().equals(PushSignalEnum.QYWX_SIGNAL_STOP.getSignalCode()))
+        {
+            //更新数据库
+            configMapper.updateConfig(ConfigEnum.qywxSyncMsgResult.getKeyCode(),"N");
+            //重新加载配置到redis
+            configService.loadConfigToRedis();
         }else
         {
             //什么也不做
@@ -74,6 +86,10 @@ public class PushConfig {
 
     public String getPushFlag() {
         return configService.getValueByName(ConfigEnum.pushFlag.getKeyCode());
+    }
+
+    public String queryQywxPushFlag(){
+        return configService.getValueByName(ConfigEnum.qywxSyncMsgResult.getKeyCode());
     }
 
     public String getPushMethod() {

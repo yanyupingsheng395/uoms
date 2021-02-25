@@ -9,7 +9,10 @@ public enum  PushSignalEnum {
     SIGNAL_START("start","启动推送服务"),
     SIGNAL_STOP("stop","关闭推送服务"),
     SIGNAL_REFRESH("refresh","刷新配置"),
+    QYWX_SIGNAL_START("qywxstart","企业微信启动同步消息"),
+    QYWX_SIGNAL_STOP("qywxstop","企业微信关闭同步消息"),
     SIGNAL_PRINT("print","打印配置");
+
 
     private String signalCode;
 

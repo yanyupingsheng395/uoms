@@ -46,16 +46,6 @@
                             </a>
                         </div>
                     </div>
-                 <!--   <div class="col-sm-2 text-right">
-                        <div class="btn-group-sm" role="group">
-                            <a class="btn btn-secondary" onclick="getPushLog(-1)">
-                                <i class="fa fa-arrow-left"></i> 前一天
-                            </a>
-                            <a class="btn btn-secondary" onclick="getPushLog(1)">
-                                后一天 <i class="fa fa-arrow-right"></i>
-                            </a>
-                        </div>
-                    </div>-->
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
@@ -79,15 +69,13 @@
     window.onload = function () {
         //获取当前微信服务状态
         status();
-        //获取启动日志
-        //getPushLog();
     };
 
     // 启动服务
     function start() {
         $("#startPush").attr("disabled",true);
         $MB.loadingDesc('show', '启动服务中，请稍候...');
-        $.get( "/push/start", {}, function (r) {
+        $.get( "/push/qywxStart", {}, function (r) {
             if (r.code === 200) {
                 //延迟 显示遮罩层 延迟7s后结束
                 setTimeout(
@@ -110,7 +98,7 @@
     function stop() {
         $("#stopPush").attr("disabled",true);
         $MB.loadingDesc('show', '停止服务中，请稍候...');
-        $.get( "/push/stop", {}, function (r) {
+        $.get( "/push/qywxStop", {}, function (r) {
             if (r.code === 200) {
                 //延迟 显示遮罩层 延迟7s后结束
                 setTimeout(
@@ -131,7 +119,7 @@
     }
 
     function status() {
-        $.get( "/qywxpush/status", {}, function (r) {
+        $.get( "/push/qywxStatus", {}, function (r) {
             let status = r.data;
             let code = "";
             if (status == 'Y') {
