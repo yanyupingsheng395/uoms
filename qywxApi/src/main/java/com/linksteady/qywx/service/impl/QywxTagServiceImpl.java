@@ -365,7 +365,7 @@ public class QywxTagServiceImpl implements QywxTagService {
 
     @Override
     public void markCorpTags(String followUserId, String externalUserId, List<String> addTagsList, List<String> removeTagsList) throws WxErrorException{
-        StringBuffer requestUrl = new StringBuffer(qywxService.getRedisConfigStorage().getApiUrl(WxPathConsts.ExternalContacts.GET_CORP_TAG_LIST));
+        StringBuffer requestUrl = new StringBuffer(qywxService.getRedisConfigStorage().getApiUrl(WxPathConsts.ExternalContacts.MARK_CORP_TAG));
         requestUrl.append("?access_token=" + qywxService.getAccessToken());
 
         Map<String,Object> param=Maps.newHashMap();
