@@ -1,6 +1,5 @@
 package com.linksteady.qywx.service;
 
-import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.qywx.domain.QywxTag;
 import com.linksteady.qywx.domain.QywxTagGroup;
 import com.linksteady.qywx.exception.WxErrorException;
@@ -9,7 +8,7 @@ import java.util.List;
 
 public interface QywxTagService {
     /**
-     * 公共方法，获取标签组的集合
+     * 获取标签组的集合
      * @return
      */
     List<QywxTagGroup> getTagList(int limit,int offset);
@@ -19,7 +18,7 @@ public interface QywxTagService {
      * @param groupName
      * @return
      */
-    int queryGroupTag( String groupName);
+    int isTagGroupByGroupName( String groupName);
 
     /**
      * 新增标签组
@@ -34,7 +33,7 @@ public interface QywxTagService {
      * @param groupid   标签组ID
      * @return
      */
-    int queryTag(String tagName, String groupid);
+    int isTag(String tagName, String groupid);
 
     /**
      * 在标签组下新增标签

@@ -47,7 +47,7 @@ public class QywxTagServiceImpl implements QywxTagService {
     private QywxContactWayMapper qywxContactWayMapper;
 
     /**
-     * 公共方法，获取标签组的集合
+     * 获取标签组的集合
      */
     @Override
     public List<QywxTagGroup> getTagList(int limit,int offset) {
@@ -60,8 +60,8 @@ public class QywxTagServiceImpl implements QywxTagService {
      * @return
      */
     @Override
-    public int queryGroupTag(String groupName) {
-        return qywxTagMapper.queryGroupTag(groupName);
+    public int isTagGroupByGroupName(String groupName) {
+        return qywxTagMapper.isTagGroupByGroupName(groupName);
     }
 
     /**
@@ -132,8 +132,8 @@ public class QywxTagServiceImpl implements QywxTagService {
      * @return
      */
     @Override
-    public int queryTag(String tagName, String groupid) {
-        return qywxTagMapper.queryTag(tagName,groupid);
+    public int isTag(String tagName, String groupid) {
+        return qywxTagMapper.isTag(tagName,groupid);
     }
 
     /**
@@ -265,7 +265,7 @@ public class QywxTagServiceImpl implements QywxTagService {
         //根据flag类型，判断是删除标签组还是删除标签,并删除数据库中内容
         if("G".equals(flag)){
             //删除标签组
-            qywxTagMapper.delGroupTag(id);
+            qywxTagMapper.delTagGroup(id);
             //删除标签组下的所有标签
             qywxTagMapper.delTagByGroupId(id);
         }else if("T".equals(flag)){
@@ -274,7 +274,7 @@ public class QywxTagServiceImpl implements QywxTagService {
             int count = qywxTagMapper.getTagCount(groupId);
             if(count==0){
                 //如果一个标签组下所有的标签均被删除，则标签组会被自动删除。
-                qywxTagMapper.delGroupTag(groupId);
+                qywxTagMapper.delTagGroup(groupId);
             }
         }else{
             throw  new Exception("错误类型，不能更新数据库");
@@ -390,7 +390,7 @@ public class QywxTagServiceImpl implements QywxTagService {
             int count = qywxTagMapper.getTagCount(groupId);
             if(count==0){
                 //如果一个标签组下所有的标签均被删除，则标签组会被自动删除。
-                qywxTagMapper.delGroupTag(groupId);
+                qywxTagMapper.delTagGroup(groupId);
             }
         }
     }

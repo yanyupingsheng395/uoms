@@ -61,7 +61,7 @@
         update uo_qywx_tag set tag_name=#{name} where tag_id=#{id}
     </update>
 
-    <delete id="delGroupTag">
+    <delete id="delTagGroup">
         delete from uo_qywx_tag_group where group_id=#{id}
     </delete>
 
@@ -84,11 +84,11 @@
         select tag_id,tag_name,tag_create_time,tag_order,group_id,insert_dt,insert_by from uo_qywx_tag where group_id=#{groupId}
     </select>
 
-    <select id="queryGroupTag" resultType="int">
+    <select id="isTagGroupByGroupName" resultType="int">
         select count(1) from uo_qywx_tag_group where group_name=#{groupName}
     </select>
 
-    <select id="queryTag" resultType="int">
+    <select id="isTag" resultType="int">
         select count(1) from uo_qywx_tag where group_id=#{groupid} and tag_name=#{tagName}
     </select>
 

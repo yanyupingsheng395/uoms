@@ -10,13 +10,13 @@ public interface QywxTagMapper {
     List<QywxTagGroup> getTagGroup(int limit,int offset);
     List<QywxTag> selectTag();
 
-    int queryGroupTag( String groupName);
+    int isTagGroupByGroupName( String groupName);
 
     void addTagGroup(QywxTagGroup qywxTagGroup);
 
     void addTag(QywxTag qywxTag);
 
-    int queryTag(String tagName, String groupid);
+    int isTag(String tagName, String groupid);
 
     void updateTagGroup(String id, String name);
 
@@ -28,7 +28,7 @@ public interface QywxTagMapper {
 
     List<QywxTag> getTagGroupDetail(int limit, int offset, String groupId);
 
-    void delGroupTag(String id);
+    void delTagGroup(String id);
 
     void delTagByGroupId(String id);
 

@@ -35,7 +35,7 @@ public class QywxTagController {
         int limit = request.getLimit();
         int offset = request.getOffset();
         int count=qywxTagService.getTagGroupCount();
-        List<QywxTagGroup> list = getTagGroupList(limit, offset);
+        List<QywxTagGroup> list = qywxTagService.getTagList(limit,offset);
         return ResponseBo.okOverPaging(null,count,list);
     }
 
@@ -62,16 +62,10 @@ public class QywxTagController {
     @RequestMapping("/getTagList")
     @ResponseBody
     public ResponseBo getTagList(){
-        return ResponseBo.okWithData(null,getTagGroupList(0,0));
+        return ResponseBo.okWithData(null,qywxTagService.getTagList(0,0));
     }
 
-    /**
-     * 公共方法，获取标签组的集合
-     * @return
-     */
-    private List<QywxTagGroup> getTagGroupList(int limit,int offset){
-        return qywxTagService.getTagList(limit,offset);
-    }
+
 
     /**
      * 添加标签组
@@ -84,7 +78,7 @@ public class QywxTagController {
     @RequestMapping("/addTagGroup")
     @ResponseBody
     public ResponseBo addTagGroup(@RequestParam String groupTagName,@RequestParam String groupName) throws WxErrorException {
-       int count=qywxTagService.queryGroupTag(groupName);
+       int count=qywxTagService.isTagGroupByGroupName(groupName);
        if(count>0){
            return ResponseBo.error("标签组名称，请重新填写！");
        }
@@ -102,7 +96,7 @@ public class QywxTagController {
     @RequestMapping("/addTag")
     @ResponseBody
     public ResponseBo addTag(@RequestParam String tagName,@RequestParam String groupid) throws WxErrorException {
-        int count=qywxTagService.queryTag(tagName,groupid);
+        int count=qywxTagService.isTag(tagName,groupid);
         if(count>0){
             return ResponseBo.error("该名称已经存在该标签组下，请重新填写！");
         }
@@ -121,12 +115,12 @@ public class QywxTagController {
     @ResponseBody
     public ResponseBo updateGroupTagName(@RequestParam String id,@RequestParam String name,@RequestParam String flag ) throws Exception {
         if("G".equals(flag)){
-            int count=qywxTagService.queryGroupTag(name);
+            int count=qywxTagService.isTagGroupByGroupName(name);
             if(count>0){
                 return ResponseBo.error("标签组名称，请重新填写！");
             }
         }else{
-            int count = qywxTagService.queryTag(name, id);
+            int count = qywxTagService.isTag(name, id);
             if(count>0){
                 return ResponseBo.error("该名称已经存在该标签组下，请重新填写！");
             }
