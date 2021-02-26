@@ -5,19 +5,15 @@ var userData;
 var deptData;
 var $contactWayForm = $( "#contactWay_edit" );
 var userSelect = $contactWayForm.find( "select[name='userSelect']" );
-var $usersList = $contactWayForm.find( "input[name='usersList']" );
-var chatMap=[];//选择群聊对象集合
-var checkChatID=[];//校验是否重复选择群聊
 var tagIds=[];//选择标签集合
-var $qywxManualForm_validator;
 $( function () {
     createUserTree();
     showAllTag();
+    //显示为 保存 还是更新按钮
     if(contactWayId!=null&&contactWayId!=""){
-        $("#creatPreheatEdit").show();
-        $("#creatPreheat").hide();
+        $("#updateContractBtn").show();
+        $("#addContractBtn").hide();
         editContact(contactWayId);
-        editChat(contactWayId);
     }
 });
 
@@ -207,7 +203,6 @@ function addTag(flag,groupid) {
  * 新增标签
  */
 $("#tag_save").click(function () {
-    var flag= $("#tagflag").val();
     var tagName=$("#tagName").val();
     var groupid=$("#tagGroupid").val();
     if(tagName==null||tagName==""){
@@ -243,87 +238,6 @@ function clearTag() {
 }
 
 /**
- * 弹出群聊列表界面，并查询群聊
- */
-function addGroupChat() {
-    var params={param: {owner:'', status: ''}};
-    $.get( "/qywxCustomer/getContractList?limit=100&offset=0", params, function (r) {
-        deptData = r.rows;
-        var html="";
-        if (r.code === 200) {
-            for(var i=0;i<deptData.length;i++){
-                if(deptData[i].groupName==""||deptData[i].groupName==null){
-                    html= html+"<option value='"+deptData[i].chatId+"'>群聊</option>";
-                }else{
-                    html= html+"<option value='"+deptData[i].chatId+"'>"+deptData[i].groupName+"</option>";
-                }
-            }
-            $("#chatList").html(html);
-        } else {
-            $MB.n_warning( r.msg );
-        }
-    } );
-    $("#addGroupChat").modal('show');
-}
-
-/**
- * 初始化图片上传
- */
-var upload;
-image();
-function image() {
-    upload = new Cupload( {
-        ele: '#cupload-create_er',
-        num: 1
-    } );
-}
-
-/**
- * 选择群聊中的上传图片
- */
-function saveChatImg() {
-   var text= $("#chatList  option:selected").text();
-   var val=$("#chatList  option:selected").val();
-   var code=$( "input[name='image[]']" ).val();
-   if(checkChatID.indexOf(val)>-1){
-       $MB.n_warning( "请勿重复选择群聊！" );
-       return;
-   }
-    $MB.loadingDesc("show", "图片正在上传中，请稍候...");
-    $.post( "/contactWay/uploadQrcode", {
-        mediaType: 'image',
-        base64Code: code
-    }, function (r) {
-        $MB.loadingDesc("hide");
-        if (r.code === 200) {
-            var imgurl=host+"/contactWay/getImage?filePath="+r.data;
-            var html=" <tr data-index=\"0\">\n" +
-                "                                                        <td style=\"text-align: center; \">\n" +
-                "                                                            <a href=\"http://\" target=\"_blank\">"+text+"</a>\n" +
-                "                                                        </td>\n" +
-                "                                                        <td style=\"text-align: center; \">\n" +
-                "                                                            <img style=\"width:120px;height:120px\" src="+imgurl+">\n" +
-                "                                                        </td>\n" +
-                "                                                    </tr>";
-            $("#addtr").append(html);
-            $("#addGroupChat").modal('hide');
-            var wayChat = new Object();
-            wayChat.chatId=val;
-            wayChat.chatName=text;
-            wayChat.chatQrimgUrl=r.data;
-            chatMap.push(wayChat);
-            //校验是否重复选择群聊
-            checkChatID.push(val);
-            //清除所选图片
-            $("#cupload-create_er").html("");
-            image();
-        }
-    } );
-
-
-}
-
-/**
  * 移除选择的成员或部门
  * @param dom
  * @param id
@@ -337,18 +251,6 @@ function regionRemove(dom, id, selid) {
     }else if(selid=="region2"){
         user_list.splice( user_list.indexOf( id ), 1 );
     }
-}
-
-
-/**
- * 将选择的部门，成员标签数据格式话。
- */
-function getDeptAndUserId() {
-    $( "input[name='usersList']" ).val( user_list.join( "," ) );
-    $( "input[name='deptList']" ).val( dept_list.join( "," ) );
-    $( "input[name='validUser']" ).val( user_list.join( "," ) + dept_list.join( "," ));
-    $( "input[name='watChatList']" ).val(JSON.stringify(chatMap));
-    $( "input[name='tagIds']" ).val(tagIds.toString());
 }
 
 /**
@@ -406,237 +308,45 @@ function clearData(){
     $contactWayForm.find( "input[name='validUser']" ).val( "" );
 }
 
-/**
- * 是否关联群聊，显示欢迎语、小程序等下面的内容
- * @param flag
- */
-function relatedVal(flag) {
-    if(flag=="Y"){
-        $("#groupCode").show();
-    }else{
-        $("#groupCode").hide();
-    }
-}
 
 /**
  * 表单验证规则
  */
 function validQywxContact() {
     var icon = "<i class='fa fa-close'></i> ";
-    var msgType = $('input[name="msgType"]:checked').val();
-    var relateChat=$('input[name="relateChat"]:checked').val();
-    //relateChat(是否关联群聊),如果等于Y，那么就需要验证渠道，成员部门，小程序，图片，网址，如果等于N就只需要验证渠道。成员部门是否录入
-    if(relateChat=='Y'){
-        if(msgType=="applets"){
-            validator = $contactWayForm.validate( {
-                rules: {
-                    mpTitle: {
-                        required: true
-                    },
-                    mpUrl: {
-                        required: true
-                    },
-                    mediaId: {
-                        required: true
-                    },
-                    state: {
-                        required: true,
-                        maxlength: 30
-                    },
-                    validUser: {
-                        required: true
-                    },
-                    contactName: {
-                        required: true
-                    }
-                },
-                errorPlacement: function (error, element) {
-                    if (element.is( ":checkbox" ) || element.is( ":radio" )) {
-                        error.appendTo( element.parent().parent() );
-                    } else {
-                        error.insertAfter( element );
-                    }
-                },
-                messages: {
-                    mpTitle: {
-                        required: icon + "请输入小程序标题"
-                    },
-                    mpUrl: {
-                        required: icon + "请输入小程序连接"
-                    },
-                    mediaId: {
-                        required: icon + "请输入小程序封面ID"
-                    },
-                    state: {
-                        required: icon + "请输入渠道",
-                        maxlength: icon + "最大长度不能超过30个字符"
-                    },
-                    validUser: {
-                        required: icon + "请选择可联系成员"
-                    },
-                    contactName: {
-                        required: icon + "请输入名称"
-                    }
-                }
-            } );
-        }else if(msgType=="image"){
-            validator = $contactWayForm.validate( {
-                rules: {
-                    picUrl: {
-                        required: true
-                    },
-                    state: {
-                        required: true,
-                        maxlength: 30
-                    },
-                    validUser: {
-                        required: true
-                    },
-                    contactName: {
-                        required: true
-                    }
-                },
-                errorPlacement: function (error, element) {
-                    if (element.is( ":checkbox" ) || element.is( ":radio" )) {
-                        error.appendTo( element.parent().parent() );
-                    } else {
-                        error.insertAfter( element );
-                    }
-                },
-                messages: {
-                    picUrl: {
-                        required: icon + "请选择图片地址！"
-                    },
-                    state: {
-                        required: icon + "请输入渠道",
-                        maxlength: icon + "最大长度不能超过30个字符"
-                    },
-                    validUser: {
-                        required: icon + "请选择可联系成员"
-                    },
-                    contactName: {
-                        required: icon + "请输入名称"
-                    }
-                }
-            } );
-        }else if(msgType=="web"){
-            validator = $contactWayForm.validate( {
-                rules: {
-                    linkTitle: {
-                        required: true
-                    },
-                    linkUrl: {
-                        required: true
-                    },
-                    state: {
-                        required: true,
-                        maxlength: 30
-                    },
-                    validUser: {
-                        required: true
-                    },
-                    contactName: {
-                        required: true
-                    }
-                },
-                errorPlacement: function (error, element) {
-                    if (element.is( ":checkbox" ) || element.is( ":radio" )) {
-                        error.appendTo( element.parent().parent() );
-                    } else {
-                        error.insertAfter( element );
-                    }
-                },
-                messages: {
-                    linkTitle: {
-                        required: icon + "请填写网页标题！"
-                    }, linkUrl: {
-                        required: icon + "请填写网页地址！"
-                    },
-                    state: {
-                        required: icon + "请输入渠道",
-                        maxlength: icon + "最大长度不能超过30个字符"
-                    },
-                    validUser: {
-                        required: icon + "请选择可联系成员"
-                    },
-                    contactName: {
-                        required: icon + "请输入名称"
-                    }
-                }
-            } );
-        }
-    }else{
-        validator = $contactWayForm.validate( {
-            rules: {
-                state: {
-                    required: true,
-                    maxlength: 30
-                },
-                validUser: {
-                    required: true
-                },
-                contactName: {
-                    required: true
-                }
+    validator = $contactWayForm.validate( {
+        rules: {
+            state: {
+                required: true,
+                maxlength: 30
             },
-            errorPlacement: function (error, element) {
-                if (element.is( ":checkbox" ) || element.is( ":radio" )) {
-                    error.appendTo( element.parent().parent() );
-                } else {
-                    error.insertAfter( element );
-                }
+            validUser: {
+                required: true
             },
-            messages: {
-                state: {
-                    required: icon + "请输入渠道",
-                    maxlength: icon + "最大长度不能超过30个字符"
-                },
-                validUser: {
-                    required: icon + "请选择可联系成员"
-                },
-                contactName: {
-                    required: icon + "请输入名称"
-                }
+            contactName: {
+                required: true
             }
-        } );
-    }
-}
-
-/**
- * 选择小程序，图片，网页后，清除其他两项中填充的数据
- * @param type
- */
-function selectType(type) {
-    if(type=="image"){
-        $("#image").show();
-        $("#web").hide();
-        $("#applets").hide();
-
-        $("#mpTitle").val("");
-        $("#mpUrl").val("");
-        $("#mediaId").val("");
-        $("#linkTitle").val("");
-        $("#linkDesc").val("");
-        $("#linkUrl").val("");
-        $("#linkPicurl").val("");
-    }else if(type=="web"){
-        $("#image").hide();
-        $("#web").show();
-        $("#applets").hide();
-        $("#mpTitle").val("");
-        $("#mpUrl").val("");
-        $("#mediaId").val("");
-        $("#picUrl").val("");
-    }else if(type=="applets"){
-        $("#image").hide();
-        $("#web").hide();
-        $("#applets").show();
-        $("#picUrl").val("");
-        $("#linkTitle").val("");
-        $("#linkDesc").val("");
-        $("#linkUrl").val("");
-        $("#linkPicurl").val("");
-    }
+        },
+        errorPlacement: function (error, element) {
+            if (element.is( ":checkbox" ) || element.is( ":radio" )) {
+                error.appendTo( element.parent().parent() );
+            } else {
+                error.insertAfter( element );
+            }
+        },
+        messages: {
+            state: {
+                required: icon + "请输入渠道",
+                maxlength: icon + "最大长度不能超过30个字符"
+            },
+            validUser: {
+                required: icon + "请选择可联系成员"
+            },
+            contactName: {
+                required: icon + "请输入名称"
+            }
+        }
+    } );
 }
 
 

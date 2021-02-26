@@ -7,16 +7,18 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface QywxTagMapper {
-    List<QywxTagGroup> getTagGroup(int limit,int offset);
+
+    List<QywxTagGroup> selectTagGroupList(int limit,int offset);
+
     List<QywxTag> selectTag();
 
-    int isTagGroupByGroupName( String groupName);
+    int isTagGroupExists( String groupName);
+
+    int isTagExists(String tagName, String groupid);
 
     void addTagGroup(QywxTagGroup qywxTagGroup);
 
     void addTag(QywxTag qywxTag);
-
-    int isTag(String tagName, String groupid);
 
     void updateTagGroup(String id, String name);
 

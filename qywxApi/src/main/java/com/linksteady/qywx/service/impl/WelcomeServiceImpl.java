@@ -70,7 +70,7 @@ public class WelcomeServiceImpl implements WelcomeService {
             {
                 qywxMessage.setMpAppid(qywxService.getMpAppId());
                 //获取小程序卡片的mediaId
-                qywxMessage.setMpPicMediaId(getWelcomeMpMediaId(qywxWelcome));
+                qywxMessage.setMpPicMediaId(mediaService.getMpMediaId("WELCOME",qywxWelcome.getId()));
                 qywxMessage.setMpTitle(qywxWelcome.getMiniprogramTitle());
                 qywxMessage.setMpPage(qywxWelcome.getMiniprogramPage());
             }
@@ -91,20 +91,6 @@ public class WelcomeServiceImpl implements WelcomeService {
         }
     }
 
-    private String getWelcomeMpMediaId( QywxWelcome qywxWelcome) throws Exception
-    {
-        String policyType=qywxWelcome.getPolicyType();
-        if("PRODUCT".equals(policyType))
-        {
-           return mediaService.getMpMediaId("PRODUCT",qywxWelcome.getQywxProductId());
-        }else if("COUPON".equals(policyType))
-        {
-            return mediaService.getMpMediaId("COUPON",qywxWelcome.getQywxCouponId());
-        }else
-        {
-            return mediaService.getMpMediaId("PRODUCT",-1L);
-        }
-    }
 
     private void sendMessage(String welcomeCode,QywxMessage message) throws Exception
     {
@@ -196,7 +182,7 @@ public class WelcomeServiceImpl implements WelcomeService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public Integer saveData(QywxWelcome qywxWelcome) {
+    public Long saveData(QywxWelcome qywxWelcome) {
         String policyType = qywxWelcome.getPolicyType();
         if (StringUtils.isNotEmpty(policyType) && policyType.equalsIgnoreCase("A")) {
             qywxWelcome.setPolicyType(qywxWelcome.getPolicyType());
@@ -218,12 +204,12 @@ public class WelcomeServiceImpl implements WelcomeService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleteById(String id) {
+    public void deleteById(long id) {
         welcomeMapper.deleteById(id);
     }
 
     @Override
-    public QywxWelcome getDataById(String id) {
+    public QywxWelcome getDataById(long id) {
         List<QywxWelcome> welcomeList = welcomeMapper.getDataById(id);
         return welcomeList.size() > 0 ? welcomeList.get(0) : null;
     }
@@ -240,7 +226,7 @@ public class WelcomeServiceImpl implements WelcomeService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateStatus(String id, String status) {
+    public void updateStatus(long id, String status) {
         if(StringUtils.isNotEmpty(status)) {
             if(status.equalsIgnoreCase("start")) {
                 welcomeMapper.updateStartStatus(id, status);
@@ -248,6 +234,12 @@ public class WelcomeServiceImpl implements WelcomeService {
                 welcomeMapper.updateStopStatus(id, status);
             }
         }
+    }
+
+    @Override
+    public byte[] getWelcomeMpMediaContent(long id) {
+        //todo 补足此方法 根据id
+        return new byte[0];
     }
 
 }

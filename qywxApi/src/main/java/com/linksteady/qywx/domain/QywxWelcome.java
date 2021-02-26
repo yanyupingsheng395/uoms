@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Data
 public class QywxWelcome implements Serializable {
-    private Integer id;
+    private Long id;
 
     private String welcomeName;
 
@@ -37,10 +37,6 @@ public class QywxWelcome implements Serializable {
 
     private String miniprogramPage;
 
-    private Long qywxCouponId;
-
-    private Long qywxProductId;
-
     private String validFlag;
 
     private String status;
@@ -51,7 +47,5 @@ public class QywxWelcome implements Serializable {
     private Date updatetDt;
 
     private String msgType;
-
-    private String mediaId;
 
 }

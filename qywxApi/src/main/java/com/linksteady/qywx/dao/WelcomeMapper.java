@@ -17,13 +17,13 @@ public interface WelcomeMapper {
 
     List<QywxWelcome> getDataList(Integer limit, Integer offset);
 
-    void deleteById(String id);
+    void deleteById(long id);
 
-    List<QywxWelcome> getDataById(String id);
+    List<QywxWelcome> getDataById(long id);
 
     void updateData(QywxWelcome qywxWelcome);
 
-    void updateStartStatus(String id, String status);
+    void updateStartStatus(long id, String status);
 
-    void updateStopStatus(String id, String status);
+    void updateStopStatus(long id, String status);
 }

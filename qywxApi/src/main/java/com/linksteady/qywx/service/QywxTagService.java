@@ -11,21 +11,14 @@ public interface QywxTagService {
      * 获取标签组的集合
      * @return
      */
-    List<QywxTagGroup> getTagList(int limit,int offset);
+    List<QywxTagGroup> selectTagGroupList(int limit,int offset);
 
     /**
      * 查看标签组ID合标签名称是否存在
      * @param groupName
      * @return
      */
-    int isTagGroupByGroupName( String groupName);
-
-    /**
-     * 新增标签组
-     * @param groupTagName  标签名称
-     * @param groupName     标签组名称
-     */
-    void addTagGroup(String groupTagName, String groupName) throws WxErrorException;
+    int isTagGroupExists( String groupName);
 
     /**
      * 查询该标签组下面是否存在这个名字的标签
@@ -33,7 +26,14 @@ public interface QywxTagService {
      * @param groupid   标签组ID
      * @return
      */
-    int isTag(String tagName, String groupid);
+    int isTagExists(String tagName, String groupid);
+
+    /**
+     * 新增标签组
+     * @param groupTagName  标签名称
+     * @param groupName     标签组名称
+     */
+    void addTagGroup(String groupTagName, String groupName) throws WxErrorException;
 
     /**
      * 在标签组下新增标签

@@ -2,6 +2,7 @@ package com.linksteady.qywx.dao;
 
 import com.linksteady.qywx.domain.AddUserHistoryVO;
 import com.linksteady.qywx.domain.QywxParam;
+import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
  * @author huang
  * @date 2020/7/3
  */
-public interface ParamMapper {
+public interface QywxParamMapper {
 
     QywxParam getQywxParam();
 
@@ -61,5 +62,12 @@ public interface ParamMapper {
      * 获取文件内容和名称
      */
     QywxParam getFileMessage();
+
+    /**
+     * 根据商品id取uo_qywx_param中的media_content
+     */
+    QywxParam getCouponMediaContent();
+
+    QywxParam getDefaultMediaContent();
 
 }

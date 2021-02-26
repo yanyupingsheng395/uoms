@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.qywx.dao.AddUserTriggerMapper;
-import com.linksteady.qywx.dao.ParamMapper;
+import com.linksteady.qywx.dao.QywxParamMapper;
 import com.linksteady.qywx.domain.AddUserHead;
 import com.linksteady.qywx.domain.AddUserSchedule;
 import com.linksteady.qywx.domain.QywxContactWay;
@@ -36,7 +36,7 @@ public class AddUserTriggerServiceImpl implements AddUserTriggerService {
     private AddUserTriggerMapper addUserTriggerMapper;
 
     @Autowired
-    private ParamMapper paramMapper;
+    private QywxParamMapper qywxParamMapper;
 
     @Override
     public int getHeadCount() {
@@ -105,7 +105,7 @@ public class AddUserTriggerServiceImpl implements AddUserTriggerService {
             throw new Exception("当前已存在执行中的推送，为避免触发企业微信人数上限，请选择明日再进行推送!");
         }
 
-        QywxParam qywxParam=paramMapper.getQywxParam();
+        QywxParam qywxParam= qywxParamMapper.getQywxParam();
 
         if(qywxParam.getTriggerNum()==0)
         {

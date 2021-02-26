@@ -1,7 +1,6 @@
 package com.linksteady.qywx.dao;
 
 import com.linksteady.qywx.domain.QywxContactWay;
-import com.linksteady.qywx.domain.QywxContactWayChat;
 import com.linksteady.qywx.domain.QywxContactWayDetail;
 import org.apache.ibatis.annotations.Param;
 
@@ -35,8 +34,6 @@ public interface QywxContactWayMapper {
 
     void saveContactWay(QywxContactWay qywxContactWay);
 
-    String getCurrentDomain();
-
     QywxContactWay getQrcodeByConfigId(String configId);
 
     int getRefrenceCount(String configId);
@@ -50,12 +47,6 @@ public interface QywxContactWayMapper {
     void insertContactWayDetail(List<QywxContactWayDetail> list);
 
     void deleteContactWayDetail(String configId);
-
-    void insertContactWayChat(List<QywxContactWayChat> list);
-
-    List<QywxContactWayChat> getContactChatById(Long contactWayId);
-
-    void deleteContactWayChat(Long contactWayId);
 
     String getTagIdsByState(String state);
 }

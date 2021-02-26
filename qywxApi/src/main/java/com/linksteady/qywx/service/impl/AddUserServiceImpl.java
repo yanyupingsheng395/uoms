@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.linksteady.qywx.dao.AddUserMapper;
 import com.linksteady.qywx.dao.AddUserTriggerMapper;
-import com.linksteady.qywx.dao.ParamMapper;
+import com.linksteady.qywx.dao.QywxParamMapper;
 import com.linksteady.qywx.domain.*;
 import com.linksteady.qywx.service.AddUserService;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +40,7 @@ public class AddUserServiceImpl implements AddUserService {
     private AddUserTriggerMapper addUserTriggerMapper;
 
     @Autowired
-    ParamMapper paramMapper;
+    QywxParamMapper qywxParamMapper;
 
 
     @Override
@@ -133,7 +133,7 @@ public class AddUserServiceImpl implements AddUserService {
         }
 
         //获取默认的 每日推送人数 及 推送转化率
-        QywxParam qywxParam = paramMapper.getQywxParam();
+        QywxParam qywxParam = qywxParamMapper.getQywxParam();
 
         if(null==qywxParam||qywxParam.getActiveNum()==0)
         {
@@ -209,7 +209,7 @@ public class AddUserServiceImpl implements AddUserService {
         }
 
         //删除推送历史表中超过N天的记录
-        paramMapper.deleteAddUserHistory(7);
+        qywxParamMapper.deleteAddUserHistory(7);
 
         //获取今天预计推送人数
         long dailyUserCnt=addUserHead.getDailyUserCnt();
@@ -276,7 +276,7 @@ public class AddUserServiceImpl implements AddUserService {
 
             targetAddUserList=Lists.newArrayList();
             //获取历史的手机号
-            Map<String,String> addHistory=paramMapper.getAddUserHistory(7).stream().collect(Collectors.toMap(AddUserHistoryVO::getPhoneNum,AddUserHistoryVO::getPhoneNum));
+            Map<String,String> addHistory= qywxParamMapper.getAddUserHistory(7).stream().collect(Collectors.toMap(AddUserHistoryVO::getPhoneNum,AddUserHistoryVO::getPhoneNum));
             for(AddUser addUser:addUserList)
             {
                 if(addHistory.containsKey(addUser.getPhoneNum()))
@@ -296,7 +296,7 @@ public class AddUserServiceImpl implements AddUserService {
 
             if(targetAddUserList.size()>0)
             {
-                paramMapper.insertAddUserListHistory(targetAddUserList.stream().map(i->i.getPhoneNum()).collect(Collectors.toList()));
+                qywxParamMapper.insertAddUserListHistory(targetAddUserList.stream().map(i->i.getPhoneNum()).collect(Collectors.toList()));
                 addUserMapper.pushToPushListLarge(targetAddUserList,scheduleDate);
             }
         }
@@ -398,6 +398,6 @@ public class AddUserServiceImpl implements AddUserService {
     @Transactional(rollbackFor = Exception.class,propagation = Propagation.REQUIRES_NEW)
     public void insertToHistory(String phoneNum) throws Exception
     {
-        paramMapper.insertAddUserHistory(phoneNum);
+        qywxParamMapper.insertAddUserHistory(phoneNum);
     }
 }

@@ -1,6 +1,5 @@
 package com.linksteady.qywx.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.linksteady.common.controller.BaseController;
 import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
@@ -8,7 +7,6 @@ import com.linksteady.common.util.Base64Img;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.qywx.constant.FilePathConsts;
 import com.linksteady.qywx.domain.QywxContactWay;
-import com.linksteady.qywx.domain.QywxContactWayChat;
 import com.linksteady.qywx.service.QywxBaseDataService;
 import com.linksteady.qywx.service.QywxContactWayService;
 import lombok.extern.slf4j.Slf4j;
@@ -90,18 +88,6 @@ public class QywxContactWayController extends BaseController {
     }
 
     /**
-     * 根据contactWayId查询群码关联列表
-     * @param contactWayId
-     * @return
-     */
-    @RequestMapping("/contactWay/getContactChatById")
-    @ResponseBody
-    public ResponseBo getContactChatById(Long contactWayId){
-        List<QywxContactWayChat> chat=qywxContactWayService.getContactChatById(contactWayId);
-        return ResponseBo.okWithData(null, chat);
-    }
-
-    /**
      * 更新
      */
     @RequestMapping("/contactWay/update")
@@ -113,9 +99,9 @@ public class QywxContactWayController extends BaseController {
         qywxContactWay.setScene("2");
         //外部客户添加时是否无需验证，默认为true
         qywxContactWay.setSkipVerify(true);
-        List<QywxContactWayChat> list =JSON.parseArray(qywxContactWay.getWatChatList(),QywxContactWayChat.class);
+
         try {
-            qywxContactWayService.updateContractWay(qywxContactWay,list);
+            qywxContactWayService.updateContractWay(qywxContactWay);
             return ResponseBo.ok();
         } catch (Exception e) {
             String message = e.getMessage();
@@ -135,10 +121,9 @@ public class QywxContactWayController extends BaseController {
     @RequestMapping("/contactWay/save")
     @ResponseBody
     public ResponseBo save(QywxContactWay qywxContactWay) {
-        List<QywxContactWayChat> list =JSON.parseArray(qywxContactWay.getWatChatList(),QywxContactWayChat.class);
         String userName = getCurrentUser().getUsername();
         try {
-            qywxContactWayService.saveContactWay(qywxContactWay, userName,list);
+            qywxContactWayService.saveContactWay(qywxContactWay, userName);
             return ResponseBo.ok();
         } catch (Exception e) {
             String message = e.getMessage();
@@ -238,7 +223,7 @@ public class QywxContactWayController extends BaseController {
         try {
             dept = baseDataService.getDept();
         }catch (Exception e){
-            return ResponseBo.error("未获取到可联系部门，请先完成组织架构数据的上传！");
+            return ResponseBo.error("未获取到部门！");
         }
         return ResponseBo.okWithData(null, dept);
     }
@@ -254,58 +239,8 @@ public class QywxContactWayController extends BaseController {
         try {
             userlist = baseDataService.getUser();
         }catch (Exception e){
-            return ResponseBo.error("未获取到可联系成员，请先完成组织架构数据的上传！");
+            return ResponseBo.error("未获取到成员！");
         }
         return ResponseBo.okWithData(null, userlist);
-    }
-
-    /**
-     * 上传图片
-     * @param
-     * @return
-     */
-    @PostMapping("/contactWay/uploadQrcode")
-    @ResponseBody
-    public ResponseBo uploadQrcode(String base64Code)  {
-        try {
-            String fileSuffix = base64Code.substring("data:image/".length(), base64Code.lastIndexOf(";base64,"));
-            String fileName= System.currentTimeMillis()+"_qrcode." + fileSuffix;
-            File file = Base64Img.base64ToFile(base64Code, fileName, FilePathConsts.CONTACT_WAY_IMAGE_PATH);
-            return ResponseBo.okWithData(null,FilePathConsts.CONTACT_WAY_IMAGE_PATH+fileName);
-        } catch (Exception e) {
-            log.error("上传二维码（图片）报错！");
-            return ResponseBo.error();
-        }
-    }
-
-    @RequestMapping("/contactWay/getImage")
-    @ResponseBody
-    public void getImagesId(HttpServletResponse rp,String filePath) {
-        File imageFile = new File(filePath);
-        if (imageFile.exists()) {
-            FileInputStream fis = null;
-            OutputStream os = null;
-            try {
-                fis = new FileInputStream(imageFile);
-                os = rp.getOutputStream();
-                int count = 0;
-                byte[] buffer = new byte[1024 * 8];
-                while ((count = fis.read(buffer)) != -1) {
-                    os.write(buffer, 0, count);
-                    os.flush();
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    fis.close();
-                    os.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }
     }
 }

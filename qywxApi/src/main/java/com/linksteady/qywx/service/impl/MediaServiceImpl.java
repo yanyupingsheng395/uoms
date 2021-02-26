@@ -6,23 +6,23 @@ import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.qywx.constant.FilePathConsts;
 import com.linksteady.qywx.constant.WxPathConsts;
 import com.linksteady.qywx.dao.MediaMapper;
+import com.linksteady.qywx.dao.QywxParamMapper;
 import com.linksteady.qywx.domain.QywxImage;
 import com.linksteady.qywx.domain.QywxMediaImg;
 import com.linksteady.qywx.domain.QywxParam;
 import com.linksteady.qywx.domain.WxError;
 import com.linksteady.qywx.exception.WxErrorException;
 import com.linksteady.qywx.service.MediaService;
+import com.linksteady.qywx.service.ProductMediaService;
 import com.linksteady.qywx.service.QywxService;
+import com.linksteady.qywx.service.WelcomeService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.URL;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,11 +31,19 @@ import java.util.List;
 @Slf4j
 public class MediaServiceImpl implements MediaService {
 
-    @Autowired(required = false)
+    @Autowired
     MediaMapper mediaMapper;
     @Autowired
     private QywxService qywxService;
 
+    @Autowired
+    QywxParamMapper qywxParamMapper;
+
+    @Autowired
+    ProductMediaService productMediaService;
+
+    @Autowired
+    WelcomeService welcomeService;
 
     @Override
     public int getImageCount() {
@@ -47,6 +55,13 @@ public class MediaServiceImpl implements MediaService {
         return mediaMapper.getImageList(limit,offset);
     }
 
+    /**
+     * 上传永久素材
+     * @param title
+     * @param file
+     * @param opUserName
+     * @throws Exception
+     */
     @Override
     @Transactional
     public void uploadImage(String title, File file,String opUserName) throws Exception {
@@ -65,14 +80,14 @@ public class MediaServiceImpl implements MediaService {
         }else
         {
             String imgUrl=jsonObject.getString("url");
-            mediaMapper.saveMediaImg(title,imgUrl,opUserName,file.getName());
+            mediaMapper.saveQywxImages(title,imgUrl,opUserName,file.getName());
         }
     }
 
 
 
     /**
-     * identityType 可选的值有 PRODUCT表示商品 COUPON表示优惠券
+     * identityType 可选的值有 PRODUCT表示商品 COUPON表示优惠券  WELCOME表示欢迎语
      * @param identityType
      * @param identityId
      * @return
@@ -133,29 +148,38 @@ public class MediaServiceImpl implements MediaService {
         byte[] mediaContent=null;
         QywxParam qywxParam=null;
         if("PRODUCT".equals(identityType)){
-            //获取商品对应的图片地址
-            String url=mediaMapper.getProductMediaContent(identityId);
-            if(StringUtils.isNoneEmpty(url)){
-                //todo 此处需要重构
-                mediaContent=getImageByte(url);
-            }else{
-                //从默认的配置表获取图片内容
-                qywxParam=mediaMapper.getMediaContent("PRODUCT");
-                mediaContent=qywxParam.getMediaContent();
-            }
+            //获取商品对应的媒体内容
+            mediaContent=productMediaService.getProductImageByte(identityId);
         }else if("COUPON".equals(identityType)){
             //从默认的配置表获取
-            qywxParam=mediaMapper.getMediaContent("COUPON");
+            qywxParam= qywxParamMapper.getCouponMediaContent();
             mediaContent=qywxParam.getCouponMediaContent();
-        }else{
+        }else if("WELCOME".equals(identityType)){
+            //从欢迎语表读取图片地址
+            mediaContent=welcomeService.getWelcomeMpMediaContent(identityId);
+        }
+        else{
             log.error("错误类型，请检查数据是否正确！");
             return null;
         }
 
-        String fileName=identityType+"_"+identityId+"_"+System.currentTimeMillis()+".png";
-        //生成文件
-        File file = byteArrayToFile(mediaContent,fileName, FilePathConsts.TEMP_IMAGE_PATH);
-        return  file;
+        //如果mediaContent为空 从配置表默认位置读取
+        if(null==mediaContent||mediaContent.length==0)
+        {
+            qywxParam= qywxParamMapper.getDefaultMediaContent();
+            mediaContent=qywxParam.getMediaContent();
+        }
+
+        if(null==mediaContent||mediaContent.length==0)
+        {
+            return null;
+        }else
+        {
+            String fileName=identityType+"_"+identityId+"_"+System.currentTimeMillis()+".png";
+            //生成文件
+            File file = byteArrayToFile(mediaContent,fileName, FilePathConsts.TEMP_IMAGE_PATH);
+            return  file;
+        }
     };
 
     /**
@@ -225,32 +249,6 @@ public class MediaServiceImpl implements MediaService {
             }
         }
         return file;
-    }
-
-    /**
-     * 通过url，获取图片的字节数组
-     */
-    public  byte[] getImageByte(String strUrl){
-        ByteArrayOutputStream baos = null;
-        try{
-            URL u = new URL(strUrl);
-            BufferedImage image = ImageIO.read(u);
-            baos = new ByteArrayOutputStream();
-            ImageIO.write( image, "jpg", baos);
-            baos.flush();
-            return baos.toByteArray();
-        }catch (Exception e){
-            log.error("通过url，将图片转字节数组错误，请检查！");
-        }finally{
-            if(baos != null){
-                try {
-                    baos.close();
-                } catch (IOException e) {
-                    log.error("关闭流失败！");
-                }
-            }
-        }
-        return  null;
     }
 
     @Override

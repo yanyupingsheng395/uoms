@@ -6,7 +6,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Sets;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.qywx.constant.WxPathConsts;
-import com.linksteady.qywx.dao.ParamMapper;
+import com.linksteady.qywx.dao.QywxParamMapper;
 import com.linksteady.qywx.domain.QywxParam;
 import com.linksteady.qywx.domain.WxError;
 import com.linksteady.qywx.exception.WxErrorException;
@@ -29,7 +29,7 @@ public class QywxServiceImpl implements QywxService {
     JedisPool jedisPool;
 
     @Autowired
-    ParamMapper paramMapper;
+    QywxParamMapper qywxParamMapper;
 
     private RedisConfigStorageImpl redisConfigStorage;
 
@@ -37,7 +37,7 @@ public class QywxServiceImpl implements QywxService {
     public void init() throws Exception
     {
         RedisConfigStorageImpl redisConfigStorage=new RedisConfigStorageImpl(jedisPool);
-        QywxParam qywxParam=paramMapper.getQywxParam();
+        QywxParam qywxParam= qywxParamMapper.getQywxParam();
 
         //将数据库中的代码同步到redis中
         if(null==qywxParam)
@@ -112,7 +112,7 @@ public class QywxServiceImpl implements QywxService {
     @Override
     public synchronized void  updateCorpInfo(String corpId, String secret,String agentId) {
         //更新到数据库
-        paramMapper.updateCorpInfo(corpId,secret,agentId);
+        qywxParamMapper.updateCorpInfo(corpId,secret,agentId);
         //更新到redis
         redisConfigStorage.setCorpId(corpId);
         redisConfigStorage.setSecret(secret);
@@ -128,7 +128,7 @@ public class QywxServiceImpl implements QywxService {
         String ecEventToken=this.redisConfigStorage.getEcEventToken();
         if(StringUtils.isEmpty(ecEventToken))
         {
-            QywxParam qywxParam=paramMapper.getQywxParam();
+            QywxParam qywxParam= qywxParamMapper.getQywxParam();
             ecEventToken=qywxParam==null?"":qywxParam.getEcEventToken();
             if(!StringUtils.isEmpty(ecEventToken)){
                 this.redisConfigStorage.setEcEventToken(ecEventToken);
@@ -143,7 +143,7 @@ public class QywxServiceImpl implements QywxService {
 
         if(StringUtils.isEmpty(ecEventAesKey))
         {
-            QywxParam qywxParam=paramMapper.getQywxParam();
+            QywxParam qywxParam= qywxParamMapper.getQywxParam();
             ecEventAesKey=qywxParam==null?"":qywxParam.getEcEventAesKey();
             if(!StringUtils.isEmpty(ecEventAesKey)) {
                 this.redisConfigStorage.setEcEventAesKey(ecEventAesKey);
@@ -155,7 +155,7 @@ public class QywxServiceImpl implements QywxService {
     @Override
     public synchronized void updateContact(String eventToken, String eventAesKey) {
         //更新到数据库
-        paramMapper.updateContact(eventToken,eventAesKey);
+        qywxParamMapper.updateContact(eventToken,eventAesKey);
         this.redisConfigStorage.setEcEventToken(eventToken);
         this.redisConfigStorage.setEcEventAesKey(eventAesKey);
     }
@@ -166,7 +166,7 @@ public class QywxServiceImpl implements QywxService {
 
         if(StringUtils.isEmpty(enableWelcome))
         {
-            QywxParam qywxParam=paramMapper.getQywxParam();
+            QywxParam qywxParam= qywxParamMapper.getQywxParam();
             enableWelcome=qywxParam==null?"":qywxParam.getEnableWelcome();
             if(!StringUtils.isEmpty(enableWelcome)) {
                 this.redisConfigStorage.setEnableWelcome(enableWelcome);
@@ -178,7 +178,7 @@ public class QywxServiceImpl implements QywxService {
     @Override
     public synchronized void setEnableWelcome(String enableWelcome) {
          //更新到数据库
-        paramMapper.updateEnableWelcome(enableWelcome);
+        qywxParamMapper.updateEnableWelcome(enableWelcome);
         //更新到redis
         this.redisConfigStorage.setEnableWelcome(enableWelcome);
     }
@@ -189,7 +189,7 @@ public class QywxServiceImpl implements QywxService {
 
         if(StringUtils.isEmpty(mpAppId))
         {
-            QywxParam qywxParam=paramMapper.getQywxParam();
+            QywxParam qywxParam= qywxParamMapper.getQywxParam();
             mpAppId=qywxParam==null?"":qywxParam.getMpAppId();
             if(!StringUtils.isEmpty(mpAppId)) {
                 this.redisConfigStorage.setMpAppId(mpAppId);
@@ -201,7 +201,7 @@ public class QywxServiceImpl implements QywxService {
     @Override
     public synchronized void setMpAppId(String mpAppId) {
         //更新到数据库
-        paramMapper.updateMpAppId(mpAppId);
+        qywxParamMapper.updateMpAppId(mpAppId);
         //更新到redis
         this.redisConfigStorage.setMpAppId(mpAppId);
     }
@@ -212,7 +212,7 @@ public class QywxServiceImpl implements QywxService {
 
         if(StringUtils.isEmpty(corpId))
         {
-            QywxParam qywxParam=paramMapper.getQywxParam();
+            QywxParam qywxParam= qywxParamMapper.getQywxParam();
             corpId=qywxParam==null?"":qywxParam.getCorpId();
             if(!StringUtils.isEmpty(corpId)) {
                 this.redisConfigStorage.setCorpId(corpId);
@@ -227,7 +227,7 @@ public class QywxServiceImpl implements QywxService {
 
         if(StringUtils.isEmpty(agentId))
         {
-            QywxParam qywxParam=paramMapper.getQywxParam();
+            QywxParam qywxParam= qywxParamMapper.getQywxParam();
             agentId=qywxParam==null?"":qywxParam.getAgentId();
             if(!StringUtils.isEmpty(agentId)) {
                 this.redisConfigStorage.setAgentId(agentId);
@@ -294,12 +294,12 @@ public class QywxServiceImpl implements QywxService {
 
     @Override
     public void saveFile(String title, String content) {
-        paramMapper.saveFile(title,content);
+        qywxParamMapper.saveFile(title,content);
     }
 
     @Override
     public QywxParam getFileMessage() {
-        return paramMapper.getFileMessage();
+        return qywxParamMapper.getFileMessage();
     }
 
     @Override
@@ -308,7 +308,7 @@ public class QywxServiceImpl implements QywxService {
 
         if(StringUtils.isEmpty(welcomeWhiteUserName))
         {
-            QywxParam qywxParam=paramMapper.getQywxParam();
+            QywxParam qywxParam= qywxParamMapper.getQywxParam();
             welcomeWhiteUserName=qywxParam==null?"":qywxParam.getWelcomeWhiteUserName();
             if(!StringUtils.isEmpty(welcomeWhiteUserName)) {
                 this.redisConfigStorage.setWelcomeWhiteUserName(welcomeWhiteUserName);
@@ -329,7 +329,7 @@ public class QywxServiceImpl implements QywxService {
     @Override
     public synchronized void setWelcomeWhiteUserName(String welcomeWhiteUserName) {
         //更新到数据库
-        paramMapper.updateWelcomeWhiteUserName(welcomeWhiteUserName);
+        qywxParamMapper.updateWelcomeWhiteUserName(welcomeWhiteUserName);
         //更新到redis
         this.redisConfigStorage.setWelcomeWhiteUserName(welcomeWhiteUserName);
     }

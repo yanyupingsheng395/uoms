@@ -12,11 +12,6 @@
         <result column="identity_type" jdbcType="VARCHAR" property="indetityType"/>
         <result column="file_name" jdbcType="VARCHAR" property="fileName"/>
     </resultMap>
-    <resultMap id="getProductMedia" type="com.linksteady.qywx.domain.WxProductMedia">
-        <result column="product_id" jdbcType="DECIMAL" property="productId"/>
-        <result column="prod_pic_url" jdbcType="VARCHAR" property="prodPicUrl"/>
-        <result column="url_type" jdbcType="VARCHAR" property="urlType"/>
-    </resultMap>
 
     <resultMap id="BaseResultMap" type="com.linksteady.qywx.domain.QywxImage">
         <result property="imgId" jdbcType="DECIMAL" column="img_id"/>
@@ -25,13 +20,6 @@
         <result property="insertBy" jdbcType="VARCHAR" column="insert_by"/>
         <result property="imgTitle" jdbcType="VARCHAR" column="img_title"/>
         <result column="file_name" jdbcType="VARCHAR" property="fileName"/>
-    </resultMap>
-
-    <resultMap id="paramMap" type="com.linksteady.qywx.domain.QywxParam">
-        <result column="last_update_by" jdbcType="VARCHAR" property="lastUpdateBy"/>
-        <result column="last_update_dt" jdbcType="TIMESTAMP" property="lastUpdateDt"/>
-        <result column="media_content" property="mediaContent" typeHandler="org.apache.ibatis.type.ByteArrayTypeHandler"/>
-        <result column="coupon_media_content" property="couponMediaContent" typeHandler="org.apache.ibatis.type.ByteArrayTypeHandler"/>
     </resultMap>
 
     <select id="getQywxMediaImg" resultMap="getMediaImgMap">
@@ -47,40 +35,14 @@
                from uo_qywx_media_img
                where identity_id=#{identityId} and identity_type=#{identityType}
     </select>
-    <select id="getProductMediaContent" resultType="string">
-        select prod_pic_url from w_product_media where product_id=#{identityId}
-    </select>
 
-    <select id="getMediaContent" resultMap="paramMap">
-        select last_update_dt,
-        <if test="type!=null and type=='COUPON'">
-            coupon_media_content
-        </if>
-        <if test="type!=null and type=='PRODUCT'">
-            media_content
-        </if>
-         from uo_qywx_param
-    </select>
+
     <update id="updateQywxMediaImgBymediaId">
         update uo_qywx_media_img set media_id=#{mediaId} ,media_expire_date=#{expreDt},file_name=#{fileName},update_dt=now() where identity_id=#{identityId} and identity_type=#{identityType}
     </update>
     <insert id="saveQywxMediaImg">
         insert  into uo_qywx_media_img(file_name,img_title,insert_dt,insert_by,update_dt,update_by,media_id, media_expire_date, identity_id, identity_type)
         values (#{fileName},#{title},#{nowtime},#{userName},#{nowtime},#{userName},#{mediaId},#{expreDt},#{identityId},#{identityType})
-    </insert>
-
-    <select id="getImageCount" resultType="int">
-        select count(*) from uo_qywx_images
-    </select>
-
-    <select id="getImageList" resultMap="BaseResultMap">
-        select * from uo_qywx_images order by insert_dt desc limit #{limit} offset #{offset}
-    </select>
-
-    <insert id="saveMediaImg">
-        insert into uo_qywx_images(img_title,img_url,insert_dt,insert_by,file_name) values(
-           #{title},#{url},now(),#{insertBy},#{fileName}
-        )
     </insert>
 
     <select id="getMediaImgCount" resultType="int">
@@ -98,4 +60,18 @@
     <select id="getValidMediaImgList" resultMap="getMediaImgMap">
         select img_id,img_title,insert_dt,insert_by,media_id,media_expire_date,identity_type,file_name from uo_qywx_media_img where media_expire_date::date>=current_date and identity_type='MANUAL' order by insert_dt desc limit #{limit} offset #{offset}
     </select>
+
+    <select id="getImageCount" resultType="int">
+        select count(*) from uo_qywx_images
+    </select>
+
+    <select id="getImageList" resultMap="BaseResultMap">
+        select * from uo_qywx_images order by insert_dt desc limit #{limit} offset #{offset}
+    </select>
+
+    <insert id="saveQywxImages">
+        insert into uo_qywx_images(img_title,img_url,insert_dt,insert_by,file_name) values(
+           #{title},#{url},now(),#{insertBy},#{fileName}
+        )
+    </insert>
 </mapper>

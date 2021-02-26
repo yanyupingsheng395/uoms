@@ -50,18 +50,30 @@ public class QywxTagServiceImpl implements QywxTagService {
      * 获取标签组的集合
      */
     @Override
-    public List<QywxTagGroup> getTagList(int limit,int offset) {
-        List<QywxTagGroup> tagList=qywxTagMapper.getTagGroup(limit,offset);
+    public List<QywxTagGroup> selectTagGroupList(int limit,int offset) {
+        List<QywxTagGroup> tagList=qywxTagMapper.selectTagGroupList(limit,offset);
         return tagList;
     }
+
     /**
-     * 查看标签组ID合标签名称是否存在
+     * 查看标签名称是否存在
      * @param groupName
      * @return
      */
     @Override
-    public int isTagGroupByGroupName(String groupName) {
-        return qywxTagMapper.isTagGroupByGroupName(groupName);
+    public int isTagGroupExists(String groupName) {
+        return qywxTagMapper.isTagGroupExists(groupName);
+    }
+
+    /**
+     * 查询该标签组下面是否存在这个名字的标签
+     * @param tagName  新增标签名称
+     * @param groupid   标签组ID
+     * @return
+     */
+    @Override
+    public int isTagExists(String tagName, String groupid) {
+        return qywxTagMapper.isTagExists(tagName,groupid);
     }
 
     /**
@@ -125,16 +137,7 @@ public class QywxTagServiceImpl implements QywxTagService {
             }
         }
     }
-    /**
-     * 查询该标签组下面是否存在这个名字的标签
-     * @param tagName  新增标签名称
-     * @param groupid   标签组ID
-     * @return
-     */
-    @Override
-    public int isTag(String tagName, String groupid) {
-        return qywxTagMapper.isTag(tagName,groupid);
-    }
+
 
     /**
      * 在标签组下新增标签
@@ -507,6 +510,4 @@ public class QywxTagServiceImpl implements QywxTagService {
             throw new WxErrorException(error);
         }
     }
-
-
 }

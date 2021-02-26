@@ -15,7 +15,7 @@ String.prototype.endWith = function (str) {
 };
 $(function () {
     validBasic();
-    validQywxContact();
+    validQywxConfig();
     validQywxAppId();
     getQywxParam();
 });
@@ -223,7 +223,7 @@ function validBasic() {
 /**
  * 校验外部联系人内容
  */
-function validQywxContact() {
+function validQywxConfig() {
     var icon = "<i class='fa fa-close'></i> ";
     qywx_validator = $qywxcontact.validate( {
         rules: {

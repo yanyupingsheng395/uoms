@@ -17,23 +17,6 @@ function editContact(contactWayId) {
             $form.find( "input[name='deptList']" ).val(d.party);
             $form.find( "input[name='shortUrl']" ).val( d.shortUrl );
             $form.find( "input[name='contactName']" ).val( d.contactName );
-            $form.find( "input[name='picUrl']" ).val( d.picUrl );
-            $form.find( "input[name='linkTitle']" ).val( d.linkTitle );
-            $form.find( "input[name='linkDesc']" ).val( d.linkDesc );
-            $form.find( "input[name='linkUrl']" ).val( d.linkUrl );
-            $form.find( "input[name='linkPicurl']" ).val( d.linkPicurl );
-            $form.find( "input[name='mpTitle']" ).val( d.mpTitle );
-            $form.find( "input[name='mpUrl']" ).val( d.mpUrl );
-            $form.find( "input[name='mediaId']" ).val( d.mediaId );
-            $form.find( "textarea[name='chatText']" ).val( d.chatText );
-            $(":radio[name='msgType'][value='" + d.msgType + "']").prop("checked", "checked");
-            //选择消息类型
-            selectType(d.msgType)
-            $(":radio[name='relateChat'][value='" + d.relateChat + "']").prop("checked", "checked");
-            var tagid=d.tagIds;
-            if(d.relateChat =='N'){
-                $("#groupCode").hide();
-            }
             if(d.contactType==1){
                 Single=true;
             }
@@ -45,41 +28,6 @@ function editContact(contactWayId) {
             $MB.n_danger( r['msg'] );
         }
     } );
-}
-
-/**
- * 填充群聊
- * @param contactWayId
- */
-function editChat(contactWayId) {
-    $.post( "/contactWay/getContactChatById", {"contactWayId": contactWayId}, function (r) {
-        if(r.code==200){
-            var d=r.data;
-            var html="";
-            for (var i=0;i<d.length;i++){
-                var chatID=d[i].chatId;
-                var chatName=d[i].chatName;
-                var chatQrimgUrl=host+"/contactWay/getImage?filePath="+d[i].chatQrimgUrl;
-                var wayChat = new Object();
-                wayChat.chatId=chatID;
-                wayChat.chatName=chatName;
-                wayChat.chatQrimgUrl=d[i].chatQrimgUrl;
-                chatMap.push(wayChat);
-                //校验是否重复选择群聊
-                checkChatID.push(chatID);
-
-                html+=" <tr data-index=\"0\">\n" +
-                    "                                                        <td style=\"text-align: center; \">\n" +
-                    "                                                            <a href=\"http://\" target=\"_blank\">"+chatName+"</a>\n" +
-                    "                                                        </td>\n" +
-                    "                                                        <td style=\"text-align: center; \">\n" +
-                    "                                                            <img style=\"width:120px;height:120px\" src="+chatQrimgUrl+">\n" +
-                    "                                                        </td>\n" +
-                    "                                                    </tr>";
-            }
-            $("#addtr").append(html);
-        }
-    })
 }
 
 /**
@@ -99,6 +47,7 @@ function upContactWay() {
     if (flag) {
         //打开遮罩层
         $MB.loadingDesc('show', '保存中，请稍候...');
+        console.log($("#contactWay_edit").serialize());
         $.post("/contactWay/update",$("#contactWay_edit").serialize(), function (r) {
             if (r.code === 200) {
                 $MB.closeAndRestModal( "add_modal" );
@@ -112,6 +61,16 @@ function upContactWay() {
             $MB.loadingDesc('hide');
         });
     }
+}
+
+/**
+ * 将成员、部门等信息填充到页面
+ */
+function getDeptAndUserId() {
+    $( "input[name='usersList']" ).val( user_list.join( "," ) );
+    $( "input[name='deptList']" ).val( dept_list.join( "," ) );
+    $( "input[name='validUser']" ).val( user_list.join( "," ) + dept_list.join( "," ));
+    $( "input[name='tagIds']" ).val(tagIds.toString());
 }
 
 /**

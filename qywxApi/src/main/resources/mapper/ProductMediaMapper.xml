@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linksteady.qywx.dao.ProductMediaMapper">
+
+<!--    <resultMap id="getProductMedia" type="com.linksteady.qywx.domain.WxProductMedia">-->
+<!--        <result column="product_id" jdbcType="DECIMAL" property="productId"/>-->
+<!--        <result column="prod_pic_url" jdbcType="VARCHAR" property="prodPicUrl"/>-->
+<!--        <result column="url_type" jdbcType="VARCHAR" property="urlType"/>-->
+<!--    </resultMap>-->
+
+    <select id="getProductMediaUrl" resultType="string">
+        select prod_pic_url from w_product_media where product_id=#{ebpProductId}
+    </select>
+
+</mapper>

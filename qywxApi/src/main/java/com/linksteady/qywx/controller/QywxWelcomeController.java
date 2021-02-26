@@ -38,13 +38,13 @@ public class QywxWelcomeController {
     }
 
     @PostMapping("/deleteById")
-    public ResponseBo deleteById(String id) {
+    public ResponseBo deleteById(long id) {
         qywxWelcomeService.deleteById(id);
         return ResponseBo.ok();
     }
 
     @PostMapping("/updateStatus")
-    public ResponseBo updateStatus(String id, String status) {
+    public ResponseBo updateStatus(long id, String status) {
         qywxWelcomeService.updateStatus(id, status);
         return ResponseBo.ok();
     }

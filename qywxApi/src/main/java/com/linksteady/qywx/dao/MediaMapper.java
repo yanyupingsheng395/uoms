@@ -13,21 +13,9 @@ public interface MediaMapper {
      * 根据dentityType和identityId获取QywxMediaImg
      */
     QywxMediaImg getQywxMediaImg(Long identityId, String identityType);
-
+    
     /**
-     * 根据商品id查w_product_media中的prod_pic_url
-     * @param identityId
-     * @return
-     */
-    String getProductMediaContent(Long identityId);
-
-    /**
-     * 根据商品id取uo_qywx_param中的media_content
-     */
-    QywxParam getMediaContent(@Param("type")String type);
-
-    /**
-     * 更新
+     * 更新临时素材
      * @param identityId
      * @param mediaId
      * @param expreDt
@@ -35,7 +23,7 @@ public interface MediaMapper {
     void updateQywxMediaImgBymediaId(String fileName,Long identityId,String identityType,String mediaId, LocalDateTime expreDt);
 
     /**
-     * 新增uo_qywx_media_img数据
+     * 保存临时素材
      * @param fileName
      * @param nowtime
      * @param mediaId
@@ -45,20 +33,14 @@ public interface MediaMapper {
      */
     void saveQywxMediaImg(String fileName, String title,LocalDateTime nowtime, String mediaId, LocalDateTime expreDt, Long identityId, String identityType,String userName);
 
-    int getImageCount();
-
-    List<QywxImage> getImageList(int limit, int offset);
-
-    void saveMediaImg(String title,String url,String insertBy,String fileName);
-
     /**
-     * 获取所有的临时素材
+     * 获取所有的临时素材 (所有 包括失效的)
      * @return
      */
     int getMediaImgCount();
 
     /**
-     * 获取所有的临时素材明细
+     * 获取所有的临时素材明细 (所有 包括失效的)
      * @param limit
      * @param offset
      * @return
@@ -66,16 +48,40 @@ public interface MediaMapper {
     List<QywxMediaImg> getMediaImgList(int limit, int offset);
 
     /**
-     * 获取有效的临时素材
+     * 获取有效的临时素材 (界面上传)
      * @return
      */
     int getValidMediaImgCount();
 
     /**
-     * 获取有效的临时素材明细
+     * 获取有效的临时素材明细 (界面上传)
      * @param limit
      * @param offset
      * @return
      */
     List<QywxMediaImg> getValidMediaImgList(int limit, int offset);
+
+    ///////////////////////////////////永久素材 ////////////////////////////////////
+    /**
+     * 获取永久素材的数量
+     * @return
+     */
+    int getImageCount();
+
+    /**
+     * 获取永久素材的明细
+     * @param limit
+     * @param offset
+     * @return
+     */
+    List<QywxImage> getImageList(int limit, int offset);
+
+    /**
+     * 保存永久素材
+     * @param title
+     * @param url
+     * @param insertBy
+     * @param fileName
+     */
+    void saveQywxImages(String title,String url,String insertBy,String fileName);
 }

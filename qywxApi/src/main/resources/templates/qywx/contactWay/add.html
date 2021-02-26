@@ -83,6 +83,7 @@
                                 <form   class="form-horizontal" method="post" id="contactWay_edit">
                                     <input type="hidden" id="contactWayId" name="contactWayId"/>
                                     <input type="hidden" id="configId" name="configId"/>
+                                    <input type="hidden" name="tagIds">
                                     <div class="form-group">
                                         <label  class="col-sm-2 control-label">名称：</label>
                                         <div class="col-sm-6">
@@ -129,126 +130,125 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label  class="col-sm-2 control-label">是否关联群聊：</label>
-                                        <div class="col-sm-6" style="margin-top: 5px;">
-                                            <label class="lyear-radio radio-inline radio-primary" >
-                                                <input type="radio" name="relateChat" value="Y" checked="checked" onclick="relatedVal('Y')"><span>是</span>
-                                             </label>
-                                            <label class="lyear-radio radio-inline radio-primary" >
-                                                <input type="radio" name="relateChat" value="N" onclick="relatedVal('N')"><span>否</span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div id="groupCode">
-                                        <div class="form-group">
-                                            <label  class="col-sm-2 control-label">群码关联：</label>
-                                            <div>
-                                                <div  class="col-md-10" style="color: cornflowerblue" ><span onclick="addGroupChat()" class="labelSpan labelS" ><i class="glyphicon glyphicon-user"></i>选择群聊 </span></div>
-                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label  class="col-sm-2 control-label">引导进群欢迎语：</label>
-                                            <div class="col-md-6">
-                                                <textarea name="chatText" id="chatText" cols="30" rows="4" class="form-control"></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="form-group" id="intelPolicy" >
-                                            <div class="col-xs-12" >
-                                                <label class="col-md-2 control-label"/>选择消息类型：</label>
-                                                <div class="col-md-6" style="margin-top: 5px;">
-                                                    <label class="lyear-radio radio-inline radio-primary">
-                                                        <input type="radio" checked='checked' name="msgType" value="applets" onclick="selectType('applets')"><span>小程序</span>
-                                                    </label>
-                                                    <label class="lyear-radio radio-inline radio-primary">
-                                                        <input type="radio"  name="msgType" value="image" onclick="selectType('image')"><span>图片</span>
-                                                    </label>
-                                                    <label class="lyear-radio radio-inline radio-primary">
-                                                        <input type="radio" name="msgType" value="web" onclick="selectType('web')"><span>网页</span>
-                                                    </label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div id="image" style="display: none">
-                                            <div class="form-group" style="margin-bottom: 2px;">
-                                                <label class="col-md-2 control-label">图片地址：</label>
-                                                <div class="col-md-6">
-                                                    <input class="form-control" readonly="readonly" name="picUrl" id="picUrl"/>
-                                                </div>
-                                                <a id='addMediaImage' style="cursor:pointer;color: #409eff !important;" onclick="chooseMediaImg()"><i class="fa fa-plus-circle" style="margin-top:12px;"></i>选择</a>
-                                            </div>
-                                        </div>
-                                        <div id="web" style="display: none">
-                                            <div class="form-group">
-                                                <label class="col-md-2 control-label">网页标题：</label>
-                                                <div class="col-md-6">
-                                                    <input class="form-control" name="linkTitle"  id="linkTitle">
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="col-md-2 control-label">网页描述：</label>
-                                                <div class="col-md-6">
-                                                    <input class="form-control" name="linkDesc" id="linkDesc">
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="col-md-2 control-label">网页地址：</label>
-                                                <div class="col-md-6">
-                                                    <input class="form-control" name="linkUrl" id="linkUrl">
-                                                </div>
-                                            </div>
-                                            <div class="form-group" style="margin-bottom: 2px;">
-                                                <label class="col-md-2 control-label">网页封面图片URL：</label>
-                                                <div class="col-md-6">
-                                                    <input class="form-control" name="linkPicurl" id="linkPicurl">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div id="applets" style="display: block">
-                                            <div class="form-group">
-                                                <label class="col-md-2 control-label">小程序标题：</label>
-                                                <div class="col-md-6">
-                                                    <input name="mpTitle" id="mpTitle"  class="form-control"/>
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="col-md-2 control-label">小程序页面路径：</label>
-                                                <div class="col-md-6">
-                                                    <input name="mpUrl" id="mpUrl"  class="form-control"/>
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="col-md-2 control-label">小程序封面MediaID：</label>
-                                                <div class="col-md-6">
-                                                    <input name="mediaId" id="mediaId"  readonly="readonly" class="form-control"/>
-                                                </div>
-                                                <a id='addShopDiscountBtn' style="cursor:pointer;color: #409eff !important;" onclick="chooseMedia()"><i class="fa fa-plus-circle" style="margin-top:12px;"></i>添加</a>
-                                            </div>
-                                        </div>
+<!--                                    <div class="form-group">-->
+<!--                                        <label  class="col-sm-2 control-label">是否关联群聊：</label>-->
+<!--                                        <div class="col-sm-6" style="margin-top: 5px;">-->
+<!--                                            <label class="lyear-radio radio-inline radio-primary" >-->
+<!--                                                <input type="radio" name="relateChat" value="Y" checked="checked" onclick="relatedVal('Y')"><span>是</span>-->
+<!--                                             </label>-->
+<!--                                            <label class="lyear-radio radio-inline radio-primary" >-->
+<!--                                                <input type="radio" name="relateChat" value="N" onclick="relatedVal('N')"><span>否</span>-->
+<!--                                            </label>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                    <div id="groupCode">-->
+<!--                                        <div class="form-group">-->
+<!--                                            <label  class="col-sm-2 control-label">群码关联：</label>-->
+<!--                                            <div>-->
+<!--                                                <div  class="col-md-10" style="color: cornflowerblue" ><span onclick="addGroupChat()" class="labelSpan labelS" ><i class="glyphicon glyphicon-user"></i>选择群聊 </span></div>-->
+<!--                                             </div>-->
+<!--                                        </div>-->
+<!--                                        <div class="form-group">-->
+<!--                                            <label  class="col-sm-2 control-label">引导进群欢迎语：</label>-->
+<!--                                            <div class="col-md-6">-->
+<!--                                                <textarea name="chatText" id="chatText" cols="30" rows="4" class="form-control"></textarea>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <div class="form-group" id="intelPolicy" >-->
+<!--                                            <div class="col-xs-12" >-->
+<!--                                                <label class="col-md-2 control-label"/>选择消息类型：</label>-->
+<!--                                                <div class="col-md-6" style="margin-top: 5px;">-->
+<!--                                                    <label class="lyear-radio radio-inline radio-primary">-->
+<!--                                                        <input type="radio" checked='checked' name="msgType" value="applets" onclick="selectType('applets')"><span>小程序</span>-->
+<!--                                                    </label>-->
+<!--                                                    <label class="lyear-radio radio-inline radio-primary">-->
+<!--                                                        <input type="radio"  name="msgType" value="image" onclick="selectType('image')"><span>图片</span>-->
+<!--                                                    </label>-->
+<!--                                                    <label class="lyear-radio radio-inline radio-primary">-->
+<!--                                                        <input type="radio" name="msgType" value="web" onclick="selectType('web')"><span>网页</span>-->
+<!--                                                    </label>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <div id="image" style="display: none">-->
+<!--                                            <div class="form-group" style="margin-bottom: 2px;">-->
+<!--                                                <label class="col-md-2 control-label">图片地址：</label>-->
+<!--                                                <div class="col-md-6">-->
+<!--                                                    <input class="form-control" readonly="readonly" name="picUrl" id="picUrl"/>-->
+<!--                                                </div>-->
+<!--                                                <a id='addMediaImage' style="cursor:pointer;color: #409eff !important;" onclick="chooseMediaImg()"><i class="fa fa-plus-circle" style="margin-top:12px;"></i>选择</a>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <div id="web" style="display: none">-->
+<!--                                            <div class="form-group">-->
+<!--                                                <label class="col-md-2 control-label">网页标题：</label>-->
+<!--                                                <div class="col-md-6">-->
+<!--                                                    <input class="form-control" name="linkTitle"  id="linkTitle">-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                            <div class="form-group">-->
+<!--                                                <label class="col-md-2 control-label">网页描述：</label>-->
+<!--                                                <div class="col-md-6">-->
+<!--                                                    <input class="form-control" name="linkDesc" id="linkDesc">-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                            <div class="form-group">-->
+<!--                                                <label class="col-md-2 control-label">网页地址：</label>-->
+<!--                                                <div class="col-md-6">-->
+<!--                                                    <input class="form-control" name="linkUrl" id="linkUrl">-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                            <div class="form-group" style="margin-bottom: 2px;">-->
+<!--                                                <label class="col-md-2 control-label">网页封面图片URL：</label>-->
+<!--                                                <div class="col-md-6">-->
+<!--                                                    <input class="form-control" name="linkPicurl" id="linkPicurl">-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <div id="applets" style="display: block">-->
+<!--                                            <div class="form-group">-->
+<!--                                                <label class="col-md-2 control-label">小程序标题：</label>-->
+<!--                                                <div class="col-md-6">-->
+<!--                                                    <input name="mpTitle" id="mpTitle"  class="form-control"/>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                            <div class="form-group">-->
+<!--                                                <label class="col-md-2 control-label">小程序页面路径：</label>-->
+<!--                                                <div class="col-md-6">-->
+<!--                                                    <input name="mpUrl" id="mpUrl"  class="form-control"/>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+<!--                                            <div class="form-group">-->
+<!--                                                <label class="col-md-2 control-label">小程序封面MediaID：</label>-->
+<!--                                                <div class="col-md-6">-->
+<!--                                                    <input name="mediaId" id="mediaId"  readonly="readonly" class="form-control"/>-->
+<!--                                                </div>-->
+<!--                                                <a id='addShopDiscountBtn' style="cursor:pointer;color: #409eff !important;" onclick="chooseMedia()"><i class="fa fa-plus-circle" style="margin-top:12px;"></i>添加</a>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
 
-                                        <div class="form-group" style="margin-top: 10px;">
-                                            <label  class="col-sm-2 control-label">群码关联列表：</label>
-                                            <div class="col-sm-7" style="border: dashed 1px #e7eaec;margin-left:1%">
-                                                <table id="contactWayTable" class="table  table-striped table-bordered table-hover">
-                                                    <thead>
-                                                        <tr>
-                                                            <th style="text-align: center; " data-field="shortUrl" tabindex="0"><div class="th-inner ">群聊名称</div><div class="fht-cell"></div></th>
-                                                            <th style="text-align: center; " data-field="qrCode" tabindex="0"><div class="th-inner ">二维码样式</div><div class="fht-cell"></div></th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody id="addtr"></tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <input type="hidden" name="watChatList">
-                                        <input type="hidden" name="tagIds">
-                                    </div>
+<!--                                        <div class="form-group" style="margin-top: 10px;">-->
+<!--                                            <label  class="col-sm-2 control-label">群码关联列表：</label>-->
+<!--                                            <div class="col-sm-7" style="border: dashed 1px #e7eaec;margin-left:1%">-->
+<!--                                                <table id="contactWayTable" class="table  table-striped table-bordered table-hover">-->
+<!--                                                    <thead>-->
+<!--                                                        <tr>-->
+<!--                                                            <th style="text-align: center; " data-field="shortUrl" tabindex="0"><div class="th-inner ">群聊名称</div><div class="fht-cell"></div></th>-->
+<!--                                                            <th style="text-align: center; " data-field="qrCode" tabindex="0"><div class="th-inner ">二维码样式</div><div class="fht-cell"></div></th>-->
+<!--                                                        </tr>-->
+<!--                                                    </thead>-->
+<!--                                                    <tbody id="addtr"></tbody>-->
+<!--                                                </table>-->
+<!--                                            </div>-->
+<!--                                        </div>-->
+<!--                                        <input type="hidden" name="watChatList">-->
+<!--                                    </div>-->
                                 </form>
                             </div>
                             <div class="row m-t-15">
                                 <div class="col-md-12 text-right">
-                                    <a id='creatPreheat' class="btn btn-sm btn-primary" onclick="addContactWay()" type="button"><i class="fa fa-arrow-right"></i>保存</a>
-                                    <a id='creatPreheatEdit' style="display: none" class="btn btn-sm btn-primary" onclick="upContactWay()" type="button"><i class="fa fa-arrow-right"></i>更新</a>
+                                    <a id='addContractBtn' class="btn btn-sm btn-primary" onclick="addContactWay()" type="button"><i class="fa fa-arrow-right"></i>保存</a>
+                                    <a id='updateContractBtn' style="display: none" class="btn btn-sm btn-primary" onclick="upContactWay()" type="button"><i class="fa fa-arrow-right"></i>更新</a>
                                     <a class="btn btn-secondary btn-sm" href="/page/contactWay" style="margin-right:10px;"><i class="fa fa-backward"></i>&nbsp;返回</a>
                                 </div>
                             </div>
@@ -260,10 +260,10 @@
     </div>
 </div>
 
-<div data-th-include="qywx/chooseMedia/chooseMedia"></div>
-<div data-th-include="qywx/chooseMediaImg/chooseMediaImg"></div>
+<!--<div data-th-include="qywx/chooseMedia/chooseMedia"></div>-->
+<!--<div data-th-include="qywx/chooseMediaImg/chooseMediaImg"></div>-->
 <div data-th-include="qywx/contactWay/contactWayTag"></div>
-<div data-th-include="qywx/contactWay/groupChat"></div>
+<!--<div data-th-include="qywx/contactWay/groupChat"></div>-->
 
 <th:block th:include="common/include::footer" />
 <th:block th:include="common/include::datepicker-js" />
@@ -277,11 +277,8 @@
     var contactWayId = '[[${contactWayId}]]';
     var host="http://"+window.location.host;
 </script>
-<script data-th-src="@{/plugins/imageUpload/cupload.js}"></script>
 <script data-th-src="@{/js/app/qywx/common/template.js}"></script>
 <script data-th-src="@{/js/app/qywx/contactWay/add.js}"></script>
 <script data-th-src="@{/js/app/qywx/contactWay/edit.js}"></script>
-<script data-th-src="@{/js/app/qywx/chooseMediaImg/chooseMediaImg.js}"></script>
-<script data-th-src="@{/js/app/qywx/chooseMedia/chooseMedia.js}"></script>
 </body>
 </html>

@@ -1,7 +1,6 @@
 package com.linksteady.qywx.service;
 
 import com.linksteady.qywx.domain.QywxContactWay;
-import com.linksteady.qywx.domain.QywxContactWayChat;
 
 import java.util.List;
 
@@ -12,9 +11,9 @@ import java.util.List;
  */
 public interface QywxContactWayService {
 
-    void saveContactWay(QywxContactWay qywxContactWay, String userName,List<QywxContactWayChat> list) throws Exception;
+    void saveContactWay(QywxContactWay qywxContactWay, String userName) throws Exception;
 
-    void updateContractWay(QywxContactWay qywxContactWay,List<QywxContactWayChat> list)  throws Exception;
+    void updateContractWay(QywxContactWay qywxContactWay)  throws Exception;
 
     int getContactWayCount(String qstate);
 
@@ -34,5 +33,4 @@ public interface QywxContactWayService {
 
     QywxContactWay getQrcodeByConfigId(String configId);
 
-    List<QywxContactWayChat> getContactChatById(Long contactWayId);
 }

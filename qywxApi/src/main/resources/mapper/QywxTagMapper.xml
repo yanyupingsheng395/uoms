@@ -20,6 +20,26 @@
             <result column="insert_by" jdbcType="VARCHAR"  property="insertBy"/>
         </collection>
     </resultMap>
+
+    <select id="selectTagGroupList" resultMap="tagGroup">
+        select group_id,group_name,group_order,create_time,insert_dt,insert_by from uo_qywx_tag_group order by create_time desc
+        <if test="limit!=0 and limit !=''">
+            limit #{limit} offset #{offset}
+        </if>
+    </select>
+
+    <select id="selectTag" resultType="com.linksteady.qywx.domain.QywxTag">
+        select tag_id,tag_name,tag_create_time,tag_order,group_id,insert_dt,insert_by from uo_qywx_tag where group_id=#{groupId}
+    </select>
+
+    <select id="isTagGroupExists" resultType="int">
+        select count(1) from uo_qywx_tag_group where group_name=#{groupName}
+    </select>
+
+    <select id="isTagExists" resultType="int">
+        select count(1) from uo_qywx_tag where group_id=#{groupid} and tag_name=#{tagName}
+    </select>
+
     <insert id="addTagGroup">
         insert into uo_qywx_tag_group(group_id, group_name, group_order, create_time,insert_by,insert_dt) values (#{groupId},#{groupName},#{groupOrder},#{createTime},#{insertBy},#{insertDt})
     </insert>
@@ -72,25 +92,6 @@
     <delete id="delTagByTagId">
         delete from uo_qywx_tag where tag_id=#{id}
     </delete>
-
-    <select id="getTagGroup" resultMap="tagGroup">
-        select group_id,group_name,group_order,create_time,insert_dt,insert_by from uo_qywx_tag_group order by create_time desc
-        <if test="limit!=0 and limit !=''">
-            limit #{limit} offset #{offset}
-        </if>
-    </select>
-
-    <select id="selectTag" resultType="com.linksteady.qywx.domain.QywxTag">
-        select tag_id,tag_name,tag_create_time,tag_order,group_id,insert_dt,insert_by from uo_qywx_tag where group_id=#{groupId}
-    </select>
-
-    <select id="isTagGroupByGroupName" resultType="int">
-        select count(1) from uo_qywx_tag_group where group_name=#{groupName}
-    </select>
-
-    <select id="isTag" resultType="int">
-        select count(1) from uo_qywx_tag where group_id=#{groupid} and tag_name=#{tagName}
-    </select>
 
     <select id="getTagGroupCount" resultType="int">
         select count(1) from uo_qywx_tag_group

@@ -12,21 +12,31 @@ public interface WelcomeService {
      */
     QywxMessage getValidWelcomeMessage() throws Exception;
 
-
+    /**
+     * 进行欢迎语发发送
+     * @param welcomeCode
+     * @param exernalUserId
+     * @throws Exception
+     */
     void sendWelcomeMessage(String welcomeCode,String exernalUserId)  throws Exception;
 
-    Integer saveData(QywxWelcome qywxWelcome);
+    Long saveData(QywxWelcome qywxWelcome);
 
     int getDataCount();
 
     List<QywxWelcome> getDataList(Integer limit, Integer offset);
 
-    void deleteById(String id);
+    void deleteById(long id);
 
-    QywxWelcome getDataById(String id);
+    QywxWelcome getDataById(long id);
 
     void updateData(QywxWelcome qywxWelcome);
 
-    void updateStatus(String id, String status);
+    void updateStatus(long id, String status);
+
+    /**
+     * 获取欢迎语对应小程序卡片的图片内容
+     */
+    byte[] getWelcomeMpMediaContent(long id);
 
 }

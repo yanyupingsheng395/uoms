@@ -6,7 +6,7 @@ import com.linksteady.common.util.ArithUtil;
 import com.linksteady.common.util.SpringUtils;
 import com.linksteady.qywx.dao.AddUserMapper;
 import com.linksteady.qywx.dao.AddUserTriggerMapper;
-import com.linksteady.qywx.dao.ParamMapper;
+import com.linksteady.qywx.dao.QywxParamMapper;
 import com.linksteady.qywx.domain.*;
 import com.linksteady.qywx.service.AddUserJobService;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +41,7 @@ public class AddUserJobServiceImpl implements AddUserJobService {
     AddUserTriggerMapper addUserTriggerMapper;
 
     @Autowired
-    ParamMapper paramMapper;
+    QywxParamMapper qywxParamMapper;
 
     @Override
     public void updateTriggerStatus() {
@@ -216,7 +216,7 @@ public class AddUserJobServiceImpl implements AddUserJobService {
            }
 
            //获取当前的时间戳
-           QywxParam qywxParam=paramMapper.getQywxParam();
+           QywxParam qywxParam= qywxParamMapper.getQywxParam();
 
            //如果时间戳距现在已经过去?3天，则不再使用这个时间戳，使用新的时间戳，sysdate-1
            long lastTimes= Timestamp.valueOf(qywxParam.getLastSyncOrderDt()).getTime();
@@ -321,7 +321,7 @@ public class AddUserJobServiceImpl implements AddUserJobService {
 
            //更新参数表中的时间戳字段
            LocalDateTime nextSyncDt=currentTimes.minusMinutes(5);
-           paramMapper.updateOrderSyncTimes(nextSyncDt);
+           qywxParamMapper.updateOrderSyncTimes(nextSyncDt);
            log.info("企业微信-主动拉新：订单处理完成");
        }else
        {
@@ -416,7 +416,7 @@ public class AddUserJobServiceImpl implements AddUserJobService {
     @Override
     public void deleteAddUserHistory()
     {
-        paramMapper.deleteAddUserHistory(7);
+        qywxParamMapper.deleteAddUserHistory(7);
     }
 
     /**
@@ -428,6 +428,6 @@ public class AddUserJobServiceImpl implements AddUserJobService {
     @Transactional(rollbackFor = Exception.class,propagation = Propagation.REQUIRES_NEW)
     public void insertToHistory(String phoneNum) throws Exception
     {
-        paramMapper.insertAddUserHistory(phoneNum);
+        qywxParamMapper.insertAddUserHistory(phoneNum);
     }
 }
