@@ -36,10 +36,6 @@ function getDataList(tableId) {
                 title: '图片失效时间',
                 align: 'center'
             },{
-                field: 'insertBy',
-                title: '创建人',
-                align: 'center'
-            },{
                 field: 'insertDt',
                 title: '创建时间',
                 align: 'center'
