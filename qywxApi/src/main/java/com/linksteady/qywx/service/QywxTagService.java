@@ -8,6 +8,10 @@ import com.linksteady.qywx.exception.WxErrorException;
 import java.util.List;
 
 public interface QywxTagService {
+    /**
+     * 公共方法，获取标签组的集合
+     * @return
+     */
     List<QywxTagGroup> getTagList(int limit,int offset);
 
     /**
@@ -50,7 +54,7 @@ public interface QywxTagService {
      * 获取标签组的数量
      * @return
      */
-    int getGroupTagCount();
+    int getTagGroupCount();
 
     /**
      * 获取该标签组下的标签数量

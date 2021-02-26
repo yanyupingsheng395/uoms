@@ -1,0 +1,34 @@
+<div class="modal fade" id="addGroupChat" data-keyboard="false" data-backdrop="static" tabindex="-1" >
+    <div class="modal-dialog" style="width: 41%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h5 class="modal-title pull-left">选择群聊</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <form id="chatTextForm">
+                            <div class="form-group">
+                                <span>群聊列表：</span>
+                                <select class="form-control col-md-6" id="chatList"></select>
+                            </div>
+                            <div class="form-group" id="imageBox" style="margin-top: 10px;">
+                                <span>加群二维码图片：</span>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div id="cupload-create_er"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-save btn-sm" onclick="saveChatImg()" name="save">保存</button>
+                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal" >关闭</button>
+            </div>
+        </div>
+    </div>
+</div>

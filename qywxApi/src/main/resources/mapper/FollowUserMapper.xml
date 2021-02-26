@@ -58,4 +58,14 @@
     <delete id="deleteDept">
         delete from  uo_qywx_dept where delete_flag=1
     </delete>
+
+    <select id="getFollowUserCount" resultType="int">
+        select count(1) from uo_qywx_follower_user_list
+    </select>
+
+    <select id="getUserList" resultType="map">
+        select user_id,name,main_department,operate_flag from uo_qywx_follower_user_list where delete_flag=0
+        order by name asc
+    </select>
+
 </mapper>

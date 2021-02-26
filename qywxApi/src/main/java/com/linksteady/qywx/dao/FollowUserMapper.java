@@ -3,6 +3,7 @@ package com.linksteady.qywx.dao;
 import com.linksteady.qywx.domain.FollowUser;
 
 import java.util.List;
+import java.util.Map;
 
 public interface FollowUserMapper {
 
@@ -26,6 +27,10 @@ public interface FollowUserMapper {
     void saveDept(Long id,String deptName,Long parentId,int orderNo);
 
     void deleteDept();
+
+    List<Map<String, Object>> getUserList();
+
+    int getFollowUserCount();
 
 
 }

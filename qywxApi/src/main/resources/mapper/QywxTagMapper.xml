@@ -92,7 +92,7 @@
         select count(1) from uo_qywx_tag where group_id=#{groupid} and tag_name=#{tagName}
     </select>
 
-    <select id="getGroupTagCount" resultType="int">
+    <select id="getTagGroupCount" resultType="int">
         select count(1) from uo_qywx_tag_group
     </select>
 

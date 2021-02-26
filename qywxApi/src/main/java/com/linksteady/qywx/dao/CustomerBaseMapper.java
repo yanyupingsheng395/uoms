@@ -16,8 +16,6 @@ public interface CustomerBaseMapper {
 
     List<QywxChatDetail> getCustomerList(int limit, int offset, String chatId);
 
-    List<FollowUser> getFollowUser();
-
     void insertDetail(@Param("chatDetailList") List<QywxChatDetail> list);
     void insertChatBase(@Param("chatBaseList") List<QywxChatBase> list);
 

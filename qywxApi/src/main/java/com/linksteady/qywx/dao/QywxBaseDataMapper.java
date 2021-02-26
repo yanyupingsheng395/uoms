@@ -15,9 +15,7 @@ public interface QywxBaseDataMapper {
 
     List<Map<String, Object>> getDeptList(Integer limit, Integer offset);
 
-    int getFollowUserCount();
-
     int getDeptCount();
 
-    List<Map<String, Object>> getUserList();
+
 }

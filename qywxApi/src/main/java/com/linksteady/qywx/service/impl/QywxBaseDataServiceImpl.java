@@ -1,8 +1,10 @@
 package com.linksteady.qywx.service.impl;
 
 
+import com.linksteady.qywx.dao.FollowUserMapper;
 import com.linksteady.qywx.dao.QywxBaseDataMapper;
 import com.linksteady.qywx.service.QywxBaseDataService;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,9 @@ public class QywxBaseDataServiceImpl implements QywxBaseDataService {
 
     @Autowired(required = false)
     private QywxBaseDataMapper qywxBaseDataMapper;
+
+    @Autowired(required = false)
+    private FollowUserMapper followUserMapper;
 
 
     @Override
@@ -28,7 +33,7 @@ public class QywxBaseDataServiceImpl implements QywxBaseDataService {
 
     @Override
     public int getFollowUserCount() {
-        return qywxBaseDataMapper.getFollowUserCount();
+        return followUserMapper.getFollowUserCount();
     }
 
     @Override
@@ -43,6 +48,6 @@ public class QywxBaseDataServiceImpl implements QywxBaseDataService {
 
     @Override
     public List<Map<String, Object>> getUser() {
-        return qywxBaseDataMapper.getUserList();
+        return followUserMapper.getUserList();
     }
 }

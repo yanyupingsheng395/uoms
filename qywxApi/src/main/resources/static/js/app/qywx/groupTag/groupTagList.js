@@ -4,7 +4,7 @@ $( function () {
 //获取标签组列表
 function getTagGroupList() {
     var settings = {
-        url: "/qywxtag/getGroupTag",
+        url: "/qywxtag/getGroupTagList",
         cache: false,
         pagination: true,
         singleSelect: true,

@@ -30,11 +30,11 @@ public class QywxTagController {
      * @param request
      * @return
      */
-    @RequestMapping("/getGroupTag")
-    public ResponseBo getGroupTag(QueryRequest request){
+    @RequestMapping("/getGroupTagList")
+    public ResponseBo getGroupTagList(QueryRequest request){
         int limit = request.getLimit();
         int offset = request.getOffset();
-        int count=qywxTagService.getGroupTagCount();
+        int count=qywxTagService.getTagGroupCount();
         List<QywxTagGroup> list = getTagGroupList(limit, offset);
         return ResponseBo.okOverPaging(null,count,list);
     }

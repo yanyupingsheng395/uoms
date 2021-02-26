@@ -66,9 +66,7 @@
         from uo_qywx_chat_detail a,uo_qywx_follower_user_list c
         where a.userid=c.user_id and a.chat_id=#{chatId} and a.user_type='1')bse limit #{limit} offset #{offset}
     </select>
-    <select id="getFollowUser" resultType="com.linksteady.qywx.domain.FollowUser">
-        select user_id,name from uo_qywx_follower_user_list
-    </select>
+
     <select id="getChatBaseDetail" resultMap="contractBase">
         select a.notice,b.name as owner,a.create_time,a.group_name from uo_qywx_chat_base a join uo_qywx_follower_user_list b on a.owner=b.user_id
         where a.chat_id=#{chatId}

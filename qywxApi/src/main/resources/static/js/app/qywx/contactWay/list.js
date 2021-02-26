@@ -1,7 +1,5 @@
 var validator;
-var modifyUrlValidator;
 $( function () {
-    modifyUrlValidateRule();
     initTable();
     let clipboard1 = new ClipboardJS( '.copy_btn' );
     clipboard1.on( 'success', function (e) {
@@ -9,6 +7,9 @@ $( function () {
     } );
 } );
 
+/**
+ * 获取渠道活码数据
+ */
 function initTable() {
     let settings = {
         url: '/contactWay/getList',
@@ -22,7 +23,7 @@ function initTable() {
             return {
                 pageSize: params.limit,  ////页面大小
                 pageNum: (params.offset / params.limit) + 1,
-                param: {state: $( "#state" ).val()}
+                param: {qstate: $( "#qstate" ).val()}
             };
         },
         columns: [{
@@ -103,11 +104,17 @@ function initTable() {
     $MB.initTable( 'contactWayTable', settings );
 }
 
+/**
+ * 重置
+ */
 function resetQuery() {
-    $( "#state" ).val( "" );
+    $( "#qstate" ).val( "" );
     $MB.refreshTable( "contactWayTable" );
 }
 
+/**
+ * 搜索
+ */
 $( "#btn_query" ).click( function () {
     $MB.refreshTable( "contactWayTable" );
 } );
@@ -134,6 +141,9 @@ $( "#btn_add" ).click( function () {
     window.location.href="/page/contactWay/add";
 } );
 
+/**
+ * 删除渠道活码
+ */
 $( "#btn_delete" ).click( function () {
     var selected = $( "#contactWayTable" ).bootstrapTable( 'getSelections' );
     var selected_length = selected.length;
@@ -159,134 +169,3 @@ $( "#btn_delete" ).click( function () {
         } );
     } );
 } );
-
-$( "#add_modal" ).on( 'hidden.bs.modal', function () {
-    //执行一些清空操作
-    clearData();
-} );
-
-$( "#btn_close" ).click( function () {
-    clearData();
-})
-
-/**
- * 清空数据
- */
-function clearData(){
-    userData=null;
-    deptData=null;
-    Single=false;
-    $("#alllist").html("");
-    $( "#btn_save" ).attr( "name", "save" );
-    dept_list=[];
-    user_list=[];
-    $contactWayForm.validate().resetForm();
-    $contactWayForm.find( "input[name='contactWayId']" ).val( "" );
-    $contactWayForm.find( "input[name='configId']" ).val( "" );
-    $contactWayForm.find( "input[name='state']" ).val( "" );
-    $contactWayForm.find( "input[name='usersList']" ).val( "" );
-    $contactWayForm.find( "input[name='deptList']" ).val( "" );
-    $contactWayForm.find( "input[name='validUser']" ).val( "" );
-}
-
-$( "#btn_save" ).click( function () {
-    var name = $( this ).attr( "name" );
-    getDeptAndUserId();
-    var validator = $contactWayForm.validate();
-    var flag = validator.form();
-    if(Single){
-        if(user_list.length>1){
-            $MB.n_danger( "该渠道活吗初始类型是单人，不能添加多人！");
-            return;
-        }
-    }
-    if (flag) {
-        //打开遮罩层
-        $MB.loadingDesc( 'show', '保存中，请稍候...' );
-        if (name === "save") {
-            $.post( "/contactWay/save", $( "#contactWay_edit" ).serialize(), function (r) {
-                if (r.code === 200) {
-                    closeModal();
-                    $MB.n_success( r.msg );
-                    $MB.refreshTable( "contactWayTable" );
-                    clearData();
-                } else {
-                    $MB.n_danger( r.msg );
-                };
-                $MB.loadingDesc( 'hide' );
-            } );
-        }
-        if (name === "update") {
-            $.post( "/contactWay/update", $( "#contactWay_edit" ).serialize(), function (r) {
-                if (r.code === 200) {
-                    closeModal();
-                    $MB.n_success( r.msg );
-                    $MB.refreshTable( "contactWayTable" );
-                    clearData();
-                } else {
-                    $MB.n_danger( r.msg );
-                }
-            } );
-            $MB.loadingDesc( 'hide' );
-        }
-    }
-} );
-
-
-
-// 表单验证规则
-function modifyUrlValidateRule() {
-    var icon = "<i class='zmdi zmdi-close-circle zmdi-hc-fw'></i> ";
-    modifyUrlValidator = $( "#modifyurlForm" ).validate( {
-        rules: {
-            shortUrl: {
-                required: true,
-                maxlength: 15
-            }
-        },
-        errorPlacement: function (error, element) {
-            if (element.is( ":checkbox" ) || element.is( ":radio" )) {
-                error.appendTo( element.parent().parent() );
-            } else {
-                error.insertAfter( element );
-            }
-        },
-        messages: {
-            shortUrl: {
-                required: icon + "短链不能为空",
-                maxlength: icon + "最大长度不能超过15个字符"
-            }
-        }
-    } );
-}
-
-function closeModal() {
-    $MB.closeAndRestModal( "add_modal" );
-}
-
-/**
- * 获取短链
- */
-function getShortUrl() {
-    var url = $( "#longUrl" ).val();
-    if (url.trim() == "") {
-        $MB.n_warning( "长链不能为空！" );
-        return;
-    }
-
-    var Expression = /http(s)?:\/\/([\w-]+\.)+[\w-]+(\/[\w- .\/?%&=]*)?/;
-    var objExp = new RegExp( Expression );
-    if (objExp.test( url ) != true) {
-        $MB.n_warning( "长链格式错误！" );
-        return;
-    }
-    $.get( "/coupon/getShortUrl", {url: url}, function (r) {
-        if (r.code === 200) {
-            $( "#shortUrl" ).val( r.data );
-            //给出提示
-            $MB.n_success( "生成短链成功!" );
-        } else {
-            $MB.n_danger( r['msg'] );
-        }
-    } );
-}

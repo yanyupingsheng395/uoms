@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.qywx.constant.WxPathConsts;
 import com.linksteady.qywx.dao.CustomerBaseMapper;
+import com.linksteady.qywx.dao.FollowUserMapper;
 import com.linksteady.qywx.domain.FollowUser;
 import com.linksteady.qywx.domain.QywxChatDetail;
 import com.linksteady.qywx.domain.QywxChatBase;
@@ -22,8 +23,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class CustomerBaseServiceImpl implements CustomerBaseService {
@@ -32,6 +35,9 @@ public class CustomerBaseServiceImpl implements CustomerBaseService {
     private CustomerBaseMapper customerBaseMapper;
     @Autowired
     private QywxService qywxService;
+    @Autowired(required = false)
+    private FollowUserMapper followUserMapper;
+
 
     @Override
     public int getCount(String owner,String status) {
@@ -55,7 +61,15 @@ public class CustomerBaseServiceImpl implements CustomerBaseService {
 
     @Override
     public List<FollowUser> getFollowUser() {
-        return customerBaseMapper.getFollowUser();
+        List<Map<String, Object>> userList = followUserMapper.getUserList();
+        List<FollowUser> list=new ArrayList<>();
+        userList.stream().forEach(x->{
+            FollowUser user = new FollowUser();
+            user.setName(x.get("name").toString());
+            user.setUserId(x.get("user_id").toString());
+            list.add(user);
+        });
+        return list;
     }
 
     @Override

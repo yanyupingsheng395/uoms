@@ -22,7 +22,7 @@ public interface QywxTagMapper {
 
     void updateTag(String id, String name);
 
-    int getGroupTagCount();
+    int getTagGroupCount();
 
     int getTagCount(String groupId);
 
@@ -38,7 +38,4 @@ public interface QywxTagMapper {
 
     void addTagGroupList(@Param("tagGroupList")List<QywxTagGroup> list);
 
-/*    void delAllTagGroup();
-
-    void delAllTag();*/
 }
