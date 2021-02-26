@@ -219,7 +219,7 @@ function getTabFormData() {
     return tabFormData;
 }
 
-function saveData(dom) {
+function saveDataWel(dom) {
     var operate = $(dom).attr('name');
     validWelcomeForm();
     var validator = $qywxManualForm.validate();
@@ -507,6 +507,9 @@ function validWelcomeForm() {
                 miniprogramPage: {
                     required: true
                 },
+                mediaId:{
+                    required: true
+                },
                 welcomeName:{
                     required: true
                 },
@@ -526,7 +529,10 @@ function validWelcomeForm() {
                     required: icon + "请输入小程序标题"
                 },
                 miniprogramPage: {
-                    required: icon + "请输入小程序连接"
+                    required: icon + "请输入小程序标题"
+                },
+                mediaId: {
+                    required: icon + "请输入小程序封面ID"
                 },
                 welcomeName:{
                     required: icon + "请输入欢迎语名称"
@@ -717,29 +723,15 @@ function selectType(type) {
         $("#web").hide();
         $("#miniprogram").hide();
         $('#configBtn').attr('style', 'display:none;');
-        $("#linkTitle").val("");
-        $("#linkDesc").val("");
-        $("#linkUrl").val("");
-        $("#linkPicurl").val("");
-        $("#minititle").val("");
-        $("#miniaddress").val("");
     }else if(type=="web"){
         $("#image").hide();
         $("#web").show();
         $("#miniprogram").hide();
         $('#configBtn').attr('style', 'display:none;');
-        $("#minititle").val("");
-        $("#miniaddress").val("");
-        $("#picUrl").val("");
     }else if(type=="miniprogram"){
         $("#image").hide();
         $("#web").hide();
         $("#miniprogram").show();
         $('#configBtn').attr('style', 'display:inline-block;');
-        $("#picUrl").val("");
-        $("#linkTitle").val("");
-        $("#linkDesc").val("");
-        $("#linkUrl").val("");
-        $("#linkPicurl").val("");
     }
 }

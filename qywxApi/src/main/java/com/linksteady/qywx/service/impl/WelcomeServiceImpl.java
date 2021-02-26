@@ -199,7 +199,7 @@ public class WelcomeServiceImpl implements WelcomeService {
     public Integer saveData(QywxWelcome qywxWelcome) {
         String policyType = qywxWelcome.getPolicyType();
         if (StringUtils.isNotEmpty(policyType) && policyType.equalsIgnoreCase("A")) {
-            qywxWelcome.setPolicyType(qywxWelcome.getPolicyTypeTmp());
+            qywxWelcome.setPolicyType(qywxWelcome.getPolicyType());
         }
         welcomeMapper.saveData(qywxWelcome);
         System.out.println(qywxWelcome);
@@ -233,7 +233,7 @@ public class WelcomeServiceImpl implements WelcomeService {
     public void updateData(QywxWelcome qywxWelcome) {
         String policyType = qywxWelcome.getPolicyType();
         if (StringUtils.isNotEmpty(policyType) && policyType.equalsIgnoreCase("A")) {
-            qywxWelcome.setPolicyType(qywxWelcome.getPolicyTypeTmp());
+            qywxWelcome.setPolicyType(qywxWelcome.getPolicyType());
         }
         welcomeMapper.updateData(qywxWelcome);
     }

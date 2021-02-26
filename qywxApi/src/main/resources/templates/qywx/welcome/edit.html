@@ -84,7 +84,7 @@
                                             </label>
                                         </div>
                                     </div>-->
-                                    <div class="form-group" id="intelPolicy" th:if="!${welcome.policyType eq 'M'}">
+                                <!--    <div class="form-group" id="intelPolicy" th:if="!${welcome.policyType eq 'M'}">
                                         <label class="col-xs-12" style="font-weight: bold;">智能策略配置方案</label>
                                         <div class="col-xs-12">
                                             <label class="radio-inline">
@@ -111,92 +111,91 @@
                                                 派发商品页
                                             </label>
                                         </div>
-                                    </div>
+                                    </div>-->
                                     <div class="form-group">
                                         <label class="col-xs-12" style="font-weight: bold;">欢迎语素材</label>
                                         <div class="col-md-12">
-                                          <!--  <ul id="myTabs" class="nav nav-tabs" role="tablist">
-                                                <li class="active"><a href="#text" id="text-tab" role="tab"
-                                                                      data-toggle="tab"><i class="fa fa-file-text-o"></i>&nbsp;文本</a>
-                                                </li>
-                                                <li><a href="#image" id="image-tab" role="tab"
-                                                                      data-toggle="tab"><i class="fa fa-image"></i>&nbsp;图片</a>
-                                                </li>
-                                                <li><a href="#web" id="web-tab" role="tab"
-                                                       data-toggle="tab"><i class="fa fa-link"></i>&nbsp;网页</a>
-                                                </li>
-                                                <li><a href="#miniprogram" id="miniprogram-tab" role="tab"
-                                                       data-toggle="tab"><i class="fa fa-skyatlas"></i>&nbsp;小程序</a>
-                                                </li>
-                                            </ul>-->
                                             <div id="myTabContent" class="tab-content" style="height: auto;">
                                                 <!--文本-->
                                                 <div class="row" id="text">
-                                                    <label class="col-md-3">文本：</label>
-                                                    <div class="col-md-9">
-                                                        <textarea th:text="${welcome.content}" class="form-control" name="content" rows="6" placeholder="请输入欢迎语内容" id="textContent1" data-emojiable="true" ></textarea>
+                                                    <div class="form-group">
+                                                        <label class="col-md-3 control-label">文本：</label>
+                                                        <div class="col-md-9">
+                                                            <textarea th:text="${welcome.content}" class="form-control" name="content" rows="6" placeholder="请输入欢迎语内容" id="textContent1" data-emojiable="true" ></textarea>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div class="form-group" style="margin-top: 10px;">
-                                                    <label class="col-xs-3" >选择消息类型：</label>
-                                                    <div class="col-xs-9">
-                                                        <label class="radio-inline">
-                                                            <input type="radio" checked='checked' name="sendType" th:checked="${welcome.msgType eq 'applets'} ? true:false" value="applets" onclick="selectType('miniprogram')"><span>小程序</span>
-                                                        </label>
-                                                        <label class="radio-inline">
-                                                            <input type="radio"  name="sendType" value="image" th:checked="${welcome.msgType eq 'image'} ? true:false" onclick="selectType('image')"><span>图片</span>
-                                                        </label>
-                                                        <label class="radio-inline">
-                                                            <input type="radio" name="sendType" value="web" th:checked="${welcome.msgType eq 'web'} ? true:false" onclick="selectType('web')"><span>网页</span>
-                                                        </label>
+                                                <div class="row" style="margin-top: 10px;">
+                                                    <div class="form-group" style="margin-top: 10px;">
+                                                        <label class="col-xs-3 control-label" >选择消息类型：</label>
+                                                        <div class="col-xs-9"  style="margin-top: 5px;">
+                                                            <label class="radio-inline">
+                                                                <input type="radio" checked='checked' name="sendType" th:checked="${welcome.msgType eq 'applets'} ? true:false" value="applets" onclick="selectType('miniprogram')"><span>小程序</span>
+                                                            </label>
+                                                            <label class="radio-inline">
+                                                                <input type="radio"  name="sendType" value="image" th:checked="${welcome.msgType eq 'image'} ? true:false" onclick="selectType('image')"><span>图片</span>
+                                                            </label>
+                                                            <label class="radio-inline">
+                                                                <input type="radio" name="sendType" value="web" th:checked="${welcome.msgType eq 'web'} ? true:false" onclick="selectType('web')"><span>网页</span>
+                                                            </label>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <!--图片-->
                                                 <div class="row" id="image" style="display: none">
-                                                    <label class="col-md-3">图片地址：</label>
-                                                    <div class="col-md-7">
-                                                        <input class="form-control" th:value="${welcome.picUrl}" readonly="readonly" name="picUrl" id="picUrl"/>
-                                                    </div>
-                                                    <a id='addMediaImage' style="cursor:pointer;color: #409eff !important;" onclick="chooseMediaImg()"><i class="fa fa-plus-circle" style="margin-top:12px;"></i>选择</a>
-                                                </div>
-                                                <div id="web" style="display: none">
                                                     <div class="form-group">
-                                                        <label class="col-md-3 ">消息标题：</label>
+                                                        <label class="col-md-3  control-label">图片地址：</label>
+                                                        <div class="col-md-7">
+                                                            <input class="form-control" th:value="${welcome.picUrl}" readonly="readonly" name="picUrl" id="picUrl"/>
+                                                        </div>
+                                                        <a id='addMediaImage' style="cursor:pointer;color: #409eff !important;" onclick="chooseMediaImg()"><i class="fa fa-plus-circle" style="margin-top:12px;"></i>选择</a>
+                                                    </div>
+                                                </div>
+                                                <div  class="row" id="web" style="display: none">
+                                                    <div class="form-group">
+                                                        <label class="col-md-3 control-label ">消息标题：</label>
                                                         <div class="col-md-7">
                                                             <input class="form-control" name="linkTitle" th:value="${welcome.linkTitle}">
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label class="col-md-3 ">消息描述：</label>
+                                                        <label class="col-md-3 control-label ">消息描述：</label>
                                                         <div class="col-md-7">
                                                             <input class="form-control" name="linkDesc" th:value="${welcome.linkDesc}">
                                                         </div>
                                                     </div>
                                                     <div class="form-group">
-                                                        <label class="col-md-3 ">消息地址：</label>
+                                                        <label class="col-md-3 control-label ">消息地址：</label>
                                                         <div class="col-md-7">
                                                             <input class="form-control" name="linkUrl" th:value="${welcome.linkUrl}">
                                                         </div>
                                                     </div>
                                                     <div class="form-group" style="margin-bottom: 2px;">
-                                                        <label class="col-md-3 ">封面地址：</label>
+                                                        <label class="col-md-3 control-label ">封面地址：</label>
                                                         <div class="col-md-7">
                                                             <input class="form-control" name="linkPicurl" th:value="${welcome.linkPicurl}">
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div id="miniprogram">
+                                                <div class="row" id="miniprogram">
                                                     <div class="form-group">
-                                                        <label class="col-md-3 ">小程序标题：</label>
+                                                        <label class="col-md-3 control-label ">小程序标题：</label>
                                                         <div class="col-md-7">
-                                                            <input class="form-control" readonly="readonly" name="miniprogramTitle" id="minititle" th:value="${welcome.miniprogramTitle}">
+                                                            <input class="form-control"  name="miniprogramTitle" id="minititle" th:value="${welcome.miniprogramTitle}">
                                                         </div>
                                                     </div>
                                                     <div class="form-group" style="margin-bottom: 2px;">
-                                                        <label class="col-md-3 ">小程序地址：</label>
+                                                        <label class="col-md-3 control-label ">小程序地址：</label>
                                                         <div class="col-md-7">
-                                                            <input class="form-control" readonly="readonly" name="miniprogramPage" id="miniaddress" th:value="${welcome.miniprogramPage}">
+                                                            <input class="form-control"  name="miniprogramPage" id="miniaddress" th:value="${welcome.miniprogramPage}">
                                                         </div>
+                                                    </div>
+                                                    <div class="form-group" style="margin-top: 10px;">
+                                                        <label class="col-md-3 control-label">小程序封面ID：</label>
+                                                        <div class="col-md-7">
+                                                            <input name="mediaId" id="mediaId"  readonly="readonly" class="form-control" th:value="${welcome.mediaId}"/>
+                                                        </div>
+                                                        <a id='addShopDiscountBtn' style="cursor:pointer;color: #409eff !important;" onclick="chooseMedia()"><i class="fa fa-plus-circle" style="margin-top:12px;"></i>添加</a>
                                                     </div>
                                                 </div>
                                                 <div>
@@ -208,7 +207,7 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="col-md-12">
-                                            <ul style="color: #666; font-size: 12px;">
+                                            <ul style="color: #666; font-size: 12px;margin-left: 25%;">
                                                 <li><i class="fa fa-angle-double-right"></i>&nbsp;文本、图片、网页和小程序四者不能同时为空；</li>
                                                 <li><i class="fa fa-angle-double-right"></i>&nbsp;文本与另外三者可以同时发送，此时将会以两条消息的形式触达客户</li>
                                                 <li><i class="fa fa-angle-double-right"></i>&nbsp;图片、网页和小程序只能有一个，如果三者同时填，则按图片、网页、小程序的优先顺序取参，也就是说，如果图片和网页同时传值，则只有图片生效。</li>
@@ -217,7 +216,7 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="col-xs-12 text-center">
-                                            <button class="btn btn-primary btn-sm" type="button" onclick="saveData(this)" name='update'><i
+                                            <button class="btn btn-primary btn-sm" type="button" onclick="saveDataWel(this)" name='update'><i
                                                     class="fa fa-save"></i>&nbsp;更新
                                             </button>
                                           <!--  <button th:if="!${welcome.policyType eq 'M'}" class="btn btn-primary btn-sm" type="button" onclick="getViewData()" id="configBtn"><i
@@ -467,6 +466,8 @@
         </div>
     </div>
 </div>
+
+<div data-th-include="qywx/chooseMedia/chooseMedia"></div>
 <div data-th-include="qywx/chooseMediaImg/chooseMediaImg"></div>
 <th:block th:include="common/include::footer"/>
 <th:block th:include="common/include::datepicker-js" />
@@ -480,6 +481,7 @@
 <script data-th-src="@{/js/app/qywx/welcome/emoji-picker.js}"></script>
 <script data-th-src="@{/js/app/qywx/welcome/add.js}"></script>
 <script data-th-src="@{/js/app/qywx/chooseMediaImg/chooseMediaImg.js}"></script>
+<script data-th-src="@{/js/app/qywx/chooseMedia/chooseMedia.js}"></script>
 <script>
     $(function() {
         emojiPicker = new EmojiPicker.EmojiPicker({

@@ -21,8 +21,6 @@ public class QywxWelcome implements Serializable {
 
     private String policyType;
 
-    private String policyTypeTmp;
-
     private String picUrl;
 
     private String picId;
@@ -49,6 +47,11 @@ public class QywxWelcome implements Serializable {
 
     private String updateBy;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
+    private Date updatetDt;
+
     private String msgType;
+
+    private String mediaId;
 
 }
