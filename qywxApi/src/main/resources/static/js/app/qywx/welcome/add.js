@@ -529,7 +529,7 @@ function validWelcomeForm() {
                     required: icon + "请输入小程序标题"
                 },
                 miniprogramPage: {
-                    required: icon + "请输入小程序标题"
+                    required: icon + "请输入小程序地址"
                 },
                 miniprogramImageName: {
                     required: icon + "请上传小程序封面图片"
