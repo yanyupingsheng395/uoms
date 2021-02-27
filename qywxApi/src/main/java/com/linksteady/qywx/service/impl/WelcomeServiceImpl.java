@@ -226,7 +226,7 @@ public class WelcomeServiceImpl implements WelcomeService {
             //如果小程序封面页的图片发生了变化，则删除缓存的mediaId
             if(!qywxWelcome.getMiniprogramImagePath().equals(existsWelcome.getMiniprogramImagePath()))
             {
-
+                mediaService.deleteMpMediaId("WELCOME",qywxWelcome.getId());
             }
         }
         welcomeMapper.updateData(qywxWelcome);
