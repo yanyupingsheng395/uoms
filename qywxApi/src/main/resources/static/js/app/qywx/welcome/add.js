@@ -494,6 +494,27 @@ function setProduct() {
     }
 }
 
+function selectType(type) {
+    if(type=="image"){
+        $("#image").show();
+        $("#web").hide();
+        $("#miniprogram").hide();
+        $('#configBtn').attr('style', 'display:none;');
+    }else if(type=="web"){
+        $("#image").hide();
+        $("#web").show();
+        $("#miniprogram").hide();
+        $('#configBtn').attr('style', 'display:none;');
+    }else if(type=="miniprogram"){
+        $("#image").hide();
+        $("#web").hide();
+        $("#miniprogram").show();
+        $('#configBtn').attr('style', 'display:inline-block;');
+    }
+    $qywxManualForm_validator.resetForm();
+
+}
+
 // 验证欢迎语表单
 function validWelcomeForm() {
     var icon = "<i class='fa fa-close'></i> ";
@@ -717,24 +738,7 @@ $("#addCouponModal").on('hidden.bs.modal', function () {
     validator_coupon.resetForm();
 });
 
-function selectType(type) {
-    if(type=="image"){
-        $("#image").show();
-        $("#web").hide();
-        $("#miniprogram").hide();
-        $('#configBtn').attr('style', 'display:none;');
-    }else if(type=="web"){
-        $("#image").hide();
-        $("#web").show();
-        $("#miniprogram").hide();
-        $('#configBtn').attr('style', 'display:none;');
-    }else if(type=="miniprogram"){
-        $("#image").hide();
-        $("#web").hide();
-        $("#miniprogram").show();
-        $('#configBtn').attr('style', 'display:inline-block;');
-    }
-}
+
 
 var upload;
 image();
