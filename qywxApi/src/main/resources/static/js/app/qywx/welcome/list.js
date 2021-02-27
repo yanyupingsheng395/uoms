@@ -22,17 +22,6 @@ function init() {
             align: "center",
             title: '欢迎语名称',
         },{
-            field: 'policyType',
-            align: "center",
-            title: '素材类型',
-            formatter: function (value, row, index) {
-                if(value === 'M') {
-                    return "自定义";
-                }else if(value === 'PRODUCT' || value === 'COUPON') {
-                    return "智能策略";
-                }
-            }
-        },{
             field: 'insertDt',
             align: "center",
             title: '配置时间',
