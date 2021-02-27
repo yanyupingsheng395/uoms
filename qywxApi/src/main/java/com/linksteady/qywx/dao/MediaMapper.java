@@ -13,6 +13,8 @@ public interface MediaMapper {
      * 根据dentityType和identityId获取QywxMediaImg
      */
     QywxMediaImg getQywxMediaImg(Long identityId, String identityType);
+
+    void deleteMpMediaId(String identityType, Long identityId);
     
     /**
      * 更新临时素材

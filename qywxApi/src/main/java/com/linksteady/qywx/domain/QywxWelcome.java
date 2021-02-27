@@ -19,8 +19,6 @@ public class QywxWelcome implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "GMT+8")
     private Date insertDt;
 
-    private String policyType;
-
     private String picUrl;
 
     private String picId;

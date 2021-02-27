@@ -13,6 +13,11 @@ public interface MediaService {
      */
     String getMpMediaId(String identityType, Long identityId) throws Exception;
 
+    /**
+     * 删除MpMedia数据
+     */
+    void deleteMpMediaId(String identityType, Long identityId);
+
     int getImageCount();
 
     List<QywxImage> getImageList(int limit, int offset);

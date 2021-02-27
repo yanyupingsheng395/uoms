@@ -190,10 +190,6 @@ public class WelcomeServiceImpl implements WelcomeService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long saveData(QywxWelcome qywxWelcome) {
-        String policyType = qywxWelcome.getPolicyType();
-        if (StringUtils.isNotEmpty(policyType) && policyType.equalsIgnoreCase("A")) {
-            qywxWelcome.setPolicyType(qywxWelcome.getPolicyType());
-        }
         welcomeMapper.saveData(qywxWelcome);
         return qywxWelcome.getId();
     }
@@ -216,16 +212,22 @@ public class WelcomeServiceImpl implements WelcomeService {
 
     @Override
     public QywxWelcome getDataById(long id) {
-        List<QywxWelcome> welcomeList = welcomeMapper.getDataById(id);
-        return welcomeList.size() > 0 ? welcomeList.get(0) : null;
+        return welcomeMapper.getDataById(id);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateData(QywxWelcome qywxWelcome) {
-        String policyType = qywxWelcome.getPolicyType();
-        if (StringUtils.isNotEmpty(policyType) && policyType.equalsIgnoreCase("A")) {
-            qywxWelcome.setPolicyType(qywxWelcome.getPolicyType());
+        //如果更新了小程序卡片
+        QywxWelcome  existsWelcome=welcomeMapper.getDataById(qywxWelcome.getId());
+
+        if("applets".equals(qywxWelcome.getMsgType()))
+        {
+            //如果小程序封面页的图片发生了变化，则删除缓存的mediaId
+            if(!qywxWelcome.getMiniprogramImagePath().equals(existsWelcome.getMiniprogramImagePath()))
+            {
+
+            }
         }
         welcomeMapper.updateData(qywxWelcome);
     }
@@ -244,7 +246,7 @@ public class WelcomeServiceImpl implements WelcomeService {
 
     @Override
     public byte[] getWelcomeMpMediaContent(long id) {
-     String miniprogramImagePath=welcomeMapper.getDataById(id).get(0).getMiniprogramImagePath();
+     String miniprogramImagePath=welcomeMapper.getDataById(id).getMiniprogramImagePath();
        String path= FilePathConsts.WELCOME_IMAGE_PATH+miniprogramImagePath;
         byte[] content=new byte[0];
         try {

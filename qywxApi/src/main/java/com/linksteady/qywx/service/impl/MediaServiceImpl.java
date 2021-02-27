@@ -135,6 +135,11 @@ public class MediaServiceImpl implements MediaService {
         return mediaId;
     }
 
+    @Override
+    public void deleteMpMediaId(String identityType, Long identityId) {
+         mediaMapper.deleteMpMediaId(identityType,identityId);
+    }
+
     /**
      * 获取小程序封面内容
      * 查找图片？ 商品根据商品ID到w_product_media中取 获取不到则取uo_qywx_param中的media_content

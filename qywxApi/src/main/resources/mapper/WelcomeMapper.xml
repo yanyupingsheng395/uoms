@@ -8,7 +8,6 @@
         <result column="content" jdbcType="VARCHAR" property="content"/>
         <result column="insert_by" jdbcType="VARCHAR" property="insertBy"/>
         <result column="insert_dt" jdbcType="TIMESTAMP" property="insertDt"/>
-        <result column="policy_type" jdbcType="VARCHAR" property="policyType"/>
         <result column="pic_url" jdbcType="VARCHAR" property="picUrl"/>
         <result column="pic_id" jdbcType="VARCHAR" property="picId"/>
         <result column="link_title" jdbcType="VARCHAR" property="linkTitle"/>
@@ -32,7 +31,6 @@
                content,
                insert_by,
                insert_dt,
-               policy_type,
                pic_url,
                pic_id,
                link_title,
@@ -55,8 +53,8 @@
         <selectKey  resultType="java.lang.Long" order="BEFORE" keyProperty="id">
             select nextval('uo_qywx_welcome_id_seq'::regclass)
         </selectKey>
-        insert into uo_qywx_welcome (id, welcome_name, content, insert_by, insert_dt, policy_type, pic_url, pic_id, link_title, link_picurl, link_desc, link_url, miniprogram_title, miniprogram_page, msg_type,miniprogram_image_name,miniprogram_image_path)
-        values (#{id}, #{welcomeName}, #{content}, #{insertBy}, now(), #{policyType}, #{picUrl}, #{picId}::integer, #{linkTitle}, #{linkPicurl}, #{linkDesc}, #{linkUrl}, #{miniprogramTitle}, #{miniprogramPage},#{msgType},#{miniprogramImageName}, #{miniprogramImagePath})
+        insert into uo_qywx_welcome (id, welcome_name, content, insert_by, insert_dt, pic_url, pic_id, link_title, link_picurl, link_desc, link_url, miniprogram_title, miniprogram_page, msg_type,miniprogram_image_name,miniprogram_image_path)
+        values (#{id}, #{welcomeName}, #{content}, #{insertBy}, now(), #{picUrl}, #{picId}::integer, #{linkTitle}, #{linkPicurl}, #{linkDesc}, #{linkUrl}, #{miniprogramTitle}, #{miniprogramPage},#{msgType},#{miniprogramImageName}, #{miniprogramImagePath})
     </insert>
 
     <select id="getDataCount" resultType="int">
@@ -70,7 +68,6 @@
         content,
         insert_by,
         insert_dt,
-        policy_type,
         pic_url,
         pic_id,
         link_title,
@@ -101,7 +98,6 @@
         content,
         insert_by,
         insert_dt,
-        policy_type,
         pic_url,
         pic_id,
         link_title,
@@ -126,7 +122,6 @@
         content,
         update_by,
         update_dt,
-        policy_type,
         pic_url,
         pic_id,
         link_title,
@@ -145,7 +140,6 @@
         #{content},
         #{updateBy},
         now(),
-        #{policyType},
         #{picUrl},
         #{picId}::integer,
         #{linkTitle},

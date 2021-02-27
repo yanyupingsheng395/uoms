@@ -19,7 +19,7 @@ public interface WelcomeMapper {
 
     void deleteById(long id);
 
-    List<QywxWelcome> getDataById(long id);
+    QywxWelcome getDataById(long id);
 
     void updateData(QywxWelcome qywxWelcome);
 

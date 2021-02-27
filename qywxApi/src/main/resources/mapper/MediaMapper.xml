@@ -36,6 +36,9 @@
                where identity_id=#{identityId} and identity_type=#{identityType}
     </select>
 
+    <delete id="deleteMpMediaId">
+        delete from uo_qywx_media_img where identity_id=#{identityId} and identity_type=#{identityType}
+    </delete>
 
     <update id="updateQywxMediaImgBymediaId">
         update uo_qywx_media_img set media_id=#{mediaId} ,media_expire_date=#{expreDt},file_name=#{fileName},update_dt=now() where identity_id=#{identityId} and identity_type=#{identityType}
