@@ -47,5 +47,13 @@ public class QywxWelcome implements Serializable {
     private Date updatetDt;
 
     private String msgType;
+    /**
+     *小程序图片名称
+     */
+    private String miniprogramImageName;
+    /**
+     *小程序图片路径
+     */
+    private String miniprogramImagePath;
 
 }

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.linksteady.common.domain.QywxMessage;
 import com.linksteady.common.util.OkHttpUtil;
+import com.linksteady.qywx.constant.FilePathConsts;
 import com.linksteady.qywx.constant.WxPathConsts;
 import com.linksteady.qywx.dao.WelcomeMapper;
 import com.linksteady.qywx.domain.QywxWelcome;
@@ -15,9 +16,14 @@ import com.linksteady.qywx.service.WelcomeService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 @Slf4j
@@ -28,6 +34,7 @@ public class WelcomeServiceImpl implements WelcomeService {
     WelcomeMapper welcomeMapper;
 
     @Autowired
+    @Lazy
     MediaService mediaService;
 
     @Autowired
@@ -188,7 +195,6 @@ public class WelcomeServiceImpl implements WelcomeService {
             qywxWelcome.setPolicyType(qywxWelcome.getPolicyType());
         }
         welcomeMapper.saveData(qywxWelcome);
-        System.out.println(qywxWelcome);
         return qywxWelcome.getId();
     }
 
@@ -238,8 +244,28 @@ public class WelcomeServiceImpl implements WelcomeService {
 
     @Override
     public byte[] getWelcomeMpMediaContent(long id) {
-        //todo 补足此方法 根据id
-        return new byte[0];
+     String miniprogramImagePath=welcomeMapper.getDataById(id).get(0).getMiniprogramImagePath();
+       String path= FilePathConsts.WELCOME_IMAGE_PATH+miniprogramImagePath;
+        byte[] content=new byte[0];
+        try {
+            BufferedInputStream in = new BufferedInputStream(new FileInputStream(path));
+            ByteArrayOutputStream out=new ByteArrayOutputStream(1024);
+            byte[] temp = new byte[1024];
+            int size = 0;
+            while ((size = in.read(temp)) != -1) {
+                out.write(temp, 0, size);
+            }
+            in.close();
+             content = out.toByteArray();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return content;
+    }
+
+    public static void main(String[] args) {
+        WelcomeServiceImpl welcomeService=new WelcomeServiceImpl();
+        welcomeService.getWelcomeMpMediaContent(71l);
     }
 
 }

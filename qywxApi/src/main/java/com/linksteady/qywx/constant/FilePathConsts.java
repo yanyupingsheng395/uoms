@@ -9,4 +9,6 @@ public final class FilePathConsts {
 
     //渠道活码关联入群二维码存放地址
     public static final String CONTACT_WAY_IMAGE_PATH="file/contactWay/";
+
+    public static final String WELCOME_IMAGE_PATH="file/welcome/";
 }

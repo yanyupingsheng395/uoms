@@ -1,5 +1,5 @@
 init_date('endDate', 'yyyy-mm-dd', 0, 2, 0);
-getCouponData();
+//getCouponData();
 var $qywxManualForm = $( "#welcomeFormData" );
 var $qywxManualForm_validator;
 
@@ -111,7 +111,7 @@ function getCouponData() {
     $("#couponDataTable").bootstrapTable(settings);
 }
 
-getProductData();
+//getProductData();
 function getProductData() {
     var settings = {
         url: "/qywxWelcomeProduct/getTableDataList",
@@ -507,7 +507,7 @@ function validWelcomeForm() {
                 miniprogramPage: {
                     required: true
                 },
-                mediaId:{
+                miniprogramImageName:{
                     required: true
                 },
                 welcomeName:{
@@ -531,8 +531,8 @@ function validWelcomeForm() {
                 miniprogramPage: {
                     required: icon + "请输入小程序标题"
                 },
-                mediaId: {
-                    required: icon + "请输入小程序封面ID"
+                miniprogramImageName: {
+                    required: icon + "请上传小程序封面图片"
                 },
                 welcomeName:{
                     required: icon + "请输入欢迎语名称"
@@ -734,4 +734,61 @@ function selectType(type) {
         $("#miniprogram").show();
         $('#configBtn').attr('style', 'display:inline-block;');
     }
+}
+
+var upload;
+image();
+
+function image() {
+    upload = new Cupload( {
+        ele: '#cupload-create',
+        num: 1
+    } );
+}
+
+function uploadMediaImg() {
+    $("#mediaModal").modal('show');
+}
+
+function saveModelImg() {
+    var code=$( "input[name='image[]']" ).val();
+
+    if(code === ''||null==code) {
+        $MB.n_warning("图片不能为空！");
+        return false;
+    }
+    var filename=document.getElementsByClassName("cupload-image-delete")[0].title;
+    if(filename.substr(filename.lastIndexOf(".")+1)!="png"&&filename.substr(filename.lastIndexOf(".")+1)!="PNG"){
+        $MB.n_warning("图片格式不正确，请上传png格式图片！");
+        return false;
+    }
+    $MB.loadingDesc("show", "图片正在上传中，请稍候...");
+    $.post( "/welcome/saveModelImg", {
+        mediaType: 'image',
+        base64Code: code,
+        filename:filename.substr(0,filename.lastIndexOf("."))
+    }, function (r) {
+        $MB.loadingDesc("hide");
+        if (r.code === 200) {
+            $MB.n_success( "保存成功！" );
+            $("#miniprogramImageName").val(filename);
+            $("#miniprogramImagePath").val(r.data);
+            $("#mediaModal").modal('hide');
+            clearImg();
+        }
+    } );
+}
+
+
+function closeModelImg() {
+    $("#mediaModal").modal('hide');
+    clearImg();
+}
+/**
+ * 清除上传内容
+ */
+function clearImg() {
+    //清除所选图片
+    $("#cupload-create").html("");
+    image();
 }

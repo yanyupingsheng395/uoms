@@ -22,6 +22,8 @@
         <result column="update_by" jdbcType="VARCHAR" property="updateBy"/>
         <result column="update_dt" jdbcType="TIMESTAMP" property="updatetDt"/>
         <result column="msg_type" jdbcType="VARCHAR" property="msgType"/>
+        <result column="miniprogram_image_name" jdbcType="VARCHAR" property="miniprogramImageName"/>
+        <result column="miniprogram_image_path" jdbcType="VARCHAR" property="miniprogramImagePath"/>
     </resultMap>
 
     <select id="getValidWelcome" resultMap="welcomeMap">
@@ -50,28 +52,98 @@
     </select>
 
     <insert id="saveData">
-        <selectKey keyColumn="id" resultType="int" order="BEFORE" keyProperty="id">
+        <selectKey  resultType="java.lang.Long" order="BEFORE" keyProperty="id">
             select nextval('uo_qywx_welcome_id_seq'::regclass)
         </selectKey>
-        insert into uo_qywx_welcome (id,
-            welcome_name,
-            content,
-            insert_by,
-            insert_dt,
-            policy_type,
-            pic_url,
-            pic_id,
-            link_title,
-            link_picurl,
-            link_desc,
-            link_url,
-            miniprogram_title,
-            miniprogram_page
-            msg_type)
-        values (#{id},
+        insert into uo_qywx_welcome (id, welcome_name, content, insert_by, insert_dt, policy_type, pic_url, pic_id, link_title, link_picurl, link_desc, link_url, miniprogram_title, miniprogram_page, msg_type,miniprogram_image_name,miniprogram_image_path)
+        values (#{id}, #{welcomeName}, #{content}, #{insertBy}, now(), #{policyType}, #{picUrl}, #{picId}::integer, #{linkTitle}, #{linkPicurl}, #{linkDesc}, #{linkUrl}, #{miniprogramTitle}, #{miniprogramPage},#{msgType},#{miniprogramImageName}, #{miniprogramImagePath})
+    </insert>
+
+    <select id="getDataCount" resultType="int">
+        select count(1) from uo_qywx_welcome
+    </select>
+
+    <select id="getDataList" resultMap="welcomeMap">
+        select
+        id,
+        welcome_name,
+        content,
+        insert_by,
+        insert_dt,
+        policy_type,
+        pic_url,
+        pic_id,
+        link_title,
+        link_picurl,
+        link_desc,
+        link_url,
+        miniprogram_title,
+        miniprogram_page,
+        update_dt,
+        update_by,
+        valid_flag,
+        status,
+        msg_type,
+        miniprogram_image_name,
+        miniprogram_image_path
+         from uo_qywx_welcome
+        order by insert_dt desc limit #{limit} offset #{offset}
+    </select>
+
+    <delete id="deleteById">
+        delete from uo_qywx_welcome where id = #{id}
+    </delete>
+
+    <select id="getDataById" resultMap="welcomeMap">
+        select
+        id,
+        welcome_name,
+        content,
+        insert_by,
+        insert_dt,
+        policy_type,
+        pic_url,
+        pic_id,
+        link_title,
+        link_picurl,
+        link_desc,
+        link_url,
+        miniprogram_title,
+        miniprogram_page,
+        update_dt,
+        update_by,
+        valid_flag,
+        status,
+        msg_type,
+        miniprogram_image_name,
+        miniprogram_image_path
+        from uo_qywx_welcome where id = #{id}
+    </select>
+
+    <update id="updateData">
+        update uo_qywx_welcome set (
+        welcome_name,
+        content,
+        update_by,
+        update_dt,
+        policy_type,
+        pic_url,
+        pic_id,
+        link_title,
+        link_picurl,
+        link_desc,
+        link_url,
+         miniprogram_title,
+         miniprogram_page,
+         msg_type,
+         miniprogram_image_name,
+         miniprogram_image_path
+         )
+        =
+         (
         #{welcomeName},
         #{content},
-        #{insertBy},
+        #{updateBy},
         now(),
         #{policyType},
         #{picUrl},
@@ -81,30 +153,10 @@
         #{linkDesc},
         #{linkUrl},
         #{miniprogramTitle},
-        #{miniprogramPage}
-        ,#{msgType})
-    </insert>
-
-    <select id="getDataCount" resultType="int">
-        select count(1) from uo_qywx_welcome
-    </select>
-
-    <select id="getDataList" resultMap="welcomeMap">
-        select id, welcome_name, content, insert_by, insert_dt, policy_type, pic_url, pic_id, link_title, link_picurl, link_desc, link_url, miniprogram_title, miniprogram_page, update_dt, update_by, valid_flag, status,msg_type from uo_qywx_welcome
-        order by insert_dt desc limit #{limit} offset #{offset}
-    </select>
-
-    <delete id="deleteById">
-        delete from uo_qywx_welcome where id = #{id}
-    </delete>
-
-    <select id="getDataById" resultMap="welcomeMap">
-        select id, welcome_name, content, insert_by, insert_dt, policy_type, pic_url, pic_id, link_title, link_picurl, link_desc, link_url, miniprogram_title, miniprogram_page, update_dt, update_by, valid_flag, status,msg_type from uo_qywx_welcome where id = #{id}
-    </select>
-
-    <update id="updateData">
-        update uo_qywx_welcome set (welcome_name, content, update_by, update_dt, policy_type, pic_url, pic_id, link_title, link_picurl, link_desc, link_url, miniprogram_title, miniprogram_page,msg_type)
-        = (#{welcomeName}, #{content}, #{updateBy}, now(), #{policyType}, #{picUrl}, #{picId}::integer, #{linkTitle}, #{linkPicurl}, #{linkDesc}, #{linkUrl}, #{miniprogramTitle}, #{miniprogramPage},#{msgType})
+        #{miniprogramPage},
+        #{msgType},
+        #{miniprogramImageName},
+        #{miniprogramImagePath})
         where id = #{id}
     </update>
 

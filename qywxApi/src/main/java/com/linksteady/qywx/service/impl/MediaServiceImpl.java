@@ -19,6 +19,7 @@ import com.linksteady.qywx.service.WelcomeService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,19 +32,20 @@ import java.util.List;
 @Slf4j
 public class MediaServiceImpl implements MediaService {
 
-    @Autowired
+    @Autowired(required = false)
     MediaMapper mediaMapper;
     @Autowired
     private QywxService qywxService;
 
-    @Autowired
+    @Autowired(required = false)
     QywxParamMapper qywxParamMapper;
 
     @Autowired
     ProductMediaService productMediaService;
 
     @Autowired
-    WelcomeService welcomeService;
+    @Lazy
+    private WelcomeService welcomeService;
 
     @Override
     public int getImageCount() {
