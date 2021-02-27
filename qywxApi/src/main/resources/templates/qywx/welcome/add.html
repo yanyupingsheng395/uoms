@@ -113,7 +113,7 @@
                                                         <label class="col-xs-3 control-label" >选择消息类型：</label>
                                                         <div class="col-xs-9" style="margin-top: 5px;">
                                                             <label class="radio-inline">
-                                                                <input type="radio" checked='checked' name="msgType" value="applets" onclick="selectType('miniprogram')"><span>小程序</span>
+                                                                <input type="radio" checked='checked' name="msgType" value="applets" onclick="selectType('applets')"><span>小程序</span>
                                                             </label>
                                                             <label class="radio-inline">
                                                                 <input type="radio"  name="msgType" value="image" onclick="selectType('image')"><span>图片</span>
@@ -164,13 +164,13 @@
                                                     <div class="form-group">
                                                         <label class="col-md-3 control-label">小程序标题：</label>
                                                         <div class="col-md-7">
-                                                            <input class="form-control" name="miniprogramTitle" id="minititle">
+                                                            <input class="form-control" name="miniprogramTitle" id="miniprogramTitle">
                                                         </div>
                                                     </div>
                                                     <div class="form-group" style="margin-bottom: 2px;">
                                                         <label class="col-md-3 control-label">小程序地址：</label>
                                                         <div class="col-md-7">
-                                                            <input class="form-control" name="miniprogramPage" id="miniaddress">
+                                                            <input class="form-control" name="miniprogramPage" id="miniprogramPage">
                                                         </div>
                                                     </div>
                                                     <div class="form-group" style="margin-top: 10px;">
@@ -259,6 +259,8 @@
             assetsPath: '/images/emoji/',
         });
         emojiPicker.discover();
+
+        selectType('applets')
     });
 </script>
 </body>
