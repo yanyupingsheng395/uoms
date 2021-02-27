@@ -222,7 +222,7 @@ function saveModelImg() {
     }, function (r) {
         $MB.loadingDesc("hide");
         if (r.code === 200) {
-            $MB.n_success( "保存成功！" );
+            $MB.n_success( "图片上传成功！" );
             $("#miniprogramImageName").val(filename);
             $("#miniprogramImagePath").val(r.data);
             $("#mediaModal").modal('hide');
