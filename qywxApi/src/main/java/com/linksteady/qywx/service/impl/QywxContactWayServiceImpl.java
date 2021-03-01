@@ -161,6 +161,7 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
             throw new Exception("configId不能为空");
         }
         param.put("config_id",configId);
+
         List userList= Splitter.on(',').trimResults().omitEmptyStrings().splitToList(qywxContactWay.getUsersList());//获取人员列表
         List deptlist = Splitter.on(',').trimResults().omitEmptyStrings().splitToList(qywxContactWay.getDeptList());//获取部门列表
         if(userList.size()>0){
@@ -171,6 +172,8 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
         }else{
             qywxContactWay.setDeptList(null);
         }
+
+
         log.info("渠道活码发送的参数为{}",JSON.toJSONString(param));
         String url= qywxService.getRedisConfigStorage().getApiUrl(WxPathConsts.ExternalContacts.UPDATE_CONTACT_WAY)+qywxService.getAccessToken();
         String result=OkHttpUtil.postRequest(url,param.toJSONString());
@@ -191,7 +194,6 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
             //更新数据库
             qywxContactWayMapper.updateContractWay(qywxContactWay);
             qywxContactWayMapper.updateContactWayQrCode(qywxContactWay.getContactWayId(),qrCode,qywxContactWay.getUpdateBy());
-
         }else
         {
             throw new Exception("更新失败！");

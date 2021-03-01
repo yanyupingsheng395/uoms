@@ -49,11 +49,11 @@
     </insert>
 
     <select id="getMediaImgCount" resultType="int">
-        select count(*) from uo_qywx_media_img where identity_type='MANUAL'
+        select count(*) from uo_qywx_media_img where identity_type='MANUAL'  and media_expire_date>=now()
     </select>
 
     <select id="getMediaImgList" resultMap="getMediaImgMap">
-        select img_id,img_title,insert_dt,insert_by,media_id,media_expire_date,identity_type,file_name from uo_qywx_media_img where  identity_type='MANUAL' order by insert_dt desc limit #{limit} offset #{offset}
+        select img_id,img_title,insert_dt,insert_by,media_id,media_expire_date,identity_type,file_name from uo_qywx_media_img where  identity_type='MANUAL' and media_expire_date>=now()  order by insert_dt desc limit #{limit} offset #{offset}
     </select>
 
     <select id="getValidMediaImgCount" resultType="int">
