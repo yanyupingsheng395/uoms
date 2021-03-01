@@ -99,13 +99,14 @@ function getExternalUserId() {
 
 // 给客户发送消息
 function sendMsgToUser(content) {
-    wx.invoke( 'sendChatMessage', {
-        msgtype: "text",
-        text: {
-            content: content
-        }
-    }, function (res) {
-    } );
+    $.toptip('配置管理员尚未开启发送配置！',20000,'error');
+    // wx.invoke( 'sendChatMessage', {
+    //     msgtype: "text",
+    //     text: {
+    //         content: content
+    //     }
+    // }, function (res) {
+    // } );
 }
 
 
