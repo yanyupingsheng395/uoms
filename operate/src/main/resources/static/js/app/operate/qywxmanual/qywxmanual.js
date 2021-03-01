@@ -1,5 +1,5 @@
 var $qywxManualForm = $( "#qywx-manual-form" );
-var $qywxManualForm_validator;
+var qywxManualForm_validator;
 $(function () {
     initTable();
 });
@@ -98,15 +98,15 @@ function showContent(headId) {
             $form.find( "input[name='mediaId']" ).val( data.mpMediald );
             if("applets"==msgType){
                 $("#image_show").hide();
-                $("#webPage_show").hide();
+                $("#web_show").hide();
                 $("#applets_show").show();
             }else if("image"==msgType){
                 $("#image_show").show();
-                $("#webPage_show").hide();
+                $("#web_show").hide();
                 $("#applets_show").hide();
             }else if("web"==msgType){
                 $("#image_show").hide();
-                $("#webPage_show").show();
+                $("#web_show").show();
                 $("#applets_show").hide();
             }
             $(":radio[name='msgType_show'][value='" + msgType + "']").prop("checked", "checked");
@@ -117,6 +117,9 @@ function showContent(headId) {
     });
 }
 
+/**
+ * 上传文件前，检查格式
+ */
 function beforeUpload() {
     var fileName = document.getElementById('file').files[0].name;
     if(!fileName.endsWith(".csv")) {
@@ -128,7 +131,6 @@ function beforeUpload() {
 
 // 提交数据
 function submitData() {
-    validQywxContact();
     let file = document.getElementById('file').files;
     if(document.getElementById('file').files.length === 0) {
         $MB.n_warning("请上传数据！");
@@ -138,6 +140,8 @@ function submitData() {
         $MB.n_warning("上传数据不能超过10M！");
         return false;
     }
+    let valdatorType= $('input[name="msgType"]:checked').val();
+    selectType(valdatorType);
     var validator = $qywxManualForm.validate();
     if(validator.form()) {
         $MB.loadingDesc("show", "正在处理数据中，请稍候...");
@@ -214,95 +218,6 @@ function makeErrorTable(data) {
     $("#upload_error_modal").modal('show');
 }
 
-function validQywxContact() {
-    var icon = "<i class='fa fa-close'></i> ";
-    let msgType = $('input[name="msgType"]:checked').val();
-    if(msgType=="applets"){
-        $qywxManualForm_validator = $qywxManualForm.validate( {
-            rules: {
-                smsContent: {
-                    required: true
-                },
-                mpTitle: {
-                    required: true
-                },
-                mpUrl: {
-                    required: true
-                },
-                mediaId: {
-                    required: true
-                }
-            },
-            errorPlacement: function (error, element) {
-                if (element.is( ":checkbox" ) || element.is( ":radio" )) {
-                    error.appendTo( element.parent().parent() );
-                } else {
-                    error.insertAfter( element );
-                }
-            },
-            messages: {
-                smsContent: {
-                    required: icon + "请输入内容！"
-                },
-                mpTitle: {
-                    required: icon + "请输入小程序标题"
-                },
-                mpUrl: {
-                    required: icon + "请输入小程序连接"
-                },
-                mediaId: {
-                    required: icon + "请输入小程序封面ID"
-                }
-            }
-        } );
-    }else if(msgType=="image"){
-        $qywxManualForm_validator = $qywxManualForm.validate( {
-            rules: {
-                picUrl: {
-                    required: true
-                }
-            },
-            errorPlacement: function (error, element) {
-                if (element.is( ":checkbox" ) || element.is( ":radio" )) {
-                    error.appendTo( element.parent().parent() );
-                } else {
-                    error.insertAfter( element );
-                }
-            },
-            messages: {
-                picUrl: {
-                    required: icon + "请选择图片地址！"
-                }
-            }
-        } );
-    }else if(msgType=="web"){
-        $qywxManualForm_validator = $qywxManualForm.validate( {
-            rules: {
-                linkTitle: {
-                    required: true
-                },
-                linkUrl: {
-                    required: true
-                }
-            },
-            errorPlacement: function (error, element) {
-                if (element.is( ":checkbox" ) || element.is( ":radio" )) {
-                    error.appendTo( element.parent().parent() );
-                } else {
-                    error.insertAfter( element );
-                }
-            },
-            messages: {
-                linkTitle: {
-                    required: icon + "请填写网页标题！"
-                }, linkUrl: {
-                    required: icon + "请填写网页地址！"
-                }
-            }
-        } );
-    }
-
-}
 
 // 推送信息
 function pushMessage() {
@@ -334,15 +249,18 @@ function getPushInfo(headId) {
     });
 }
 
+//搜索按钮
 $("#btn_query").click(function () {
     $MB.refreshTable('dataTable');
 });
 
+//重置按钮
 $("#btn_reset").click(function () {
     $("#pushDate").val('');
     $MB.refreshTable('dataTable');
 });
 
+//删除记录
 $("#btn_delete").click(function () {
     let selected = $("#dataTable").bootstrapTable('getSelections');
     let selected_length = selected.length;
@@ -371,6 +289,7 @@ $("#btn_delete").click(function () {
     });
 });
 
+//隐藏新增model框
 $("#add_modal").on('hidden.bs.modal', function () {
     $("#smsContent").val('');
     $("#upload_file_name").text('');
@@ -391,6 +310,7 @@ $("#send_modal").on('hidden.bs.modal', function () {
     $('#phoneNum').val("");
 });
 
+//查看效果
 $("#btn_effect").click(function () {
     let selected = $("#dataTable").bootstrapTable('getSelections');
     let selected_length = selected.length;
@@ -407,36 +327,76 @@ $("#btn_effect").click(function () {
     window.location.href="/page/qywxManual/effect?headId="+headId;
 });
 
+/**
+ * 更换消息类型
+ * @param type
+ */
 function selectType(type) {
+    var icon = "<i class='fa fa-close'></i> ";
+    qywxManualForm_validator = $qywxManualForm.validate( {
+        rules: {
+            smsContent: {
+                required: true
+            }
+        },
+        errorPlacement: function (error, element) {
+            if (element.is( ":checkbox" ) || element.is( ":radio" )) {
+                error.appendTo( element.parent().parent() );
+            } else {
+                error.insertAfter( element );
+            }
+        },
+        messages: {
+            smsContent: {
+                required: icon + "请输入内容！"
+            }
+        }
+    } );
+
     if(type=="image"){
         $("#image").show();
-        $("#webPage").hide();
+        $("#web").hide();
         $("#applets").hide();
-        $("#linkTitle").val("");
-        $("#linkDesc").val("");
-        $("#linkUrl").val("");
-        $("#linkPicurl").val("");
-        $("#mpTitle").val("");
-        $("#mpUrl").val("");
-        $("#mediaId").val("");
-    }else if(type=="webPage"){
+
+        //添加对图片的校验
+        $("#picUrl").rules("add",{required:true,messages:{required:"请选择图片地址！"}});
+
+        //清除对小程序和web的校验
+        $("#mpTitle").rules("remove");
+        $("#mpUrl").rules("remove");
+        $("#mediaId").rules("remove");
+
+        $("#linkTitle").rules("remove");
+        $("#linkUrl").rules("remove");
+
+    }else if(type=="web"){
         $("#image").hide();
-        $("#webPage").show();
+        $("#web").show();
         $("#applets").hide();
-        $("#picUrl").val("");
-        $("#mpTitle").val("");
-        $("#mpUrl").val("");
-        $("#mediaId").val("");
+
+        $("#linkTitle").rules("add",{required:true,messages:{required:"请填写网页标题！"}});
+        $("#linkUrl").rules("add",{required:true,messages:{required:"请填写网页地址！"}});
+
+        $("#mpTitle").rules("remove");
+        $("#mpUrl").rules("remove");
+        $("#mediaId").rules("remove");
+
+        $("#picUrl").rules("remove");
+
     }else if(type=="applets"){
         $("#image").hide();
-        $("#webPage").hide();
+        $("#web").hide();
         $("#applets").show();
-        $("#linkTitle").val("");
-        $("#linkDesc").val("");
-        $("#linkUrl").val("");
-        $("#linkPicurl").val("");
-        $("#mpTitle").val("");
-        $("#mpUrl").val("");
-        $("#mediaId").val("");
+
+        //添加对小程序的校验
+        $("#mpTitle").rules("add",{required:true,messages:{required:"请输入小程序标题！"}});
+        $("#mpUrl").rules("add",{required:true,messages:{required:"请输入小程序地址！"}});
+        $("#mediaId").rules("add",{required:true,messages:{required:"请选择小程序封面ID！"}});
+
+        $("#linkTitle").rules("remove");
+        $("#linkUrl").rules("remove");
+
+        $("#picUrl").rules("remove");
     }
+    qywxManualForm_validator.resetForm();
 }

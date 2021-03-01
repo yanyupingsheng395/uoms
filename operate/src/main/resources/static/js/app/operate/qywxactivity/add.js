@@ -901,9 +901,9 @@ function validBasic() {
 function validBasicDt() {
     let formalStartDt = $( "#formalStartDt" ).val();
     var formalNotifyDt = $( "#formalNotifyDt" ).val();
-    var flag = new Date( String( formalStartDt ) ) > new Date( String( formalNotifyDt ) );
+    var flag = new Date( String( formalStartDt ) ) >= new Date( String( formalNotifyDt ) );
     if (!flag) {
-        $MB.n_warning( "正式提醒时间必须小于正式开始时间！" );
+        $MB.n_warning( "正式提醒时间必须小于或等于正式开始时间！" );
         return false;
     }
     return flag;
