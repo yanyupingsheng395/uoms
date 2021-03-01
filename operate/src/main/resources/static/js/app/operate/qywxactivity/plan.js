@@ -106,18 +106,6 @@ function getPlanTable() {
                     return res;
                 }
             }
-            // {
-            //     field: 'covRate',
-            //     title: '推送转化率(%)',
-            //     align: 'center',
-            //     valign: 'middle'
-            // },
-            // {
-            //     field: 'covAmount',
-            //     title: '推送转化金额(元)',
-            //     align: 'center',
-            //     valign: 'middle'
-            // }
             ]
     };
     $("#planTable").bootstrapTable('destroy').bootstrapTable(settings);
@@ -407,6 +395,12 @@ $("#btn_stop").click(function () {
     }
 });
 
+//解析日期
+function dateFormat(planDateWid) {
+    var resultDate=planDateWid.slice(0,4)+"-"+planDateWid.slice(4,6)+"-"+planDateWid.slice(6,8);
+    return resultDate;
+}
+
 /**
  * 计算名单
  */
@@ -434,7 +428,7 @@ $("#btn_calculation").click(function () {
         $MB.n_warning('请选择当天计划！');
         return;
     }
-$MB.loadingDesc('show', '名计算中，请稍候...');
+    $MB.loadingDesc('show', '名单计算中，请稍候...');
     $.get("/qywxActivityPlan/calculationList", {planId: planId,headId:headId}, function (r) {
         if(r.code == 200) {
             var data=r.data;
@@ -456,10 +450,6 @@ $MB.loadingDesc('show', '名计算中，请稍候...');
 
 });
 
-function dateFormat(planDateWid) {
-    var resultDate=planDateWid.slice(0,4)+"-"+planDateWid.slice(4,6)+"-"+planDateWid.slice(6,8);
-    return resultDate;
-    
-}
+
 
 
