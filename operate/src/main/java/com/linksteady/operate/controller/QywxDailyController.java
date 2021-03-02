@@ -552,6 +552,14 @@ public class QywxDailyController {
         return ResponseBo.okWithData(null,qywxDailyService.getHeadInfo(headId).getVersion());
     }
 
+    /**
+     * 通过上传文件，新增券码
+     * @param file
+     * @param couponId
+     * @param couponIdentity
+     * @return
+     * @throws Exception
+     */
     @PostMapping("/uploadCoupon")
     public ResponseBo uploadCoupon(@RequestParam("file") MultipartFile file,
                                    @RequestParam("couponId")  Long couponId,
@@ -570,6 +578,13 @@ public class QywxDailyController {
         return  ResponseBo.ok();
     }
 
+    /**
+     * 一键生成，券码流水号
+     * @param couponId
+     * @param couponIdentity
+     * @return
+     * @throws Exception
+     */
     @PostMapping("/couponToSequence")
     public ResponseBo couponToSequence(@RequestParam("couponId")  Long couponId ,@RequestParam("couponIdentity")  String couponIdentity) throws Exception {
         try {

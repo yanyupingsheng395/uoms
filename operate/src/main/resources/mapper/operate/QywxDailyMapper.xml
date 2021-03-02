@@ -309,7 +309,7 @@
 
     <select id="getCouponListData" resultMap="couponMap">
         select  a.coupon_id,a.coupon_identity,a.coupon_display_name,a.coupon_threshold,a.coupon_denom,
-         COUNT(*) as coupon_serial_num,COUNT(case when b.used_flag='N' then 1 end ) as coupon_serial_no_num
+         COUNT(b.coupon_id) as coupon_serial_num,COUNT(case when b.used_flag='N' then 1 end ) as coupon_serial_no_num
         from uo_qywx_coupon a left join uo_coupon_serial_no b on a.coupon_id=b.coupon_id
         where a.valid_status='Y' and a.check_flag='1'  group by a.coupon_id, a.coupon_identity, a.coupon_display_name, a.coupon_threshold, a.coupon_denom
         order by a.coupon_id asc  limit #{limit} offset #{offset}
