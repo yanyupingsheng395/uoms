@@ -197,23 +197,16 @@ function validateRule() {
                 required: true,
                 digits: true
             },
+            couponIdentity : {
+                required: true,
+            },
             couponThreshold: {
                 required: true,
                 digits: true
             },
-            couponLongUrl: {
-                required: function () {
-                    return $("input[name='couponSendType']").val() === 'A';
-                }
-            },
-            couponUrl: {
-                required: function () {
-                    return $("input[name='couponSendType']").val() === 'A';
-                }
-            },
             couponDisplayName: {
                 required: true,
-                maxlength: couponNameLen
+                maxlength: 100
             },
             validEnd: {
                 required: true
@@ -235,15 +228,33 @@ function validateRule() {
                 required: icon + "请输入补贴门槛",
                 digits: icon + "只能是整数"
             },
-            couponLongUrl: icon + "请输入原链接",
-            couponUrl: icon + "请输入短链接",
+            couponIdentity: icon+"请输入补贴编号",
             couponDisplayName: {
                 required: icon + "请输入补贴名称",
-                maxlength: icon + "最大长度不能超过"+couponNameLen+"个字符"
+                maxlength: icon + "最大长度不能超过100个字符"
             },
             validEnd: icon + "请输入有效截止日期",
         }
     });
+
+
+    //判断优惠券发放方式 自行领取
+    if(couponSendType=='A')
+    {
+        $("#couponUrl").rules("add",{required:true,messages:{required:"请输入补贴链接！"}});
+        $("#couponLongUrl").rules("add",{required:true,messages:{required:"请输入补贴H5链接！"}});
+        //设置为可用
+        $("#couponUrl").removeAttr("disabled");
+        $("#couponLongUrl").removeAttr("disabled");
+    }else
+    {
+        $("#couponUrl").rules("remove");
+        $("#couponLongUrl").rules("remove");
+        //设置为不可用
+        $("#couponUrl").attr("disabled","disabled");
+        $("#couponLongUrl").attr("disabled","disabled");
+
+    }
 }
 
 // 券保存

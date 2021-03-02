@@ -62,7 +62,7 @@ public enum  ConfigEnum {
 
     pathActiveList("op.daily.pathactive.list"),
     sendCouponUrl("op.sendCouponUrl"),
-    sendCouponType("op.sendCouponType"),
+    couponSnManualUpload("op.couponSnManualUpload"),
     sendCouponIdentityType("op.sendCouponIdentityType"),
 
     qywxSyncMsgResult("qywx.syncMsgResult");

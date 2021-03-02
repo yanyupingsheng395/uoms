@@ -43,29 +43,15 @@ function couponTable() {
             field: 'couponDisplayName',
             align: 'center',
             title: '补贴名称'
-        }, /*{
-            field: 'couponSource',
-            title: '类型',
-            align: 'center',
-            formatter: function (value, row, index) {
-                var res = '-';
-                if (value === '0') {
-                    res = "智能";
-                }
-                if (value === '1') {
-                    res = "手动";
-                }
-                return res;
-            }
-        },*/ {
+        },{
             field: 'couponThreshold',
             align: 'center',
             title: '门槛(元)'
-        }, {
+        },{
             field: 'couponDenom',
             align: 'center',
             title: '面额(元)'
-        }, {
+        },{
             field: 'couponUrl',
             align: 'center',
             title: '补贴小程序链接',
@@ -229,12 +215,6 @@ function validateRule() {
                 required: true,
                 digits: true
             },
-            couponUrl: {
-                required: true
-            },
-            couponLongUrl: {
-                required: true
-            },
             couponDisplayName: {
                 required: true,
                 maxlength: 100
@@ -260,8 +240,6 @@ function validateRule() {
                 digits: icon + "只能是整数"
             },
             couponIdentity: icon+"请输入补贴编号",
-            couponUrl: icon + "请输入补贴链接",
-            couponLongUrl: icon + "请输入补贴H5链接",
             couponDisplayName: {
                 required: icon + "请输入补贴名称",
                 maxlength: icon + "最大长度不能超过100个字符"
@@ -269,6 +247,25 @@ function validateRule() {
             validEnd: icon + "请输入有效截止日期",
         }
     });
+
+
+    //判断优惠券发放方式 自行领取
+    if(couponSendType=='A')
+    {
+        $("#couponUrl").rules("add",{required:true,messages:{required:"请输入补贴链接！"}});
+        $("#couponLongUrl").rules("add",{required:true,messages:{required:"请输入补贴H5链接！"}});
+        //设置为可用
+        $("#couponUrl").removeAttr("disabled");
+        $("#couponLongUrl").removeAttr("disabled");
+    }else
+    {
+        $("#couponUrl").rules("remove");
+        $("#couponLongUrl").rules("remove");
+        //设置为不可用
+        $("#couponUrl").attr("disabled","disabled");
+        $("#couponLongUrl").attr("disabled","disabled");
+
+    }
 }
 
 // 券保存

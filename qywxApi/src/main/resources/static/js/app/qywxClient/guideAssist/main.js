@@ -327,9 +327,9 @@ function recProductList(operateUserId) {
                     }
                 }, {
                     field: 'ebp_product_url',
-                    title: '商品详情页',
+                    title: '操作',
                     formatter: function (value, row, index) {
-                        return "<a onclick='sendMsgToUser(\"" + value + "\")' style='text-decoration: underline;'>发送链接</a>";
+                        return "<a onclick='sendMsgToUser(\"" + value + "\")' style='text-decoration: underline;'>发送</a>";
                     }
                 }
             ]
@@ -360,9 +360,9 @@ function recProductList(operateUserId) {
                     }
                 }, {
                     field: 'ebp_product_url',
-                    title: '商品详情页',
+                    title: '操作',
                     formatter: function (value, row, index) {
-                        return "<a onclick='sendMsgToUser(\"" + value + "\")' style='text-decoration: underline;'>发送链接</a>";
+                        return "<a onclick='sendMsgToUser(\"" + value + "\")' style='text-decoration: underline;'>发送</a>";
                     }
                 }
             ],
@@ -523,9 +523,9 @@ function guideCoupon(data) {
                 title: '有效截止日期'
             }, {
                 field: 'coupon_url',
-                title: '优惠券链接',
+                title: '操作',
                 formatter: function (value, row, index) {
-                    return "<a onclick='sendMsgToUser(\"" + value + "\")' style='text-decoration: underline;'>发送链接</a>";
+                    return "<a onclick='sendMsgToUser(\"" + value + "\")' style='text-decoration: underline;'>发送</a>";
                 }
             }
         ]

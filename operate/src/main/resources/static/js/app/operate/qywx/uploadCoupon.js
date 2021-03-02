@@ -142,7 +142,7 @@ function uploadCoupon() {
     let formData = new FormData();
     formData.append("couponId",$("#couponId").val());
     formData.append("couponIdentity",$("#couponIdentity").val());
-    if(sendFlag){
+    if(couponSnManualUpload){
         let file = document.getElementById('file').files;
         if(document.getElementById('file').files.length === 0) {
             $MB.n_warning("请上传数据！");

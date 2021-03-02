@@ -428,8 +428,8 @@ public class PageController extends BaseController {
     @Log(value = "每日用户运营[企业微信]-上传优惠券流水号", location = "用户成长系统")
     @RequestMapping("/qywxDaily/uploadCoupon")
     public String uploadCoupo(Model model) {
-        boolean coupontype="Y".equals(configService.getValueByName(ConfigEnum.sendCouponType.getKeyCode()))?true:false;
-        model.addAttribute("sendFlag",coupontype);
+        boolean couponSnManualUpload="Y".equals(configService.getValueByName(ConfigEnum.couponSnManualUpload.getKeyCode()))?true:false;
+        model.addAttribute("sendFlag",couponSnManualUpload);
         return "operate/qywx/uploadCoupon";
     }
 

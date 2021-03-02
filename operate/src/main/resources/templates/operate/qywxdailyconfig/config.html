@@ -139,6 +139,8 @@
 <script data-th-src="@{/plugins/emoji-picker/emoji-picker.js}"></script>
 <script data-th-src="@{/js/app/operate/qywxdailyconfig/config.js}"></script>
 <script>
+    let couponSendType ='[[${sourceConfig.couponSendType}]]';
+
     var clipboard1 = new ClipboardJS('.copy_btn');
     clipboard1.on('success', function(e) {
         $MB.n_success("成功复制到粘贴板！");
