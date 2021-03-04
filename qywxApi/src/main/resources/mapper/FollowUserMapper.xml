@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.linksteady.qywx.dao.FollowUserMapper">
+    <resultMap id="followUserMap" type="com.linksteady.qywx.domain.FollowUser">
+        <result column="user_id" jdbcType="VARCHAR" property="userId"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="main_department" jdbcType="VARCHAR" property="mainDepartment"/>
+        <result column="operate_flag" jdbcType="VARCHAR" property="operateFlag"/>
+        <result column="insert_dt" jdbcType="VARCHAR" property="insertDt"/>
+        <result column="update_dt" jdbcType="VARCHAR" property="updateDt"/>
+    </resultMap>
 
     <update id="updateFollowUser">
         UPDATE uo_qywx_follower_user_list SET
@@ -48,24 +56,20 @@
         update uo_qywx_dept set delete_flag=1
     </update>
 
-    <insert id="saveDept">
-      insert into uo_qywx_dept(id,name,parent_id,order_no,insert_dt,update_dt,delete_flag) values(
-         #{id},#{deptName},#{parentId},#{orderNo},now(),now(),0
-      )  ON CONFLICT (id) DO UPDATE
-      set parent_id=#{parentId}, order_no=#{orderNo},update_dt=now(),delete_flag=0
-    </insert>
-
-    <delete id="deleteDept">
-        delete from  uo_qywx_dept where delete_flag=1
-    </delete>
-
     <select id="getFollowUserCount" resultType="int">
         select count(1) from uo_qywx_follower_user_list
     </select>
 
-    <select id="getUserList" resultType="map">
-        select user_id,name,main_department,operate_flag from uo_qywx_follower_user_list where delete_flag=0
+    <select id="getFollowUserList" resultMap="followUserMap">
+        select user_id,name,main_department,operate_flag
+        from uo_qywx_follower_user_list where delete_flag=0
         order by name asc
+    </select>
+
+    <select id="getFollowUserListPagging" resultMap="followUserMap">
+        select user_id, name, insert_dt, update_dt,operate_flag
+        from uo_qywx_follower_user_list order by user_id asc
+        limit #{limit} offset #{offset}
     </select>
 
 </mapper>

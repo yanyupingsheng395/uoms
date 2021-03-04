@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.linksteady.qywx.dao.QywxBaseDataMapper">
-
-    <select id="getFollowUserList" resultType="map">
-        select user_id, name, insert_dt, update_dt,operate_flag from uo_qywx_follower_user_list order by user_id asc
-        limit #{limit} offset #{offset}
-    </select>
+<mapper namespace="com.linksteady.qywx.dao.QywxDeptMapper">
 
     <select id="getDeptList" resultType="map">
         select
@@ -26,5 +21,16 @@
     <select id="getDeptCount" resultType="int">
         select count(1) from uo_qywx_dept
     </select>
+
+    <insert id="saveDept">
+      insert into uo_qywx_dept(id,name,parent_id,order_no,insert_dt,update_dt,delete_flag) values(
+         #{id},#{deptName},#{parentId},#{orderNo},now(),now(),0
+      )  ON CONFLICT (id) DO UPDATE
+      set parent_id=#{parentId}, order_no=#{orderNo},update_dt=now(),delete_flag=0
+    </insert>
+
+    <delete id="deleteDept">
+        delete from  uo_qywx_dept where delete_flag=1
+    </delete>
 
 </mapper>

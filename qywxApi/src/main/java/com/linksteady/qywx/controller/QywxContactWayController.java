@@ -6,7 +6,9 @@ import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.common.util.Base64Img;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.qywx.constant.FilePathConsts;
+import com.linksteady.qywx.domain.FollowUser;
 import com.linksteady.qywx.domain.QywxContactWay;
+import com.linksteady.qywx.service.FollowUserService;
 import com.linksteady.qywx.service.QywxBaseDataService;
 import com.linksteady.qywx.service.QywxContactWayService;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +41,10 @@ public class QywxContactWayController extends BaseController {
 
     @Autowired
     QywxBaseDataService baseDataService;
+
+    @Autowired
+    FollowUserService followUserService;
+
     /**
      * 获取列表
      *
@@ -232,12 +238,12 @@ public class QywxContactWayController extends BaseController {
      * 获取组织架构数据树
      * @return
      */
-    @RequestMapping("/contactWay/getUser")
+    @RequestMapping("/contactWay/getFollowUserList")
     @ResponseBody
     public ResponseBo getUser(){
-        List<Map<String, Object>> userlist =null;
+        List<FollowUser> userlist =null;
         try {
-            userlist = baseDataService.getUser();
+            userlist = followUserService.getFollowUserList();
         }catch (Exception e){
             return ResponseBo.error("未获取到成员！");
         }

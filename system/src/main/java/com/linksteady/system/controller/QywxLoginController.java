@@ -235,6 +235,7 @@ public class QywxLoginController extends BaseController {
             sbf.append("&response_type=code");
             sbf.append("&scope=snsapi_base");
             sbf.append("&state=linksteady#wechat_redirect");
+            log.info("回调的地址为:{}",sbf.toString());
             return "redirect:" + sbf.toString();
         } catch (UnsupportedEncodingException e) {
             log.error("oauth回调链接加密错误，原因为{}", e);

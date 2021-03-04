@@ -66,21 +66,12 @@ public class CustomerBaseController {
     @RequestMapping("/syncQywxChatList")
     public ResponseBo syncQywxChatList() {
         try {
-            customerBaseService.syncQywxChatList("");
+            customerBaseService.syncQywxChatList();
             return ResponseBo.ok();
         } catch (WxErrorException e) {
             return ResponseBo.error(e.getMessage());
         }
     }
-
-    @RequestMapping("/getFollower")
-    @ResponseBody
-    public ResponseBo getFollower(){
-        List<FollowUser> user = customerBaseService.getFollowUser();
-        return ResponseBo.okWithData(null,user);
-    }
-
-
 
 
 

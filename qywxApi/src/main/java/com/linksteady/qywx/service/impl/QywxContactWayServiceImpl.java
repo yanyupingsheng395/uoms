@@ -7,7 +7,6 @@ import com.google.common.base.Splitter;
 import com.linksteady.common.service.ConfigService;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.qywx.constant.WxPathConsts;
-import com.linksteady.qywx.dao.QywxBaseDataMapper;
 import com.linksteady.qywx.dao.QywxContactWayMapper;
 import com.linksteady.qywx.domain.QywxContactWay;
 import com.linksteady.qywx.domain.QywxContactWayDetail;
@@ -36,10 +35,6 @@ public class QywxContactWayServiceImpl implements QywxContactWayService {
 
     @Autowired(required = false)
     QywxContactWayMapper qywxContactWayMapper;
-
-    @Autowired(required = false)
-    QywxBaseDataMapper qywxBaseDataMapper;
-
 
     @Autowired
     QywxService qywxService;

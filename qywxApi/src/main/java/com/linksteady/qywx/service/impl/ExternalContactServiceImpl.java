@@ -28,6 +28,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -54,7 +55,8 @@ public class ExternalContactServiceImpl implements ExternalContactService {
         externalContactMapper.updateDeleteFlag();
 
         //获取配置了客户联系功能的成员列表
-        List<String> followerUserList = followUserService.selectFollowUserList();
+        List<String> followerUserList = followUserService.getFollowUserList()
+                .stream().map(i->i.getUserId()).collect(Collectors.toList());
         for (String followerUserId : followerUserList) {
             //获取此成员下所有的外部客户信息
             List<String> externalUserList = findExternalContractList(followerUserId);

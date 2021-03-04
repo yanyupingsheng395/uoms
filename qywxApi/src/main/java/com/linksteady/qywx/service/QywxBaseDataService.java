@@ -2,6 +2,7 @@ package com.linksteady.qywx.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.linksteady.common.domain.Tree;
+import com.linksteady.qywx.domain.FollowUser;
 import com.linksteady.qywx.domain.QywxDeptUser;
 
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.Map;
  */
 public interface QywxBaseDataService {
 
-    List<Map<String, Object>> getFollowUserList(Integer limit, Integer offset);
+    List<FollowUser> getFollowUserList(Integer limit, Integer offset);
 
     List<Map<String, Object>> getDeptList(Integer limit, Integer offset);
 
@@ -22,5 +23,6 @@ public interface QywxBaseDataService {
     int getDeptCount();
 
     List<Map<String, Object>> getDept();
-    List<Map<String, Object>> getUser();
+
+    List<FollowUser> getFollowUserList();
 }

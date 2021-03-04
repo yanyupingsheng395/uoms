@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface CustomerBaseMapper {
+
     int getCount(String owner,String status);
 
     List<QywxChatBase> getDataList(int limit, int offset,String owner,String status);
@@ -17,7 +18,8 @@ public interface CustomerBaseMapper {
     List<QywxChatDetail> getCustomerList(int limit, int offset, String chatId);
 
     void insertDetail(@Param("chatDetailList") List<QywxChatDetail> list);
-    void insertChatBase(@Param("chatBaseList") List<QywxChatBase> list);
+
+    void insertChatBase(QywxChatBase qywxChatBase);
 
     void deleteChatBase(String chatId);
 

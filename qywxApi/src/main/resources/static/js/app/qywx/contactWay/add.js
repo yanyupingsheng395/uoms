@@ -66,12 +66,12 @@ function createUserTree() {
         }
     } );
 
-    $.post( "/contactWay/getUser", {}, function (r) {
+    $.post( "/contactWay/getFollowUserList", {}, function (r) {
         userData = r.data;
         var html="";
         if (r.code === 200) {
             for(var i=0;i<userData.length;i++){
-                html= html+"<option value='"+userData[i].user_id+"'>"+userData[i].name+"</option>";
+                html= html+"<option value='"+userData[i].userId+"'>"+userData[i].name+"</option>";
             }
             $("#region2").html(html);
         } else {

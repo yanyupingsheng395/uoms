@@ -24,13 +24,11 @@ public interface FollowUserMapper {
 
     void updateDeptDeleteFlag();
 
-    void saveDept(Long id,String deptName,Long parentId,int orderNo);
-
-    void deleteDept();
-
-    List<Map<String, Object>> getUserList();
+    List<FollowUser> getFollowUserList();
 
     int getFollowUserCount();
+
+    List<FollowUser> getFollowUserListPagging(Integer limit, Integer offset);
 
 
 }

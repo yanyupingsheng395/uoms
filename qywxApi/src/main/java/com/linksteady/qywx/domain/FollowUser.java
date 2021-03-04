@@ -6,6 +6,7 @@ import lombok.Data;
 import javax.persistence.Column;
 import javax.persistence.Table;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  *配置了客户联系功能的成员列表
@@ -76,6 +77,15 @@ public class FollowUser implements Serializable {
 
    @Column(name="external_profile")
    private String externalProfile;
+
+    @Column(name="operate_flag")
+    private String operateFlag;
+
+    @Column(name="insert_dt")
+    private Date insertDt;
+
+    @Column(name="update_dt")
+    private Date updateDt;
 
     public FollowUser buildFromJsonObject(JSONObject jsonObject)
     {

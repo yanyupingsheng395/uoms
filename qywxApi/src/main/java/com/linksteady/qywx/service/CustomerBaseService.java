@@ -28,21 +28,11 @@ public interface CustomerBaseService {
 
     List<QywxChatDetail> getCustomerList(int limit, int offset, String chatId);
 
-    List<FollowUser> getFollowUser();
-
     /**
      * 获取客户群列表，存入数据库
-     * @param cursor   下一次查询的游标，第一次查询不用
      * @throws WxErrorException
      */
-    void syncQywxChatList( String cursor) throws WxErrorException;
-
-    /**
-     * 新建客户群，同步数据
-     * @param chatId   客户群ID
-     * @param flag      是否需要单独存主表
-     */
-    QywxChatBase saveChatBase(String chatId,boolean flag) throws WxErrorException;
+    void syncQywxChatList() throws WxErrorException;
 
     /**
      * 客户群解散，删除数据库中uo_qywx_chat_detail 和uo_qywx_chat_base数据

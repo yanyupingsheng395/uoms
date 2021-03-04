@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.linksteady.common.util.OkHttpUtil;
 import com.linksteady.qywx.constant.WxPathConsts;
 import com.linksteady.qywx.dao.FollowUserMapper;
+import com.linksteady.qywx.dao.QywxDeptMapper;
 import com.linksteady.qywx.domain.FollowUser;
 import com.linksteady.qywx.domain.WxError;
 import com.linksteady.qywx.exception.WxErrorException;
@@ -27,8 +28,11 @@ public class FollowUserServiceImpl implements FollowUserService {
     @Autowired
     FollowUserMapper followUserMapper;
 
+    @Autowired
+    QywxDeptMapper qywxDeptMapper;
+
     @Override
-    public List<String> selectFollowUserList() throws WxErrorException{
+    public List<String> callFollowUserRemote() throws WxErrorException{
         StringBuffer requestUrl=new StringBuffer(qywxService.getRedisConfigStorage().getApiUrl(WxPathConsts.ExternalContacts.GET_FOLLOW_USER_LIST));
 
         requestUrl.append("?access_token="+qywxService.getAccessToken());
@@ -50,7 +54,7 @@ public class FollowUserServiceImpl implements FollowUserService {
      * @return
      */
     @Override
-    public FollowUser selectUserDetail(String followerUserId) throws WxErrorException{
+    public FollowUser callFollowUserDetailRemote(String followerUserId) throws WxErrorException{
         StringBuffer requestUrl=new StringBuffer(qywxService.getRedisConfigStorage().getApiUrl(WxPathConsts.User.USER_GET));
 
         requestUrl.append(followerUserId);
@@ -78,7 +82,7 @@ public class FollowUserServiceImpl implements FollowUserService {
     {
         log.info("同步具有外部联系权限的成员列表");
         //获取配置了客户联系功能的成员列表
-        List<String> followerUserList =this.selectFollowUserList();
+        List<String> followerUserList =this.callFollowUserRemote();
         log.info("处理标志位");
         //更新删除标记位为1
         followUserMapper.updateDeleteFlag();
@@ -99,7 +103,7 @@ public class FollowUserServiceImpl implements FollowUserService {
         {
             count++;
             //查询成员的详细信息，并进行更新
-            followUser = selectUserDetail(followerUserId);
+            followUser = callFollowUserDetailRemote(followerUserId);
             log.info("{}对follower:{}的详细信息进行更新",count,followerUserId);
             followUserMapper.updateFollowUser(followUser);
         }
@@ -130,11 +134,16 @@ public class FollowUserServiceImpl implements FollowUserService {
             {
                 temp=deptArray.getJSONObject(i);
                 //insert or update
-                followUserMapper.saveDept(temp.getLong("id"),temp.getString("name"),temp.getLong("parentid"),temp.getIntValue("order"));
+                qywxDeptMapper.saveDept(temp.getLong("id"),temp.getString("name"),temp.getLong("parentid"),temp.getIntValue("order"));
             }
         }
 
-        followUserMapper.deleteDept();
+        qywxDeptMapper.deleteDept();
         log.info("同步部门信息结束");
+    }
+
+    @Override
+    public List<FollowUser> getFollowUserList() {
+        return followUserMapper.getFollowUserList();
     }
 }

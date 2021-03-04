@@ -10,11 +10,13 @@ import java.util.List;
  */
 public interface FollowUserService {
 
-    List<String> selectFollowUserList() throws WxErrorException;
+    List<String> callFollowUserRemote() throws WxErrorException;
 
-    FollowUser selectUserDetail(String followerUserId) throws WxErrorException;
+    FollowUser callFollowUserDetailRemote(String followerUserId) throws WxErrorException;
 
     void syncQywxFollowUser() throws Exception;
 
     void syncDept() throws Exception;
+
+    List<FollowUser> getFollowUserList();
 }

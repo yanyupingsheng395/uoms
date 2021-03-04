@@ -100,7 +100,7 @@ public class EventServiceImpl implements EventService {
            String chatId = inMessage.getChatId();
            if(StringUtils.equalsAnyIgnoreCase(inMessage.getChangeType(),"create")){
                log.info("群事件-客户群创建");
-               customerBaseService.saveChatBase(chatId,true);
+               customerBaseService.updateChat(chatId);
 
            }else if(StringUtils.equalsAnyIgnoreCase(inMessage.getChangeType(),"update")){
                log.info("群事件-客户群变更");

@@ -24,9 +24,11 @@
         <result column="join_scene" jdbcType="VARCHAR" property="joinScene"/>
         <result column="user_name" jdbcType="VARCHAR" property="userName"/>
     </resultMap>
+
     <delete id="deleteChatBase">
         delete from uo_qywx_chat_base where chat_id=#{chatId}
     </delete>
+
     <delete id="deleteChatDetail">
         delete from uo_qywx_chat_detail where chat_id=#{chatId}
     </delete>
@@ -82,6 +84,7 @@
         join_time=excluded.join_time,
         join_scene=excluded.join_scene
     </insert>
+
     <insert id="insertChatBase">
         insert into uo_qywx_chat_base(chat_id,
         status,
@@ -90,9 +93,14 @@
         notice,
         create_time,
         group_number)values
-        <foreach collection="chatBaseList" item="item" separator=",">
-            (#{item.chatId},#{item.status},#{item.groupName},#{item.owner},#{item.notice},#{item.createTime},#{item.groupNumber})
-        </foreach>
+         (#{chatId},
+         #{status},
+         #{groupName},
+         #{owner},
+         #{notice},
+         #{createTime},
+         #{groupNumber}
+         )
         ON CONFLICT(chat_id) do update set
         status=excluded.status,
         group_name=excluded.group_name,
@@ -101,4 +109,5 @@
         create_time=excluded.create_time,
         group_number=excluded.group_number
     </insert>
+
 </mapper>

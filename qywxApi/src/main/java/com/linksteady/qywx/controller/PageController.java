@@ -42,7 +42,7 @@ public class PageController  extends BaseController {
     ConfigService configService;
 
     @Autowired
-    private CustomerBaseService customerBaseService;
+    FollowUserService followUserService;
 
 
     /**
@@ -321,7 +321,7 @@ public class PageController  extends BaseController {
      */
     @RequestMapping("/goChatMsgList/add")
     public String goBaseMsg(Model model){
-       List<FollowUser> foll= customerBaseService.getFollowUser();
+       List<FollowUser> foll= followUserService.getFollowUserList();
        model.addAttribute("foll",foll);
         return  "qywx/customerBaseSend/BaseSendMsg";
     }
