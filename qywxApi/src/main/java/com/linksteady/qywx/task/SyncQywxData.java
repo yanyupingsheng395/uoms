@@ -43,6 +43,10 @@ public class SyncQywxData extends IJobHandler {
             //同步企业微信的标签
             qywxTagService.syncQywxTagList();
 
+            //同步群数据
+
+            //更新群统计数据
+
             log.info("同步企业微信数据执行成功");
             return ResultInfo.success("");
         } catch (Exception e) {
