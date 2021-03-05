@@ -1,9 +1,6 @@
 package com.linksteady.qywx.task;
 
-import com.linksteady.qywx.service.ExternalContactService;
-import com.linksteady.qywx.service.FollowUserService;
-import com.linksteady.qywx.service.MappingService;
-import com.linksteady.qywx.service.QywxTagService;
+import com.linksteady.qywx.service.*;
 import com.linksteady.smp.starter.annotation.JobHandler;
 import com.linksteady.smp.starter.domain.ResultInfo;
 import com.linksteady.smp.starter.jobclient.service.IJobHandler;
@@ -28,6 +25,9 @@ public class SyncQywxData extends IJobHandler {
     @Autowired
     QywxTagService qywxTagService;
 
+    @Autowired
+    private QywxChatService qywxChatService;
+
     @Override
     public ResultInfo execute(String param) {
         try {
@@ -44,8 +44,10 @@ public class SyncQywxData extends IJobHandler {
             qywxTagService.syncQywxTagList();
 
             //同步群数据
+            qywxChatService.syncQywxChatList();
 
             //更新群统计数据
+            qywxChatService.syncChatStatistics();
 
             log.info("同步企业微信数据执行成功");
             return ResultInfo.success("");
