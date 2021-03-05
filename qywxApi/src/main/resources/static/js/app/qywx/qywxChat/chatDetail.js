@@ -8,6 +8,8 @@ $(function () {
     getDetailData();
     //获取群名称，群主等相关信息
     getChatBaseDetail();
+    //获取添加好友数量和未添加好友数量
+    getFriendsNum();
 });
 
 /**
@@ -30,6 +32,19 @@ function getDetailData() {
             $("#groupNumber").html(data[data.length-1].groupNumber);
             $("#addNumber").html(data[data.length-1].addNumber);
             $("#outNumber").html(data[data.length-1].outNumber);
+        }
+    })
+}
+
+/**
+ * 获取添加好友数量和未添加好友数量
+ */
+function getFriendsNum() {
+    $.post("/qywxCustomer/getFriendsNum",{chatId:chatId},function (r) {
+        if(r.code===200){
+            let data=r.data;
+            $("#friendsNum").html(data.friendsNum);
+            $("#unFriendsNum").html(data.unFriendsNum);
         }
     })
 }

@@ -38,4 +38,6 @@ public interface QywxChatMapper {
     void updateNumber(@Param("numlist") List<QywxChatStatistics> numlist);
 
     List<QywxChatBase>  getChatBaseData();
+
+    FriendsNumVO getFriendsNum(String chatId);
 }

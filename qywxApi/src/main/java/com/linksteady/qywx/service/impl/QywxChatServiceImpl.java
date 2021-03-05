@@ -246,4 +246,9 @@ public class QywxChatServiceImpl implements QywxChatService {
         });
     }
 
+    @Override
+    public FriendsNumVO getFriendsNum(String chatId) {
+        return qywxChatMapper.getFriendsNum(chatId);
+    }
+
 }

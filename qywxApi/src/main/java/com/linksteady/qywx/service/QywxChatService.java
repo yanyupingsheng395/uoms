@@ -1,9 +1,6 @@
 package com.linksteady.qywx.service;
 
-import com.linksteady.qywx.domain.FollowUser;
-import com.linksteady.qywx.domain.QywxChatDetail;
-import com.linksteady.qywx.domain.QywxChatBase;
-import com.linksteady.qywx.domain.QywxChatStatistics;
+import com.linksteady.qywx.domain.*;
 import com.linksteady.qywx.exception.WxErrorException;
 
 import java.util.List;
@@ -65,4 +62,11 @@ public interface QywxChatService {
      * 同步群人数统计
      */
     void syncChatStatistics();
+
+    /**
+     * 获取添加好友数量和未添加好友数量
+     * @param chatId
+     * @return
+     */
+    FriendsNumVO  getFriendsNum(String chatId);
 }

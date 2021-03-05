@@ -40,6 +40,11 @@
         <result column="grand_total_cnt" jdbcType="DECIMAL" property="grandTotalCnt"/>
     </resultMap>
 
+    <resultMap id="addNumVO" type="com.linksteady.qywx.domain.FriendsNumVO">
+        <result column="friends_num" jdbcType="DECIMAL" property="friendsNum"/>
+        <result column="un_friends_num" jdbcType="DECIMAL" property="unFriendsNum"/>
+    </resultMap>
+
     <select id="getCount" resultType="int">
         select count(*) from uo_qywx_chat_base where 1=1
         <if test="owner != '' and owner != null">
@@ -167,6 +172,22 @@
 
     <select id="getChatBaseData" resultMap="contractBase">
         select chat_id, status, insert_dt, insert_by, group_number, group_join, group_out, group_name, owner, notice, create_time from uo_qywx_chat_base;
+    </select>
+
+    <select id="getFriendsNum" resultMap="addNumVO">
+        with g1 as (
+        select uqcb.chat_id,
+               uqcb.owner,
+               uo_qywx_chat_detail.userid from uo_qywx_chat_detail
+            join uo_qywx_chat_base uqcb on uo_qywx_chat_detail.chat_id = uqcb.chat_id
+              and uqcb.chat_id=#{chatId}
+            )
+        select
+             count(case when ul.external_userid is not null then g1.userid end ) friends_num,
+             count(case when ul.external_userid is  null then g1.userid end )  un_friends_num
+        from
+              g1 left join uo_qywx_external_user_list ul on g1.owner=ul.follow_user_id
+               and g1.userid=ul.external_userid
     </select>
 
 

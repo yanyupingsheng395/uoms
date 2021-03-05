@@ -47,6 +47,18 @@ public class QywxChatController {
         return ResponseBo.okWithData(null,list);
     }
 
+    /**
+     * 获取添加好友数量和未添加好友数量
+     * @param chatId
+     * @return
+     */
+    @RequestMapping("/getFriendsNum")
+    public ResponseBo getFriendsNum(@RequestParam String chatId){
+        FriendsNumVO friendsNum=qywxChatService.getFriendsNum(chatId);
+        return ResponseBo.okWithData(null,friendsNum);
+    }
+
+
     @RequestMapping("/getCustomerList")
     @ResponseBody
     public ResponseBo getCustomerList(QueryRequest request, @RequestParam String chatId){
