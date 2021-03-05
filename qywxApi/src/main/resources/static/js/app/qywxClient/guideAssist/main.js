@@ -325,13 +325,14 @@ function recProductList(operateUserId) {
                             return Math.round( value * 100 * 100 ) / 100;
                         }
                     }
-                }, {
-                    field: 'ebp_product_url',
-                    title: '操作',
-                    formatter: function (value, row, index) {
-                        return "<a onclick='sendMsgToUser(\"" + value + "\")' style='text-decoration: underline;'>发送</a>";
-                    }
                 }
+                // , {
+                //     field: 'ebp_product_url',
+                //     title: '操作',
+                //     formatter: function (value, row, index) {
+                //         return "<a onclick='sendMsgToUser(\"" + value + "\")' style='text-decoration: underline;'>发送</a>";
+                //     }
+                // }
             ]
         };
         $( "#recProductTable" ).bootstrapTable( settings ).bootstrapTable( 'load', [] );
@@ -358,13 +359,14 @@ function recProductList(operateUserId) {
                             return Math.round( value * 100 * 100 ) / 100;
                         }
                     }
-                }, {
-                    field: 'ebp_product_url',
-                    title: '操作',
-                    formatter: function (value, row, index) {
-                        return "<a onclick='sendMsgToUser(\"" + value + "\")' style='text-decoration: underline;'>发送</a>";
-                    }
                 }
+                // , {
+                //     field: 'ebp_product_url',
+                //     title: '操作',
+                //     formatter: function (value, row, index) {
+                //         return "<a onclick='sendMsgToUser(\"" + value + "\")' style='text-decoration: underline;'>发送</a>";
+                //     }
+                // }
             ],
             onClickRow: function (row, $element) {
                 //判断是否已选中
