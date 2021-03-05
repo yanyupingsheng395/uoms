@@ -27,7 +27,9 @@ function getDetailData() {
                 chart1(chartX_1,chaty_1);
                 chart2(xdata_2,ydata1_2,ydata2_2);
             }
-           // document.getElementById("personDetail").innerHTML="该群截止"+data[data.length-1].dayWid+"，群总人数："+data[data.length-1].groupNumber+"人，退群人数："+data[data.length-1].outNumber+"人。新增人数"+data[data.length-1].addNumber+"人";
+            $("#groupNumber").html(data[data.length-1].groupNumber);
+            $("#addNumber").html(data[data.length-1].addNumber);
+            $("#outNumber").html(data[data.length-1].outNumber);
         }
     })
 }

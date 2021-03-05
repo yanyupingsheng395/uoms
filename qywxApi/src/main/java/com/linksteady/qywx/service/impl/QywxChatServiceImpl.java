@@ -240,7 +240,7 @@ public class QywxChatServiceImpl implements QywxChatService {
                 QywxChatStatistics pre = outNumList.get(i - 1);
                 //比对当前的和上一个是不是同一个chatid
                 if(current.getChatId().equals(pre.getChatId())){
-                    current.setOutNumber(current.getGroupNumber()-pre.getGroupNumber());
+                    current.setOutNumber(current.getGroupNumber()-pre.getGroupNumber()-current.getAddNumber());
                 }else{
                     //如果不是，那么就是新的chatID，退群人数就为0
                     current.setOutNumber(0);
