@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.linksteady.qywx.dao.CustomerBaseMapper">
+<mapper namespace="com.linksteady.qywx.dao.QywxChatMapper">
     <resultMap id="contractBase" type="com.linksteady.qywx.domain.QywxChatBase">
         <result column="chat_id" jdbcType="VARCHAR" property="chatId"/>
         <result column="status" jdbcType="VARCHAR" property="status"/>
@@ -24,6 +24,27 @@
         <result column="join_scene" jdbcType="VARCHAR" property="joinScene"/>
         <result column="user_name" jdbcType="VARCHAR" property="userName"/>
     </resultMap>
+
+    <resultMap id="chatStatistics" type="com.linksteady.qywx.domain.QywxChatStatistics">
+        <result column="day_wid" jdbcType="DECIMAL" property="dayWid"/>
+        <result column="chat_id" jdbcType="VARCHAR" property="chatId"/>
+        <result column="group_number" jdbcType="DECIMAL" property="groupNumber"/>
+        <result column="add_number" jdbcType="DECIMAL" property="addNumber"/>
+        <result column="out_number" jdbcType="DECIMAL" property="outNumber"/>
+    </resultMap>
+
+    <resultMap id="chatStatisticsVO" type="com.linksteady.qywx.domain.QywxChatStatisticsVO">
+        <result column="chat_id" jdbcType="VARCHAR" property="chatId"/>
+        <result column="join_day" jdbcType="DECIMAL" property="joinDay"/>
+        <result column="cnt" jdbcType="DECIMAL" property="cnt"/>
+        <result column="grand_total_cnt" jdbcType="DECIMAL" property="grandTotalCnt"/>
+    </resultMap>
+
+    <update id="updateNumber">
+        <foreach collection="numlist" separator=";" item="item">
+            update uo_qywx_chat_statistics set out_number= #{item.outNumber},group_number=#{item.groupNumber},add_number=#{item.addNumber} where day_wid= #{item.dayWid} and chat_id= #{item.chatId}
+        </foreach>
+    </update>
 
     <delete id="deleteChatBase">
         delete from uo_qywx_chat_base where chat_id=#{chatId}
@@ -74,6 +95,31 @@
         where a.chat_id=#{chatId}
     </select>
 
+    <select id="getDetailData" resultMap="chatStatistics">
+        select day_wid, chat_id, group_number, add_number, out_number from uo_qywx_chat_statistics where chat_id=#{chatId}  order by day_wid asc limit 7
+    </select>
+
+    <select id="getChatStatisticsById" resultMap="chatStatistics">
+         select day_wid, chat_id, group_number, add_number, out_number from uo_qywx_chat_statistics where chat_id=#{chatId} order by day_wid asc
+    </select>
+
+    <select id="getChatData" resultMap="chatStatisticsVO">
+       with g1 as (
+        select chat_id,to_char(join_time,'yyyymmdd') join_day,count(*) cnt
+        from uo_qywx_chat_detail group by chat_id,to_char(join_time,'yyyymmdd'))
+        select
+             g1.chat_id,g1.join_day,cnt, --某一天的新增
+            sum(g1.cnt)over(partition by chat_id order by join_day asc) grand_total_cnt --累计总人数
+        from g1 where g1.chat_id in(select chat_id from uo_qywx_chat_base)  order by join_day asc
+    </select>
+
+    <select id="getChatStatistics" resultMap="chatStatistics">
+        select chat_id, group_number, add_number, out_number, day_wid,
+       rank() over(partition by chat_id order by day_wid) rn
+        from uo_qywx_chat_statistics
+    </select>
+
+
     <insert id="insertDetail">
         insert into uo_qywx_chat_detail( userid, user_type, join_time, join_scene, chat_id)values
         <foreach collection="chatDetailList" item="item" separator=",">
@@ -108,6 +154,13 @@
         notice=excluded.notice,
         create_time=excluded.create_time,
         group_number=excluded.group_number
+    </insert>
+    <insert id="insertChatDay">
+        insert into uo_qywx_chat_statistics(chat_id,day_wid) select chat_id,row_wid as day_wid from w_date cross join (
+        select  chat_id,to_char(create_time,'yyyymmdd') chat_create_day
+        from uo_qywx_chat_base group by chat_id,to_char(create_time,'yyyymmdd')) t2
+        where w_date.row_wid>=t2.chat_create_day::int8
+        and w_date.row_wid &lt;= to_char(current_date-1,'yyyymmdd')::int8 on conflict (chat_id,day_wid) do nothing
     </insert>
 
 </mapper>

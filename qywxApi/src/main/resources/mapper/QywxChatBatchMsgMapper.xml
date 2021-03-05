@@ -6,7 +6,7 @@
         <result column="batch_msg_name" jdbcType="VARCHAR" property="batchMsgName"/>
         <result column="chat_owner_list" jdbcType="VARCHAR" property="chatOwnerList"/>
         <result column="text_content" jdbcType="VARCHAR" property="textContent"/>
-        <result column="img_url" jdbcType="VARCHAR" property="imgUrl"/>
+        <result column="pic_url" jdbcType="VARCHAR" property="picUrl"/>
         <result column="link_title" jdbcType="VARCHAR" property="linkTitle"/>
         <result column="link_pic_url" jdbcType="VARCHAR" property="linkPicUrl"/>
         <result column="link_desc" jdbcType="VARCHAR" property="linkDesc"/>
@@ -29,12 +29,13 @@
         <result column="exec_chat_owner_size" jdbcType="DECIMAL" property="execChatOwnerSize"/>
         <result column="exec_chat_size" jdbcType="DECIMAL" property="execChatSize"/>
         <result column="exec_user_size" jdbcType="DECIMAL" property="execUserSize"/>
+        <result column="msg_type" jdbcType="VARCHAR" property="msgType"/>
     </resultMap>
     <insert id="saveData">
         insert into uo_qywx_chat_batchmsg(batch_msg_name,
                                   chat_owner_list,
                                   text_content,
-                                  img_url,
+                                  pic_url,
                                   link_title,
                                   link_pic_url,
                                   link_desc,
@@ -46,8 +47,9 @@
                                   fix_date,
                                   insert_by,
                                   insert_dt,
-                                  chat_owner_size)values (#{batchMsgName},#{chatOwnerList},#{textContent},#{imgUrl},#{linkTitle},#{linkPicUrl},#{linkDesc},#{linkUrl},#{mpTitle},#{mpUrl},#{mpMediaId}
-                                  ,#{sendType},#{fixDate},#{insertBy},#{insertDt},#{chatOwnerSize})
+                                  chat_owner_size,
+                                  msg_type)values (#{batchMsgName},#{chatOwnerList},#{textContent},#{picUrl},#{linkTitle},#{linkPicUrl},#{linkDesc},#{linkUrl},#{mpTitle},#{mpUrl},#{mpMediaId}
+                                  ,#{sendType},#{fixDate},#{insertBy},#{insertDt},#{chatOwnerSize},#{msgType})
     </insert>
     <delete id="deleteById">
         delete from  uo_qywx_chat_batchmsg where batch_msg_id=#{id}
@@ -57,8 +59,13 @@
     </select>
 
     <select id="getDataList" resultMap="chatBatchMsg">
-        select batch_msg_id,batch_msg_name,chat_owner_list,text_content,img_url,link_title,link_pic_url,link_desc,link_url,mp_title,mp_url,mp_media_id,
-            send_type,fix_date,status,insert_by,update_by,insert_dt,update_dt,exec_by,exec_date,chat_owner_size,chat_size,user_size,exec_chat_owner_size,exec_chat_size,exec_user_size
+        select batch_msg_id,batch_msg_name,chat_owner_list,text_content,pic_url,link_title,link_pic_url,link_desc,link_url,mp_title,mp_url,mp_media_id,
+            send_type,fix_date,status,insert_by,update_by,insert_dt,update_dt,exec_by,exec_date,chat_owner_size,chat_size,user_size,exec_chat_owner_size,exec_chat_size,exec_user_size,msg_type
          from uo_qywx_chat_batchmsg  order by insert_dt desc limit #{limit} offset #{offset}
+    </select>
+    <select id="getChatBatchmsg" resultMap="chatBatchMsg">
+        select batch_msg_id,batch_msg_name,chat_owner_list,text_content,pic_url,link_title,link_pic_url,link_desc,link_url,mp_title,mp_url,mp_media_id,
+            send_type,fix_date,status,insert_by,update_by,insert_dt,update_dt,exec_by,exec_date,chat_owner_size,chat_size,user_size,exec_chat_owner_size,exec_chat_size,exec_user_size,msg_type
+         from uo_qywx_chat_batchmsg where batch_msg_id=#{batchMsgId}
     </select>
 </mapper>

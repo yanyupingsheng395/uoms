@@ -82,10 +82,6 @@
                                         群主：
                                         <select id="followUser" name="followUser">
                                             <option value="">所有</option>
-                                            <option value="edit">待计划</option>
-                                            <option value="todo">待执行</option>
-                                            <option value="doing">执行中</option>
-                                            <option value="done">已完成</option>
                                         </select>
                                     </li>
                                     <li>
@@ -114,10 +110,10 @@
                                     </a>
                                     <a class="btn btn-primary" id="btn_sop">
                                         <i class="fa fa-edit"></i> 设置群SOP
-                                    </a>-->
+                                    </a>
                                     <a class="btn btn-success" id="btn_lable">
                                         <i class="fa fa-eye-slash"></i> 打标签
-                                    </a>
+                                    </a>-->
                                     <a class="btn btn-primary btn-edit" id="btn_Details">
                                         <i class="fa fa-check-square-o"></i> 详情
                                     </a>
@@ -135,7 +131,7 @@
         </main>
     </div>
 </div>
-<div data-th-include="qywx/customerBaseList/chatLable"></div>
+<div data-th-include="qywx/qywxChat/chatLable"></div>
 <th:block th:include="common/include::footer" />
 <th:block th:include="common/include::perfect-scrollbar" />
 <th:block th:include="common/include::jquery-validate-js" />
@@ -145,7 +141,7 @@
 <th:block th:include="common/include::bootstrap-select-js" />
 <th:block th:include="common/include::jquery-confirm-js" />
 <script data-th-src="@{/js/app/qywx/common/template.js}"></script>
-<script data-th-src="@{/js/app/qywx/CustomerBaseList/Baselist.js}"></script>
-<script data-th-src="@{/js/app/qywx/CustomerBaseList/chatLable.js}"></script>
+<script data-th-src="@{/js/app/qywx/qywxChat/Baselist.js}"></script>
+<script data-th-src="@{/js/app/qywx/qywxChat/chatLable.js}"></script>
 </body>
 </html>

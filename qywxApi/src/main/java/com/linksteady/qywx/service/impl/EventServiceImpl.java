@@ -28,7 +28,7 @@ public class EventServiceImpl implements EventService {
     MappingService mappingService;
 
     @Autowired
-    CustomerBaseService customerBaseService;
+    QywxChatService qywxChatService;
 
     @Autowired
     QywxTagService qywxTagService;
@@ -100,16 +100,16 @@ public class EventServiceImpl implements EventService {
            String chatId = inMessage.getChatId();
            if(StringUtils.equalsAnyIgnoreCase(inMessage.getChangeType(),"create")){
                log.info("群事件-客户群创建");
-               customerBaseService.updateChat(chatId);
+               qywxChatService.updateChat(chatId);
 
            }else if(StringUtils.equalsAnyIgnoreCase(inMessage.getChangeType(),"update")){
                log.info("群事件-客户群变更");
                //客户群变更，先删除，后从企微处获取
-               customerBaseService.updateChat(chatId);
+               qywxChatService.updateChat(chatId);
 
            }else if(StringUtils.equalsAnyIgnoreCase(inMessage.getChangeType(),"dismiss")){
                log.info("客户群解散");
-               customerBaseService.deleChatBase(chatId);
+               qywxChatService.deleChatBase(chatId);
            }
        }else if("event".equals(inMessage.getMsgType())&&"change_external_tag".equals(inMessage.getEvent())){
            // TODO: 2021/1/6 标签事件只维护了标签的增删改查。标签组的事件操作未维护，原因是微信端未提供根据标签组ID去查标签组信息的接口

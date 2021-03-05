@@ -27,7 +27,7 @@ public class QywxChatBatchMsg {
     /**
      * 图片链接
      */
-    private String imgUrl;
+    private String picUrl;
     /**
      * 图文消息标题
      */
@@ -121,5 +121,9 @@ public class QywxChatBatchMsg {
      * 成功推送用户数
      */
     private long execUserSize;
+    /**
+     * 选择消息类型
+     */
+    private String msgType;
 
 }

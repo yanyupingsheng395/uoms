@@ -248,8 +248,8 @@ function validateRule() {
         $("#couponLongUrl").removeAttr("disabled");
     }else
     {
-        $("#couponUrl").rules("remove");
-        $("#couponLongUrl").rules("remove");
+       /* $("#couponUrl").rules("remove");
+        $("#couponLongUrl").rules("remove");*/
         //设置为不可用
         $("#couponUrl").attr("disabled","disabled");
         $("#couponLongUrl").attr("disabled","disabled");

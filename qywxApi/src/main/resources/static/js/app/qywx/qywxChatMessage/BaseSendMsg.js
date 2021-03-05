@@ -1,6 +1,5 @@
 $( function () {
     getMessageList();
-    validCoupon();
 });
 
 function getMessageList() {
@@ -90,39 +89,13 @@ function smsContentValid() {
 $("#btn_save").click(function () {
     window.location.href="/page/goChatMsgList/add";
 });
-
+/**
+ * 新增一条群聊
+ */
 var validator_coupon;
-function validCoupon() {
-    var icon = "<i class='mdi mdi-close-circle'></i> ";
-    var rule = {
-        rules: {
-            batchMsgName: {
-                required: true
-            },
-            textContent: {
-                required: true
-            },
-            chatOwnerList:{
-                required: true
-            }
-        },
-        messages: {
-            batchMsgName: {
-                required: icon + "请输入群发名称"
-            },
-            textContent: {
-                required: icon + "请输入群发消息内容"
-            },
-            chatOwnerList: {
-                required: icon + "请选择群主"
-            }
-        }
-    };
-    validator_coupon = $("#smsTemplateAddForm").validate(rule);
-}
-
 function saveCouponData() {
-    getOwner();
+    selectType( $("#msgType").val());
+    $( "input[name='chatOwnerList']" ).val( user_list.join( "," ) );
     var flag = validator_coupon.form();
     if(flag) {
         $.post("/qywxChatMsg/saveData", $("#smsTemplateAddForm").serialize(), function (r) {
@@ -134,10 +107,6 @@ function saveCouponData() {
             }
         });
     }
-}
-
-function getOwner(){
-    $( "input[name='chatOwnerList']" ).val( user_list.join( "," ) );
 }
 
 //删除
@@ -183,3 +152,83 @@ function regionRemove(dom, id, selid) {
     id=parseInt(id);
     user_list.splice( user_list.indexOf( id ), 1 );
 }
+
+function selectType(type) {
+    $("#msgType").val(type);
+    var icon = "<i class='mdi mdi-close-circle'></i> ";
+    var rule = {
+        rules: {
+            batchMsgName: {
+                required: true
+            },
+            textContent: {
+                required: true
+            },
+            chatOwnerList:{
+                required: true
+            }
+        },
+        messages: {
+            batchMsgName: {
+                required: icon + "请输入群发名称"
+            },
+            textContent: {
+                required: icon + "请输入群发消息内容"
+            },
+            chatOwnerList: {
+                required: icon + "请选择群主"
+            }
+        }
+    };
+    validator_coupon = $("#smsTemplateAddForm").validate(rule);
+
+    if (type == "image") {
+        //添加对图片的校验
+        $("#picUrl").rules("add",{required:true,messages:{required:"请选择图片地址！"}});
+
+        //清除对小程序和web的校验
+        $("#mpTitle").rules("remove");
+        $("#mpUrl").rules("remove");
+        $("#mediaId").rules("remove");
+
+        $("#linkTitle").rules("remove");
+        $("#linkUrl").rules("remove");
+    } else if (type == "web") {
+
+        $("#linkTitle").rules("add",{required:true,messages:{required:"请填写网页标题！"}});
+        $("#linkUrl").rules("add",{required:true,messages:{required:"请填写网页地址！"}});
+
+        $("#mpTitle").rules("remove");
+        $("#mpUrl").rules("remove");
+        $("#mediaId").rules("remove");
+
+        $("#picUrl").rules("remove");
+    } else if (type == "miniprogram") {
+        //添加对小程序的校验
+        $("#mpTitle").rules("add",{required:true,messages:{required:"请输入小程序标题！"}});
+        $("#mpUrl").rules("add",{required:true,messages:{required:"请输入小程序地址！"}});
+        $("#mediaId").rules("add",{required:true,messages:{required:"请选择小程序封面ID！"}});
+
+        $("#linkTitle").rules("remove");
+        $("#linkUrl").rules("remove");
+
+        $("#picUrl").rules("remove");
+    }
+    validator_coupon.resetForm();
+}
+
+//推送信息
+$("#btn_push").click(function () {
+    var selected = $( "#baseTable" ).bootstrapTable( 'getSelections' );
+    if(selected.length == 0) {
+        $MB.n_warning("请先选择一条记录！");
+    }
+    let batchMsgId=selected[0]['batchMsgId'];
+    $MB.loadingDesc("show", "正在推送中，请稍候...");
+    $.post( "/qywxChatMsg/pushMessage", {batchMsgId: batchMsgId}, function (r) {
+        $MB.loadingDesc('hide');
+        if (r.code == 200) {
+            $MB.n_success( "推送成功！" );
+        }
+    } );
+});

@@ -292,7 +292,7 @@ public class PageController  extends BaseController {
      */
     @RequestMapping("/goCustomerBase")
     public String goCustomerBase(){
-        return  "qywx/customerBaseList/Baselist";
+        return  "qywx/qywxChat/Baselist";
     }
 
     /**
@@ -302,7 +302,7 @@ public class PageController  extends BaseController {
     @RequestMapping("/goCustomerBase/goChatDetail/{chatId}")
     public String goChatDetail(Model model, @PathVariable(name = "chatId") String chatId){
         model.addAttribute("chatId",chatId);
-        return  "qywx/customerBaseList/ChatDetail";
+        return  "qywx/qywxChat/ChatDetail";
     }
 
 
@@ -312,7 +312,7 @@ public class PageController  extends BaseController {
      */
     @RequestMapping("/goChatMsgList")
     public String goChatMsgList(){
-        return  "qywx/customerBaseSend/groupMessageList";
+        return  "qywx/qywxChatMessage/groupMessageList";
     }
 
     /**
@@ -323,7 +323,7 @@ public class PageController  extends BaseController {
     public String goBaseMsg(Model model){
        List<FollowUser> foll= followUserService.getFollowUserList();
        model.addAttribute("foll",foll);
-        return  "qywx/customerBaseSend/BaseSendMsg";
+        return  "qywx/qywxChatMessage/BaseSendMsg";
     }
 
     /**

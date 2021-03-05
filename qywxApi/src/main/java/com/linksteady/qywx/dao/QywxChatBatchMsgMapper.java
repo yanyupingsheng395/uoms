@@ -12,4 +12,6 @@ public interface QywxChatBatchMsgMapper {
     void saveData(QywxChatBatchMsg qywxChatBatchMsg);
 
     void deleteById(long id);
+
+    QywxChatBatchMsg getChatBatchmsg(long batchMsgId);
 }

@@ -6,10 +6,7 @@ import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.qywx.domain.QywxChatBatchMsg;
 import com.linksteady.qywx.service.QywxChatBatchMsgService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
@@ -54,6 +51,21 @@ public class QywxChatBatchMsgController  extends BaseController {
     public ResponseBo deleteById(long id){
         qywxChatBatchMsgService.deleteById(id);
         return ResponseBo.ok();
+    }
+
+    /**
+     * 群发消息推送
+     * @param batchMsgId
+     * @return
+     */
+    @RequestMapping("/pushMessage")
+    public ResponseBo pushMessage(@RequestParam("batchMsgId")long batchMsgId){
+        try {
+            String result =qywxChatBatchMsgService.pushMessage(batchMsgId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

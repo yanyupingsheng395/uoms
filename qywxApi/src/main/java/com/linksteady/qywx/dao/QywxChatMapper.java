@@ -1,13 +1,11 @@
 package com.linksteady.qywx.dao;
 
-import com.linksteady.qywx.domain.FollowUser;
-import com.linksteady.qywx.domain.QywxChatDetail;
-import com.linksteady.qywx.domain.QywxChatBase;
+import com.linksteady.qywx.domain.*;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
-public interface CustomerBaseMapper {
+public interface QywxChatMapper {
 
     int getCount(String owner,String status);
 
@@ -26,4 +24,17 @@ public interface CustomerBaseMapper {
     void deleteChatDetail(String chatId);
 
     QywxChatBase getChatBaseDetail(String chatId);
+
+    List<QywxChatStatistics> getDetailData(String chatId);
+
+    void insertChatDay();
+
+    List<QywxChatStatisticsVO> getChatData();
+
+    List <QywxChatStatistics>  getChatStatisticsById(String chatId);
+
+    List<QywxChatStatistics> getChatStatistics();
+
+    void updateNumber(@Param("numlist") List<QywxChatStatistics> numlist);
+
 }

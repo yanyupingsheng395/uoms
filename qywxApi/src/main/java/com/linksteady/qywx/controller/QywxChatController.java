@@ -4,7 +4,7 @@ import com.linksteady.common.domain.QueryRequest;
 import com.linksteady.common.domain.ResponseBo;
 import com.linksteady.qywx.domain.*;
 import com.linksteady.qywx.exception.WxErrorException;
-import com.linksteady.qywx.service.CustomerBaseService;
+import com.linksteady.qywx.service.QywxChatService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,10 +15,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/qywxCustomer")
-public class CustomerBaseController {
+public class QywxChatController {
 
     @Autowired
-    private CustomerBaseService customerBaseService;
+    private QywxChatService qywxChatService;
 
     /**
      * 获取客户群列表
@@ -31,9 +31,20 @@ public class CustomerBaseController {
         int offset = request.getOffset();
         String owner = request.getParam().get("owner");
         String status = request.getParam().get("status");
-        int count = customerBaseService.getCount(owner,status);
-        List<QywxChatBase> lists= customerBaseService.getDataList(limit, offset,owner,status);
+        int count = qywxChatService.getCount(owner,status);
+        List<QywxChatBase> lists= qywxChatService.getDataList(limit, offset,owner,status);
         return ResponseBo.okOverPaging(null,count,lists);
+    }
+
+    /**
+     * 根据群聊ID获取七天内群人数的详细信息
+     * @param chatId
+     * @return
+     */
+    @RequestMapping("/getDetailData")
+    public ResponseBo getDetailData(@RequestParam String chatId){
+        List<QywxChatStatistics> list= qywxChatService.getDetailData(chatId);
+        return ResponseBo.okWithData(null,list);
     }
 
     @RequestMapping("/getCustomerList")
@@ -41,15 +52,20 @@ public class CustomerBaseController {
     public ResponseBo getCustomerList(QueryRequest request, @RequestParam String chatId){
         int limit = request.getLimit();
         int offset = request.getOffset();
-        int count = customerBaseService.getCustomerListCount(chatId);
-        List<QywxChatDetail> lists= customerBaseService.getCustomerList(limit, offset,chatId);
+        int count = qywxChatService.getCustomerListCount(chatId);
+        List<QywxChatDetail> lists= qywxChatService.getCustomerList(limit, offset,chatId);
         return ResponseBo.okOverPaging(null,count,lists);
     }
 
+    /**
+     * 获取群聊的名称信息
+     * @param chatId
+     * @return
+     */
     @RequestMapping("/getChatBaseDetail")
     @ResponseBody
     public ResponseBo getChatBaseDetail(@RequestParam String chatId){
-        QywxChatBase chatBase= customerBaseService.getChatBaseDetail(chatId);
+        QywxChatBase chatBase= qywxChatService.getChatBaseDetail(chatId);
         if(StringUtils.isEmpty( chatBase.getGroupName())){
             chatBase.setGroupName("群聊");
         }
@@ -66,11 +82,17 @@ public class CustomerBaseController {
     @RequestMapping("/syncQywxChatList")
     public ResponseBo syncQywxChatList() {
         try {
-            customerBaseService.syncQywxChatList();
+            qywxChatService.syncQywxChatList();
             return ResponseBo.ok();
         } catch (WxErrorException e) {
             return ResponseBo.error(e.getMessage());
         }
+    }
+
+    @RequestMapping("/synQywxChatStatistics")
+    public ResponseBo synQywxChatStatistics(){
+        qywxChatService.syncChatStatistics();
+        return ResponseBo.ok();
     }
 
 

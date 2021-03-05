@@ -3,11 +3,12 @@ package com.linksteady.qywx.service;
 import com.linksteady.qywx.domain.FollowUser;
 import com.linksteady.qywx.domain.QywxChatDetail;
 import com.linksteady.qywx.domain.QywxChatBase;
+import com.linksteady.qywx.domain.QywxChatStatistics;
 import com.linksteady.qywx.exception.WxErrorException;
 
 import java.util.List;
 
-public interface CustomerBaseService {
+public interface QywxChatService {
 
     int getCount(String owner,String status);
 
@@ -52,4 +53,16 @@ public interface CustomerBaseService {
      * @return
      */
     QywxChatBase getChatBaseDetail(String chatId);
+
+    /**
+     * 获取群聊七天内的人员变化
+     * @param chatId
+     * @return
+     */
+    List<QywxChatStatistics> getDetailData(String chatId);
+
+    /**
+     * 同步群人数统计
+     */
+    void syncChatStatistics();
 }
