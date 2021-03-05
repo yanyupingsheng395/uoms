@@ -39,7 +39,7 @@ public interface QywxChatService {
      * 客户群解散，删除数据库中uo_qywx_chat_detail 和uo_qywx_chat_base数据
      * @param chatId
      */
-    void deleChatBase(String chatId);
+    void delChatBase(String chatId);
 
     /**
      * 客户群变更

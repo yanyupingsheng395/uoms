@@ -14,4 +14,13 @@ public interface QywxChatBatchMsgMapper {
     void deleteById(long id);
 
     QywxChatBatchMsg getChatBatchmsg(long batchMsgId);
+
+    /**
+     * 通过群主，获取所有群的外部成员
+     * @param owner
+     * @return
+     */
+    List<String> getUserID(String owner);
+
+    void upadteStatus(long batchMsgId, String username, String status);
 }

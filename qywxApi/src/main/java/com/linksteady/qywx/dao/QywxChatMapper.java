@@ -29,7 +29,7 @@ public interface QywxChatMapper {
 
     void insertChatDay();
 
-    List<QywxChatStatisticsVO> getChatData();
+    List<QywxChatStatisticsVO> getChatSummary(String chatId);
 
     List <QywxChatStatistics>  getChatStatisticsById(String chatId);
 
@@ -37,4 +37,5 @@ public interface QywxChatMapper {
 
     void updateNumber(@Param("numlist") List<QywxChatStatistics> numlist);
 
+    List<QywxChatBase>  getChatBaseData();
 }

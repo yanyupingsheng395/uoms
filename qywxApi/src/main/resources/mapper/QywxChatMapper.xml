@@ -103,14 +103,14 @@
          select day_wid, chat_id, group_number, add_number, out_number from uo_qywx_chat_statistics where chat_id=#{chatId} order by day_wid asc
     </select>
 
-    <select id="getChatData" resultMap="chatStatisticsVO">
+    <select id="getChatSummary" resultMap="chatStatisticsVO">
        with g1 as (
         select chat_id,to_char(join_time,'yyyymmdd') join_day,count(*) cnt
         from uo_qywx_chat_detail group by chat_id,to_char(join_time,'yyyymmdd'))
         select
              g1.chat_id,g1.join_day,cnt, --某一天的新增
             sum(g1.cnt)over(partition by chat_id order by join_day asc) grand_total_cnt --累计总人数
-        from g1 where g1.chat_id in(select chat_id from uo_qywx_chat_base)  order by join_day asc
+        from g1 where g1.chat_id=#{chatId} order by join_day asc;
     </select>
 
     <select id="getChatStatistics" resultMap="chatStatistics">
@@ -119,6 +119,9 @@
         from uo_qywx_chat_statistics
     </select>
 
+    <select id="getChatBaseData" resultMap="contractBase">
+        select chat_id, status, insert_dt, insert_by, group_number, group_join, group_out, group_name, owner, notice, create_time from uo_qywx_chat_base;
+    </select>
 
     <insert id="insertDetail">
         insert into uo_qywx_chat_detail( userid, user_type, join_time, join_scene, chat_id)values

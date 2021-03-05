@@ -79,7 +79,7 @@ public class QywxChatServiceImpl implements QywxChatService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void deleChatBase(String chatId) {
+    public void delChatBase(String chatId) {
         qywxChatMapper.deleteChatBase(chatId);
         qywxChatMapper.deleteChatDetail(chatId);
     }
@@ -103,7 +103,6 @@ public class QywxChatServiceImpl implements QywxChatService {
     {
         StringBuffer requestUrl = new StringBuffer(qywxService.getRedisConfigStorage().getApiUrl(WxPathConsts.ExternalContacts.GET_GROUPCHAT_LIST));
         requestUrl.append("?access_token=" + qywxService.getAccessToken());
-        requestUrl.append("&debug=1");
 
         JSONObject param= new JSONObject();
         param.put("limit",100);
@@ -209,45 +208,42 @@ public class QywxChatServiceImpl implements QywxChatService {
         qywxChatMapper.insertChatDay();
 
         //更新群总人数和新增人数
-        Table<String, Long, Object> qywxChatTable =  HashBasedTable.create();
-       List<QywxChatStatisticsVO> list=qywxChatMapper.getChatData();
-        list.stream().forEach(x->{
-            qywxChatTable.put(x.getChatId(),x.getJoinDay(),x);
+        Table<String,Long,Object> qywxChatTable =  HashBasedTable.create();
+        List<QywxChatBase> baselist=qywxChatMapper.getChatBaseData();
+        baselist.stream().forEach(x->{
             String chatId = x.getChatId();
+            List<QywxChatStatisticsVO> list=qywxChatMapper.getChatSummary(chatId);
+            list.stream().forEach(y->{
+                qywxChatTable.put(y.getChatId(),y.getJoinDay(),y);
+            });
             List <QywxChatStatistics> chatStatistics=qywxChatMapper.getChatStatisticsById(chatId);
             for (int i = 0; i < chatStatistics.size(); i++) {
-                QywxChatStatistics statistics = chatStatistics.get(i);
+                QywxChatStatistics current = chatStatistics.get(i);
                 //根据查询统计表的chatID和日期，去table集合中找
-                QywxChatStatisticsVO vo =(QywxChatStatisticsVO) qywxChatTable.get(statistics.getChatId(), statistics.getDayWid());
+                QywxChatStatisticsVO vo =(QywxChatStatisticsVO) qywxChatTable.get(current.getChatId(), current.getDayWid());
                 if(vo!=null){
-                    statistics.setGroupNumber(vo.getGrandTotalCnt());
-                    statistics.setAddNumber(vo.getCnt());
+                    current.setGroupNumber(vo.getGrandTotalCnt());
+                    current.setAddNumber(vo.getCnt());
                 }else{
-                    statistics.setAddNumber(0);
-                    statistics.setGroupNumber(chatStatistics.get(i-1).getGroupNumber());
+                    current.setAddNumber(0);
+                    current.setGroupNumber(chatStatistics.get(i-1).getGroupNumber());
+                }
+
+                //计算退群人数
+                if(i==0){
+                    current.setOutNumber(0);
+                }else{
+                    QywxChatStatistics pre = chatStatistics.get(i - 1);
+                    if(current.getChatId().equals(pre.getChatId())){
+                        current.setOutNumber(current.getGroupNumber()-pre.getGroupNumber()-current.getAddNumber());
+                    }else{
+                        //如果不是，那么就是新的chatID，退群人数就为0
+                        current.setOutNumber(0);
+                    }
                 }
             }
             qywxChatMapper.updateNumber(chatStatistics);
         });
-
-        //更新退群人数
-        List <QywxChatStatistics> outNumList=qywxChatMapper.getChatStatistics();
-        for (int i = 0; i < outNumList.size(); i++) {
-            if(i==0){
-                outNumList.get(i).setOutNumber(0);
-            }else{
-                QywxChatStatistics current = outNumList.get(i);
-                QywxChatStatistics pre = outNumList.get(i - 1);
-                //比对当前的和上一个是不是同一个chatid
-                if(current.getChatId().equals(pre.getChatId())){
-                    current.setOutNumber(current.getGroupNumber()-pre.getGroupNumber()-current.getAddNumber());
-                }else{
-                    //如果不是，那么就是新的chatID，退群人数就为0
-                    current.setOutNumber(0);
-                }
-            }
-        }
-        qywxChatMapper.updateNumber(outNumList);
     }
 
 }

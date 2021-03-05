@@ -32,7 +32,7 @@ function getMessageList() {
             field: 'chatOwnerSize',
             title: '群主数',
             align: 'center'
-        }, {
+        }/*, {
             field: 'chatSize',
             title: '群聊数',
             align: 'center'
@@ -52,11 +52,37 @@ function getMessageList() {
             field: 'execUserSize',
             title: '成功推送的用户数',
             align: 'center'
-        },{
+        }*/,{
             field: 'insertDt',
             title: '创建时间',
             align: 'center'
-        } ]
+        },{
+            field: 'execDate',
+            title: '执行时间',
+            align: 'center'
+        } ,{
+            field: 'execBy',
+            title: '执行人',
+            align: 'center'
+        },{
+            field: 'status',
+            title: '状态',
+            align: 'center',
+            formatter: function (value, row, index) {
+                var res = "-";
+                if(value === 'todo') {
+                    res = "<span class=\"badge bg-info\">待推送</span>";
+                }
+                if(value === 'fail') {
+                    res = "<span class=\"badge bg-warning\">推送失败</span>";
+                }
+                if(value === 'done') {
+                    res = "<span class=\"badge bg-success\">推送成功</span>";
+                }
+                return res;
+            }
+
+        }]
     };
     $MB.initTable( 'baseTable', settings );
 }
@@ -228,7 +254,9 @@ $("#btn_push").click(function () {
     $.post( "/qywxChatMsg/pushMessage", {batchMsgId: batchMsgId}, function (r) {
         $MB.loadingDesc('hide');
         if (r.code == 200) {
-            $MB.n_success( "推送成功！" );
+            $MB.n_success( "群发消息推送成功！" );
+        }else{
+            $MB.n_danger("群发消息推送失败");
         }
     } );
 });

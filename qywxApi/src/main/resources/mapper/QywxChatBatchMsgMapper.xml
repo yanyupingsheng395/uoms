@@ -63,9 +63,20 @@
             send_type,fix_date,status,insert_by,update_by,insert_dt,update_dt,exec_by,exec_date,chat_owner_size,chat_size,user_size,exec_chat_owner_size,exec_chat_size,exec_user_size,msg_type
          from uo_qywx_chat_batchmsg  order by insert_dt desc limit #{limit} offset #{offset}
     </select>
+
     <select id="getChatBatchmsg" resultMap="chatBatchMsg">
         select batch_msg_id,batch_msg_name,chat_owner_list,text_content,pic_url,link_title,link_pic_url,link_desc,link_url,mp_title,mp_url,mp_media_id,
             send_type,fix_date,status,insert_by,update_by,insert_dt,update_dt,exec_by,exec_date,chat_owner_size,chat_size,user_size,exec_chat_owner_size,exec_chat_size,exec_user_size,msg_type
          from uo_qywx_chat_batchmsg where batch_msg_id=#{batchMsgId}
     </select>
+
+
+    <select id="getUserID" resultType="string">
+        select distinct de.userid from uo_qywx_chat_base base left join uo_qywx_chat_detail de on base.chat_id=de.chat_id where base.owner=#{owner} and de.user_type='2'
+    </select>
+
+
+    <update id="upadteStatus">
+        update uo_qywx_chat_batchmsg set status=#{status},exec_by=#{username},exec_date=now() where batch_msg_id=#{batchMsgId}
+    </update>
 </mapper>

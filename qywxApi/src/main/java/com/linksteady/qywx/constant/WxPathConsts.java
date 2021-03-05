@@ -23,6 +23,28 @@ public final class WxPathConsts {
 
   public static final String JSCODE_TO_SESSION = "/cgi-bin/miniprogram/jscode2session";
 
+  public static class QywxApiPathConstants {
+
+    public static final String GET_VALID_MEDIA_LIST="/api/getValidMediaImgList";
+
+    public static final String GET_VALID_MEDIA_COUNT="/api/getValidMediaImgCount";
+
+    public static final String GET_VALID_MEDIA_PERMANENT_LIST="/api/getPermanentMediaImgList";
+
+    public static final String GET_VALID_MEDIA_PERMANENT_COUNT="/api/getPermanentMediaImgCount";
+
+    public static final String UPDATE_QYWX_PERMANENT_MEDIA="/api/uploadPermanentMaterial";
+
+    public static final String UPDATE_QYWX_MEDIA="/api/uploadQywxMaterial";
+
+    public static final String SEND_QYWX_MESSAGE="/api/addMsgTemplate";
+
+    public static final String GET_CORP_ID="/api/getCorpId";
+
+    public static final String GET_MP_APPID="/api/getMpAppId";
+
+    public static final String GET_MEDIA_ID="/api/getMpMediaId";
+  }
 
   public static class Agent {
     public static final String AGENT_GET = "/cgi-bin/agent/get?agentid=%d";

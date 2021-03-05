@@ -109,7 +109,7 @@ public class EventServiceImpl implements EventService {
 
            }else if(StringUtils.equalsAnyIgnoreCase(inMessage.getChangeType(),"dismiss")){
                log.info("客户群解散");
-               qywxChatService.deleChatBase(chatId);
+               qywxChatService.delChatBase(chatId);
            }
        }else if("event".equals(inMessage.getMsgType())&&"change_external_tag".equals(inMessage.getEvent())){
            // TODO: 2021/1/6 标签事件只维护了标签的增删改查。标签组的事件操作未维护，原因是微信端未提供根据标签组ID去查标签组信息的接口
