@@ -36,5 +36,5 @@ public interface QywxChatBatchMsgService {
      * @param batchMsgId
      * @return
      */
-    String pushMessage(long batchMsgId) throws Exception;
+    void pushMessage(long batchMsgId) throws Exception;
 }

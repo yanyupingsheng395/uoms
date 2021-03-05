@@ -51,6 +51,7 @@
                                   msg_type)values (#{batchMsgName},#{chatOwnerList},#{textContent},#{picUrl},#{linkTitle},#{linkPicUrl},#{linkDesc},#{linkUrl},#{mpTitle},#{mpUrl},#{mpMediaId}
                                   ,#{sendType},#{fixDate},#{insertBy},#{insertDt},#{chatOwnerSize},#{msgType})
     </insert>
+
     <delete id="deleteById">
         delete from  uo_qywx_chat_batchmsg where batch_msg_id=#{id}
     </delete>
@@ -75,8 +76,46 @@
         select distinct de.userid from uo_qywx_chat_base base left join uo_qywx_chat_detail de on base.chat_id=de.chat_id where base.owner=#{owner} and de.user_type='2'
     </select>
 
+    <select id="getChatID" resultType="string">
+        select chat_id from uo_qywx_chat_base where owner=#{ownerId}
+    </select>
 
     <update id="upadteStatus">
         update uo_qywx_chat_batchmsg set status=#{status},exec_by=#{username},exec_date=now() where batch_msg_id=#{batchMsgId}
+    </update>
+
+    <insert id="insertPushList" useGeneratedKeys="true" keyProperty="pushId" keyColumn="push_id">
+        insert into uo_qywx_push_list(
+           text_content,
+           push_status,
+           source_code,
+           follow_user_id,
+           insert_dt,
+           mp_media_id,
+           mp_appid,
+           mp_title,
+           mp_url,
+           external_contact_ids)
+        values(#{textContent},
+                 'P',
+                 'CHAT',
+                 #{followUserId},
+                 now(),
+                 #{mpMediaId},
+                 #{mpAppid},
+                 #{mpTitle},
+                 #{mpUrl},
+                 #{externalContactIds})
+    </insert>
+
+    <update id="updatePushList">
+        update uo_qywx_push_list set
+           push_status = #{status},
+           msgid = #{msgId},
+           push_date = now(),
+           fail_list = #{failList},
+           remark=#{remark}
+        where
+           push_id=#{pushId}
     </update>
 </mapper>

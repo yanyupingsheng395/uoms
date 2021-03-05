@@ -40,20 +40,6 @@
         <result column="grand_total_cnt" jdbcType="DECIMAL" property="grandTotalCnt"/>
     </resultMap>
 
-    <update id="updateNumber">
-        <foreach collection="numlist" separator=";" item="item">
-            update uo_qywx_chat_statistics set out_number= #{item.outNumber},group_number=#{item.groupNumber},add_number=#{item.addNumber} where day_wid= #{item.dayWid} and chat_id= #{item.chatId}
-        </foreach>
-    </update>
-
-    <delete id="deleteChatBase">
-        delete from uo_qywx_chat_base where chat_id=#{chatId}
-    </delete>
-
-    <delete id="deleteChatDetail">
-        delete from uo_qywx_chat_detail where chat_id=#{chatId}
-    </delete>
-
     <select id="getCount" resultType="int">
         select count(*) from uo_qywx_chat_base where 1=1
         <if test="owner != '' and owner != null">
@@ -76,9 +62,11 @@
         </if>
             order by a.insert_dt desc limit #{limit} offset #{offset}
     </select>
+
     <select id="getCustomerListCount" resultType="int">
         select count(*) from uo_qywx_chat_detail where chat_id=#{chatId}
     </select>
+
     <select id="getCustomerList" resultMap="custractDetail">
         select userid,user_type,join_scene,join_time,user_name from (
         select a.userid,a.user_type,a.join_scene,a.join_time, b.name as user_name
@@ -88,39 +76,6 @@
         select a.userid,a.user_type,a.join_scene,a.join_time, c.name as user_name
         from uo_qywx_chat_detail a,uo_qywx_follower_user_list c
         where a.userid=c.user_id and a.chat_id=#{chatId} and a.user_type='1')bse limit #{limit} offset #{offset}
-    </select>
-
-    <select id="getChatBaseDetail" resultMap="contractBase">
-        select a.notice,b.name as owner,a.create_time,a.group_name from uo_qywx_chat_base a join uo_qywx_follower_user_list b on a.owner=b.user_id
-        where a.chat_id=#{chatId}
-    </select>
-
-    <select id="getDetailData" resultMap="chatStatistics">
-        select day_wid, chat_id, group_number, add_number, out_number from uo_qywx_chat_statistics where chat_id=#{chatId}  order by day_wid asc limit 7
-    </select>
-
-    <select id="getChatStatisticsById" resultMap="chatStatistics">
-         select day_wid, chat_id, group_number, add_number, out_number from uo_qywx_chat_statistics where chat_id=#{chatId} order by day_wid asc
-    </select>
-
-    <select id="getChatSummary" resultMap="chatStatisticsVO">
-       with g1 as (
-        select chat_id,to_char(join_time,'yyyymmdd') join_day,count(*) cnt
-        from uo_qywx_chat_detail group by chat_id,to_char(join_time,'yyyymmdd'))
-        select
-             g1.chat_id,g1.join_day,cnt, --某一天的新增
-            sum(g1.cnt)over(partition by chat_id order by join_day asc) grand_total_cnt --累计总人数
-        from g1 where g1.chat_id=#{chatId} order by join_day asc;
-    </select>
-
-    <select id="getChatStatistics" resultMap="chatStatistics">
-        select chat_id, group_number, add_number, out_number, day_wid,
-       rank() over(partition by chat_id order by day_wid) rn
-        from uo_qywx_chat_statistics
-    </select>
-
-    <select id="getChatBaseData" resultMap="contractBase">
-        select chat_id, status, insert_dt, insert_by, group_number, group_join, group_out, group_name, owner, notice, create_time from uo_qywx_chat_base;
     </select>
 
     <insert id="insertDetail">
@@ -158,6 +113,24 @@
         create_time=excluded.create_time,
         group_number=excluded.group_number
     </insert>
+
+    <delete id="deleteChatBase">
+        delete from uo_qywx_chat_base where chat_id=#{chatId}
+    </delete>
+
+    <delete id="deleteChatDetail">
+        delete from uo_qywx_chat_detail where chat_id=#{chatId}
+    </delete>
+
+    <select id="getChatBaseDetail" resultMap="contractBase">
+        select a.notice,b.name as owner,a.create_time,a.group_name from uo_qywx_chat_base a join uo_qywx_follower_user_list b on a.owner=b.user_id
+        where a.chat_id=#{chatId}
+    </select>
+
+    <select id="getDetailData" resultMap="chatStatistics">
+        select day_wid, chat_id, group_number, add_number, out_number from uo_qywx_chat_statistics where chat_id=#{chatId}  order by day_wid asc limit 7
+    </select>
+
     <insert id="insertChatDay">
         insert into uo_qywx_chat_statistics(chat_id,day_wid) select chat_id,row_wid as day_wid from w_date cross join (
         select  chat_id,to_char(create_time,'yyyymmdd') chat_create_day
@@ -165,5 +138,36 @@
         where w_date.row_wid>=t2.chat_create_day::int8
         and w_date.row_wid &lt;= to_char(current_date-1,'yyyymmdd')::int8 on conflict (chat_id,day_wid) do nothing
     </insert>
+
+    <select id="getChatSummary" resultMap="chatStatisticsVO">
+       with g1 as (
+        select chat_id,to_char(join_time,'yyyymmdd') join_day,count(*) cnt
+        from uo_qywx_chat_detail group by chat_id,to_char(join_time,'yyyymmdd'))
+        select
+             g1.chat_id,g1.join_day,cnt, --某一天的新增
+            sum(g1.cnt)over(partition by chat_id order by join_day asc) grand_total_cnt --累计总人数
+        from g1 where g1.chat_id=#{chatId} order by join_day asc;
+    </select>
+
+    <select id="getChatStatisticsById" resultMap="chatStatistics">
+         select day_wid, chat_id, group_number, add_number, out_number from uo_qywx_chat_statistics where chat_id=#{chatId} order by day_wid asc
+    </select>
+
+    <select id="getChatStatistics" resultMap="chatStatistics">
+        select chat_id, group_number, add_number, out_number, day_wid,
+       rank() over(partition by chat_id order by day_wid) rn
+        from uo_qywx_chat_statistics
+    </select>
+
+    <update id="updateNumber">
+        <foreach collection="numlist" separator=";" item="item">
+            update uo_qywx_chat_statistics set out_number= #{item.outNumber},group_number=#{item.groupNumber},add_number=#{item.addNumber} where day_wid= #{item.dayWid} and chat_id= #{item.chatId}
+        </foreach>
+    </update>
+
+    <select id="getChatBaseData" resultMap="contractBase">
+        select chat_id, status, insert_dt, insert_by, group_number, group_join, group_out, group_name, owner, notice, create_time from uo_qywx_chat_base;
+    </select>
+
 
 </mapper>

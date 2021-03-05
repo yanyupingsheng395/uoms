@@ -1,6 +1,7 @@
 package com.linksteady.qywx.dao;
 
 import com.linksteady.qywx.domain.QywxChatBatchMsg;
+import com.linksteady.qywx.domain.QywxPushList;
 
 import java.util.List;
 
@@ -23,4 +24,10 @@ public interface QywxChatBatchMsgMapper {
     List<String> getUserID(String owner);
 
     void upadteStatus(long batchMsgId, String username, String status);
+
+    List<String> getChatID(String ownerId);
+
+    void insertPushList(QywxPushList qywxPushList);
+
+    void updatePushList(long pushId, String status, String msgId, String failList, String remark);
 }

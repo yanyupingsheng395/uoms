@@ -258,5 +258,6 @@ $("#btn_push").click(function () {
         }else{
             $MB.n_danger("群发消息推送失败");
         }
+        $MB.refreshTable( 'baseTable' );
     } );
 });

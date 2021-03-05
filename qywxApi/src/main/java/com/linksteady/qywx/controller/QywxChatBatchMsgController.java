@@ -64,13 +64,12 @@ public class QywxChatBatchMsgController  extends BaseController {
     @RequestMapping("/pushMessage")
     public ResponseBo pushMessage(@RequestParam("batchMsgId")long batchMsgId){
         try {
-            String result =qywxChatBatchMsgService.pushMessage(batchMsgId);
-            ResponseBo.ok("群发消息成功，请查看推送状态！");
+            qywxChatBatchMsgService.pushMessage(batchMsgId);
+            return ResponseBo.ok("群发消息成功，请查看推送状态！");
         } catch (Exception e) {
            log.info("执行群发消息失败{}",e);
            return ResponseBo.error("群发消息失败！");
         }
-        return null;
     }
 
 }

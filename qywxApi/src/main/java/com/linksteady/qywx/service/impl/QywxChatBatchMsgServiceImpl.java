@@ -14,6 +14,7 @@ import com.linksteady.qywx.dao.QywxChatBatchMsgMapper;
 import com.linksteady.qywx.dao.QywxParamMapper;
 import com.linksteady.qywx.domain.QywxChatBatchMsg;
 import com.linksteady.qywx.domain.QywxParam;
+import com.linksteady.qywx.domain.QywxPushList;
 import com.linksteady.qywx.service.QywxChatBatchMsgService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -64,15 +66,50 @@ public class QywxChatBatchMsgServiceImpl implements QywxChatBatchMsgService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public synchronized String pushMessage(long batchMsgId) throws Exception {
-
+    public synchronized void pushMessage(long batchMsgId) throws Exception {
         QywxChatBatchMsg qywxChatBatchMsg=qywxChatBatchMsgMapper.getChatBatchmsg(batchMsgId);
         if(qywxChatBatchMsg==null){
             log.info("群发消息失败，未获取到数据，{}",batchMsgId);
             throw new Exception("群发消息失败，未获取到数据");
         }
 
+        //获取当前的群主数
+        List<String> ownerList = Arrays.asList(qywxChatBatchMsg.getChatOwnerList().split(","));
+        //通过群主ID，获取当前群主下所有群成员的ID
+        for (int i = 0; i < ownerList.size(); i++) {
+            QywxPushList qywxPushList=new QywxPushList();
+            qywxPushList.setTextContent(qywxChatBatchMsg.getTextContent());
+            qywxPushList.setMpTitle(qywxChatBatchMsg.getMpTitle());
+            qywxPushList.setMpUrl(qywxChatBatchMsg.getMpUrl());
+            qywxPushList.setMpMediaId(qywxChatBatchMsg.getMpMediaId());
+            qywxPushList.setMpAppid(qywxParamMapper.getQywxParam().getMpAppId());
+            qywxPushList.setPicUrl(qywxChatBatchMsg.getPicUrl());
+            qywxPushList.setLinkUrl(qywxChatBatchMsg.getLinkUrl());
+            qywxPushList.setLinkDesc(qywxChatBatchMsg.getLinkDesc());
+            qywxPushList.setLinkPicurl(qywxChatBatchMsg.getLinkPicUrl());
+            qywxPushList.setLinkTitle(qywxChatBatchMsg.getLinkTitle());
+            qywxPushList.setSourceCode("CHAT");
+            //setfollowuserid为群主ID
+            qywxPushList.setFollowUserId(ownerList.get(i));
+            //根据群主ID，获取群主下面的群聊ID
+            List<String> chatidList=qywxChatBatchMsgMapper.getChatID(ownerList.get(i));
+            qywxPushList.setExternalContactIds(org.apache.commons.lang3.StringUtils.join(chatidList.stream().collect(Collectors.toList()),","));
+
+            //将信息，放入uo_qywx_push_list表中。
+            qywxChatBatchMsgMapper.insertPushList(qywxPushList);
+            //执行推送
+            pushQywxMessage(qywxPushList,qywxChatBatchMsg,ownerList.get(i));
+        }
+    }
+
+    private void pushQywxMessage(QywxPushList qywxPushList,QywxChatBatchMsg qywxChatBatchMsg,String sender){
+
         QywxMessage qywxMessage=new QywxMessage();
+        //填充文本
+        if(StringUtils.isNotEmpty(qywxChatBatchMsg.getTextContent())){
+            qywxMessage.setText(qywxChatBatchMsg.getTextContent());
+        }
+
         if("miniprogram".equals(qywxChatBatchMsg.getMsgType())){
             QywxParam qywxParam= qywxParamMapper.getQywxParam();
             String appId =qywxParam.getMpAppId();
@@ -89,40 +126,58 @@ public class QywxChatBatchMsgServiceImpl implements QywxChatBatchMsgService {
             qywxMessage.setLinkUrl(qywxChatBatchMsg.getLinkUrl());
         }
 
-        //获取当前的群主数
-        List<String> ownerList = Arrays.asList(qywxChatBatchMsg.getChatOwnerList().split(","));
-        List<String> flagList=new ArrayList<>();
-        //通过群主ID，获取当前群主下所有群成员的ID
-        for (int i = 0; i < ownerList.size(); i++) {
-            List<String> useridList=qywxChatBatchMsgMapper.getUserID(ownerList.get(i));
-            //调用推送接口
-            String result = pushQywxMessage(qywxMessage, ownerList.get(i), useridList);
-            //处理返回
-            if(StringUtils.isEmpty(result)){
-                flagList.add("N");
-            }else{
-                flagList.add("Y");
+        String status="S";
+        String msgId ="";
+        String failList="";
+        String remark="群发消息推送成功";
+        //调用推送接口
+        String result = pushQywxMessage(qywxMessage, sender,"group",null);
+        //处理返回
+        if(StringUtils.isEmpty(result)) {
+            status="F";
+            remark="调用企业微信接口返回空";
+        }else{
+            JSONObject jsonObject = JSON.parseObject(result);
+            msgId = jsonObject.getString("msgid");
+            int errcode = jsonObject.getIntValue("errcode");
+            failList = jsonObject.getString("fail_list");
+
+            if(errcode!=0){
+                status="F";
+                remark="调用企业微信接口失败";
             }
         }
-        String status="done";
-        if(flagList.contains("N")){
-            status="fail";
+        //更新状态。
+        qywxChatBatchMsgMapper.updatePushList(qywxPushList.getPushId(),status,msgId,failList,remark);
+
+        String flag="done";
+        if("F".equals(status)){
+            flag="fail";
         }
         UserBo userBo = (UserBo) SecurityUtils.getSubject().getPrincipal();
-        qywxChatBatchMsgMapper.upadteStatus(batchMsgId,userBo.getUsername(),status);
-        return status;
+        qywxChatBatchMsgMapper.upadteStatus(qywxChatBatchMsg.getBatchMsgId(),userBo.getUsername(),flag);
     }
 
-
-    private String pushQywxMessage(QywxMessage message, String sender, List<String> externalUserList){
+    /**
+     *
+     * @param message  推送消息的对象
+     * @param sender    发消息的成员
+     * @param chatType  类型（single，表示发送给客户，group表示发送给客户群）
+     * @param externalUserList  客户的外部联系人id列表，仅在chatType为single时有效
+     * @return
+     */
+    private String pushQywxMessage(QywxMessage message, String sender,String chatType, List<String> externalUserList){
         int retryTimes=0;
         //返回结果值
         String result="";
         do{
             //构造推送参数
             JSONObject param=new JSONObject();
-            param.put("chat_type","single");
-            param.put("external_userid", JSONArray.parseArray(JSON.toJSONString(externalUserList)));
+            param.put("chat_type",chatType);
+
+            if("single".equals(chatType)){
+                param.put("external_userid", JSONArray.parseArray(JSON.toJSONString(externalUserList)));
+            }
             param.put("sender",sender);
 
             JSONObject tempContent=null;
@@ -205,7 +260,7 @@ public class QywxChatBatchMsgServiceImpl implements QywxChatBatchMsgService {
                 log.error("调用企业微信接口发送消息失败，即将进行重试");
                 if(retryTimes+1>maxRetryTimes){
                     //超过最大重试次数，写log日志，将错误信息返回上一层处理
-                    log.warn("推送消息重试达到最大次数，接收到的参数为{}",message,sender,externalUserList.toString());
+                   // log.warn("推送消息重试达到最大次数，接收到的参数为{}",message,sender,externalUserList.toString());
                     //todo 暂时未实现 返回空字符串 由上层进行处理
                     return "";
                 }else{
