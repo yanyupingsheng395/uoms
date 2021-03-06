@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -208,47 +209,61 @@ public class QywxChatServiceImpl implements QywxChatService {
         qywxChatMapper.insertChatDay();
 
         //更新群总人数和新增人数
-        Table<String,Long,Object> qywxChatTable =  HashBasedTable.create();
         List<QywxChatBase> baselist=qywxChatMapper.getChatBaseData();
         baselist.stream().forEach(x->{
+
+            Table<String,Long,Object> qywxChatTable =  HashBasedTable.create();
             String chatId = x.getChatId();
             List<QywxChatStatisticsVO> list=qywxChatMapper.getChatSummary(chatId);
-            list.stream().forEach(y->{
-                qywxChatTable.put(y.getChatId(),y.getJoinDay(),y);
-            });
-            List <QywxChatStatistics> chatStatistics=qywxChatMapper.getChatStatisticsById(chatId);
-            for (int i = 0; i < chatStatistics.size(); i++) {
-                QywxChatStatistics current = chatStatistics.get(i);
-                //根据查询统计表的chatID和日期，去table集合中找
-                QywxChatStatisticsVO vo =(QywxChatStatisticsVO) qywxChatTable.get(current.getChatId(), current.getDayWid());
-                if(vo!=null){
-                    current.setGroupNumber(vo.getGrandTotalCnt());
-                    current.setAddNumber(vo.getCnt());
-                }else{
-                    current.setAddNumber(0);
-                    current.setGroupNumber(chatStatistics.get(i-1).getGroupNumber());
-                }
+            //查的群明细有值，才进行计算；
+            if(list.size()>0){
+                list.stream().forEach(y->{
+                    qywxChatTable.put(y.getChatId(),y.getJoinDay(),y);
+                });
 
-                //计算退群人数
-                if(i==0){
-                    current.setOutNumber(0);
-                }else{
-                    QywxChatStatistics pre = chatStatistics.get(i - 1);
-                    if(current.getChatId().equals(pre.getChatId())){
-                        current.setOutNumber(current.getGroupNumber()-pre.getGroupNumber()-current.getAddNumber());
+                //计算总人数和新增人数
+                List <QywxChatStatistics> chatStatistics=qywxChatMapper.getChatStatisticsById(chatId);
+                for (int i = 0; i < chatStatistics.size(); i++) {
+                    QywxChatStatistics current = chatStatistics.get(i);
+                    //根据查询统计表的chatID和日期，去table集合中找
+                    QywxChatStatisticsVO vo =(QywxChatStatisticsVO) qywxChatTable.get(current.getChatId(), current.getDayWid());
+                    if(vo!=null){
+                        current.setGroupNumber(vo.getGrandTotalCnt());
+                        current.setAddNumber(vo.getCnt());
                     }else{
-                        //如果不是，那么就是新的chatID，退群人数就为0
+                        current.setAddNumber(0);
+                        current.setGroupNumber(chatStatistics.get(i-1).getGroupNumber());
+                    }
+
+                    //计算退群人数
+                    if(i==0){
                         current.setOutNumber(0);
+                    }else{
+                        QywxChatStatistics pre = chatStatistics.get(i - 1);
+                        if(current.getChatId().equals(pre.getChatId())){
+                            current.setOutNumber(current.getGroupNumber()-pre.getGroupNumber()-current.getAddNumber());
+                        }else{
+                            //如果不是，那么就是新的chatID，退群人数就为0
+                            current.setOutNumber(0);
+                        }
                     }
                 }
+                qywxChatMapper.updateNumber(chatStatistics);
             }
-            qywxChatMapper.updateNumber(chatStatistics);
         });
     }
 
     @Override
     public FriendsNumVO getFriendsNum(String chatId) {
         return qywxChatMapper.getFriendsNum(chatId);
+    }
+
+    public static void main(String[] args) {
+        List<QywxChatStatisticsVO> list=new ArrayList<>();
+        list.stream().forEach(x->{
+            Table<String,Long,Object> qywxChatTable =  HashBasedTable.create();
+            qywxChatTable.put(x.getChatId(),x.getJoinDay(),x);
+        });
     }
 
 }
